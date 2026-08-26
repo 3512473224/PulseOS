@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PULSE · Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Inter:wght@200;300;400;600&family=JetBrains+Mono:wght@100;300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --bg: #030305;
+  --fg: #ffffff;
+  --dim: rgba(255,255,255,0.4);
+  --accent: #5e6ad2;
+  --accent-glow: rgba(94, 106, 210, 0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body, html { width:100%; height:100%; background:var(--bg); color:var(--fg); overflow-x:hidden; font-family:'Inter', sans-serif; }
+::selection { background: var(--accent); color: #fff; }
+
+#canvas-container { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0; transition: opacity 2s ease; }
+#canvas-container.loaded { opacity: 1; }
+.noise-overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; background:url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.06%22/%3E%3C/svg%3E'); }
+
+/* Layout */
+.ui-layer { position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column; padding: 2.5vw 4vw; }
+header { display:flex; justify-content:space-between; align-items:flex-start; mix-blend-mode: difference; }
+.logo { font-family:'Cormorant Garamond', serif; font-size:1.8rem; font-weight:300; letter-spacing:0.3em; text-transform:uppercase; }
+.status-indicator { display:flex; align-items:center; gap:12px; font-family:'JetBrains Mono', monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); }
+.dot { width:4px; height:4px; border-radius:50%; background:#fff; box-shadow: 0 0 10px #fff; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.main-content { flex:1; display:flex; flex-direction:column; justify-content:center; margin-top: 8vh; }
+.title-wrap { overflow:hidden; margin-bottom: 2vh; }
+h1 { font-family:'Cormorant Garamond', serif; font-size:clamp(4rem, 10vw, 9rem); font-weight:300; line-height:0.9; letter-spacing:-0.02em; }
+h1 i { font-style:italic; color:var(--dim); }
+.subtitle { font-family:'JetBrains Mono', monospace; font-size:clamp(0.7rem, 1vw, 0.9rem); color:var(--accent); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:6vh; max-width: 400px; line-height: 1.6; }
+
+/* Grid of highly stylized metrics */
+.metrics-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4vw; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 4vw; }
+.metric { display:flex; flex-direction:column; gap: 8px; position: relative; }
+.metric::before { content:''; position:absolute; top:-4vw; left:0; width:1px; height:2vw; background:var(--accent); opacity:0.5; }
+.m-label { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--dim); letter-spacing:0.2em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.m-val { font-family:'Inter', sans-serif; font-size:3.5rem; font-weight:200; letter-spacing:-0.04em; display:flex; align-items:baseline; gap:4px; }
+.m-unit { font-size:1rem; color:var(--dim); font-weight:300; }
+.m-bar { height: 1px; width: 100%; background: rgba(255,255,255,0.1); margin-top: 12px; position:relative; overflow:hidden; }
+.m-bar-fill { position:absolute; top:0; left:0; height:100%; background: #fff; width: 0%; box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Details text */
+.sys-details { font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--dim); line-height:1.8; opacity: 0.7; }
+.sys-details span { color: #fff; }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<div class="noise-overlay"></div>
+
+<div class="ui-layer">
+  <header>
+    <div class="logo">Pulse</div>
+    <div class="status-indicator">
+      <div class="dot" id="ws-dot"></div>
+      <span id="ws-txt">Awaiting Link</span>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="subtitle gs-rev">QUANTUM TELEMETRY ENGINE</div>
+    <div class="title-wrap"><h1 class="gs-rev">Server <i>Aesthetics</i></h1></div>
+    <div class="title-wrap"><h1 class="gs-rev">Reimagined.</h1></div>
+
+    <div class="metrics-grid">
+      <div class="metric gs-rev">
+        <div class="m-label"><i data-lucide="cpu" stroke-width="1"></i> Compute Core</div>
+        <div class="m-val"><span id="v-cpu">0.0</span><span class="m-unit">%</span></div>
+        <div class="m-bar"><div class="m-bar-fill" id="b-cpu"></div></div>
+        <div class="sys-details" style="margin-top:12px">Threads: <span id="s-cpu-c">—</span><br>Load: <span id="s-cpu-l">—</span></div>
+      </div>
+      <div class="metric gs-rev">
+        <div class="m-label"><i data-lucide="brain" stroke-width="1"></i> Neural Memory</div>
+        <div class="m-val"><span id="v-mem">0.0</span><span class="m-unit">%</span></div>
+        <div class="m-bar"><div class="m-bar-fill" id="b-mem"></div></div>
+        <div class="sys-details" style="margin-top:12px">Used: <span id="s-mem-u">—</span> GB<br>Total: <span id="s-mem-t">—</span> GB</div>
+      </div>
+      <div class="metric gs-rev">
+        <div class="m-label"><i data-lucide="database" stroke-width="1"></i> Deep Storage</div>
+        <div class="m-val"><span id="v-disk">0.0</span><span class="m-unit">%</span></div>
+        <div class="m-bar"><div class="m-bar-fill" id="b-disk"></div></div>
+        <div class="sys-details" style="margin-top:12px">Free: <span id="s-disk-f">—</span> GB<br>Total: <span id="s-disk-t">—</span> GB</div>
+      </div>
+      <div class="metric gs-rev">
+        <div class="m-label"><i data-lucide="activity" stroke-width="1"></i> System Pulse</div>
+        <div class="m-val" style="font-size:2rem; margin-top:12px; margin-bottom:12px;"><span id="v-up">—</span></div>
+        <div class="sys-details">Uplink: <span id="s-net-u">—</span> MB<br>Downlink: <span id="s-net-d">—</span> MB</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+// --- 1. Ethereal WebGL Background ---
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x030305, 0.04);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 2, 8);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+container.appendChild(renderer.domElement);
+
+// Organic morphing terrain
+const geometry = new THREE.PlaneGeometry(25, 25, 128, 128);
+geometry.rotateX(-Math.PI / 2);
+
+const vertexShader = 
+  uniform float uTime;
+  varying float vElevation;
+  
+  // Classic Perlin 3D Noise 
+  vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+  vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+  vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
+  float cnoise(vec3 P){
+    vec3 Pi0 = floor(P); vec3 Pi1 = Pi0 + vec3(1.0);
+    Pi0 = mod(Pi0, 289.0); Pi1 = mod(Pi1, 289.0);
+    vec3 Pf0 = fract(P); vec3 Pf1 = Pf0 - vec3(1.0);
+    vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+    vec4 iy = vec4(Pi0.yy, Pi1.yy);
+    vec4 iz0 = Pi0.zzzz; vec4 iz1 = Pi1.zzzz;
+    vec4 ixy = permute(permute(ix) + iy);
+    vec4 ixy0 = permute(ixy + iz0); vec4 ixy1 = permute(ixy + iz1);
+    vec4 gx0 = ixy0 / 7.0; vec4 gy0 = fract(floor(gx0) / 7.0) - 0.5;
+    gx0 = fract(gx0); vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+    vec4 sz0 = step(gz0, vec4(0.0));
+    gx0 -= sz0 * (step(0.0, gx0) - 0.5); gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+    vec4 gx1 = ixy1 / 7.0; vec4 gy1 = fract(floor(gx1) / 7.0) - 0.5;
+    gx1 = fract(gx1); vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+    vec4 sz1 = step(gz1, vec4(0.0));
+    gx1 -= sz1 * (step(0.0, gx1) - 0.5); gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+    vec3 g000 = vec3(gx0.x,gy0.x,gz0.x); vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+    vec3 g010 = vec3(gx0.z,gy0.z,gz0.z); vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+    vec3 g001 = vec3(gx1.x,gy1.x,gz1.x); vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+    vec3 g011 = vec3(gx1.z,gy1.z,gz1.z); vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+    vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+    g000 *= norm0.x; g010 *= norm0.y; g100 *= norm0.z; g110 *= norm0.w;
+    vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+    g001 *= norm1.x; g011 *= norm1.y; g101 *= norm1.z; g111 *= norm1.w;
+    float n000 = dot(g000, Pf0); float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+    float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z)); float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+    float n001 = dot(g001, vec3(Pf0.xy, Pf1.z)); float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+    float n011 = dot(g011, vec3(Pf0.x, Pf1.yz)); float n111 = dot(g111, Pf1);
+    vec3 fade_xyz = fade(Pf0);
+    vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+    vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+    return 2.2 * n_xyz;
+  }
+
+  void main() {
+    vec3 pos = position;
+    float noise = cnoise(vec3(pos.x * 0.15, pos.z * 0.15 + uTime * 0.1, uTime * 0.05));
+    float noise2 = cnoise(vec3(pos.x * 0.4, pos.z * 0.4 - uTime * 0.2, uTime * 0.1));
+    pos.y += noise * 2.5 + noise2 * 0.5;
+    vElevation = pos.y;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+  }
+;
+
+const fragmentShader = 
+  varying float vElevation;
+  void main() {
+    vec3 baseColor = vec3(0.02, 0.02, 0.03);
+    vec3 peakColor = vec3(0.37, 0.42, 0.82); // Accent
+    float mixStrength = (vElevation + 2.0) * 0.25;
+    vec3 finalColor = mix(baseColor, peakColor, clamp(mixStrength, 0.0, 1.0));
+    
+    // Create a wireframe-like glowing grid effect via smoothstep on fragments (optional, here we just use color)
+    gl_FragColor = vec4(finalColor, 1.0);
+  }
+;
+
+const material = new THREE.ShaderMaterial({
+  vertexShader,
+  fragmentShader,
+  uniforms: { uTime: { value: 0 } },
+  wireframe: true, // Wireframe aesthetic for that digital avant-garde look
+  transparent: true,
+  opacity: 0.15
+});
+
+const mesh = new THREE.Mesh(geometry, material);
+mesh.position.y = -3;
+scene.add(mesh);
+
+// Particles floating
+const pGeo = new THREE.BufferGeometry();
+const pCount = 500;
+const pArr = new Float32Array(pCount * 3);
+for(let i=0; i<pCount*3; i++) pArr[i] = (Math.random() - 0.5) * 30;
+pGeo.setAttribute('position', new THREE.BufferAttribute(pArr, 3));
+const pMat = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent:true, opacity: 0.4 });
+const pMesh = new THREE.Points(pGeo, pMat);
+scene.add(pMesh);
+
+// Parallax Mouse
+let mouseX = 0;
+let mouseY = 0;
+document.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  material.uniforms.uTime.value = t;
+  
+  camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+  camera.position.y += (-mouseY * 1 + 2 - camera.position.y) * 0.05;
+  camera.lookAt(0, 0, 0);
+  
+  pMesh.rotation.y = t * 0.05;
+  
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+container.classList.add('loaded');
+
+// --- 2. GSAP Animations ---
+gsap.from(".gs-rev", {
+  y: 60,
+  opacity: 0,
+  duration: 1.5,
+  stagger: 0.15,
+  ease: "power4.out",
+  delay: 0.2
+});
+
+// --- 3. Telemetry WebSocket ---
+const dot = document.getElementById('ws-dot');
+const txt = document.getElementById('ws-txt');
+let wsR = 0;
+
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const ws = new WebSocket(proto + '//' + location.host + '/ws');
+  
+  ws.onopen = () => {
+    wsR = 0;
+    txt.textContent = 'Neural Link Active';
+    dot.style.background = '#10b981';
+    dot.style.boxShadow = '0 0 10px #10b981';
+  };
+  
+  ws.onmessage = ({data}) => {
+    try {
+      const d = JSON.parse(data);
+      updateUI(d);
+    } catch (e) {}
+  };
+  
+  ws.onclose = () => {
+    txt.textContent = 'Link Lost · Retrying';
+    dot.style.background = '#f43f5e';
+    dot.style.boxShadow = '0 0 10px #f43f5e';
+    setTimeout(connectWS, Math.min(5000 * ++wsR, 30000));
+  };
+}
+
+function updateUI(d) {
+  // CPU
+  const cpu = d.cpu?.percent ?? 0;
+  document.getElementById('v-cpu').textContent = cpu.toFixed(1);
+  document.getElementById('b-cpu').style.width = cpu + '%';
+  document.getElementById('s-cpu-c').textContent = d.cpu?.cores ?? '-';
+  document.getElementById('s-cpu-l').textContent = (d.cpu?.load_avg || [0])[0].toFixed(2);
+  
+  // MEM
+  const mem = d.memory?.percent ?? 0;
+  document.getElementById('v-mem').textContent = mem.toFixed(1);
+  document.getElementById('b-mem').style.width = mem + '%';
+  document.getElementById('s-mem-u').textContent = ((d.memory?.used_mb || 0)/1024).toFixed(2);
+  document.getElementById('s-mem-t').textContent = ((d.memory?.total_mb || 0)/1024).toFixed(2);
+  
+  // DISK
+  const disk = d.disk?.percent ?? 0;
+  document.getElementById('v-disk').textContent = disk.toFixed(1);
+  document.getElementById('b-disk').style.width = disk + '%';
+  document.getElementById('s-disk-f').textContent = (d.disk?.free_gb || 0).toFixed(1);
+  document.getElementById('s-disk-t').textContent = (d.disk?.total_gb || 0).toFixed(1);
+  
+  // NET & UP
+  document.getElementById('v-up').textContent = d.uptime?.formatted ?? '—';
+  document.getElementById('s-net-u').textContent = ((d.network?.bytes_sent || 0) / 1048576).toFixed(1);
+  document.getElementById('s-net-d').textContent = ((d.network?.bytes_recv || 0) / 1048576).toFixed(1);
+}
+
+connectWS();
+</script>
+</body>
+</html>
