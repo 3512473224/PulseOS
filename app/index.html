@@ -1,1557 +1,1114 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>PulseOS · Cloud Telemetry</title>
-
-<!-- Three.js for 3D fluid -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<!-- GSAP for non-linear physics animation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<!-- Chart.js for sparklines -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <style>
-  :root {
-    --void: #050508;
-    --abyss: #08080f;
-    --panel: rgba(8,8,18,0.72);
-    --glass: rgba(15,15,30,0.55);
-    --cyan: #00f5ff;
-    --violet: #9b59ff;
-    --coral: #ff3d7f;
-    --gold: #ffd166;
-    --green: #06ffa0;
-    --text: #e2e8f7;
-    --muted: rgba(226,232,247,0.45);
-    --border: rgba(0,245,255,0.12);
-    --glow-cyan: 0 0 24px rgba(0,245,255,0.35), 0 0 60px rgba(0,245,255,0.12);
-    --glow-violet: 0 0 24px rgba(155,89,255,0.4), 0 0 60px rgba(155,89,255,0.15);
-    --glow-coral: 0 0 20px rgba(255,61,127,0.4);
-  }
+:root {
+  --bg: #0a0a0f;
+  --surface: rgba(16,16,24,0.7);
+  --surface-solid: #10101a;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --accent: #00d4ff;
+  --accent-dim: rgba(0,212,255,0.1);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.1);
+  --rose: #f43f5e;
+  --rose-dim: rgba(244,63,94,0.1);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.1);
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.1);
+  --text: #e4e4e7;
+  --text-secondary: #71717a;
+  --text-dim: #52525b;
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+*,*::before,*::after { margin:0;padding:0;box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
 
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* ---------- 3D Background ---------- */
+#bg-canvas {
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; opacity:0.5;
+}
 
-  html, body {
-    width:100%; min-height:100vh;
-    background: var(--void);
-    color: var(--text);
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    overflow-x: hidden;
-  }
+/* ---------- Shell ---------- */
+.shell {
+  position:relative; z-index:1;
+  max-width:1280px; margin:0 auto; padding:0 20px 60px;
+}
 
-  /* ─── WebGL Canvas ─── */
-  #fluid-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
+/* ---------- Nav ---------- */
+nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 0; position:sticky; top:0; z-index:100;
+  background:rgba(10,10,15,0.8); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand { display:flex; align-items:center; gap:10px; }
+.nav-orb {
+  width:28px; height:28px; border-radius:50%;
+  background:conic-gradient(from 0deg,var(--accent),var(--purple),var(--rose),var(--accent));
+  animation:spin 6s linear infinite;
+}
+.nav-orb::after {
+  content:''; display:block; width:18px; height:18px;
+  margin:5px; border-radius:50%; background:var(--bg);
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.nav-title { font-weight:700; font-size:0.95rem; letter-spacing:0.06em; }
+.nav-title span { color:var(--accent); }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.status-badge {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.7rem; color:var(--text-secondary);
+  letter-spacing:0.08em; text-transform:uppercase;
+}
+.status-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:blink 2s ease infinite;
+}
+@keyframes blink { 50%{opacity:0.4} }
+.lang-btn {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:6px; padding:4px 10px;
+  color:var(--text-secondary); font-size:0.72rem;
+  cursor:pointer; transition:all 0.2s;
+  font-family:inherit; letter-spacing:0.04em;
+}
+.lang-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* ─── Noise overlay ─── */
-  body::before {
-    content:'';
-    position:fixed; inset:0; z-index:1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    opacity: 0.6;
-  }
+/* ---------- Hero ---------- */
+.hero {
+  display:grid; grid-template-columns:1fr 340px;
+  gap:48px; align-items:center;
+  padding:72px 0 56px; min-height:48vh;
+}
+.hero-content { }
+.hero-tag {
+  display:inline-block;
+  font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:16px;
+  padding:4px 12px; border-radius:20px;
+  background:var(--accent-dim); border:1px solid rgba(0,212,255,0.15);
+}
+.hero h1 {
+  font-size:clamp(2rem,4.5vw,3.4rem); font-weight:800;
+  line-height:1.1; letter-spacing:-0.03em; color:#fff;
+}
+.hero h1 .grad {
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.hero-desc {
+  margin-top:16px; font-size:0.9rem; color:var(--text-secondary);
+  max-width:420px; line-height:1.7;
+}
+.hero-kpi {
+  display:flex; gap:28px; margin-top:32px;
+}
+.kpi { }
+.kpi-val {
+  font-size:1.8rem; font-weight:700; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.kpi-val.c1 { color:var(--accent); }
+.kpi-val.c2 { color:var(--purple); }
+.kpi-val.c3 { color:var(--rose); }
+.kpi-label {
+  font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;
+  letter-spacing:0.1em; margin-top:4px;
+}
 
-  /* ─── Scanline ─── */
-  body::after {
-    content:'';
-    position:fixed; inset:0; z-index:2;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.04) 2px,
-      rgba(0,0,0,0.04) 4px
-    );
-    pointer-events: none;
-  }
+/* Fluid sphere */
+.hero-viz { display:flex; justify-content:center; align-items:center; position:relative; }
+#sphere-canvas { width:320px; height:320px; border-radius:50%; }
+.orbit-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(0,212,255,0.08);
+  pointer-events:none;
+}
+.orbit-ring:nth-child(2) { inset:-16px; border-color:rgba(139,92,246,0.1); animation:spin 12s linear infinite reverse; }
+.orbit-ring:nth-child(3) { inset:-36px; border-color:rgba(244,63,94,0.06); animation:spin 20s linear infinite; border-style:dashed; }
 
-  /* ─── Main layout ─── */
-  #app {
-    position: relative;
-    z-index: 10;
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 24px 80px;
-  }
+/* ---------- Section ---------- */
+.section-label {
+  display:flex; align-items:center; gap:12px;
+  margin:48px 0 20px;
+}
+.section-label span {
+  font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--text-dim); white-space:nowrap;
+}
+.section-label hr {
+  flex:1; border:none; height:1px;
+  background:linear-gradient(90deg,var(--border),transparent);
+}
 
-  /* ─── Header ─── */
-  #header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px 0 20px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(5,5,8,0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-  }
+/* ---------- Metric Grid ---------- */
+.metrics {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+}
+.m-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:22px 20px;
+  position:relative; overflow:hidden;
+  transition:border-color 0.25s, transform 0.25s;
+  backdrop-filter:blur(12px);
+}
+.m-card:hover { border-color:var(--border-hover); transform:translateY(-2px); }
+.m-card-icon {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; margin-bottom:16px;
+}
+.m-card-icon.i-cpu  { background:var(--accent-dim); }
+.m-card-icon.i-mem  { background:var(--purple-dim); }
+.m-card-icon.i-disk { background:var(--rose-dim); }
+.m-card-icon.i-up   { background:var(--amber-dim); }
 
-  .logo-mark {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
+.m-val {
+  font-size:2rem; font-weight:700; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.m-val.v-cpu  { color:var(--accent); }
+.m-val.v-mem  { color:var(--purple); }
+.m-val.v-disk { color:var(--rose); }
+.m-val.v-up   { color:var(--amber); font-size:1.3rem; }
+.m-unit { font-size:0.7rem; color:var(--text-dim); margin-left:2px; }
+.m-name {
+  font-size:0.65rem; color:var(--text-dim);
+  text-transform:uppercase; letter-spacing:0.1em; margin-top:6px;
+}
+.m-detail {
+  font-size:0.72rem; color:var(--text-secondary); margin-top:4px;
+  font-variant-numeric:tabular-nums;
+}
 
-  .logo-orb {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, var(--cyan), var(--violet), var(--coral), var(--cyan));
-    animation: spin-orb 4s linear infinite;
-    box-shadow: var(--glow-cyan);
-    position: relative;
-  }
-  .logo-orb::after {
-    content:'';
-    position:absolute;
-    inset:4px;
-    border-radius:50%;
-    background: var(--void);
-  }
+/* Arc gauge */
+.arc-gauge {
+  position:absolute; bottom:18px; right:18px;
+  width:48px; height:48px;
+}
+.arc-gauge svg { width:100%; height:100%; }
+.arc-track { fill:none; stroke:rgba(255,255,255,0.04); stroke-width:3; }
+.arc-fill {
+  fill:none; stroke-width:3; stroke-linecap:round;
+  transition:stroke-dashoffset 0.6s cubic-bezier(0.22,1,0.36,1);
+}
 
-  @keyframes spin-orb {
-    to { transform: rotate(360deg); }
-  }
+/* ---------- Chart ---------- */
+.chart-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:20px;
+  backdrop-filter:blur(12px);
+}
+.chart-head {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:12px;
+}
+.chart-title { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); }
+.chart-now { font-size:1.1rem; font-weight:700; color:var(--purple); font-variant-numeric:tabular-nums; }
+#cpu-chart { max-height:100px; }
 
-  .logo-text {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .logo-text span { color: var(--cyan); }
+/* ---------- System Info Grid ---------- */
+.sys-info {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+}
+.sys-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:20px;
+  backdrop-filter:blur(12px);
+}
+.sys-card-title {
+  font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:12px;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.sys-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:4px 0; font-size:0.78rem;
+}
+.sys-row-label { color:var(--text-secondary); }
+.sys-row-val { color:var(--text); font-weight:500; font-variant-numeric:tabular-nums; }
+.sys-bar-wrap {
+  height:4px; background:rgba(255,255,255,0.04); border-radius:2px;
+  margin-top:8px; overflow:hidden;
+}
+.sys-bar {
+  height:100%; border-radius:2px;
+  transition:width 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.sys-bar.bar-mem  { background:linear-gradient(90deg,var(--purple),var(--accent)); }
+.sys-bar.bar-swap { background:linear-gradient(90deg,var(--amber),var(--rose)); }
+.sys-bar.bar-disk { background:linear-gradient(90deg,var(--rose),var(--amber)); }
 
-  .header-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
+/* ---------- Docker Containers ---------- */
+.docker-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+}
+.d-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px 18px;
+  display:flex; gap:12px; align-items:flex-start;
+  transition:border-color 0.2s;
+  backdrop-filter:blur(12px);
+}
+.d-card:hover { border-color:var(--border-hover); }
+.d-dot {
+  width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0;
+}
+.d-dot.on { background:var(--green); box-shadow:0 0 8px var(--green); }
+.d-dot.off { background:var(--rose); }
+.d-name { font-size:0.82rem; font-weight:600; margin-bottom:4px; }
+.d-meta { font-size:0.7rem; color:var(--text-secondary); line-height:1.7; }
+.d-meta em { color:var(--accent); font-style:normal; }
 
-  .live-dot {
-    width:8px; height:8px;
-    border-radius:50%;
-    background: var(--green);
-    box-shadow: 0 0 12px var(--green);
-    animation: pulse-dot 1.4s ease-in-out infinite;
-  }
-  @keyframes pulse-dot {
-    0%,100% { transform:scale(1); opacity:1; }
-    50% { transform:scale(1.5); opacity:0.6; }
-  }
+/* ---------- Logs ---------- */
+.log-box {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); overflow:hidden;
+  backdrop-filter:blur(12px);
+}
+.log-bar {
+  padding:12px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(0,0,0,0.2);
+}
+.log-bar-title { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-dim); }
+.log-body {
+  padding:12px 20px; height:180px; overflow-y:auto;
+  font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+  font-size:0.72rem; line-height:1.9;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.log-line { display:block; }
+.log-ts { color:var(--text-dim); margin-right:10px; }
+.l-info { color:var(--accent); }
+.l-warn { color:var(--amber); }
+.l-err  { color:var(--rose); }
+.log-msg { color:var(--text-secondary); }
 
-  /* ─── HERO ─── */
-  #hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: center;
-    padding: 80px 0 60px;
-    min-height: 55vh;
-  }
+/* ---------- Probe ---------- */
+.probe-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.probe-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:22px;
+  backdrop-filter:blur(12px);
+}
+.probe-title {
+  font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:14px;
+}
+.probe-row { display:flex; gap:8px; margin-bottom:12px; }
+.probe-in {
+  flex:1; background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:8px; padding:9px 12px; color:var(--text);
+  font-family:monospace; font-size:0.78rem; outline:none;
+  transition:border-color 0.2s;
+}
+.probe-in:focus { border-color:var(--accent); }
+.probe-go {
+  background:var(--accent); border:none; border-radius:8px;
+  padding:9px 16px; color:var(--bg); font-weight:600;
+  font-size:0.78rem; cursor:pointer; transition:opacity 0.15s;
+  white-space:nowrap; font-family:inherit;
+}
+.probe-go:hover { opacity:0.85; }
+.probe-go:active { transform:scale(0.97); }
+.probe-out {
+  background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:8px; padding:10px 14px;
+  font-size:0.73rem; line-height:1.7; min-height:56px;
+  color:var(--text-dim); white-space:pre-wrap; word-break:break-all;
+  font-family:monospace;
+}
+.out-ok   { color:var(--green); }
+.out-fail { color:var(--rose); }
 
-  .hero-left { }
-  .hero-eyebrow {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    opacity: 0;
-  }
-  .hero-title {
-    font-size: clamp(2.4rem, 5vw, 4.2rem);
-    font-weight: 800;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    font-family: system-ui, sans-serif;
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  .hero-title .accent { color: var(--cyan); }
-  .hero-title .accent2 { color: var(--violet); }
+/* ---------- Kanban ---------- */
+.kanban { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.kb-col {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px;
+  backdrop-filter:blur(12px);
+}
+.kb-col-head {
+  font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:14px; padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.kb-dot { width:6px; height:6px; border-radius:50%; }
+.kb-tasks { display:flex; flex-direction:column; gap:6px; min-height:60px; }
+.kb-task {
+  background:rgba(0,0,0,0.25); border:1px solid var(--border);
+  border-radius:8px; padding:10px 12px;
+  font-size:0.78rem; cursor:pointer; transition:all 0.2s;
+  display:flex; justify-content:space-between; align-items:flex-start; gap:8px;
+}
+.kb-task:hover { border-color:var(--accent); transform:translateX(3px); }
+.kb-task-title { flex:1; }
+.kb-task-pri {
+  font-size:0.6rem; padding:2px 6px; border-radius:4px;
+  text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0;
+}
+.pri-high { background:var(--rose-dim); color:var(--rose); }
+.pri-medium { background:var(--amber-dim); color:var(--amber); }
+.pri-low { background:var(--green-dim); color:var(--green); }
+.kb-add { display:flex; gap:6px; margin-top:10px; }
+.kb-input {
+  flex:1; background:rgba(0,0,0,0.3); border:1px solid var(--border);
+  border-radius:6px; padding:7px 10px; color:var(--text);
+  font-size:0.73rem; outline:none; font-family:inherit;
+  transition:border-color 0.2s;
+}
+.kb-input:focus { border-color:var(--accent); }
+.kb-add-btn {
+  background:var(--accent-dim); border:1px solid rgba(0,212,255,0.2);
+  border-radius:6px; padding:7px 10px; color:var(--accent);
+  font-size:0.85rem; cursor:pointer; transition:background 0.2s;
+}
+.kb-add-btn:hover { background:rgba(0,212,255,0.18); }
 
-  .hero-subtitle {
-    margin-top: 22px;
-    font-size: 0.88rem;
-    color: var(--muted);
-    line-height: 1.7;
-    max-width: 380px;
-    opacity: 0;
-    transform: translateY(20px);
-  }
+/* ---------- Footer ---------- */
+footer {
+  margin-top:60px; padding:20px 0;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between;
+  font-size:0.68rem; color:var(--text-dim); letter-spacing:0.06em;
+}
+footer a { color:var(--accent); text-decoration:none; }
 
-  .hero-stats {
-    display: flex;
-    gap: 32px;
-    margin-top: 40px;
-    opacity: 0;
-  }
-  .hero-stat { }
-  .hero-stat-val {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--cyan);
-    font-family: system-ui, sans-serif;
-    line-height: 1;
-  }
-  .hero-stat-val.coral { color: var(--coral); }
-  .hero-stat-val.violet { color: var(--violet); }
-  .hero-stat-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
-  /* 3D Fluid sphere container */
-  .hero-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  #fluid-sphere-container {
-    width: 380px;
-    height: 380px;
-    border-radius: 50%;
-    position: relative;
-    opacity: 0;
-  }
-
-  #fluid-sphere-canvas {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-  }
-
-  .sphere-ring {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(0,245,255,0.15);
-    animation: orbit 8s linear infinite;
-    pointer-events: none;
-  }
-  .sphere-ring:nth-child(2) {
-    inset: -20px;
-    border-color: rgba(155,89,255,0.2);
-    animation-duration: 12s;
-    animation-direction: reverse;
-  }
-  .sphere-ring:nth-child(3) {
-    inset: -45px;
-    border-color: rgba(255,61,127,0.1);
-    animation-duration: 20s;
-    border-style: dashed;
-  }
-  @keyframes orbit {
-    to { transform: rotate(360deg); }
-  }
-
-  /* ─── Section Header ─── */
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 60px 0 28px;
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  .section-line {
-    flex:1;
-    height:1px;
-    background: linear-gradient(90deg, var(--cyan), transparent);
-    opacity: 0.3;
-  }
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--cyan);
-  }
-
-  /* ─── Telemetry Grid ─── */
-  #telemetry-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-
-  .metric-card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 24px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    opacity: 0;
-    transform: translateY(30px);
-    cursor: default;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .metric-card:hover {
-    border-color: rgba(0,245,255,0.3);
-    transform: translateY(-4px) !important;
-  }
-  .metric-card::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; right:0;
-    height:1px;
-    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-    opacity: 0.5;
-  }
-
-  /* animated gradient corner glow */
-  .metric-card::after {
-    content:'';
-    position:absolute;
-    top:-40px; right:-40px;
-    width:100px; height:100px;
-    border-radius:50%;
-    background: radial-gradient(circle, var(--c, rgba(0,245,255,0.15)) 0%, transparent 70%);
-    animation: glow-drift 6s ease-in-out infinite;
-  }
-  .metric-card.violet-card { --c: rgba(155,89,255,0.18); }
-  .metric-card.coral-card  { --c: rgba(255,61,127,0.18); }
-  .metric-card.gold-card   { --c: rgba(255,209,102,0.18); }
-  @keyframes glow-drift {
-    0%,100% { transform: translate(0,0); }
-    50% { transform: translate(-10px, 10px); }
-  }
-
-  .metric-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display: flex; align-items:center; justify-content:center;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    background: rgba(0,245,255,0.08);
-    border: 1px solid rgba(0,245,255,0.15);
-  }
-  .metric-card.violet-card .metric-icon {
-    background: rgba(155,89,255,0.08);
-    border-color: rgba(155,89,255,0.2);
-  }
-  .metric-card.coral-card .metric-icon {
-    background: rgba(255,61,127,0.08);
-    border-color: rgba(255,61,127,0.2);
-  }
-  .metric-card.gold-card .metric-icon {
-    background: rgba(255,209,102,0.08);
-    border-color: rgba(255,209,102,0.2);
-  }
-
-  .metric-val {
-    font-size: 2.4rem;
-    font-weight: 700;
-    font-family: system-ui, sans-serif;
-    line-height: 1;
-    color: var(--cyan);
-    letter-spacing: -0.02em;
-  }
-  .metric-card.violet-card .metric-val { color: var(--violet); }
-  .metric-card.coral-card .metric-val  { color: var(--coral); }
-  .metric-card.gold-card .metric-val   { color: var(--gold); }
-
-  .metric-unit {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-left: 4px;
-    vertical-align: middle;
-    font-family: monospace;
-  }
-  .metric-name {
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 8px;
-  }
-
-  /* Arc gauge */
-  .metric-gauge {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 60px; height: 60px;
-  }
-  .metric-gauge svg { width:100%; height:100%; overflow:visible; }
-  .gauge-track { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:3; }
-  .gauge-fill  { fill:none; stroke-width:3; stroke-linecap:round;
-    transition: stroke-dashoffset 0.8s cubic-bezier(0.34,1.56,0.64,1); }
-
-  /* ─── Sparkline row ─── */
-  .sparkline-card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    opacity: 0;
-    transform: translateY(20px);
-    position: relative;
-    overflow: hidden;
-  }
-  .sparkline-card::before {
-    content:'';
-    position:absolute;
-    top:0; left:0; right:0;
-    height:1px;
-    background: linear-gradient(90deg, transparent, var(--violet), transparent);
-    opacity: 0.4;
-  }
-  .sparkline-header {
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom: 16px;
-  }
-  .sparkline-title {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .sparkline-now {
-    font-size: 1.2rem;
-    font-weight: 700;
-    font-family: system-ui;
-    color: var(--violet);
-  }
-
-  /* ─── Docker cards ─── */
-  #docker-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
-
-  .docker-card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    opacity: 0;
-    transform: scale(0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .docker-card:hover {
-    border-color: rgba(0,245,255,0.25);
-    box-shadow: var(--glow-cyan);
-  }
-  .docker-status {
-    width:10px; height:10px; border-radius:50%;
-    margin-top:4px; flex-shrink:0;
-  }
-  .docker-status.running {
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-  .docker-status.stopped {
-    background: var(--coral);
-  }
-  .docker-name {
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-  }
-  .docker-meta {
-    font-size: 0.68rem;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-  .docker-meta span { color: var(--cyan); }
-
-  /* ─── Log Stream ─── */
-  #log-stream {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 0;
-    overflow: hidden;
-    opacity: 0;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .log-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items:center;
-    justify-content:space-between;
-    background: rgba(0,0,0,0.3);
-  }
-  .log-title { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
-  .log-body {
-    padding: 16px 24px;
-    height: 200px;
-    overflow-y: auto;
-    font-size: 0.73rem;
-    line-height: 1.8;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-  .log-line { display:block; }
-  .log-time { color: var(--muted); margin-right:12px; }
-  .log-lvl-info { color: var(--cyan); }
-  .log-lvl-warn { color: var(--gold); }
-  .log-lvl-err  { color: var(--coral); }
-  .log-msg { color: var(--text); }
-
-  /* ─── DevOps Probe ─── */
-  .probe-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .probe-card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px;
-    opacity: 0;
-    transform: translateY(20px);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .probe-card-title {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    margin-bottom: 18px;
-  }
-  .probe-input-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .probe-input {
-    flex:1;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: monospace;
-    font-size: 0.8rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .probe-input:focus { border-color: var(--cyan); }
-  .probe-btn {
-    background: linear-gradient(135deg, var(--cyan), var(--violet));
-    border: none;
-    border-radius: 10px;
-    padding: 10px 18px;
-    color: var(--void);
-    font-family: monospace;
-    font-size: 0.78rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    white-space: nowrap;
-  }
-  .probe-btn:hover {
-    transform: scale(1.04);
-    box-shadow: var(--glow-cyan);
-  }
-  .probe-btn:active { transform:scale(0.97); }
-  .probe-result {
-    background: rgba(0,0,0,0.5);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 0.75rem;
-    line-height: 1.7;
-    min-height: 60px;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-  .result-ok   { color: var(--green); }
-  .result-fail { color: var(--coral); }
-
-  /* ─── Kanban ─── */
-  .kanban-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  .kanban-col {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    opacity: 0;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-  .kanban-col-title {
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-    display:flex; align-items:center; gap:8px;
-  }
-  .kanban-dot { width:7px; height:7px; border-radius:50%; }
-  .kanban-tasks { display:flex; flex-direction:column; gap:8px; min-height:80px; }
-  .kanban-task {
-    background: rgba(0,0,0,0.35);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 0.78rem;
-    line-height: 1.5;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .kanban-task:hover {
-    border-color: rgba(0,245,255,0.3);
-    transform: translateX(4px);
-  }
-  .kanban-add {
-    display:flex; gap:8px; margin-top:12px;
-  }
-  .kanban-new-input {
-    flex:1;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    color: var(--text);
-    font-size: 0.75rem;
-    font-family: monospace;
-    outline:none;
-    transition: border-color 0.2s;
-  }
-  .kanban-new-input:focus { border-color: var(--cyan); }
-  .kanban-add-btn {
-    background: rgba(0,245,255,0.1);
-    border: 1px solid var(--cyan);
-    border-radius: 8px;
-    padding: 8px 12px;
-    color: var(--cyan);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .kanban-add-btn:hover { background: rgba(0,245,255,0.2); }
-
-  /* ─── Footer ─── */
-  #footer {
-    margin-top: 80px;
-    padding: 28px 0;
-    border-top: 1px solid var(--border);
-    display:flex; justify-content:space-between; align-items:center;
-    font-size: 0.67rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
-  .footer-brand { color: var(--cyan); }
-
-  /* ─── Scrollbar ─── */
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius:2px; }
-
-  /* ─── Responsive ─── */
-  @media (max-width:1100px) {
-    #telemetry-grid { grid-template-columns: repeat(2, 1fr); }
-    #docker-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width:768px) {
-    #hero { grid-template-columns:1fr; }
-    .hero-right { display:none; }
-    #telemetry-grid { grid-template-columns: repeat(2, 1fr); }
-    #docker-grid { grid-template-columns:1fr; }
-    .probe-grid { grid-template-columns:1fr; }
-    .kanban-grid { grid-template-columns:1fr; }
-  }
-
-  /* ─── Loading screen ─── */
-  #loader {
-    position:fixed; inset:0; z-index:9999;
-    background: var(--void);
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    gap:24px;
-  }
-  .loader-glyph {
-    font-size:3rem;
-    animation:spin-orb 2s linear infinite;
-  }
-  .loader-bar-track {
-    width:200px; height:2px;
-    background: rgba(255,255,255,0.08);
-    border-radius:1px; overflow:hidden;
-  }
-  .loader-bar-fill {
-    height:100%;
-    background: linear-gradient(90deg, var(--cyan), var(--violet));
-    border-radius:1px;
-    width:0%;
-    transition: width 0.3s ease;
-  }
-  .loader-text {
-    font-size:0.65rem;
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    color:var(--muted);
-  }
+/* ---------- Responsive ---------- */
+@media(max-width:1024px) {
+  .metrics { grid-template-columns:repeat(2,1fr); }
+  .docker-grid { grid-template-columns:1fr; }
+  .sys-info { grid-template-columns:1fr; }
+}
+@media(max-width:768px) {
+  .hero { grid-template-columns:1fr; }
+  .hero-viz { display:none; }
+  .metrics { grid-template-columns:repeat(2,1fr); }
+  .probe-grid { grid-template-columns:1fr; }
+  .kanban { grid-template-columns:1fr; }
+}
 </style>
 </head>
 <body>
 
-<!-- Loading Screen -->
-<div id="loader">
-  <div class="loader-glyph">◎</div>
-  <div class="loader-bar-track">
-    <div class="loader-bar-fill" id="loader-fill"></div>
-  </div>
-  <div class="loader-text" id="loader-text">Initializing telemetry…</div>
-</div>
+<canvas id="bg-canvas"></canvas>
 
-<!-- 3D WebGL fluid background canvas -->
-<canvas id="fluid-canvas"></canvas>
+<div class="shell">
 
-<div id="app">
-  <!-- Header -->
-  <header id="header">
-    <div class="logo-mark">
-      <div class="logo-orb"></div>
-      <div class="logo-text">Pulse<span>OS</span></div>
+  <!-- Nav -->
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-orb"></div>
+      <div class="nav-title">Pulse<span>OS</span></div>
     </div>
-    <div class="header-status">
-      <div class="live-dot"></div>
-      <span id="ws-status">CONNECTING</span>
-      &nbsp;·&nbsp;
-      <span id="header-uptime">—</span>
+    <div class="nav-right">
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span id="ws-badge">CONNECTING</span>
+        <span style="margin:0 4px;color:var(--text-dim)">·</span>
+        <span id="nav-uptime">—</span>
+      </div>
+      <button class="lang-btn" id="lang-toggle" onclick="toggleLang()">中文</button>
     </div>
-  </header>
+  </nav>
 
   <!-- Hero -->
-  <section id="hero">
-    <div class="hero-left">
-      <div class="hero-eyebrow">ppday.site · cloud workstation</div>
-      <h1 class="hero-title">
-        Real&#8209;time<br/>
-        <span class="accent">Cloud</span> <span class="accent2">Intelligence</span>
-      </h1>
-      <p class="hero-subtitle">
-        Live telemetry. Autonomous ops. Every pulse of your infrastructure rendered in real time — 
-        from CPU to container to cosmos.
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag" data-i18n="hero_tag">CLOUD TELEMETRY PLATFORM</div>
+      <h1>Server <span class="grad" data-i18n="hero_grad">Pulse</span><br/>in Real Time</h1>
+      <p class="hero-desc" data-i18n="hero_desc">
+        Every heartbeat of your infrastructure — CPU, memory, containers, network — 
+        streamed and visualised at 1Hz refresh from your Debian VPS.
       </p>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="hero-stat-val" id="hero-cpu">—</div>
-          <div class="hero-stat-label">CPU Load</div>
+      <div class="hero-kpi">
+        <div class="kpi">
+          <div class="kpi-val c1" id="kpi-cpu">—</div>
+          <div class="kpi-label" data-i18n="kpi_cpu">CPU</div>
         </div>
-        <div class="hero-stat">
-          <div class="hero-stat-val coral" id="hero-ram">—</div>
-          <div class="hero-stat-label">RAM Used</div>
+        <div class="kpi">
+          <div class="kpi-val c2" id="kpi-mem">—</div>
+          <div class="kpi-label" data-i18n="kpi_mem">MEMORY</div>
         </div>
-        <div class="hero-stat">
-          <div class="hero-stat-val violet" id="hero-disk">—</div>
-          <div class="hero-stat-label">Disk Used</div>
+        <div class="kpi">
+          <div class="kpi-val c3" id="kpi-disk">—</div>
+          <div class="kpi-label" data-i18n="kpi_disk">DISK</div>
         </div>
       </div>
     </div>
-
-    <!-- Fluid Sphere -->
-    <div class="hero-right">
-      <div id="fluid-sphere-container">
-        <canvas id="fluid-sphere-canvas"></canvas>
-        <div class="sphere-ring"></div>
-        <div class="sphere-ring"></div>
-        <div class="sphere-ring"></div>
-      </div>
+    <div class="hero-viz">
+      <canvas id="sphere-canvas" width="320" height="320"></canvas>
+      <div class="orbit-ring"></div>
+      <div class="orbit-ring"></div>
+      <div class="orbit-ring"></div>
     </div>
   </section>
 
-  <!-- Telemetry Grid -->
-  <div class="section-head" id="sh-telemetry">
-    <div class="section-label">Live Metrics</div>
-    <div class="section-line"></div>
+  <!-- Live Metrics -->
+  <div class="section-label">
+    <span data-i18n="sec_metrics">LIVE METRICS</span><hr/>
+  </div>
+  <div class="metrics">
+    <div class="m-card">
+      <div class="m-card-icon i-cpu">⚡</div>
+      <div class="m-val v-cpu" id="v-cpu">—<span class="m-unit">%</span></div>
+      <div class="m-name" data-i18n="m_cpu">CPU USAGE</div>
+      <div class="m-detail" id="d-cpu">— cores · load —</div>
+      <div class="arc-gauge">
+        <svg viewBox="0 0 48 48">
+          <circle class="arc-track" cx="24" cy="24" r="20" stroke-dasharray="125.7"/>
+          <circle id="g-cpu" class="arc-fill" cx="24" cy="24" r="20"
+            stroke="var(--accent)" stroke-dasharray="125.7" stroke-dashoffset="125.7"
+            transform="rotate(-90 24 24)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="m-card">
+      <div class="m-card-icon i-mem">🧠</div>
+      <div class="m-val v-mem" id="v-mem">—<span class="m-unit">%</span></div>
+      <div class="m-name" data-i18n="m_mem">MEMORY</div>
+      <div class="m-detail" id="d-mem">— / — MB</div>
+      <div class="arc-gauge">
+        <svg viewBox="0 0 48 48">
+          <circle class="arc-track" cx="24" cy="24" r="20" stroke-dasharray="125.7"/>
+          <circle id="g-mem" class="arc-fill" cx="24" cy="24" r="20"
+            stroke="var(--purple)" stroke-dasharray="125.7" stroke-dashoffset="125.7"
+            transform="rotate(-90 24 24)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="m-card">
+      <div class="m-card-icon i-disk">💾</div>
+      <div class="m-val v-disk" id="v-disk">—<span class="m-unit">%</span></div>
+      <div class="m-name" data-i18n="m_disk">DISK</div>
+      <div class="m-detail" id="d-disk">— / — GB</div>
+      <div class="arc-gauge">
+        <svg viewBox="0 0 48 48">
+          <circle class="arc-track" cx="24" cy="24" r="20" stroke-dasharray="125.7"/>
+          <circle id="g-disk" class="arc-fill" cx="24" cy="24" r="20"
+            stroke="var(--rose)" stroke-dasharray="125.7" stroke-dashoffset="125.7"
+            transform="rotate(-90 24 24)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="m-card">
+      <div class="m-card-icon i-up">⏱</div>
+      <div class="m-val v-up" id="v-uptime">—</div>
+      <div class="m-name" data-i18n="m_up">UPTIME</div>
+      <div class="m-detail" id="d-uptime">—</div>
+    </div>
   </div>
 
-  <div id="telemetry-grid">
-    <div class="metric-card" id="card-cpu">
-      <div class="metric-icon">⚡</div>
-      <div class="metric-val" id="cpu-val">—<span class="metric-unit">%</span></div>
-      <div class="metric-name">CPU Usage</div>
-      <svg class="metric-gauge" viewBox="0 0 60 60">
-        <circle class="gauge-track" cx="30" cy="30" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
-        <circle id="gauge-cpu" class="gauge-fill" cx="30" cy="30" r="24"
-          stroke="var(--cyan)" stroke-dasharray="150.8" stroke-dashoffset="150.8"
-          transform="rotate(-90 30 30)"/>
-      </svg>
+  <!-- System Detail -->
+  <div class="section-label">
+    <span data-i18n="sec_system">SYSTEM DETAIL</span><hr/>
+  </div>
+  <div class="sys-info">
+    <div class="sys-card">
+      <div class="sys-card-title" data-i18n="sys_memory">Memory</div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_used">Used</span><span class="sys-row-val" id="si-mem-used">—</span></div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_free">Free</span><span class="sys-row-val" id="si-mem-free">—</span></div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_total">Total</span><span class="sys-row-val" id="si-mem-total">—</span></div>
+      <div class="sys-bar-wrap"><div class="sys-bar bar-mem" id="sb-mem" style="width:0%"></div></div>
     </div>
-    <div class="metric-card violet-card" id="card-ram">
-      <div class="metric-icon">🧠</div>
-      <div class="metric-val" id="ram-val">—<span class="metric-unit">%</span></div>
-      <div class="metric-name">Memory Usage</div>
-      <svg class="metric-gauge" viewBox="0 0 60 60">
-        <circle class="gauge-track" cx="30" cy="30" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
-        <circle id="gauge-ram" class="gauge-fill" cx="30" cy="30" r="24"
-          stroke="var(--violet)" stroke-dasharray="150.8" stroke-dashoffset="150.8"
-          transform="rotate(-90 30 30)"/>
-      </svg>
+    <div class="sys-card">
+      <div class="sys-card-title">Swap</div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_used">Used</span><span class="sys-row-val" id="si-swap-used">—</span></div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_total">Total</span><span class="sys-row-val" id="si-swap-total">—</span></div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_percent">Usage</span><span class="sys-row-val" id="si-swap-pct">—</span></div>
+      <div class="sys-bar-wrap"><div class="sys-bar bar-swap" id="sb-swap" style="width:0%"></div></div>
     </div>
-    <div class="metric-card coral-card" id="card-disk">
-      <div class="metric-icon">💽</div>
-      <div class="metric-val" id="disk-val">—<span class="metric-unit">%</span></div>
-      <div class="metric-name">Disk Used</div>
-      <svg class="metric-gauge" viewBox="0 0 60 60">
-        <circle class="gauge-track" cx="30" cy="30" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"/>
-        <circle id="gauge-disk" class="gauge-fill" cx="30" cy="30" r="24"
-          stroke="var(--coral)" stroke-dasharray="150.8" stroke-dashoffset="150.8"
-          transform="rotate(-90 30 30)"/>
-      </svg>
-    </div>
-    <div class="metric-card gold-card" id="card-uptime">
-      <div class="metric-icon">⏱</div>
-      <div class="metric-val" id="uptime-val" style="font-size:1.4rem;">—</div>
-      <div class="metric-name">Server Uptime</div>
+    <div class="sys-card">
+      <div class="sys-card-title" data-i18n="sys_network">Network I/O</div>
+      <div class="sys-row"><span class="sys-row-label">↑ Sent</span><span class="sys-row-val" id="si-net-sent">—</span></div>
+      <div class="sys-row"><span class="sys-row-label">↓ Recv</span><span class="sys-row-val" id="si-net-recv">—</span></div>
+      <div class="sys-row"><span class="sys-row-label" data-i18n="sys_disk_free">Disk Free</span><span class="sys-row-val" id="si-disk-free">—</span></div>
     </div>
   </div>
 
-  <!-- CPU Sparkline -->
-  <div class="section-head" id="sh-spark">
-    <div class="section-label">CPU History</div>
-    <div class="section-line"></div>
+  <!-- CPU Chart -->
+  <div class="section-label">
+    <span data-i18n="sec_chart">CPU HISTORY · 60s</span><hr/>
   </div>
-  <div class="sparkline-card" id="sparkline-card">
-    <div class="sparkline-header">
-      <div class="sparkline-title">CPU — 60s window</div>
-      <div class="sparkline-now" id="spark-now">—%</div>
+  <div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-title" data-i18n="chart_title">CPU — 60-second window</div>
+      <div class="chart-now" id="chart-now">—%</div>
     </div>
-    <canvas id="cpu-chart" height="80"></canvas>
+    <canvas id="cpu-chart" height="90"></canvas>
   </div>
 
-  <!-- Docker Containers -->
-  <div class="section-head" id="sh-docker">
-    <div class="section-label">Container Matrix</div>
-    <div class="section-line"></div>
+  <!-- Containers -->
+  <div class="section-label">
+    <span data-i18n="sec_containers">CONTAINERS · <em id="ct-count">0</em></span><hr/>
   </div>
-  <div id="docker-grid"></div>
+  <div class="docker-grid" id="docker-grid"></div>
 
-  <!-- Log Stream -->
-  <div class="section-head" id="sh-log">
-    <div class="section-label">System Log</div>
-    <div class="section-line"></div>
+  <!-- Logs -->
+  <div class="section-label">
+    <span data-i18n="sec_logs">EVENT LOG</span><hr/>
   </div>
-  <div id="log-stream">
-    <div class="log-header">
-      <div class="log-title">Live Event Stream</div>
-      <div class="live-dot"></div>
+  <div class="log-box">
+    <div class="log-bar">
+      <div class="log-bar-title" data-i18n="log_title">Live Stream</div>
+      <div class="status-dot"></div>
     </div>
     <div class="log-body" id="log-body"></div>
   </div>
 
-  <!-- DevOps Probe -->
-  <div class="section-head" id="sh-probe">
-    <div class="section-label">DevOps Probe</div>
-    <div class="section-line"></div>
+  <!-- Probe -->
+  <div class="section-label">
+    <span data-i18n="sec_probe">NETWORK PROBE</span><hr/>
   </div>
   <div class="probe-grid">
-    <div class="probe-card" id="probe-ping">
-      <div class="probe-card-title">Latency Probe · Ping</div>
-      <div class="probe-input-row">
-        <input class="probe-input" id="ping-host" type="text" value="google.com" placeholder="hostname"/>
-        <button class="probe-btn" onclick="runPing()">⚡ Run</button>
+    <div class="probe-card">
+      <div class="probe-title" data-i18n="probe_ping">PING PROBE</div>
+      <div class="probe-row">
+        <input class="probe-in" id="ping-host" value="google.com" placeholder="hostname or IP"/>
+        <button class="probe-go" onclick="doPing()">Ping</button>
       </div>
-      <div class="probe-result" id="ping-result">Ready to probe…</div>
+      <div class="probe-out" id="ping-out" data-i18n="probe_ready">Ready.</div>
     </div>
-    <div class="probe-card" id="probe-http">
-      <div class="probe-card-title">HTTP Reachability Check</div>
-      <div class="probe-input-row">
-        <input class="probe-input" id="http-url" type="text" value="https://ppday.site" placeholder="https://…"/>
-        <button class="probe-btn" onclick="runHttp()">⚡ Run</button>
+    <div class="probe-card">
+      <div class="probe-title" data-i18n="probe_http">HTTP CHECK</div>
+      <div class="probe-row">
+        <input class="probe-in" id="http-url" value="https://ppday.site" placeholder="https://..."/>
+        <button class="probe-go" onclick="doHttp()">Check</button>
       </div>
-      <div class="probe-result" id="http-result">Ready to check…</div>
+      <div class="probe-out" id="http-out" data-i18n="probe_ready">Ready.</div>
     </div>
   </div>
 
   <!-- Kanban -->
-  <div class="section-head" id="sh-kanban">
-    <div class="section-label">Cloud Kanban</div>
-    <div class="section-line"></div>
+  <div class="section-label">
+    <span data-i18n="sec_kanban">TASK BOARD</span><hr/>
   </div>
-  <div class="kanban-grid">
-    <div class="kanban-col" id="col-todo">
-      <div class="kanban-col-title">
-        <div class="kanban-dot" style="background:var(--muted)"></div>
-        BACKLOG
-      </div>
-      <div class="kanban-tasks" id="tasks-todo"></div>
-      <div class="kanban-add">
-        <input class="kanban-new-input" id="new-todo" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('todo')"/>
-        <button class="kanban-add-btn" onclick="addTask('todo')">＋</button>
+  <div class="kanban">
+    <div class="kb-col">
+      <div class="kb-col-head"><div class="kb-dot" style="background:var(--text-dim)"></div><span data-i18n="kb_todo">BACKLOG</span></div>
+      <div class="kb-tasks" id="kb-todo"></div>
+      <div class="kb-add">
+        <input class="kb-input" id="inp-todo" data-i18n-ph="kb_ph" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('todo')"/>
+        <button class="kb-add-btn" onclick="addTask('todo')">+</button>
       </div>
     </div>
-    <div class="kanban-col" id="col-doing">
-      <div class="kanban-col-title">
-        <div class="kanban-dot" style="background:var(--gold)"></div>
-        IN PROGRESS
-      </div>
-      <div class="kanban-tasks" id="tasks-doing"></div>
-      <div class="kanban-add">
-        <input class="kanban-new-input" id="new-doing" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('doing')"/>
-        <button class="kanban-add-btn" onclick="addTask('doing')">＋</button>
+    <div class="kb-col">
+      <div class="kb-col-head"><div class="kb-dot" style="background:var(--amber)"></div><span data-i18n="kb_doing">IN PROGRESS</span></div>
+      <div class="kb-tasks" id="kb-doing"></div>
+      <div class="kb-add">
+        <input class="kb-input" id="inp-doing" data-i18n-ph="kb_ph" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('doing')"/>
+        <button class="kb-add-btn" onclick="addTask('doing')">+</button>
       </div>
     </div>
-    <div class="kanban-col" id="col-done">
-      <div class="kanban-col-title">
-        <div class="kanban-dot" style="background:var(--green)"></div>
-        DONE
-      </div>
-      <div class="kanban-tasks" id="tasks-done"></div>
-      <div class="kanban-add">
-        <input class="kanban-new-input" id="new-done" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('done')"/>
-        <button class="kanban-add-btn" onclick="addTask('done')">＋</button>
+    <div class="kb-col">
+      <div class="kb-col-head"><div class="kb-dot" style="background:var(--green)"></div><span data-i18n="kb_done">DONE</span></div>
+      <div class="kb-tasks" id="kb-done"></div>
+      <div class="kb-add">
+        <input class="kb-input" id="inp-done" data-i18n-ph="kb_ph" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('done')"/>
+        <button class="kb-add-btn" onclick="addTask('done')">+</button>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer id="footer">
-    <div>
-      <span class="footer-brand">PulseOS 2.0</span> · Antigravity Edition · ppday.site
-    </div>
-    <div id="footer-time"></div>
+  <footer>
+    <div>PulseOS 2.0 · <a href="https://ppday.site" target="_blank">ppday.site</a></div>
+    <div id="clock">—</div>
   </footer>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   3D FLUID SPHERE — WebGL via Three.js
-═══════════════════════════════════════════════════════════════════ */
-(function initFluidSphere() {
-  const canvas = document.getElementById('fluid-sphere-canvas');
-  const container = document.getElementById('fluid-sphere-container');
-  const W = 380, H = 380;
-  canvas.width = W; canvas.height = H;
+/* ═══════ i18n ═══════ */
+let lang = 'en';
+const I18N = {
+  en: {
+    hero_tag: 'CLOUD TELEMETRY PLATFORM',
+    hero_grad: 'Pulse',
+    hero_desc: 'Every heartbeat of your infrastructure — CPU, memory, containers, network — streamed and visualised at 1Hz from your Debian VPS.',
+    kpi_cpu:'CPU', kpi_mem:'MEMORY', kpi_disk:'DISK',
+    sec_metrics:'LIVE METRICS', sec_system:'SYSTEM DETAIL',
+    sec_chart:'CPU HISTORY · 60s', sec_containers:'CONTAINERS',
+    sec_logs:'EVENT LOG', sec_probe:'NETWORK PROBE', sec_kanban:'TASK BOARD',
+    m_cpu:'CPU USAGE', m_mem:'MEMORY', m_disk:'DISK', m_up:'UPTIME',
+    sys_memory:'Memory', sys_network:'Network I/O', sys_used:'Used',
+    sys_free:'Free', sys_total:'Total', sys_percent:'Usage', sys_disk_free:'Disk Free',
+    chart_title:'CPU — 60-second window',
+    log_title:'Live Stream',
+    probe_ping:'PING PROBE', probe_http:'HTTP CHECK', probe_ready:'Ready.',
+    kb_todo:'BACKLOG', kb_doing:'IN PROGRESS', kb_done:'DONE', kb_ph:'New task…',
+    lang_btn:'中文'
+  },
+  zh: {
+    hero_tag: '云端遥测平台',
+    hero_grad: '脉搏',
+    hero_desc: '基础设施的每一次心跳 — CPU、内存、容器、网络 — 以 1Hz 频率从 Debian VPS 实时传输并可视化。',
+    kpi_cpu:'处理器', kpi_mem:'内存', kpi_disk:'磁盘',
+    sec_metrics:'实时指标', sec_system:'系统详情',
+    sec_chart:'CPU 历史 · 60秒', sec_containers:'容器列表',
+    sec_logs:'事件日志', sec_probe:'网络探针', sec_kanban:'任务看板',
+    m_cpu:'CPU 使用率', m_mem:'内存', m_disk:'磁盘', m_up:'运行时间',
+    sys_memory:'内存', sys_network:'网络 I/O', sys_used:'已用',
+    sys_free:'可用', sys_total:'总计', sys_percent:'使用率', sys_disk_free:'磁盘剩余',
+    chart_title:'CPU — 60秒滑动窗口',
+    log_title:'实时流',
+    probe_ping:'Ping 探针', probe_http:'HTTP 检查', probe_ready:'就绪。',
+    kb_todo:'待办', kb_doing:'进行中', kb_done:'已完成', kb_ph:'新任务…',
+    lang_btn:'EN'
+  }
+};
+function toggleLang() {
+  lang = lang === 'en' ? 'zh' : 'en';
+  document.getElementById('lang-toggle').textContent = I18N[lang].lang_btn;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (I18N[lang][k]) el.textContent = I18N[lang][k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    if (I18N[lang][k]) el.placeholder = I18N[lang][k];
+  });
+}
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+/* ═══════ 3D Fluid Sphere ═══════ */
+(function(){
+  const c = document.getElementById('sphere-canvas');
+  const r = new THREE.WebGLRenderer({canvas:c, alpha:true, antialias:true});
+  r.setSize(320,320); r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(45,1,0.1,100);
+  cam.position.z = 2.8;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-  camera.position.z = 2.8;
-
-  // GLSL fluid vertex shader
-  const vertexShader = `
+  const vs = `
     uniform float uTime;
-    uniform float uDistort;
-    varying vec3 vNormal;
-    varying vec3 vPos;
-
-    // Simplex-like noise
-    vec3 mod289(vec3 x){return x - floor(x*(1./289.))*289.;}
-    vec4 mod289(vec4 x){return x - floor(x*(1./289.))*289.;}
+    varying vec3 vN, vP;
+    vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+    vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
     vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}
-    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314*r;}
-
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
     float snoise(vec3 v){
-      const vec2 C = vec2(1./6., 1./3.);
-      const vec4 D = vec4(0., 0.5, 1., 2.);
-      vec3 i = floor(v + dot(v, C.yyy));
-      vec3 x0 = v - i + dot(i, C.xxx);
-      vec3 g = step(x0.yzx, x0.xyz);
-      vec3 l = 1. - g;
-      vec3 i1 = min(g.xyz, l.zxy);
-      vec3 i2 = max(g.xyz, l.zxy);
-      vec3 x1 = x0 - i1 + C.xxx;
-      vec3 x2 = x0 - i2 + C.yyy;
-      vec3 x3 = x0 - D.yyy;
-      i = mod289(i);
-      vec4 p = permute(permute(permute(
-        i.z + vec4(0.,i1.z,i2.z,1.))
-        + i.y + vec4(0.,i1.y,i2.y,1.))
-        + i.x + vec4(0.,i1.x,i2.x,1.));
-      float n_ = .142857142857;
-      vec3 ns = n_ * D.wyz - D.xzx;
-      vec4 j = p - 49.*floor(p*ns.z*ns.z);
-      vec4 x_ = floor(j*ns.z);
-      vec4 y_ = floor(j - 7.*x_);
-      vec4 x = x_*ns.x + ns.yyyy;
-      vec4 y = y_*ns.x + ns.yyyy;
-      vec4 h = 1. - abs(x) - abs(y);
-      vec4 b0 = vec4(x.xy,y.xy);
-      vec4 b1 = vec4(x.zw,y.zw);
-      vec4 s0 = floor(b0)*2.+1.;
-      vec4 s1 = floor(b1)*2.+1.;
-      vec4 sh = -step(h, vec4(0.));
-      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-      vec3 p0 = vec3(a0.xy,h.x);
-      vec3 p1 = vec3(a0.zw,h.y);
-      vec3 p2 = vec3(a1.xy,h.z);
-      vec3 p3 = vec3(a1.zw,h.w);
-      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+      const vec2 C=vec2(1./6.,1./3.);
+      vec3 i=floor(v+dot(v,C.yyy));
+      vec3 x0=v-i+dot(i,C.xxx);
+      vec3 g=step(x0.yzx,x0.xyz);
+      vec3 l=1.-g;
+      vec3 i1=min(g.xyz,l.zxy), i2=max(g.xyz,l.zxy);
+      vec3 x1=x0-i1+C.xxx, x2=x0-i2+C.yyy, x3=x0-.5;
+      i=mod289(i);
+      vec4 p=permute(permute(permute(
+        i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+      float n_=1./7.;
+      vec3 ns=n_*vec3(2.,1.,0.)-vec3(1.,1./7.,0.);
+      vec4 j=p-49.*floor(p*ns.z*ns.z);
+      vec4 x_=floor(j*ns.z), y_=floor(j-7.*x_);
+      vec4 x=x_*ns.x+ns.yyyy, y=y_*ns.x+ns.yyyy;
+      vec4 h=1.-abs(x)-abs(y);
+      vec4 b0=vec4(x.xy,y.xy), b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.+1., s1=floor(b1)*2.+1.;
+      vec4 sh=-step(h,vec4(0.));
+      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy, a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x), p1=vec3(a0.zw,h.y), p2=vec3(a1.xy,h.z), p3=vec3(a1.zw,h.w);
+      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
       p0*=norm.x; p1*=norm.y; p2*=norm.z; p3*=norm.w;
-      vec4 m = max(.6 - vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);
-      m = m*m;
-      return 42.*dot(m*m, vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+      vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);
+      m=m*m;
+      return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
     }
-
     void main(){
-      vNormal = normal;
-      vPos    = position;
-      vec3 pos = position;
-      float n  = snoise(pos * 1.6 + vec3(uTime * 0.22, uTime * 0.15, uTime * 0.18));
-      float n2 = snoise(pos * 3.2 - vec3(uTime * 0.11, uTime * 0.26, uTime * 0.08));
-      pos += normal * (n * 0.22 + n2 * 0.10) * uDistort;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
-    }
-  `;
-
-  const fragmentShader = `
+      vN=normal; vP=position;
+      vec3 p=position;
+      float n=snoise(p*1.5+vec3(uTime*0.2,uTime*0.15,uTime*0.18));
+      float n2=snoise(p*3.0-vec3(uTime*0.1,uTime*0.22,uTime*0.08));
+      p+=normal*(n*0.2+n2*0.08);
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
+    }`;
+  const fs = `
     uniform float uTime;
-    varying vec3 vNormal;
-    varying vec3 vPos;
-
+    varying vec3 vN, vP;
     void main(){
-      vec3 cyan   = vec3(0.0, 0.96, 1.0);
-      vec3 violet = vec3(0.61, 0.35, 1.0);
-      vec3 coral  = vec3(1.0, 0.24, 0.50);
-      vec3 dark   = vec3(0.02, 0.02, 0.07);
-
-      float t = sin(uTime * 0.4) * 0.5 + 0.5;
-      float t2 = sin(uTime * 0.27 + 1.2) * 0.5 + 0.5;
-
-      vec3 base = mix(cyan, violet, t);
-      base = mix(base, coral, t2 * 0.4);
-
-      float rim = 1.0 - max(dot(normalize(vNormal), vec3(0.,0.,1.)), 0.0);
-      rim = pow(rim, 2.2);
-
-      vec3 col = mix(dark, base, rim * 0.85 + 0.15);
-      col += base * rim * 0.5;
-
-      gl_FragColor = vec4(col, 0.92 - rim * 0.1);
-    }
-  `;
-
-  const geo = new THREE.IcosahedronGeometry(1, 64);
+      vec3 c1=vec3(0.,0.83,1.), c2=vec3(0.55,0.36,0.97), c3=vec3(0.96,0.25,0.37);
+      float t=sin(uTime*0.35)*0.5+0.5;
+      float t2=sin(uTime*0.25+1.2)*0.5+0.5;
+      vec3 base=mix(c1,c2,t);
+      base=mix(base,c3,t2*0.35);
+      float rim=1.-max(dot(normalize(vN),vec3(0.,0.,1.)),0.);
+      rim=pow(rim,2.5);
+      vec3 col=mix(vec3(0.02,0.02,0.06),base,rim*0.8+0.12);
+      col+=base*rim*0.4;
+      gl_FragColor=vec4(col,0.9-rim*0.08);
+    }`;
+  const geo = new THREE.IcosahedronGeometry(1,48);
   const mat = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-      uTime:    { value: 0 },
-      uDistort: { value: 1.0 }
-    },
-    transparent: true,
-    side: THREE.FrontSide
+    vertexShader:vs, fragmentShader:fs,
+    uniforms:{uTime:{value:0}}, transparent:true
   });
-  const mesh = new THREE.Mesh(geo, mat);
-  scene.add(mesh);
-
-  // Glow
-  const glowGeo = new THREE.SphereGeometry(1.15, 32, 32);
-  const glowMat = new THREE.MeshBasicMaterial({
-    color: 0x00f5ff,
-    transparent: true,
-    opacity: 0.04,
-    side: THREE.BackSide
+  const mesh = new THREE.Mesh(geo,mat);
+  sc.add(mesh);
+  let mx=0, my=0;
+  document.addEventListener('mousemove', e=>{
+    mx=(e.clientX/innerWidth-0.5)*2;
+    my=-(e.clientY/innerHeight-0.5)*2;
   });
-  scene.add(new THREE.Mesh(glowGeo, glowMat));
-
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', e => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  function animSphere() {
-    requestAnimationFrame(animSphere);
-    const t = performance.now() * 0.001;
-    mat.uniforms.uTime.value = t;
-    mesh.rotation.y = t * 0.12 + mouseX * 0.3;
-    mesh.rotation.x = mouseY * 0.2;
-    renderer.render(scene, camera);
-  }
-  animSphere();
+  (function anim(){
+    requestAnimationFrame(anim);
+    const t=performance.now()*0.001;
+    mat.uniforms.uTime.value=t;
+    mesh.rotation.y=t*0.1+mx*0.25;
+    mesh.rotation.x=my*0.15;
+    r.render(sc,cam);
+  })();
 })();
 
-/* ═══════════════════════════════════════════════════════════════════
-   BACKGROUND FLUID CANVAS — Full-page ambient WebGL
-═══════════════════════════════════════════════════════════════════ */
-(function initBgFluid() {
-  const canvas = document.getElementById('fluid-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-  const resize = () => { renderer.setSize(window.innerWidth, window.innerHeight); };
-  resize();
-  window.addEventListener('resize', resize);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-1,1,1,-1, 0, 1);
-
-  const bgVert = `
-    varying vec2 vUv;
-    void main(){ vUv = uv; gl_Position = vec4(position.xy,0.,1.); }
-  `;
-  const bgFrag = `
-    uniform float uT;
-    varying vec2 vUv;
-
-    float noise(vec2 p){
-      return sin(p.x*4.1+uT*0.3)*sin(p.y*3.7+uT*0.25) * 0.5
-           + sin(p.x*8.3-uT*0.18)*sin(p.y*7.1+uT*0.14) * 0.25;
-    }
-
-    void main(){
-      vec2 uv = vUv;
-      float n = noise(uv * 2.5);
-      float n2 = noise(uv * 5. + vec2(1.7, 2.3));
-
-      vec3 c1 = vec3(0.,0.05,0.12) * (n * 0.5 + 0.5);
-      vec3 c2 = vec3(0.04,0.,0.10) * (n2 * 0.5 + 0.5);
-      vec3 col = c1 + c2;
-
-      // Vignette
-      vec2 q = uv - .5;
-      col *= 1. - dot(q,q)*2.2;
-
-      gl_FragColor = vec4(col, 1.);
-    }
-  `;
-
-  const geo = new THREE.PlaneGeometry(2,2);
-  const mat = new THREE.ShaderMaterial({
-    vertexShader: bgVert,
-    fragmentShader: bgFrag,
-    uniforms: { uT: { value:0 } }
+/* ═══════ Background ═══════ */
+(function(){
+  const c=document.getElementById('bg-canvas');
+  const r=new THREE.WebGLRenderer({canvas:c,alpha:true});
+  r.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  function rs(){ r.setSize(innerWidth,innerHeight); }
+  rs(); addEventListener('resize',rs);
+  const sc=new THREE.Scene();
+  const cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const mat=new THREE.ShaderMaterial({
+    vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`,
+    fragmentShader:`
+      uniform float uT; varying vec2 vUv;
+      void main(){
+        vec2 uv=vUv;
+        float n=sin(uv.x*3.5+uT*0.25)*sin(uv.y*3.1+uT*0.2)*0.5
+               +sin(uv.x*7.+uT*0.15)*sin(uv.y*6.+uT*0.12)*0.25;
+        vec3 col=vec3(0.,0.03,0.08)*(n*0.5+0.5)+vec3(0.03,0.,0.06)*(1.-n*0.3);
+        vec2 q=uv-.5; col*=1.-dot(q,q)*2.;
+        gl_FragColor=vec4(col,1.);
+      }`,
+    uniforms:{uT:{value:0}}
   });
-  scene.add(new THREE.Mesh(geo, mat));
-
-  function animBg() {
-    requestAnimationFrame(animBg);
-    mat.uniforms.uT.value = performance.now() * 0.001;
-    renderer.render(scene, camera);
-  }
-  animBg();
+  sc.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+  (function a(){requestAnimationFrame(a);mat.uniforms.uT.value=performance.now()*0.001;r.render(sc,cam);})();
 })();
 
-/* ═══════════════════════════════════════════════════════════════════
-   LOADING SEQUENCE
-═══════════════════════════════════════════════════════════════════ */
-const STEPS = [
-  'Initializing WebGL renderer…',
-  'Connecting telemetry socket…',
-  'Calibrating fluid simulation…',
-  'Mounting sensor arrays…',
-  'System online.'
-];
-let loadP = 0;
-const fill = document.getElementById('loader-fill');
-const ltxt = document.getElementById('loader-text');
-function advanceLoader() {
-  if (loadP >= STEPS.length) return;
-  ltxt.textContent = STEPS[loadP];
-  fill.style.width = ((loadP+1)/STEPS.length*100) + '%';
-  loadP++;
-  if (loadP < STEPS.length) setTimeout(advanceLoader, 500);
-}
-advanceLoader();
-
-/* ═══════════════════════════════════════════════════════════════════
-   INTRO ANIMATIONS — GSAP spring / elastic
-═══════════════════════════════════════════════════════════════════ */
-function runIntro() {
-  const tl = gsap.timeline({ delay: 0.2 });
-
-  // Hero
-  tl.to('.hero-eyebrow', { opacity:1, duration:0.6, ease:'power2.out' }, 0)
-    .to('.hero-title',   { opacity:1, y:0, duration:0.9, ease:'back.out(1.8)' }, 0.15)
-    .to('.hero-subtitle',{ opacity:1, y:0, duration:0.7, ease:'power3.out' }, 0.35)
-    .to('.hero-stats',   { opacity:1, duration:0.6, ease:'power2.out' }, 0.55)
-    .to('#fluid-sphere-container', { opacity:1, duration:1, ease:'elastic.out(1,0.6)' }, 0.2);
-
-  // Section heads — stagger in
-  gsap.utils.toArray('.section-head').forEach((el, i) => {
-    gsap.to(el, {
-      opacity:1, x:0, duration:0.6,
-      delay: 0.8 + i*0.15,
-      ease: 'power2.out',
-      scrollTrigger: undefined
-    });
-  });
-
-  // Metric cards — non-linear stagger
-  const cards = document.querySelectorAll('.metric-card');
-  cards.forEach((c, i) => {
-    gsap.to(c, {
-      opacity:1, y:0,
-      delay: 1.0 + i * 0.08,
-      duration: 0.7,
-      ease: 'back.out(1.6)'
-    });
-  });
-
-  gsap.to('.sparkline-card', { opacity:1, y:0, duration:0.7, delay:1.4, ease:'power3.out' });
-  gsap.to('#log-stream',     { opacity:1, duration:0.7, delay:1.6, ease:'power2.out' });
-  gsap.to('.probe-card',     { opacity:1, y:0, duration:0.7, delay:1.8, stagger:0.12, ease:'back.out(1.4)' });
-  gsap.to('.kanban-col',     { opacity:1, duration:0.6, delay:2.0, stagger:0.1, ease:'power2.out' });
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   CHART — CPU sparkline
-═══════════════════════════════════════════════════════════════════ */
-const cpuHistory = new Array(60).fill(0);
-const cpuCtx = document.getElementById('cpu-chart').getContext('2d');
-const cpuChart = new Chart(cpuCtx, {
+/* ═══════ Chart ═══════ */
+const cpuH = new Array(60).fill(0);
+const cpuChart = new Chart(document.getElementById('cpu-chart').getContext('2d'), {
   type:'line',
   data:{
-    labels: cpuHistory.map((_,i)=>i),
+    labels:cpuH.map((_,i)=>i),
     datasets:[{
-      data: cpuHistory,
-      borderColor: '#9b59ff',
-      borderWidth: 2,
-      fill: true,
-      backgroundColor: (ctx) => {
-        const g = ctx.chart.ctx.createLinearGradient(0,0,0,80);
-        g.addColorStop(0, 'rgba(155,89,255,0.3)');
-        g.addColorStop(1, 'rgba(155,89,255,0)');
+      data:cpuH, borderColor:'#8b5cf6', borderWidth:1.5,
+      fill:true,
+      backgroundColor:ctx=>{
+        const g=ctx.chart.ctx.createLinearGradient(0,0,0,90);
+        g.addColorStop(0,'rgba(139,92,246,0.25)');
+        g.addColorStop(1,'rgba(139,92,246,0)');
         return g;
       },
-      pointRadius: 0,
-      tension: 0.45
+      pointRadius:0, tension:0.4
     }]
   },
   options:{
-    responsive:true,
-    animation:{ duration:300, easing:'easeInOutQuart' },
-    plugins:{ legend:{ display:false }, tooltip:{ enabled:false } },
-    scales:{
-      x:{ display:false },
-      y:{ display:false, min:0, max:100 }
-    }
+    responsive:true, animation:{duration:200},
+    plugins:{legend:{display:false},tooltip:{enabled:false}},
+    scales:{x:{display:false},y:{display:false,min:0,max:100}}
   }
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   GAUGE HELPER
-═══════════════════════════════════════════════════════════════════ */
-function setGauge(id, pct) {
-  const circ = 150.8;
-  const el = document.getElementById(id);
-  if (el) el.style.strokeDashoffset = circ - (circ * Math.min(pct,100) / 100);
+/* ═══════ Gauge ═══════ */
+const ARC=125.7;
+function setArc(id,pct){ const e=document.getElementById(id); if(e) e.style.strokeDashoffset=ARC-ARC*Math.min(pct,100)/100; }
+
+/* ═══════ Format helpers ═══════ */
+function fmtBytes(b){
+  if(b<1024) return b+'B';
+  if(b<1048576) return (b/1024).toFixed(1)+'KB';
+  if(b<1073741824) return (b/1048576).toFixed(1)+'MB';
+  return (b/1073741824).toFixed(2)+'GB';
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   WEBSOCKET — real-time telemetry
-═══════════════════════════════════════════════════════════════════ */
-let wsRetries = 0;
-function connectWS() {
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${proto}//${location.host}/ws`);
-
-  ws.onopen = () => {
-    wsRetries = 0;
-    document.getElementById('ws-status').textContent = 'LIVE';
-    appendLog('info', 'WebSocket telemetry established');
+/* ═══════ WebSocket ═══════ */
+let wsR=0;
+function connectWS(){
+  const p=location.protocol==='https:'?'wss:':'ws:';
+  const ws=new WebSocket(`${p}//${location.host}/ws`);
+  ws.onopen=()=>{
+    wsR=0;
+    document.getElementById('ws-badge').textContent='LIVE';
+    log('info','WebSocket connected');
   };
-
-  ws.onmessage = ({ data }) => {
-    let d;
-    try { d = JSON.parse(data); } catch { return; }
-    updateMetrics(d);
+  ws.onmessage=({data})=>{
+    try{ update(JSON.parse(data)); }catch{}
   };
-
-  ws.onclose = () => {
-    document.getElementById('ws-status').textContent = 'RECONNECT';
-    appendLog('warn', `WebSocket closed, retry in ${Math.min(5*++wsRetries,30)}s`);
-    setTimeout(connectWS, Math.min(5000*wsRetries, 30000));
+  ws.onclose=()=>{
+    document.getElementById('ws-badge').textContent='RECONNECT';
+    log('warn','WebSocket closed — retrying');
+    setTimeout(connectWS,Math.min(5000*++wsR,30000));
   };
-
-  ws.onerror = () => {
-    appendLog('err', 'WebSocket error — check backend');
-    ws.close();
-  };
+  ws.onerror=()=>ws.close();
 }
 
-function updateMetrics(d) {
-  const cpu  = d.cpu_percent  ?? 0;
-  const ram  = d.memory_percent ?? 0;
-  const disk = d.disk_percent  ?? 0;
+/* ═══════ Update ═══════ */
+function update(d){
+  /* Backend sends nested:
+     d.cpu.percent, d.cpu.cores, d.cpu.load_avg[]
+     d.memory.percent, d.memory.used_mb, d.memory.free_mb, d.memory.total_mb
+     d.swap.total_mb, d.swap.used_mb, d.swap.percent
+     d.disk.percent, d.disk.used_gb, d.disk.free_gb, d.disk.total_gb
+     d.network.bytes_sent, d.network.bytes_recv
+     d.uptime.seconds, d.uptime.formatted
+     d.docker_count, d.docker_containers[]
+  */
+  const cpu = d.cpu?.percent ?? 0;
+  const mem = d.memory?.percent ?? 0;
+  const disk = d.disk?.percent ?? 0;
 
-  // Hero stat vals
-  document.getElementById('hero-cpu').textContent  = cpu.toFixed(1) + '%';
-  document.getElementById('hero-ram').textContent  = ram.toFixed(1) + '%';
-  document.getElementById('hero-disk').textContent = disk.toFixed(1) + '%';
+  // KPI
+  document.getElementById('kpi-cpu').textContent = cpu.toFixed(1)+'%';
+  document.getElementById('kpi-mem').textContent = mem.toFixed(1)+'%';
+  document.getElementById('kpi-disk').textContent = disk.toFixed(1)+'%';
 
-  // Cards
-  document.getElementById('cpu-val').innerHTML  = cpu.toFixed(1) + '<span class="metric-unit">%</span>';
-  document.getElementById('ram-val').innerHTML  = ram.toFixed(1) + '<span class="metric-unit">%</span>';
-  document.getElementById('disk-val').innerHTML = disk.toFixed(1) + '<span class="metric-unit">%</span>';
+  // Metric cards
+  document.getElementById('v-cpu').innerHTML = cpu.toFixed(1)+'<span class="m-unit">%</span>';
+  document.getElementById('v-mem').innerHTML = mem.toFixed(1)+'<span class="m-unit">%</span>';
+  document.getElementById('v-disk').innerHTML = disk.toFixed(1)+'<span class="m-unit">%</span>';
 
-  const up = formatUptime(d.uptime_seconds ?? 0);
-  document.getElementById('uptime-val').textContent = up;
-  document.getElementById('header-uptime').textContent = up;
-  document.getElementById('spark-now').textContent = cpu.toFixed(1) + '%';
+  // Detail lines
+  document.getElementById('d-cpu').textContent =
+    `${d.cpu?.cores??'?'} core${d.cpu?.cores>1?'s':''} · load ${(d.cpu?.load_avg||[0])[0].toFixed(2)}`;
+  document.getElementById('d-mem').textContent =
+    `${d.memory?.used_mb?.toFixed(0)??'—'} / ${d.memory?.total_mb?.toFixed(0)??'—'} MB`;
+  document.getElementById('d-disk').textContent =
+    `${d.disk?.used_gb?.toFixed(1)??'—'} / ${d.disk?.total_gb?.toFixed(1)??'—'} GB`;
+
+  // Uptime
+  const upFmt = d.uptime?.formatted ?? '—';
+  document.getElementById('v-uptime').textContent = upFmt;
+  document.getElementById('d-uptime').textContent = `${(d.uptime?.seconds/3600).toFixed(1)??0} hours`;
+  document.getElementById('nav-uptime').textContent = upFmt;
 
   // Gauges
-  setGauge('gauge-cpu',  cpu);
-  setGauge('gauge-ram',  ram);
-  setGauge('gauge-disk', disk);
+  setArc('g-cpu',cpu); setArc('g-mem',mem); setArc('g-disk',disk);
+
+  // System detail panel
+  document.getElementById('si-mem-used').textContent  = (d.memory?.used_mb?.toFixed(0)??'—')+' MB';
+  document.getElementById('si-mem-free').textContent  = (d.memory?.free_mb?.toFixed(0)??'—')+' MB';
+  document.getElementById('si-mem-total').textContent = (d.memory?.total_mb?.toFixed(0)??'—')+' MB';
+  document.getElementById('sb-mem').style.width = mem+'%';
+
+  document.getElementById('si-swap-used').textContent  = (d.swap?.used_mb?.toFixed(0)??'—')+' MB';
+  document.getElementById('si-swap-total').textContent = (d.swap?.total_mb?.toFixed(0)??'—')+' MB';
+  document.getElementById('si-swap-pct').textContent   = (d.swap?.percent?.toFixed(1)??'—')+'%';
+  document.getElementById('sb-swap').style.width = (d.swap?.percent??0)+'%';
+
+  document.getElementById('si-net-sent').textContent = fmtBytes(d.network?.bytes_sent??0);
+  document.getElementById('si-net-recv').textContent = fmtBytes(d.network?.bytes_recv??0);
+  document.getElementById('si-disk-free').textContent = (d.disk?.free_gb?.toFixed(1)??'—')+' GB';
 
   // Sparkline
-  cpuHistory.push(cpu);
-  cpuHistory.shift();
-  cpuChart.data.datasets[0].data = [...cpuHistory];
+  cpuH.push(cpu); cpuH.shift();
+  cpuChart.data.datasets[0].data=[...cpuH];
   cpuChart.update('none');
+  document.getElementById('chart-now').textContent=cpu.toFixed(1)+'%';
 
   // Containers
-  if (d.containers?.length) renderContainers(d.containers);
+  renderContainers(d.docker_containers||[], d.docker_count||0);
 }
 
-function formatUptime(s) {
-  const d = Math.floor(s/86400);
-  const h = Math.floor((s%86400)/3600);
-  const m = Math.floor((s%3600)/60);
-  if (d > 0) return `${d}d ${h}h`;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   DOCKER CARDS
-═══════════════════════════════════════════════════════════════════ */
-function renderContainers(containers) {
-  const grid = document.getElementById('docker-grid');
-  grid.innerHTML = '';
-  containers.forEach((c, i) => {
-    const up = c.status === 'running';
-    const div = document.createElement('div');
-    div.className = 'docker-card';
-    div.style.opacity = '0';
-    div.style.transform = 'scale(0.94)';
-    div.innerHTML = `
-      <div class="docker-status ${up?'running':'stopped'}"></div>
+/* ═══════ Containers ═══════ */
+function renderContainers(list, count){
+  document.getElementById('ct-count').textContent = count;
+  const g=document.getElementById('docker-grid');
+  g.innerHTML='';
+  list.forEach(c=>{
+    // Docker JSON fields: Names, State, Status, Image, Ports, RunningFor
+    const running = (c.State||'').toLowerCase()==='running';
+    const div=document.createElement('div');
+    div.className='d-card';
+    div.innerHTML=`
+      <div class="d-dot ${running?'on':'off'}"></div>
       <div>
-        <div class="docker-name">${c.name}</div>
-        <div class="docker-meta">
-          Status: <span>${c.status}</span><br/>
-          Image: ${(c.image||'—').substring(0,28)}<br/>
-          ${c.cpu_percent != null ? `CPU: <span>${c.cpu_percent.toFixed(1)}%</span>&nbsp; RAM: <span>${(c.memory_usage_mb||0).toFixed(0)}MB</span>` : ''}
+        <div class="d-name">${c.Names||'unknown'}</div>
+        <div class="d-meta">
+          ${c.Status||c.State||'—'}<br/>
+          Image: <em>${(c.Image||'—').substring(0,35)}</em><br/>
+          ${c.Ports? 'Ports: '+c.Ports.substring(0,50) : ''}
         </div>
       </div>`;
-    grid.appendChild(div);
-    gsap.to(div, { opacity:1, scale:1, duration:0.5, delay:i*0.06, ease:'back.out(1.4)' });
+    g.appendChild(div);
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   LOG STREAM
-═══════════════════════════════════════════════════════════════════ */
-const LOG_PRELOAD = [
-  ['info', 'PulseOS 2.0 · Antigravity Edition boot sequence complete'],
-  ['info', 'Three.js WebGL fluid renderer initialized'],
-  ['info', 'GSAP spring animation engine loaded'],
-  ['info', 'TencentDB Agent Memory linked · sk-mem-Q7XH…R4Ol'],
-  ['info', 'Nginx reverse proxy · upstream 172.17.0.1:8000'],
-  ['warn', 'Xray X-UI VLESS Reality occupying port 443 · DO NOT TOUCH'],
-];
-LOG_PRELOAD.forEach(([lvl, msg]) => appendLog(lvl, msg));
-
-function appendLog(lvl, msg) {
-  const body = document.getElementById('log-body');
-  const now = new Date().toTimeString().slice(0,8);
-  const cls = lvl === 'warn' ? 'log-lvl-warn' : lvl === 'err' ? 'log-lvl-err' : 'log-lvl-info';
-  const div = document.createElement('div');
-  div.className = 'log-line';
-  div.innerHTML = `<span class="log-time">${now}</span><span class="${cls}">[${lvl.toUpperCase()}]</span> <span class="log-msg">${msg}</span>`;
-  div.style.opacity = '0';
-  div.style.transform = 'translateX(-10px)';
-  body.appendChild(div);
-  gsap.to(div, { opacity:1, x:0, duration:0.3, ease:'power2.out' });
-  body.scrollTop = body.scrollHeight;
-
-  // Trim
-  while (body.children.length > 120) body.removeChild(body.firstChild);
+/* ═══════ Logs ═══════ */
+function log(lvl,msg){
+  const b=document.getElementById('log-body');
+  const ts=new Date().toTimeString().slice(0,8);
+  const cls=lvl==='warn'?'l-warn':lvl==='err'?'l-err':'l-info';
+  const d=document.createElement('div');
+  d.className='log-line';
+  d.innerHTML=`<span class="log-ts">${ts}</span><span class="${cls}">[${lvl.toUpperCase()}]</span> <span class="log-msg">${msg}</span>`;
+  b.appendChild(d);
+  b.scrollTop=b.scrollHeight;
+  while(b.children.length>100)b.removeChild(b.firstChild);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   DEVOPS PROBE
-═══════════════════════════════════════════════════════════════════ */
-async function runPing() {
-  const host = document.getElementById('ping-host').value.trim();
-  const res  = document.getElementById('ping-result');
-  res.textContent = '⏳ Sending probe…';
-  res.className = 'probe-result';
-  appendLog('info', `Ping probe → ${host}`);
-  try {
-    const r = await fetch(`/api/tools/ping?host=${encodeURIComponent(host)}`);
-    const d = await r.json();
-    if (d.success) {
-      res.className = 'probe-result result-ok';
-      res.textContent = `✓  ${host} is reachable\nRTT: ${d.avg_ms ?? '—'}ms\nPackets: ${d.packets_transmitted ?? '—'} sent / ${d.packets_received ?? '—'} received`;
-      appendLog('info', `Ping OK · ${host} · ${d.avg_ms}ms`);
+/* ═══════ Probe — FIXED: POST with JSON body ═══════ */
+async function doPing(){
+  const host=document.getElementById('ping-host').value.trim();
+  const out=document.getElementById('ping-out');
+  out.textContent='Sending…'; out.className='probe-out';
+  log('info','Ping → '+host);
+  try{
+    const r=await fetch('/api/tools/ping',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({target:host})
+    });
+    const d=await r.json();
+    if(d.success){
+      out.className='probe-out out-ok';
+      out.textContent='✓ '+host+' reachable\n'+d.output.split('\n').slice(-3).join('\n');
+      log('info','Ping OK · '+host);
     } else {
-      res.className = 'probe-result result-fail';
-      res.textContent = `✗  ${host} unreachable\n${d.error ?? ''}`;
-      appendLog('warn', `Ping FAIL · ${host}`);
+      out.className='probe-out out-fail';
+      out.textContent='✗ '+host+' unreachable\n'+(d.error||d.output||'');
+      log('warn','Ping FAIL · '+host);
     }
-  } catch(e) {
-    res.className = 'probe-result result-fail';
-    res.textContent = `✗  Request failed: ${e.message}`;
-    appendLog('err', `Ping error · ${e.message}`);
+  }catch(e){
+    out.className='probe-out out-fail';
+    out.textContent='✗ Error: '+e.message;
+    log('err','Ping error · '+e.message);
   }
 }
 
-async function runHttp() {
-  const url = document.getElementById('http-url').value.trim();
-  const res = document.getElementById('http-result');
-  res.textContent = '⏳ Checking…';
-  res.className = 'probe-result';
-  appendLog('info', `HTTP check → ${url}`);
-  try {
-    const r = await fetch(`/api/tools/http-check?url=${encodeURIComponent(url)}`);
-    const d = await r.json();
-    if (d.success) {
-      res.className = 'probe-result result-ok';
-      res.textContent = `✓  ${url}\nHTTP ${d.status_code}  ·  ${d.response_ms ?? '—'}ms\nContent-Type: ${d.content_type ?? '—'}`;
-      appendLog('info', `HTTP OK · ${d.status_code} · ${url}`);
+async function doHttp(){
+  const url=document.getElementById('http-url').value.trim();
+  const out=document.getElementById('http-out');
+  out.textContent='Checking…'; out.className='probe-out';
+  log('info','HTTP check → '+url);
+  try{
+    const r=await fetch('/api/tools/http-check',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url})
+    });
+    const d=await r.json();
+    if(d.success){
+      out.className='probe-out out-ok';
+      out.textContent=`✓ ${url}\nHTTP ${d.status_code} · ${d.latency_ms}ms\nServer: ${d.server}\nContent-Type: ${d.content_type}`;
+      log('info',`HTTP ${d.status_code} · ${d.latency_ms}ms · ${url}`);
     } else {
-      res.className = 'probe-result result-fail';
-      res.textContent = `✗  ${url}\n${d.error ?? 'Unreachable'}`;
-      appendLog('warn', `HTTP FAIL · ${url}`);
+      out.className='probe-out out-fail';
+      out.textContent='✗ '+url+'\n'+(d.error||'Failed');
+      log('warn','HTTP FAIL · '+url);
     }
-  } catch(e) {
-    res.className = 'probe-result result-fail';
-    res.textContent = `✗  ${e.message}`;
-    appendLog('err', `HTTP error · ${e.message}`);
+  }catch(e){
+    out.className='probe-out out-fail';
+    out.textContent='✗ '+e.message;
+    log('err','HTTP error · '+e.message);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   KANBAN
-═══════════════════════════════════════════════════════════════════ */
-let kanbanData = { todo:[], doing:[], done:[] };
+/* ═══════ Kanban — FIXED: PATCH not PUT ═══════ */
+let tasks={todo:[],doing:[],done:[]};
 
-async function loadTasks() {
-  try {
-    const r = await fetch('/api/tasks');
-    const d = await r.json();
-    kanbanData = { todo:[], doing:[], done:[] };
-    (d.tasks || d || []).forEach(t => {
-      const col = t.status === 'in_progress' ? 'doing' : t.status === 'done' ? 'done' : 'todo';
-      kanbanData[col].push(t);
+async function loadTasks(){
+  try{
+    const r=await fetch('/api/tasks');
+    const d=await r.json();
+    tasks={todo:[],doing:[],done:[]};
+    (Array.isArray(d)?d:d.tasks||[]).forEach(t=>{
+      const col=t.status==='in_progress'?'doing':t.status==='done'?'done':'todo';
+      tasks[col].push(t);
     });
     renderKanban();
-  } catch(e) {
-    appendLog('warn', 'Kanban: using local state (API offline)');
-  }
+  }catch{ log('warn','Tasks: API offline, using local state'); }
 }
 
-function renderKanban() {
-  ['todo','doing','done'].forEach(col => {
-    const el = document.getElementById(`tasks-${col}`);
-    el.innerHTML = '';
-    kanbanData[col].forEach(t => {
-      const div = document.createElement('div');
-      div.className = 'kanban-task';
-      div.textContent = t.title || t.content || t;
-      div.onclick = () => cycleTask(t, col);
+function renderKanban(){
+  ['todo','doing','done'].forEach(col=>{
+    const el=document.getElementById('kb-'+col);
+    el.innerHTML='';
+    tasks[col].forEach(t=>{
+      const div=document.createElement('div');
+      div.className='kb-task';
+      const priCls=t.priority==='high'?'pri-high':t.priority==='low'?'pri-low':'pri-medium';
+      div.innerHTML=`<span class="kb-task-title">${t.title||t}</span><span class="kb-task-pri ${priCls}">${t.priority||'med'}</span>`;
+      div.onclick=()=>cycleTask(t,col);
       el.appendChild(div);
     });
   });
 }
 
-async function addTask(col) {
-  const inp = document.getElementById(`new-${col}`);
-  const title = inp.value.trim();
-  if (!title) return;
-  inp.value = '';
-  const statusMap = { todo:'todo', doing:'in_progress', done:'done' };
-  try {
-    const r = await fetch('/api/tasks', {
+async function addTask(col){
+  const inp=document.getElementById('inp-'+col);
+  const title=inp.value.trim();
+  if(!title)return;
+  inp.value='';
+  const sMap={todo:'todo',doing:'in_progress',done:'done'};
+  try{
+    const r=await fetch('/api/tasks',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ title, status: statusMap[col] })
+      body:JSON.stringify({title,status:sMap[col]})
     });
-    const t = await r.json();
-    kanbanData[col].push(t);
-  } catch {
-    kanbanData[col].push({ title, id: Date.now() });
+    tasks[col].push(await r.json());
+  }catch{
+    tasks[col].push({title,id:Date.now(),status:sMap[col],priority:'medium'});
   }
   renderKanban();
-  appendLog('info', `Task added: "${title}"`);
+  log('info','Task added: '+title);
 }
 
-async function cycleTask(t, col) {
-  const next = { todo:'doing', doing:'done', done:'todo' };
-  const statusMap = { todo:'todo', doing:'in_progress', done:'done' };
-  const newCol = next[col];
-  kanbanData[col] = kanbanData[col].filter(x => x !== t);
-  t.status = statusMap[newCol];
-  kanbanData[newCol].push(t);
-  try {
-    await fetch(`/api/tasks/${t.id}`, {
-      method:'PUT',
+async function cycleTask(t,col){
+  const nxt={todo:'doing',doing:'done',done:'todo'};
+  const sMap={todo:'todo',doing:'in_progress',done:'done'};
+  const newCol=nxt[col];
+  tasks[col]=tasks[col].filter(x=>x!==t);
+  t.status=sMap[newCol];
+  tasks[newCol].push(t);
+  try{
+    await fetch('/api/tasks/'+t.id,{
+      method:'PATCH',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ status: t.status })
+      body:JSON.stringify({status:t.status})
     });
-  } catch {}
+  }catch{}
   renderKanban();
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   CLOCK
-═══════════════════════════════════════════════════════════════════ */
-function updateClock() {
-  document.getElementById('footer-time').textContent =
-    new Date().toLocaleString('zh-CN', { hour12:false });
+/* ═══════ Clock ═══════ */
+function tick(){
+  document.getElementById('clock').textContent=new Date().toLocaleString('en-US',{hour12:false});
 }
-updateClock();
-setInterval(updateClock, 1000);
+tick(); setInterval(tick,1000);
 
-/* ═══════════════════════════════════════════════════════════════════
-   BOOT SEQUENCE
-═══════════════════════════════════════════════════════════════════ */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const loader = document.getElementById('loader');
-    gsap.to(loader, {
-      opacity:0, duration:0.6, delay:0.3,
-      ease:'power2.inOut',
-      onComplete: () => { loader.style.display='none'; runIntro(); }
-    });
-    connectWS();
-    loadTasks();
-    appendLog('info', 'Boot sequence complete · PulseOS 2.0 online');
-  }, 2600);
-});
+/* ═══════ Boot ═══════ */
+log('info','PulseOS 2.0 boot sequence');
+log('info','WebGL renderer initialised');
+connectWS();
+loadTasks();
 </script>
 </body>
 </html>
