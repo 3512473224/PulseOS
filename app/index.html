@@ -21,7 +21,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5;font-size:14px}
 #bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.app{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:0 28px 80px}
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 28px 80px}
 
 /* Nav */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;position:sticky;top:0;z-index:200;background:rgba(9,9,18,0.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--b)}
@@ -38,24 +38,16 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .lang-btn:hover{border-color:var(--c);color:var(--c)}
 
 /* Hero */
-.hero{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:center;padding:60px 0 48px}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--c);margin-bottom:14px}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 0 60px}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--c);margin-bottom:20px}
 .hero-tag i{width:12px;height:12px}
-.hero h1{font-size:clamp(1.9rem,3.8vw,3rem);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-0.025em}
+.hero h1{font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-0.025em}
 .hero h1 .hi{background:linear-gradient(120deg,var(--c) 0%,var(--p) 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{margin-top:14px;font-size:0.85rem;color:var(--w);line-height:1.75;max-width:380px}
-.hero-nums{display:flex;gap:32px;margin-top:28px}
-.hn-v{font-size:1.75rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.hero-sub{margin-top:20px;font-size:0.95rem;color:var(--w);line-height:1.75;max-width:480px}
+.hero-nums{display:flex;gap:48px;margin-top:40px;justify-content:center}
+.hn-v{font-size:2.2rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
 .hn-v.c1{color:var(--c)}.hn-v.c2{color:var(--p)}.hn-v.c3{color:var(--r)}
-.hn-l{font-size:0.6rem;color:var(--d);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px}
-
-/* Sphere */
-.sphere-wrap{display:flex;justify-content:center;align-items:center;position:relative}
-#sph{width:280px;height:280px;border-radius:50%;display:block}
-.ring{position:absolute;border-radius:50%;border:1px solid rgba(0,212,255,0.07);pointer-events:none}
-.ring1{inset:-20px;border-color:rgba(124,92,252,0.1);animation:orbit 14s linear infinite}
-.ring2{inset:-44px;border-color:rgba(244,63,94,0.06);animation:orbit 22s linear infinite reverse;border-style:dashed}
-@keyframes orbit{to{transform:rotate(360deg)}}
+.hn-l{font-size:0.65rem;color:var(--d);text-transform:uppercase;letter-spacing:0.1em;margin-top:6px}
 
 /* Section label */
 .sl{display:flex;align-items:center;gap:14px;margin:44px 0 16px}
@@ -106,56 +98,11 @@ body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSyst
 .chart-hl i{width:11px;height:11px}
 .chart-now{font-size:1rem;font-weight:700;color:var(--p);font-variant-numeric:tabular-nums}
 
-/* Docker */
-.dkg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.dk{display:flex;gap:12px;align-items:flex-start;padding:16px}
-.dk-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
-.dk-dot.on{background:var(--g);box-shadow:0 0 8px rgba(16,185,129,0.7);animation:pulse 2s ease infinite}.dk-dot.off{background:var(--r)}
-.dk-name{font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:5px}
-.dk-meta{font-size:0.68rem;color:var(--w);line-height:1.8}.dk-meta b{color:var(--c);font-weight:500}
-
-/* Log */
-.log-bar{padding:12px 18px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2);border-radius:var(--r14) var(--r14) 0 0}
-.log-title{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--d);display:flex;align-items:center;gap:6px}.log-title i{width:11px;height:11px}
-.log-body{padding:10px 18px;height:175px;overflow-y:auto;font-family:'SF Mono','Cascadia Code',monospace;font-size:0.7rem;line-height:2;scrollbar-width:thin;scrollbar-color:var(--b) transparent}
-.log-l{display:block}.ts{color:var(--d);margin-right:10px;user-select:none}
-.l-i{color:var(--c)}.l-w{color:var(--a)}.l-e{color:var(--r)}.log-msg{color:var(--w)}
-
-/* Probe */
-.probe-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.probe-c{padding:20px}
-.probe-t{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--d);margin-bottom:14px;display:flex;align-items:center;gap:6px}.probe-t i{width:11px;height:11px}
-.probe-row{display:flex;gap:8px;margin-bottom:10px}
-.probe-in{flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--b);border-radius:var(--r6);padding:8px 12px;color:var(--fg);font-family:monospace;font-size:0.75rem;outline:none;transition:border-color .2s}
-.probe-in:focus{border-color:var(--c)}
-.probe-btn{background:var(--c);border:none;border-radius:var(--r6);padding:8px 16px;color:#000;font-weight:700;font-size:0.72rem;cursor:pointer;transition:opacity .15s;white-space:nowrap;font-family:inherit;letter-spacing:0.04em}
-.probe-btn:hover{opacity:.85}
-.probe-out{background:rgba(0,0,0,0.35);border:1px solid var(--b);border-radius:var(--r6);padding:10px 14px;font-family:monospace;font-size:0.7rem;line-height:1.8;min-height:54px;color:var(--w);white-space:pre-wrap;word-break:break-all}
-.ok{color:var(--g)}.fail{color:var(--r)}
-
-/* Kanban */
-.kb{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.kb-col{padding:18px}
-.kb-col-h{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--d);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px}
-.kb-col-h i{width:11px;height:11px}.kb-col-h .cnt{margin-left:auto;background:var(--b);border-radius:10px;padding:1px 7px;font-size:0.6rem;color:var(--d)}
-.kb-tasks{display:flex;flex-direction:column;gap:6px;min-height:50px}
-.kb-task{background:rgba(0,0,0,0.3);border:1px solid var(--b);border-radius:var(--r10);padding:9px 12px;font-size:0.77rem;cursor:pointer;transition:border-color .2s,transform .2s;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.kb-task:hover{border-color:var(--c);transform:translateX(3px)}
-.kb-task-t{flex:1;color:var(--fg)}
-.pri{font-size:0.55rem;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.04em;flex-shrink:0;font-weight:600}
-.ph{background:rgba(244,63,94,0.12);color:var(--r)}.pm{background:rgba(245,158,11,0.1);color:var(--a)}.pl{background:rgba(16,185,129,0.1);color:var(--g)}
-.kb-add{display:flex;gap:6px;margin-top:10px}
-.kb-inp{flex:1;background:rgba(0,0,0,0.35);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--fg);font-size:0.72rem;outline:none;font-family:inherit;transition:border-color .2s}
-.kb-inp:focus{border-color:var(--c)}
-.kb-add-btn{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);border-radius:var(--r6);padding:7px 10px;color:var(--c);font-size:0.9rem;cursor:pointer;transition:background .2s;line-height:1}
-.kb-add-btn:hover{background:rgba(0,212,255,0.14)}
-
 /* Footer */
 footer{margin-top:60px;padding:18px 0;border-top:1px solid var(--b);display:flex;justify-content:space-between;font-size:0.65rem;color:var(--d);letter-spacing:0.06em}
 footer a{color:var(--c);text-decoration:none}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
-@media(max-width:1100px){.mg{grid-template-columns:repeat(2,1fr)}.dg{grid-template-columns:1fr}}
-@media(max-width:800px){.hero{grid-template-columns:1fr}.sphere-wrap{display:none}.mg{grid-template-columns:repeat(2,1fr)}.probe-g{grid-template-columns:1fr}.kb{grid-template-columns:1fr}.dkg{grid-template-columns:1fr}}
+@media(max-width:900px){.mg{grid-template-columns:repeat(2,1fr)}.dg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -181,22 +128,15 @@ footer a{color:var(--c);text-decoration:none}
   </div>
 </nav>
 
-<!-- Hero -->
+<!-- Hero (Minimalist) -->
 <section class="hero">
-  <div class="hero-content">
-    <div class="hero-tag"><i data-lucide="radio"></i><span data-i18n="tag">LIVE CLOUD TELEMETRY</span></div>
-    <h1>Real-Time<br/><span class="hi" data-i18n="h1_hi">Server Intelligence</span></h1>
-    <p class="hero-sub" data-i18n="hero_sub">Every metric from your Debian VPS — CPU, memory, containers, I/O — streamed at 1Hz and rendered with precision.</p>
-    <div class="hero-nums">
-      <div class="hn"><div class="hn-v c1" id="h-cpu">—</div><div class="hn-l" data-i18n="h_cpu">CPU</div></div>
-      <div class="hn"><div class="hn-v c2" id="h-mem">—</div><div class="hn-l" data-i18n="h_mem">MEM</div></div>
-      <div class="hn"><div class="hn-v c3" id="h-disk">—</div><div class="hn-l" data-i18n="h_disk">DISK</div></div>
-    </div>
-  </div>
-  <div class="sphere-wrap">
-    <canvas id="sph" width="280" height="280"></canvas>
-    <div class="ring ring1"></div>
-    <div class="ring ring2"></div>
+  <div class="hero-tag"><i data-lucide="radio"></i><span data-i18n="tag">LIVE CLOUD TELEMETRY</span></div>
+  <h1>Real-Time<br/><span class="hi" data-i18n="h1_hi">Server Intelligence</span></h1>
+  <p class="hero-sub" data-i18n="hero_sub">Every metric from your Debian VPS — CPU, memory, network, I/O — streamed at 1Hz and rendered with precision.</p>
+  <div class="hero-nums">
+    <div class="hn"><div class="hn-v c1" id="h-cpu">—</div><div class="hn-l" data-i18n="h_cpu">CPU</div></div>
+    <div class="hn"><div class="hn-v c2" id="h-mem">—</div><div class="hn-l" data-i18n="h_mem">MEM</div></div>
+    <div class="hn"><div class="hn-v c3" id="h-disk">—</div><div class="hn-l" data-i18n="h_disk">DISK</div></div>
   </div>
 </section>
 
@@ -279,52 +219,6 @@ footer a{color:var(--c);text-decoration:none}
   <div id="cpu-chart"></div>
 </div>
 
-<!-- Containers -->
-<div class="sl"><span><i data-lucide="box"></i><span data-i18n="sl_ct">CONTAINERS · <em id="ct-n" style="color:var(--c)">0</em></span></span><hr/></div>
-<div class="dkg" id="docker-grid"></div>
-
-<!-- Logs -->
-<div class="sl"><span><i data-lucide="terminal"></i><span data-i18n="sl_log">EVENT LOG</span></span><hr/></div>
-<div class="card">
-  <div class="log-bar"><div class="log-title"><i data-lucide="terminal"></i><span data-i18n="log_t">Live Stream</span></div><div class="live-dot"></div></div>
-  <div class="log-body" id="log-body"></div>
-</div>
-
-<!-- Probe -->
-<div class="sl"><span><i data-lucide="radar"></i><span data-i18n="sl_probe">NETWORK PROBE</span></span><hr/></div>
-<div class="probe-g">
-  <div class="card probe-c">
-    <div class="probe-t"><i data-lucide="zap"></i><span data-i18n="probe_ping">PING PROBE</span></div>
-    <div class="probe-row"><input class="probe-in" id="pi-host" value="google.com"/><button class="probe-btn" onclick="doPing()">Ping</button></div>
-    <div class="probe-out" id="pi-out">Ready.</div>
-  </div>
-  <div class="card probe-c">
-    <div class="probe-t"><i data-lucide="globe"></i><span data-i18n="probe_http">HTTP CHECK</span></div>
-    <div class="probe-row"><input class="probe-in" id="pi-url" value="https://ppday.site"/><button class="probe-btn" onclick="doHttp()">Check</button></div>
-    <div class="probe-out" id="pi-out2">Ready.</div>
-  </div>
-</div>
-
-<!-- Kanban -->
-<div class="sl"><span><i data-lucide="layout"></i><span data-i18n="sl_kb">TASK BOARD</span></span><hr/></div>
-<div class="kb">
-  <div class="card kb-col">
-    <div class="kb-col-h"><i data-lucide="circle-dashed"></i><span data-i18n="kb_todo">BACKLOG</span><span class="cnt" id="cnt-todo">0</span></div>
-    <div class="kb-tasks" id="kb-todo"></div>
-    <div class="kb-add"><input class="kb-inp" id="inp-todo" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('todo')"/><button class="kb-add-btn" onclick="addTask('todo')">+</button></div>
-  </div>
-  <div class="card kb-col">
-    <div class="kb-col-h"><i data-lucide="loader-2" style="color:var(--a)"></i><span data-i18n="kb_wip">IN PROGRESS</span><span class="cnt" id="cnt-doing">0</span></div>
-    <div class="kb-tasks" id="kb-doing"></div>
-    <div class="kb-add"><input class="kb-inp" id="inp-doing" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('doing')"/><button class="kb-add-btn" onclick="addTask('doing')">+</button></div>
-  </div>
-  <div class="card kb-col">
-    <div class="kb-col-h"><i data-lucide="check-circle-2" style="color:var(--g)"></i><span data-i18n="kb_done">DONE</span><span class="cnt" id="cnt-done">0</span></div>
-    <div class="kb-tasks" id="kb-done"></div>
-    <div class="kb-add"><input class="kb-inp" id="inp-done" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('done')"/><button class="kb-add-btn" onclick="addTask('done')">+</button></div>
-  </div>
-</div>
-
 <footer>
   <div>PulseOS 2.0 · <a href="https://ppday.site" target="_blank">ppday.site</a> · 104.129.1.216</div>
   <div id="clock">—</div>
@@ -335,8 +229,8 @@ footer a{color:var(--c);text-decoration:none}
 /* i18n */
 let lang='en';
 const T={
-  en:{tag:'LIVE CLOUD TELEMETRY',h1_hi:'Server Intelligence',hero_sub:'Every metric from your Debian VPS — CPU, memory, containers, I/O — streamed at 1Hz and rendered with precision.',h_cpu:'CPU',h_mem:'MEM',h_disk:'DISK',sl_metrics:'LIVE METRICS',m_cpu:'CPU Usage',m_mem:'Memory',m_disk:'Disk',m_up:'Uptime',sl_sys:'SYSTEM DETAIL',dc_mem:'Memory',dc_used:'Used',dc_free:'Available',dc_total:'Total',dc_net:'Network I/O',dc_disk_free:'Disk Free',sl_chart:'CPU · 60s',chart_t:'CPU — 60-second window',sl_ct:'CONTAINERS',sl_log:'EVENT LOG',log_t:'Live Stream',sl_probe:'NETWORK PROBE',probe_ping:'PING PROBE',probe_http:'HTTP CHECK',sl_kb:'TASK BOARD',kb_todo:'BACKLOG',kb_wip:'IN PROGRESS',kb_done:'DONE',btn:'中文'},
-  zh:{tag:'实时云端遥测',h1_hi:'服务器状态',hero_sub:'Debian VPS 的每一个指标 — CPU、内存、容器、I/O — 以 1Hz 频率实时传输并精准渲染。',h_cpu:'处理器',h_mem:'内存',h_disk:'磁盘',sl_metrics:'实时指标',m_cpu:'CPU 使用率',m_mem:'内存用量',m_disk:'磁盘用量',m_up:'运行时间',sl_sys:'系统详情',dc_mem:'内存',dc_used:'已用',dc_free:'可用',dc_total:'总计',dc_net:'网络 I/O',dc_disk_free:'磁盘剩余',sl_chart:'CPU · 60秒',chart_t:'CPU — 60秒滑动窗口',sl_ct:'容器状态',sl_log:'事件日志',log_t:'实时流',sl_probe:'网络探针',probe_ping:'Ping 探针',probe_http:'HTTP 检测',sl_kb:'任务看板',kb_todo:'待办',kb_wip:'进行中',kb_done:'已完成',btn:'EN'}
+  en:{tag:'LIVE CLOUD TELEMETRY',h1_hi:'Server Intelligence',hero_sub:'Every metric from your Debian VPS — CPU, memory, network, I/O — streamed at 1Hz and rendered with precision.',h_cpu:'CPU',h_mem:'MEM',h_disk:'DISK',sl_metrics:'LIVE METRICS',m_cpu:'CPU Usage',m_mem:'Memory',m_disk:'Disk',m_up:'Uptime',sl_sys:'SYSTEM DETAIL',dc_mem:'Memory',dc_used:'Used',dc_free:'Available',dc_total:'Total',dc_net:'Network I/O',dc_disk_free:'Disk Free',sl_chart:'CPU · 60s',chart_t:'CPU — 60-second window',btn:'中文'},
+  zh:{tag:'实时云端遥测',h1_hi:'服务器状态',hero_sub:'Debian VPS 的每一个指标 — CPU、内存、网络、I/O — 以 1Hz 频率实时传输并精准渲染。',h_cpu:'处理器',h_mem:'内存',h_disk:'磁盘',sl_metrics:'实时指标',m_cpu:'CPU 使用率',m_mem:'内存用量',m_disk:'磁盘用量',m_up:'运行时间',sl_sys:'系统详情',dc_mem:'内存',dc_used:'已用',dc_free:'可用',dc_total:'总计',dc_net:'网络 I/O',dc_disk_free:'磁盘剩余',sl_chart:'CPU · 60秒',chart_t:'CPU — 60秒滑动窗口',btn:'EN'}
 };
 function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k]!==undefined)el.innerHTML=T[lang][k];});
@@ -358,140 +252,13 @@ function toggleLang(){lang=lang==='en'?'zh':'en';applyLang();}
   (function a(){requestAnimationFrame(a);mat.uniforms.uT.value=performance.now()*.001;rr.render(sc,cam);})();
 })();
 
-/* SPHERE — Beautiful 3D Fluid Sphere */
-(()=>{
-  const c=document.getElementById('sph');
-  const rr=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true});
-  rr.setPixelRatio(Math.min(devicePixelRatio,2));
-  rr.setSize(280,280);
-  const sc=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(45,1,0.1,100);
-  cam.position.z=2.8;
-
-  const vs=`
-    uniform float uTime;
-    varying vec3 vNormal;
-    varying float vNoise;
-    // Simplex 3D Noise
-    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-    float snoise(vec3 v) {
-      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-      vec3 i  = floor(v + dot(v, C.yyy));
-      vec3 x0 = v - i + dot(i, C.xxx);
-      vec3 g = step(x0.yzx, x0.xyz);
-      vec3 l = 1.0 - g;
-      vec3 i1 = min( g.xyz, l.zxy );
-      vec3 i2 = max( g.xyz, l.zxy );
-      vec3 x1 = x0 - i1 + C.xxx;
-      vec3 x2 = x0 - i2 + C.yyy;
-      vec3 x3 = x0 - D.yyy;
-      i = mod289(i);
-      vec4 p = permute( permute( permute(
-                 i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-               + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-               + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-      float n_ = 0.142857142857;
-      vec3  ns = n_ * D.wyz - D.xzx;
-      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-      vec4 x_ = floor(j * ns.z);
-      vec4 y_ = floor(j - 7.0 * x_ );
-      vec4 x = x_ *ns.x + ns.yyyy;
-      vec4 y = y_ *ns.x + ns.yyyy;
-      vec4 h = 1.0 - abs(x) - abs(y);
-      vec4 b0 = vec4( x.xy, y.xy );
-      vec4 b1 = vec4( x.zw, y.zw );
-      vec4 s0 = floor(b0)*2.0 + 1.0;
-      vec4 s1 = floor(b1)*2.0 + 1.0;
-      vec4 sh = -step(h, vec4(0.0));
-      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-      vec3 p0 = vec3(a0.xy,h.x);
-      vec3 p1 = vec3(a0.zw,h.y);
-      vec3 p2 = vec3(a1.xy,h.z);
-      vec3 p3 = vec3(a1.zw,h.w);
-      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-      m = m * m;
-      return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
-    }
-    void main() {
-      vNormal = normal;
-      float n = snoise(vec3(position.x * 1.8 + uTime * 0.2, position.y * 1.8 + uTime * 0.3, position.z * 1.8 - uTime * 0.15));
-      vNoise = n;
-      vec3 pos = position + normal * n * 0.25;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `;
-
-  const fs=`
-    uniform float uTime;
-    varying vec3 vNormal;
-    varying float vNoise;
-    void main() {
-      vec3 color1 = vec3(0.0, 0.83, 1.0); // Cyan
-      vec3 color2 = vec3(0.48, 0.36, 0.98); // Purple
-      vec3 color3 = vec3(0.95, 0.24, 0.36); // Rose
-      
-      float mixVal = (vNoise + 1.0) * 0.5;
-      vec3 base = mix(color1, color2, mixVal);
-      base = mix(base, color3, sin(uTime + vNoise * 2.0) * 0.5 + 0.5);
-      
-      vec3 viewDir = vec3(0.0, 0.0, 1.0);
-      float rim = 1.0 - max(dot(viewDir, normalize(vNormal)), 0.0);
-      rim = smoothstep(0.4, 1.0, rim);
-      
-      vec3 finalColor = base + vec3(1.0) * rim * 0.6;
-      
-      float shadow = clamp(dot(normalize(vNormal), vec3(0.5, 0.5, 1.0)), 0.0, 1.0);
-      finalColor = mix(finalColor * 0.3, finalColor, shadow);
-      
-      gl_FragColor = vec4(finalColor, 0.95);
-    }
-  `;
-
-  const geo=new THREE.IcosahedronGeometry(1,128); // high poly for smooth fluid
-  const mat=new THREE.ShaderMaterial({
-    vertexShader:vs,
-    fragmentShader:fs,
-    uniforms:{uTime:{value:0}},
-    transparent:true
-  });
-  const mesh=new THREE.Mesh(geo,mat);
-  sc.add(mesh);
-
-  let mouseX=0, mouseY=0, targetX=0, targetY=0;
-  document.addEventListener('mousemove', e=>{
-    targetX = (e.clientX/innerWidth - 0.5)*0.8;
-    targetY = (e.clientY/innerHeight - 0.5)*0.8;
-  });
-
-  (function anim(){
-    requestAnimationFrame(anim);
-    const t=performance.now()*.001;
-    mat.uniforms.uTime.value=t;
-    
-    mouseX += (targetX - mouseX)*0.03; // highly dampened to avoid jitter
-    mouseY += (targetY - mouseY)*0.03;
-    
-    mesh.rotation.y = t*0.1 + mouseX;
-    mesh.rotation.x = t*0.08 + mouseY;
-    
-    rr.render(sc,cam);
-  })();
-})();
-
 /* APEXCHARTS — Beautified */
 const cpuH=new Array(60).fill(0);
 const cpuChart=new ApexCharts(document.getElementById('cpu-chart'),{
   series:[{name:'CPU',data:[...cpuH]}],
   chart:{
     type:'area',
-    height:130,
+    height:140,
     animations:{enabled:true,easing:'easeinout',dynamicAnimation:{speed:800}},
     toolbar:{show:false},
     background:'transparent',
@@ -540,9 +307,9 @@ let wsR=0;
 function connectWS(){
   const proto=location.protocol==='https:'?'wss:':'ws:';
   const ws=new WebSocket(`${proto}//${location.host}/ws`);
-  ws.onopen=()=>{wsR=0;document.getElementById('ws-state').textContent='LIVE';log('info','WebSocket connected')};
+  ws.onopen=()=>{wsR=0;document.getElementById('ws-state').textContent='LIVE'};
   ws.onmessage=({data})=>{try{update(JSON.parse(data))}catch{}};
-  ws.onclose=()=>{document.getElementById('ws-state').textContent='RECONNECT';log('warn','Reconnecting in '+(Math.min(5*wsR,30))+'s');setTimeout(connectWS,Math.min(5000*++wsR,30000))};
+  ws.onclose=()=>{document.getElementById('ws-state').textContent='RECONNECT';setTimeout(connectWS,Math.min(5000*++wsR,30000))};
   ws.onerror=()=>ws.close();
 }
 
@@ -579,85 +346,6 @@ function update(d){
   cpuH.push(cpu);cpuH.shift();
   cpuChart.updateSeries([{data:[...cpuH]}],false);
   document.getElementById('ch-now').textContent=cpu.toFixed(1)+'%';
-  renderContainers(d.docker_containers||[],d.docker_count||0);
-}
-
-/* CONTAINERS */
-function renderContainers(list,count){
-  document.getElementById('ct-n').textContent=count;
-  const g=document.getElementById('docker-grid');g.innerHTML='';
-  if(!list.length){g.innerHTML='<div style="color:var(--d);font-size:.75rem;padding:14px 0;">No containers found.</div>';return;}
-  list.forEach(c=>{
-    const on=(c.State||'').toLowerCase()==='running';
-    const d=document.createElement('div');d.className='card dk';
-    d.innerHTML=`<div class="dk-dot ${on?'on':'off'}"></div><div><div class="dk-name">${c.Names||'unnamed'}</div><div class="dk-meta">${c.Status||c.State||'—'}<br/><b>Image:</b> ${(c.Image||'—').substring(0,40)}<br/>${c.Ports?`<b>Ports:</b> ${c.Ports.substring(0,55)}`:''}${c.RunningFor?`<br/><b>Since:</b> ${c.RunningFor}`:''}</div></div>`;
-    g.appendChild(d);
-  });
-}
-
-/* LOG */
-function log(lvl,msg){
-  const b=document.getElementById('log-body'),ts=new Date().toTimeString().slice(0,8);
-  const cls=lvl==='warn'?'l-w':lvl==='err'?'l-e':'l-i';
-  const el=document.createElement('span');el.className='log-l';
-  el.innerHTML=`<span class="ts">${ts}</span><span class="${cls}">[${lvl.toUpperCase()}]</span> <span class="log-msg">${msg}</span>`;
-  b.appendChild(el);b.scrollTop=b.scrollHeight;
-  while(b.children.length>100)b.removeChild(b.firstChild);
-}
-
-/* PROBE */
-async function doPing(){
-  const host=document.getElementById('pi-host').value.trim(),o=document.getElementById('pi-out');
-  o.textContent='Sending…';o.className='probe-out';
-  try{
-    const r=await fetch('/api/tools/ping',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:host})});
-    const d=await r.json();
-    o.className='probe-out '+(d.success?'ok':'fail');
-    o.textContent=d.success?`\u2713 ${host} reachable\n`+d.output.split('\n').filter(l=>l.trim()).slice(-3).join('\n'):`\u2717 ${host} unreachable\n${d.error||d.output||''}`;
-    log(d.success?'info':'warn','Ping '+(d.success?'OK':'FAIL')+' \xb7 '+host);
-  }catch(e){o.className='probe-out fail';o.textContent='\u2717 '+e.message;log('err',e.message)}
-}
-async function doHttp(){
-  const url=document.getElementById('pi-url').value.trim(),o=document.getElementById('pi-out2');
-  o.textContent='Checking\u2026';o.className='probe-out';
-  try{
-    const r=await fetch('/api/tools/http-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
-    const d=await r.json();
-    o.className='probe-out '+(d.success?'ok':'fail');
-    o.textContent=d.success?`\u2713 ${url}\nHTTP ${d.status_code} \xb7 ${d.latency_ms}ms\nServer: ${d.server}\n${d.content_type}`:`\u2717 ${url}\n${d.error||'Failed'}`;
-    log(d.success?'info':'warn',`HTTP ${d.status_code||'ERR'} \xb7 ${url}`);
-  }catch(e){o.className='probe-out fail';o.textContent='\u2717 '+e.message;log('err',e.message)}
-}
-
-/* KANBAN */
-let kd={todo:[],doing:[],done:[]};
-async function loadTasks(){
-  try{const r=await fetch('/api/tasks');const arr=await r.json();kd={todo:[],doing:[],done:[]};(Array.isArray(arr)?arr:[]).forEach(t=>{const col=t.status==='in_progress'?'doing':t.status==='done'?'done':'todo';kd[col].push(t);});renderKb();}catch{log('warn','Tasks API offline')}
-}
-function renderKb(){
-  ['todo','doing','done'].forEach(col=>{
-    const el=document.getElementById('kb-'+col);el.innerHTML='';
-    document.getElementById('cnt-'+col).textContent=kd[col].length;
-    kd[col].forEach(t=>{
-      const d=document.createElement('div');d.className='kb-task';
-      const pcls=t.priority==='high'?'ph':t.priority==='low'?'pl':'pm';
-      d.innerHTML=`<span class="kb-task-t">${t.title||t}</span><span class="pri ${pcls}">${t.priority||'med'}</span>`;
-      d.onclick=()=>cycleTask(t,col);el.appendChild(d);
-    });
-  });
-}
-async function addTask(col){
-  const inp=document.getElementById('inp-'+col),title=inp.value.trim();if(!title)return;inp.value='';
-  const sm={todo:'todo',doing:'in_progress',done:'done'};
-  try{const r=await fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,status:sm[col]})});kd[col].push(await r.json());}
-  catch{kd[col].push({title,id:Date.now(),status:sm[col],priority:'medium'})}
-  renderKb();log('info','Task: '+title);
-}
-async function cycleTask(t,col){
-  const nxt={todo:'doing',doing:'done',done:'todo'},sm={todo:'todo',doing:'in_progress',done:'done'},nc=nxt[col];
-  kd[col]=kd[col].filter(x=>x!==t);t.status=sm[nc];kd[nc].push(t);
-  try{await fetch('/api/tasks/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:t.status})})}catch{}
-  renderKb();
 }
 
 /* CLOCK */
@@ -669,13 +357,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   lucide.createIcons();
   gsap.timeline()
     .from('.hero-content',{opacity:0,y:20,duration:.65,ease:'power3.out'})
-    .from('.sphere-wrap',{opacity:0,scale:.88,duration:.75,ease:'back.out(1.5)'},'<.1')
-    .from('.mg .card',{opacity:0,y:14,duration:.5,stagger:.055,ease:'power2.out'},'.25')
-    .from('.sl',{opacity:0,x:-10,duration:.35,stagger:.07,ease:'power2.out'},'.35');
-  log('info','PulseOS 2.0 — Antigravity Edition');
-  log('info','Restored 3D Fluid Sphere · Beautified Charts');
+    .from('.mg .card',{opacity:0,y:14,duration:.5,stagger:.055,ease:'power2.out'},'.2')
+    .from('.sl',{opacity:0,x:-10,duration:.35,stagger:.07,ease:'power2.out'},'.3');
   connectWS();
-  loadTasks();
 });
 </script>
 </body>
