@@ -1,5 +1,12 @@
+import re
 import asyncio
 import json
+import pty
+import fcntl
+import termios
+import struct
+import asyncio
+
 import os
 import shutil
 import sqlite3
@@ -332,6 +339,98 @@ async def agent_stream(prompt: str = "Analyze system architecture and optimize n
         yield f"data: {json.dumps({'done': True})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+class DockerActionRequest(BaseModel):
+    action: str
+
+@app.post("/api/containers/{container_name}/action")
+async def container_action(container_name: str, req: DockerActionRequest):
+    allowed_actions = {"start", "stop", "restart"}
+    if req.action not in allowed_actions:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    if not re.match(r"^[a-zA-Z0-9_.-]+$", container_name):
+        raise HTTPException(status_code=400, detail="Invalid container name")
+        
+    try:
+        args = ["docker", req.action]
+        if req.action in ["stop", "restart"]:
+            args.extend(["-t", "2"])
+        args.append(container_name)
+        proc = await asyncio.create_subprocess_exec(
+            *args,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            return {"success": False, "error": stderr.decode("utf-8")}
+        return {"success": True, "output": stdout.decode("utf-8")}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.websocket("/ws/term")
+async def websocket_terminal(websocket: WebSocket):
+    await websocket.accept()
+    
+    pid, fd = pty.fork()
+    if pid == 0:
+        os.environ['TERM'] = 'xterm-256color'
+        os.environ['HOME'] = '/root'
+        os.environ['LANG'] = 'en_US.UTF-8'
+        os.chdir('/root')
+        os.execvp('bash', ['bash'])
+    else:
+        flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+        
+        loop = asyncio.get_running_loop()
+        
+        def pty_data_received():
+            try:
+                data = os.read(fd, 4096)
+                if data:
+                    asyncio.create_task(websocket.send_text(data.decode('utf-8', 'replace')))
+            except BlockingIOError:
+                pass
+            except OSError:
+                loop.remove_reader(fd)
+            except Exception:
+                loop.remove_reader(fd)
+                
+        loop.add_reader(fd, pty_data_received)
+        
+        try:
+            while True:
+                message = await websocket.receive_text()
+                if message.startswith('{"type":"resize"'):
+                    try:
+                        data = json.loads(message)
+                        cols, rows = data.get("cols", 80), data.get("rows", 24)
+                        winsize = struct.pack("HHHH", rows, cols, 0, 0)
+                        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+                    except Exception:
+                        pass
+                else:
+                    os.write(fd, message.encode("utf-8"))
+        except WebSocketDisconnect:
+            pass
+        finally:
+            try:
+                loop.remove_reader(fd)
+            except Exception:
+                pass
+            try:
+                os.close(fd)
+            except Exception:
+                pass
+            import signal
+            try:
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     import uvicorn
