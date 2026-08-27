@@ -170,7 +170,7 @@ const renderLoop = () => {
   
     const targetKnotScale = isGenerating.value ? 0.0 : 1.0
     const targetSphereScale = isGenerating.value ? 1.0 : 0.0
-    const targetSpinSpeed = isGenerating.value ? 8.0 : 0.08
+    const targetSpinSpeed = isGenerating.value ? 2.5 : 0.08
 
     currentKnotScale += (targetKnotScale - currentKnotScale) * 0.04
     currentSphereScale += (targetSphereScale - currentSphereScale) * 0.04
