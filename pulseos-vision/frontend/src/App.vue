@@ -163,7 +163,7 @@ const renderLoop = () => {
   
   if (meshRef.value) {
     // Medium rotation speed
-    const speed = isGenerating.value ? 1.5 : 0.08
+    const speed = isGenerating.value ? 25.0 : 0.08
     
     // Scroll deeply affects X/Y rotation
     const scrollPhase = (currentScrollY / windowHeight.value)
@@ -348,19 +348,22 @@ const sendMessage = async () => {
 
         <TresMesh ref="meshRef" :position="[2.5, 0, 0]">
           <!-- Ultimate Cinema-quality Geometry -->
-          <TresTorusKnotGeometry :args="[1.6, 0.5, 512, 128]" />
+          
+          <TresTorusKnotGeometry v-if="!isGenerating" :args="[1.6, 0.5, 512, 128]" />
+          <TresSphereGeometry v-else :args="[1.8, 128, 128]" />
+
           <TresMeshPhysicalMaterial 
-            color="#ffffff"
-            :transmission="1.0"
+            :color="isGenerating ? '#222222' : '#ffffff'"
+            :transmission="isGenerating ? 0.0 : 1.0"
             :opacity="1.0"
-            :metalness="0.05"
-            :roughness="0.01"
-            :ior="1.55"
+            :metalness="isGenerating ? 1.0 : 0.1"
+            :roughness="isGenerating ? 0.1 : 0.05"
+            :ior="isGenerating ? 2.5 : 1.55"
             :thickness="3.5"
-            :specularIntensity="3.0"
+            :specularIntensity="isGenerating ? 5.0 : 3.0"
             :clearcoat="1.0"
-            :clearcoatRoughness="0.05"
-            :iridescence="1.0"
+            :clearcoatRoughness="isGenerating ? 0.1 : 0.05"
+            :iridescence="isGenerating ? 0.0 : 1.0"
             :iridescenceIOR="1.4"
           />
         </TresMesh>
@@ -511,9 +514,11 @@ const sendMessage = async () => {
 
 .markdown-body p { margin-bottom: 1rem; }
 .markdown-body pre {
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 12, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 20px 40px rgba(0, 0, 0, 0.4);
   padding: 1.5rem;
   border-radius: 12px;
   overflow-x: auto;
