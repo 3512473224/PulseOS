@@ -406,7 +406,7 @@ const sendMessage = async () => {
                   {{ msg.text }}
                 </template>
                 <template v-else>
-                  <ScrambleText :text="renderMarkdown(msg.text)" :is-generating="isGenerating && i === chatHistory.length - 1" />
+                  <ScrambleText :text="msg.text" :is-generating="isGenerating && i === chatHistory.length - 1" />
                   <span v-if="isGenerating && i === chatHistory.length - 1" class="w-2 h-6 inline-block bg-[#ffaa00] ml-1 align-middle animate-pulse"></span>
                 </template>
               </div>

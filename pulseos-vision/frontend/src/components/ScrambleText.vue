@@ -1,9 +1,21 @@
 ﻿<template>
-  <span v-html="displayText" class="scramble-text"></span>
+  <div v-html="renderedHtml" class="w-full"></div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/atom-one-dark.css'
+
+marked.setOptions({
+  highlight: function (code, lang) {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, { language }).value;
+  },
+  langPrefix: 'hljs language-'
+})
 
 const props = defineProps({
   text: {
@@ -21,7 +33,6 @@ const chars = '!<>-_\\\\/[]{}—=+*^?#________'
 let scrambleInterval = null
 
 const scramble = (newText, oldText) => {
-  // Only scramble the newly added part if it's generating
   if (props.isGenerating && newText.length > oldText.length && newText.startsWith(oldText)) {
     const newPart = newText.slice(oldText.length)
     let iterations = 0
@@ -34,16 +45,14 @@ const scramble = (newText, oldText) => {
         displayText.value = newText
       } else {
         const scrambledPart = newPart.split('').map(char => {
-          // preserve spaces and basic html tags to not break rendering
-          if (char === ' ' || char === '\n' || char === '<' || char === '>') return char
+          if (char === ' ' || char === '\n') return char
           return chars[Math.floor(Math.random() * chars.length)]
         }).join('')
         displayText.value = oldText + scrambledPart
       }
       iterations++
-    }, 30) // 30ms per scramble frame
+    }, 30)
   } else {
-    // If not appending or not generating, just set it directly
     displayText.value = newText
   }
 }
@@ -55,10 +64,8 @@ watch(() => props.text, (newVal, oldVal) => {
 onMounted(() => {
   displayText.value = props.text
 })
-</script>
 
-<style scoped>
-.scramble-text {
-  transition: all 0.1s ease;
-}
-</style>
+const renderedHtml = computed(() => {
+  return DOMPurify.sanitize(marked.parse(displayText.value))
+})
+</script>
