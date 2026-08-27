@@ -1,6 +1,24 @@
 <script setup>
 import { ref, shallowRef, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import gsap from 'gsap'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/atom-one-dark.css'
+import ScrambleText from './components/ScrambleText.vue'
+
+marked.setOptions({
+  highlight: function (code, lang) {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, { language }).value;
+  },
+  langPrefix: 'hljs language-'
+})
+
+const renderMarkdown = (text) => {
+  return DOMPurify.sanitize(marked.parse(text))
+}
+
 
 const chatHistory = ref([
   { role: 'assistant', text: 'I am AETHER. What realities shall we shape today?' }
@@ -37,9 +55,39 @@ const windowHeight = ref(1080) // Default fallback
 
 // --- Web Audio API for Cinematic UI Sounds ---
 let audioCtx = null
+let droneOsc1 = null
+let droneOsc2 = null
+let droneGain = null
+let droneFilter = null
+
 const initAudio = () => {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   if (audioCtx.state === 'suspended') audioCtx.resume()
+  
+  if (!droneOsc1) {
+    droneOsc1 = audioCtx.createOscillator()
+    droneOsc2 = audioCtx.createOscillator()
+    droneGain = audioCtx.createGain()
+    droneFilter = audioCtx.createBiquadFilter()
+    
+    droneOsc1.type = 'sine'
+    droneOsc2.type = 'sine'
+    droneOsc1.frequency.value = 55
+    droneOsc2.frequency.value = 57
+    
+    droneFilter.type = 'lowpass'
+    droneFilter.frequency.value = 200
+    
+    droneGain.gain.value = 0.03
+    
+    droneOsc1.connect(droneFilter)
+    droneOsc2.connect(droneFilter)
+    droneFilter.connect(droneGain)
+    droneGain.connect(audioCtx.destination)
+    
+    droneOsc1.start()
+    droneOsc2.start()
+  }
 }
 
 const playFuturisticSound = (type) => {
@@ -100,6 +148,14 @@ const renderLoop = () => {
 
   // Smooth scroll lerping for 3D
   currentScrollY += (scrollY.value - currentScrollY) * 0.05
+
+  if (droneFilter && droneOsc1 && droneOsc2 && audioCtx) {
+    const scrollFactor = Math.min(currentScrollY / windowHeight.value, 3.0)
+    droneFilter.frequency.setTargetAtTime(200 + scrollFactor * 400, audioCtx.currentTime, 0.1)
+    droneOsc1.frequency.setTargetAtTime(55 - scrollFactor * 8, audioCtx.currentTime, 0.1)
+    droneOsc2.frequency.setTargetAtTime(57 - scrollFactor * 8, audioCtx.currentTime, 0.1)
+  }
+
 
   // 3D Glass Physics
   const targetX = (mouse.x / window.innerWidth) * 2 - 1
@@ -342,11 +398,17 @@ const sendMessage = async () => {
               <div 
                 class="text-2xl md:text-3xl font-light leading-relaxed whitespace-pre-wrap message-text"
                 :class="[
-                  msg.role === 'user' ? 'text-[#666] text-right italic' : 'text-[#111]',
+                  msg.role === 'user' ? 'text-[#666] text-right italic' : 'text-[#111] markdown-body',
                   isGenerating && i === chatHistory.length - 1 && msg.role === 'assistant' ? 'glitch-text' : ''
                 ]"
               >
-                {{ msg.text }}<span v-if="isGenerating && i === chatHistory.length - 1" class="w-2 h-6 inline-block bg-[#ffaa00] ml-1 align-middle animate-pulse"></span>
+                <template v-if="msg.role === 'user'">
+                  {{ msg.text }}
+                </template>
+                <template v-else>
+                  <ScrambleText :text="renderMarkdown(msg.text)" :is-generating="isGenerating && i === chatHistory.length - 1" />
+                  <span v-if="isGenerating && i === chatHistory.length - 1" class="w-2 h-6 inline-block bg-[#ffaa00] ml-1 align-middle animate-pulse"></span>
+                </template>
               </div>
             </div>
           </main>
@@ -446,4 +508,32 @@ const sendMessage = async () => {
   0% { text-shadow: 1px 0 0 rgba(255,0,0,0.2), -1px 0 0 rgba(0,0,255,0.2); }
   100% { text-shadow: -1px 0 0 rgba(255,0,0,0.2), 1px 0 0 rgba(0,0,255,0.2); }
 }
+
+.markdown-body p { margin-bottom: 1rem; }
+.markdown-body pre {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  font-family: 'Courier New', Courier, monospace;
+  color: #e0e0e0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.markdown-body code:not(pre code) {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  color: #ff0088;
+}
+.markdown-body ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+.markdown-body ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
+.markdown-body strong { font-weight: 600; color: #000; }
 </style>
+
