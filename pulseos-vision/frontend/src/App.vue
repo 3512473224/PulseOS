@@ -29,6 +29,8 @@ const chatContainerRef = ref(null)
 
 const meshRefKnot = shallowRef(null)
 const meshRefSphere = shallowRef(null)
+const sphereGeoRef = shallowRef(null)
+let originalSpherePositions = null
 let currentKnotScale = 1.0
 let currentSphereScale = 0.0
 let currentSpinSpeed = 0.08
@@ -210,6 +212,35 @@ const renderLoop = () => {
     updateMesh(meshRefKnot.value, currentKnotScale, false)
     updateMesh(meshRefSphere.value, currentSphereScale, isGenerating.value)
 
+    // Liquid fluctuation for the sphere (波动思考球)
+    if (sphereGeoRef.value && isGenerating.value && currentSphereScale > 0.01) {
+      if (!originalSpherePositions) {
+        originalSpherePositions = new Float32Array(sphereGeoRef.value.attributes.position.array)
+      }
+      const posAttr = sphereGeoRef.value.attributes.position
+      const arr = posAttr.array
+      for(let i = 0; i < arr.length; i+=3) {
+        const ox = originalSpherePositions[i]
+        const oy = originalSpherePositions[i+1]
+        const oz = originalSpherePositions[i+2]
+        
+        // Organic boiling/waving noise
+        const waveX = Math.sin(ox * 3.0 + elapsed * 6.0)
+        const waveY = Math.cos(oy * 3.0 + elapsed * 5.0)
+        const waveZ = Math.sin(oz * 3.0 + elapsed * 7.0)
+        const noise = (waveX + waveY + waveZ) * 0.08
+        
+        const stretch = 1.0 + noise
+        
+        arr[i] = ox * stretch
+        arr[i+1] = oy * stretch
+        arr[i+2] = oz * stretch
+      }
+      posAttr.needsUpdate = true
+      sphereGeoRef.value.computeVertexNormals() // Recompute normals so glass reflects the ripples perfectly!
+    }
+
+
 
   // Colored lights orbiting (medium speed)
   if (light1Ref.value) {
@@ -367,7 +398,7 @@ const sendMessage = async () => {
         </TresMesh>
         
         <TresMesh ref="meshRefSphere" :position="[2.5, 0, 0]" :scale="[0,0,0]">
-          <TresSphereGeometry :args="[1.5, 128, 128]" />
+          <TresSphereGeometry ref="sphereGeoRef" :args="[1.5, 64, 64]" />
           <TresMeshPhysicalMaterial 
             color="#ffffff"
             :transmission="1.0"
