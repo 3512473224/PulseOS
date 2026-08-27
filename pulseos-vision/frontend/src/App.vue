@@ -27,7 +27,11 @@ const inputMessage = ref('')
 const isGenerating = ref(false)
 const chatContainerRef = ref(null)
 
-const meshRef = shallowRef(null)
+const meshRefKnot = shallowRef(null)
+const meshRefSphere = shallowRef(null)
+let currentKnotScale = 1.0
+let currentSphereScale = 0.0
+let currentSpinSpeed = 0.08
 const light1Ref = shallowRef(null)
 const light2Ref = shallowRef(null)
 
@@ -161,53 +165,51 @@ const renderLoop = () => {
   const targetX = (mouse.x / window.innerWidth) * 2 - 1
   const targetY = -(mouse.y / window.innerHeight) * 2 + 1
   
-  if (meshRef.value) {
-    // Medium rotation speed
-    const speed = isGenerating.value ? 25.0 : 0.08
-    
-    // Scroll deeply affects X/Y rotation
+  
+    const targetKnotScale = isGenerating.value ? 0.0 : 1.0
+    const targetSphereScale = isGenerating.value ? 1.0 : 0.0
+    const targetSpinSpeed = isGenerating.value ? 8.0 : 0.08
+
+    currentKnotScale += (targetKnotScale - currentKnotScale) * 0.04
+    currentSphereScale += (targetSphereScale - currentSphereScale) * 0.04
+    currentSpinSpeed += (targetSpinSpeed - currentSpinSpeed) * 0.02
+
     const scrollPhase = (currentScrollY / windowHeight.value)
     
-    meshRef.value.rotation.y += speed * 0.016 + (targetX * 0.015)
-    meshRef.value.rotation.x += (speed * 0.5) * 0.016 - (targetY * 0.015)
-    
-    // Add extra spin when scrolling
-    meshRef.value.rotation.z = scrollPhase * 0.5
-    
-    // Trajectory for harmonious page following (Flawless Avoidance Route):
-    // Phase 0 (Top): Right (x=2.5, y=0) - Chat is on Left
-    // Phase 1 (Middle 1): Down/Right (x=2.5, y=-0.8) - Text is on Left
-    // Phase 2 (Middle 2): Lower-Left (x=-2.0, y=-1.2) - Text is on Right
-    // Phase 3+ (Bottom): Bottom-Left (x=-2.2, y=-1.3) - Footer is Center, FULLY VISIBLE
     let targetPosX = 2.5
     let targetPosY = 0
-    
     if (scrollPhase < 1) {
-      // "先向下走" (First go down, stay right)
       targetPosX = 2.5
       targetPosY = -(scrollPhase * 0.8)
     } else if (scrollPhase < 2) {
-      // "再向左下走" (Then go to the lower left)
       const p = scrollPhase - 1
       targetPosX = 2.5 - (p * 4.5)
       targetPosY = -0.8 - (p * 0.4)
     } else {
-      // "正好停在底边的左边与文字完美错开，全部露出来"
       const p = Math.min(scrollPhase - 2, 1.0)
       targetPosX = -2.0 - (p * 0.2)
       targetPosY = -1.2 - (p * 0.1)
     }
-    
-    // Smoothly apply the new X and Y positions
-    meshRef.value.position.x += (targetPosX - meshRef.value.position.x) * 0.05
-    meshRef.value.position.y += (targetPosY - meshRef.value.position.y) * 0.05
 
-    // Smooth breathing effect
-    const breath = isGenerating.value 
-      ? 1.0 + Math.sin(elapsed * 8.0) * 0.04
-      : 1.0 + Math.sin(elapsed * 1.5) * 0.015
-    meshRef.value.scale.set(breath, breath, breath)
-  }
+    const baseBreath = 1.0 + Math.sin(elapsed * 1.5) * 0.015
+    const activeBreath = 1.0 + Math.sin(elapsed * 15.0) * 0.06 // 跃动感 (bouncing)
+
+    const updateMesh = (mesh, scaleMult, useActiveBreath) => {
+      if (!mesh) return
+      mesh.rotation.y += currentSpinSpeed * 0.016 + (targetX * 0.015)
+      mesh.rotation.x += (currentSpinSpeed * 0.5) * 0.016 - (targetY * 0.015)
+      mesh.rotation.z = scrollPhase * 0.5
+      
+      mesh.position.x += (targetPosX - mesh.position.x) * 0.05
+      mesh.position.y += (targetPosY - mesh.position.y) * 0.05
+
+      const breath = useActiveBreath ? activeBreath : baseBreath
+      mesh.scale.setScalar(scaleMult * breath)
+    }
+
+    updateMesh(meshRefKnot.value, currentKnotScale, false)
+    updateMesh(meshRefSphere.value, currentSphereScale, isGenerating.value)
+
 
   // Colored lights orbiting (medium speed)
   if (light1Ref.value) {
@@ -346,24 +348,38 @@ const sendMessage = async () => {
         <TresPointLight ref="light1Ref" color="#ff0088" :intensity="20" :distance="15" />
         <TresPointLight ref="light2Ref" color="#00ddff" :intensity="20" :distance="15" />
 
-        <TresMesh ref="meshRef" :position="[2.5, 0, 0]">
-          <!-- Ultimate Cinema-quality Geometry -->
-          
-          <TresTorusKnotGeometry v-if="!isGenerating" :args="[1.6, 0.5, 512, 128]" />
-          <TresSphereGeometry v-else :args="[1.8, 128, 128]" />
-
+        <TresMesh ref="meshRefKnot" :position="[2.5, 0, 0]">
+          <TresTorusKnotGeometry :args="[1.6, 0.5, 512, 128]" />
           <TresMeshPhysicalMaterial 
-            :color="isGenerating ? '#222222' : '#ffffff'"
-            :transmission="isGenerating ? 0.0 : 1.0"
+            color="#ffffff"
+            :transmission="1.0"
             :opacity="1.0"
-            :metalness="isGenerating ? 1.0 : 0.1"
-            :roughness="isGenerating ? 0.1 : 0.05"
-            :ior="isGenerating ? 2.5 : 1.55"
+            :metalness="0.1"
+            :roughness="0.05"
+            :ior="1.55"
             :thickness="3.5"
-            :specularIntensity="isGenerating ? 5.0 : 3.0"
+            :specularIntensity="3.0"
             :clearcoat="1.0"
-            :clearcoatRoughness="isGenerating ? 0.1 : 0.05"
-            :iridescence="isGenerating ? 0.0 : 1.0"
+            :clearcoatRoughness="0.05"
+            :iridescence="1.0"
+            :iridescenceIOR="1.4"
+          />
+        </TresMesh>
+        
+        <TresMesh ref="meshRefSphere" :position="[2.5, 0, 0]" :scale="[0,0,0]">
+          <TresSphereGeometry :args="[1.5, 128, 128]" />
+          <TresMeshPhysicalMaterial 
+            color="#ffffff"
+            :transmission="1.0"
+            :opacity="1.0"
+            :metalness="0.1"
+            :roughness="0.05"
+            :ior="1.55"
+            :thickness="3.5"
+            :specularIntensity="3.0"
+            :clearcoat="1.0"
+            :clearcoatRoughness="0.05"
+            :iridescence="1.0"
             :iridescenceIOR="1.4"
           />
         </TresMesh>
