@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: pulseos-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pulseos-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/opt/pulseos/data

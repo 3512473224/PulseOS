@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  pulseos-vision-api:
+    build: .
+    container_name: pulseos-vision-api
+    ports:
+      - "8081:8081"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 300M
