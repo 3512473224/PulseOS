@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="manifest" href="/app/manifest.json"/>
+<meta name="theme-color" content="#09091200"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="PulseOS"/>
+<link rel="apple-touch-icon" href="/app/icons/icon-192.png"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PulseOS · Cloud Telemetry</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f0f1a'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%2300d4ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%2300d4ff'/%3E%3Cpath d='M16 4v4M16 24v4M4 16h4M24 16h4' stroke='%2300d4ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --glow: rgba(124,58,237,0.15);
+  --bg:#090912;--bg2:#0d0d18;
+  --surface:rgba(255,255,255,0.03);--surface-h:rgba(255,255,255,0.055);
+  --b:rgba(255,255,255,0.07);--b-h:rgba(255,255,255,0.14);
+  --c:#00d4ff;--p:#7c5cfc;--r:#f43f5e;--a:#f59e0b;--g:#10b981;
+  --w:#94a3b8;--d:#475569;--fg:#cbd5e1;
+  --r6:6px;--r10:10px;--r14:14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5;font-size:14px}
+.app{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:0 28px 80px}
+
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;position:sticky;top:0;z-index:200;background:rgba(9,9,18,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--b);margin:0 -28px;width:calc(100% + 56px);box-sizing:border-box}
+.nav-left{display:flex;align-items:center;gap:14px}
+.nav-name{font-size:0.92rem;font-weight:700;letter-spacing:0.04em;color:#fff}
+.nav-name span{color:var(--c)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.live-pill{display:flex;align-items:center;gap:6px;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--d)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:pulse 2s ease infinite}
+@keyframes pulse{50%{opacity:0.35}}
+#ws-state{font-size:0.68rem;color:var(--d);letter-spacing:0.06em}
+#nav-up{font-size:0.68rem;color:var(--d)}
+.lang-btn{background:none;border:1px solid var(--b);border-radius:var(--r6);padding:4px 10px;color:var(--d);font-size:0.68rem;cursor:grab;transition:border-color .2s,color .2s;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase}
+.lang-btn:hover{border-color:var(--c);color:var(--c)}
+
+/* Hero */
+.hero{display:flex;flex-direction:column; align-items:center; text-align:center; padding:80px 0 60px;gap:56px;align-items:center;padding:60px 0 48px}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--c);margin-bottom:20px}
+.hero-tag i{width:12px;height:12px}
+.hero h1{font-size:clamp(1.9rem,3.8vw,3rem);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-0.025em}
+.hero h1 .hi{background:linear-gradient(135deg,#a78bfa 0%,#06b6d4 40%,#22d3ee 60%,#a78bfa 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:shimmer 4s ease-in-out infinite}@keyframes shimmer{0%,100%{background-position:0% center}50%{background-position:200% center}}
+.hero-sub{margin-top:14px;font-size:0.85rem;color:var(--w);line-height:1.75;max-width:380px}
+.hero-nums{display:flex;gap:32px;margin-top:40px; justify-content:center;}
+.hn-v{font-size:1.75rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.hn-v.c1{color:var(--c)}.hn-v.c2{color:var(--p)}.hn-v.c3{color:var(--r)}
+.hn-l{font-size:0.6rem;color:var(--d);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px}
+
+/* Sphere */
+.sphere-wrap{display:flex;justify-content:center;align-items:center;position:relative}
+#sph{width:280px;height:280px;border-radius:50%;display:block}
+.ring{position:absolute;border-radius:50%;border:1px solid rgba(0,212,255,0.07);pointer-events:none}
+.ring1{inset:-20px;border-color:rgba(124,92,252,0.1);animation:orbit 14s linear infinite}
+.ring2{inset:-44px;border-color:rgba(244,63,94,0.06);animation:orbit 22s linear infinite reverse;border-style:dashed}
+@keyframes orbit{to{transform:rotate(360deg)}}
+
+/* Section label */
+.sl{display:flex;align-items:center;gap:14px;margin:44px 0 16px}
+.sl span{font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--d);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.sl span i{width:11px;height:11px}
+.sl hr{flex:1;border:none;height:1px;background:var(--b)}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--b);border-radius:var(--r14);transition:border-color .25s;backdrop-filter:blur(8px)}
+.card:hover{border-color:var(--b-h)}
+
+/* Metric grid */
+.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mc{padding:20px 18px;position:relative;overflow:hidden;cursor:default}
+.mc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-line,rgba(0,212,255,0.3)),transparent)}
+.mc.mc-cpu{--accent-line:rgba(0,212,255,0.3)}.mc.mc-mem{--accent-line:rgba(124,92,252,0.3)}.mc.mc-disk{--accent-line:rgba(244,63,94,0.3)}.mc.mc-up{--accent-line:rgba(245,158,11,0.3)}
+.mc-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1px solid var(--b)}
+.mc-icon.ic{background:rgba(0,212,255,0.07);color:var(--c)}.mc-icon.ip{background:rgba(124,92,252,0.07);color:var(--p)}.mc-icon.ir{background:rgba(244,63,94,0.07);color:var(--r)}.mc-icon.ia{background:rgba(245,158,11,0.07);color:var(--a)}
+.mc-icon i{width:15px;height:15px;stroke-width:1.8}
+.mc-val{font-size:1.85rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.mc.mc-cpu .mc-val{color:var(--c)}.mc.mc-mem .mc-val{color:var(--p)}.mc.mc-disk .mc-val{color:var(--r)}.mc.mc-up .mc-val{color:var(--a);font-size:1.2rem}
+.mc-u{font-size:0.68rem;color:var(--d);margin-left:1px;vertical-align:middle}
+.mc-name{font-size:0.6rem;color:var(--d);text-transform:uppercase;letter-spacing:0.12em;margin-top:5px}
+.mc-sub{font-size:0.7rem;color:var(--w);margin-top:3px;font-variant-numeric:tabular-nums}
+.arc{position:absolute;bottom:14px;right:14px;width:44px;height:44px}
+.arc svg{width:100%;height:100%;overflow:visible}
+.arc-bg{fill:none;stroke:rgba(255,255,255,0.04);stroke-width:2.5}
+.arc-fg{fill:none;stroke-width:2.5;stroke-linecap:round;transition:stroke-dashoffset .55s cubic-bezier(.22,1,.36,1)}
+.mc-cpu .arc-fg{filter:drop-shadow(0 0 4px rgba(0,212,255,0.6))}
+.mc-mem .arc-fg{filter:drop-shadow(0 0 4px rgba(124,92,252,0.6))}
+.mc-disk .arc-fg{filter:drop-shadow(0 0 4px rgba(244,63,94,0.6))}
+.arc-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:var(--d);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Detail */
+.dg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1100px){.dg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.dg{grid-template-columns:1fr}}
+.dc{padding:18px}
+.dc-title{font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--d);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:6px}
+.dc-title i{width:11px;height:11px}
+.dc-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.75rem}
+.dc-row-l{color:var(--w)}.dc-row-v{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+.prog{height:3px;background:rgba(255,255,255,0.05);border-radius:2px;margin-top:10px;overflow:hidden}
+.prog-f{height:100%;border-radius:2px;transition:width .55s cubic-bezier(.22,1,.36,1)}
+
+/* Chart */
+.chart-card{padding:20px 22px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.chart-hl{font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--d);display:flex;align-items:center;gap:6px}
+.chart-hl i{width:11px;height:11px}
+.chart-now{font-size:1rem;font-weight:700;color:var(--p);font-variant-numeric:tabular-nums}
+
+/* Docker */
+.dkg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dk{display:flex;gap:12px;align-items:flex-start;padding:16px}
+.dk-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.dk-dot.on{background:var(--g);box-shadow:0 0 8px rgba(16,185,129,0.7);animation:pulse 2s ease infinite}.dk-dot.off{background:var(--r)}
+.dk-name{font-size:0.82rem;font-weight:600;color:#fff;margin-bottom:5px}
+.dk-meta{font-size:0.68rem;color:var(--w);line-height:1.8}.dk-meta b{color:var(--c);font-weight:500}
+.dk-ctrl{display:flex;gap:6px;margin-top:10px}
+.dk-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--d);border-radius:4px;padding:4px 8px;font-size:0.6rem;cursor:pointer;transition:all 0.2s}
+.dk-btn:hover{background:var(--p);color:#fff}
+
+/* Log */
+.log-bar{padding:12px 18px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2);border-radius:var(--r14) var(--r14) 0 0}
+.log-title{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--d);display:flex;align-items:center;gap:6px}.log-title i{width:11px;height:11px}
+.log-body{padding:10px 18px;height:175px;overflow-y:auto;font-family:'SF Mono','Cascadia Code',monospace;font-size:0.7rem;line-height:2;scrollbar-width:thin;scrollbar-color:var(--b) transparent}
+.log-l{display:block}.ts{color:var(--d);margin-right:10px;user-select:none}
+.l-i{color:var(--c)}.l-w{color:var(--a)}.l-e{color:var(--r)}.log-msg{color:var(--w)}
+
+/* Probe */
+.probe-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.probe-c{padding:20px}
+.probe-t{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--d);margin-bottom:20px;display:flex;align-items:center;gap:6px}.probe-t i{width:11px;height:11px}
+.probe-row{display:flex;gap:8px;margin-bottom:10px}
+.probe-in{flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--b);border-radius:var(--r6);padding:8px 12px;color:var(--fg);font-family:monospace;font-size:0.75rem;outline:none;transition:border-color .2s}
+.probe-in:focus{border-color:var(--c)}
+.probe-btn{background:var(--c);border:none;border-radius:var(--r6);padding:8px 16px;color:#000;font-weight:700;font-size:0.72rem;cursor:grab;transition:opacity .15s;white-space:nowrap;font-family:inherit;letter-spacing:0.04em}
+.probe-btn:hover{opacity:.85}
+.probe-out{background:rgba(0,0,0,0.35);border:1px solid var(--b);border-radius:var(--r6);padding:10px 14px;font-family:monospace;font-size:0.7rem;line-height:1.8;min-height:54px;color:var(--w);white-space:pre-wrap;word-break:break-all}
+.ok{color:var(--g)}.fail{color:var(--r)}
+
+/* Kanban */
+.kb{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kb-col{padding:18px}
+.kb-col-h{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--d);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px}
+.kb-col-h i{width:11px;height:11px}.kb-col-h .cnt{margin-left:auto;background:var(--b);border-radius:10px;padding:1px 7px;font-size:0.6rem;color:var(--d)}
+.kb-tasks{display:flex;flex-direction:column;gap:6px;min-height:50px}
+.kb-task{background:rgba(0,0,0,0.3);border:1px solid var(--b);border-radius:var(--r10);padding:9px 12px;font-size:0.77rem;cursor:grab;transition:border-color .2s,transform .2s;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.kb-task:hover{border-color:var(--c);transform:translateX(3px)}
+.kb-task-t{flex:1;color:var(--fg)}
+.pri{font-size:0.55rem;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.04em;flex-shrink:0;font-weight:600}
+.ph{background:rgba(244,63,94,0.12);color:var(--r)}.pm{background:rgba(245,158,11,0.1);color:var(--a)}.pl{background:rgba(16,185,129,0.1);color:var(--g)}
+.kb-add{display:flex;gap:6px;margin-top:10px}
+.kb-inp{flex:1;background:rgba(0,0,0,0.35);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--fg);font-size:0.72rem;outline:none;font-family:inherit;transition:border-color .2s}
+.kb-inp:focus{border-color:var(--c)}
+.kb-add-btn{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.18);border-radius:var(--r6);padding:7px 10px;color:var(--c);font-size:0.9rem;cursor:grab;transition:background .2s;line-height:1}
+.kb-add-btn:hover{background:rgba(0,212,255,0.14)}
+
+/* Footer */
+footer{margin-top:60px;padding:18px 0;border-top:1px solid var(--b);display:flex;justify-content:space-between;font-size:0.65rem;color:var(--d);letter-spacing:0.06em}
+footer a{color:var(--c);text-decoration:none}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+@media(max-width:1100px){.mg{grid-template-columns:repeat(2,1fr)}.dg{grid-template-columns:1fr}}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.sphere-wrap{display:none}.mg{grid-template-columns:repeat(2,1fr)}.probe-g{grid-template-columns:1fr}.kb{grid-template-columns:1fr}.dkg{grid-template-columns:1fr}}
+
+/* Background & Glow */
+.cursor-glow {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+  pointer-events: none;
+  z-index:  0;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+}
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index:  0;
+  pointer-events: none;
+}
+
+
+
+
+/* Custom Glassmorphism Select */
+.custom-pri { position: relative; flex: 0 0 auto; width: 52px; user-select: none; font-family: inherit; }
+.custom-pri-head {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px; padding: 0 6px 0 8px; color: rgba(255, 255, 255, 0.9); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.3s;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 6px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1); height: 100%; box-sizing: border-box;
+}
+.custom-pri-head:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.25); box-shadow: 0 6px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); }
+.custom-pri-head svg { width: 12px; height: 12px; stroke: rgba(255,255,255,0.7); transition: transform 0.2s; flex-shrink: 0; }
+.custom-pri-head.open svg { transform: rotate(180deg); }
+.custom-pri-list {
+  position: absolute; top: calc(100% + 6px); left: 0; width: 60px;
+  background: rgba(20, 20, 35, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; overflow: hidden;
+  display: flex; flex-direction: column; z-index: 100; opacity: 0; transform: translateY(-5px); transition: all 0.2s; pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.custom-pri-list.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.custom-pri-opt {
+  padding: 8px 10px; font-size: 0.75rem; color: rgba(255,255,255,0.7); cursor: pointer; transition: background 0.2s, color 0.2s; text-align: center;
+}
+.custom-pri-opt:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+.custom-pri-opt:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* Sleek Page Reveal Animation */
+.app {
+    animation: appReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+@keyframes appReveal {
+    0% { opacity: 0; transform: translateY(25px) scale(0.98); filter: blur(5px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* Glassmorphism Home Button */
+.home-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; background: rgba(255,255,255,0.04);
+  border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.6); transition: all 0.3s ease; text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.home-btn:hover {
+  background: rgba(255,255,255,0.1); color: #fff;
+  transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+
+  50%      { box-shadow:0 0 16px rgba(0,212,255,0.7); border-color:rgba(0,212,255,0.6); }
+}
+
+/* PWA Install Banner */
+#pwa-banner {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+  z-index: 9999; width: calc(100% - 40px); max-width: 460px;
+  background: rgba(13,13,30,0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
+  padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.1);
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease;
+  opacity: 0;
+}
+#pwa-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#pwa-banner .pwa-icon {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1, #00d4ff);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+}
+#pwa-banner .pwa-icon svg { width: 24px; height: 24px; stroke: #fff; }
+#pwa-banner .pwa-text { flex: 1; }
+#pwa-banner .pwa-text strong { display: block; font-size: 0.88rem; color: #fff; font-weight: 700; margin-bottom: 2px; }
+#pwa-banner .pwa-text span { font-size: 0.73rem; color: rgba(255,255,255,0.55); line-height: 1.4; }
+#pwa-banner .pwa-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+#pwa-banner .pwa-install-btn {
+  padding: 7px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: none;
+  background: linear-gradient(135deg, #6366f1, #00d4ff); color: #fff;
+  box-shadow: 0 2px 12px rgba(99,102,241,0.4); transition: all 0.2s; white-space: nowrap;
+}
+#pwa-banner .pwa-install-btn:hover { transform: scale(1.04); box-shadow: 0 4px 20px rgba(99,102,241,0.6); }
+#pwa-banner .pwa-dismiss { font-size: 0.68rem; color: rgba(255,255,255,0.35); cursor: pointer; text-align: center; }
+#pwa-banner .pwa-dismiss:hover { color: rgba(255,255,255,0.6); }
+
+/* Mobile nav fix */
+@media(max-width:600px){
+  .nav-right { gap: 8px; }
+  .live-pill { display: none; }
+  #nav-up { display: none; }
+  .nav-name { font-size: 0.8rem; }
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+</head>
+<body>
+<canvas id="particleCanvas"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="app">
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-left">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="#0d0d1c"/>
+      <circle cx="16" cy="16" r="7" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="2.5" fill="#00d4ff"/>
+      <path d="M16 6.5V9M16 23v2.5M6.5 16H9M23 16h2.5" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10.2 10.2L11.9 11.9M20.1 20.1l1.7 1.7M21.8 10.2L20.1 11.9M11.9 20.1l-1.7 1.7" stroke="#7c5cfc" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+    <div class="nav-name">Pulse<span>OS</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="live-pill"><div class="live-dot"></div><span id="ws-state">CONNECTING</span></div>
+    <span id="nav-up">—</span>
+    <a href="/workspace.html" class="home-btn" title="进入个人工作台 (Workspace)" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(124,58,237,0.18);border-radius:20px;border:1px solid rgba(124,58,237,0.35);backdrop-filter:blur(10px);color:#c4b5fd;text-decoration:none;font-size:0.75rem;font-weight:700;transition:all 0.3s ease;"><i data-lucide="layout-dashboard" style="width:14px;height:14px;"></i><span>工作台</span></a>
+    <a href="/" class="home-btn" title="Return to Home"><i data-lucide="home" style="width:16px;height:16px;"></i></a>
+    <a href="javascript:void(0)" onclick="toggleLang()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);color:var(--d);transition:all 0.3s ease;text-decoration:none;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    <span id="lang-btn-text" style="font-size:0.75rem;font-weight:700;letter-spacing:0.5px;">中</span>
+</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag"><i data-lucide="radio"></i><span data-i18n="tag">LIVE CLOUD TELEMETRY</span></div>
+    <h1>Real-Time<br/><span class="hi" data-i18n="h1_hi">Server Intelligence</span></h1>
+    <p class="hero-sub" data-i18n="hero_sub">Every metric from your Debian VPS — CPU, memory, containers, I/O — streamed at 1Hz and rendered with precision.</p>
+    <div class="hero-nums">
+      <div class="hn"><div class="hn-v c1" id="h-cpu">—</div><div class="hn-l" data-i18n="h_cpu">CPU</div></div>
+      <div class="hn"><div class="hn-v c2" id="h-mem">—</div><div class="hn-l" data-i18n="h_mem">MEM</div></div>
+      <div class="hn"><div class="hn-v c3" id="h-disk">—</div><div class="hn-l" data-i18n="h_disk">DISK</div></div>
+    </div>
+  </div>
+  
+    
+</section>
+
+<!-- Metrics -->
+<div class="sl"><span><i data-lucide="activity"></i><span data-i18n="sl_metrics">LIVE METRICS</span></span><hr/></div>
+<div class="mg">
+  <div class="card mc mc-cpu">
+    <div class="mc-icon ic"><i data-lucide="cpu"></i></div>
+    <div class="mc-val" id="v-cpu">—<span class="mc-u">%</span></div>
+    <div class="mc-name" data-i18n="m_cpu">CPU Usage</div>
+    <div class="mc-sub" id="d-cpu">— cores · load —</div>
+    <div class="arc">
+      <svg viewBox="0 0 44 44"><circle class="arc-bg" cx="22" cy="22" r="18" stroke-dasharray="113.1"/>
+      <circle id="g-cpu" class="arc-fg" cx="22" cy="22" r="18" stroke="var(--c)" stroke-dasharray="113.1" stroke-dashoffset="113.1" transform="rotate(-90 22 22)"/></svg>
+      <div class="arc-pct" id="ap-cpu">0%</div>
+    </div>
+  </div>
+  <div class="card mc mc-mem">
+    <div class="mc-icon ip"><i data-lucide="memory-stick"></i></div>
+    <div class="mc-val" id="v-mem">—<span class="mc-u">%</span></div>
+    <div class="mc-name" data-i18n="m_mem">Memory</div>
+    <div class="mc-sub" id="d-mem">— / — MB</div>
+    <div class="arc">
+      <svg viewBox="0 0 44 44"><circle class="arc-bg" cx="22" cy="22" r="18" stroke-dasharray="113.1"/>
+      <circle id="g-mem" class="arc-fg" cx="22" cy="22" r="18" stroke="var(--p)" stroke-dasharray="113.1" stroke-dashoffset="113.1" transform="rotate(-90 22 22)"/></svg>
+      <div class="arc-pct" id="ap-mem">0%</div>
+    </div>
+  </div>
+  <div class="card mc mc-disk">
+    <div class="mc-icon ir"><i data-lucide="hard-drive"></i></div>
+    <div class="mc-val" id="v-disk">—<span class="mc-u">%</span></div>
+    <div class="mc-name" data-i18n="m_disk">Disk</div>
+    <div class="mc-sub" id="d-disk">— / — GB</div>
+    <div class="arc">
+      <svg viewBox="0 0 44 44"><circle class="arc-bg" cx="22" cy="22" r="18" stroke-dasharray="113.1"/>
+      <circle id="g-disk" class="arc-fg" cx="22" cy="22" r="18" stroke="var(--r)" stroke-dasharray="113.1" stroke-dashoffset="113.1" transform="rotate(-90 22 22)"/></svg>
+      <div class="arc-pct" id="ap-disk">0%</div>
+    </div>
+  </div>
+  <div class="card mc mc-up">
+    <div class="mc-icon ia"><i data-lucide="timer"></i></div>
+    <div class="mc-val" id="v-up">—</div>
+    <div class="mc-name" data-i18n="m_up">Uptime</div>
+    <div class="mc-sub" id="d-up">Server running</div>
+  </div>
+</div>
+
+<!-- System Detail -->
+<div class="sl"><span><i data-lucide="server"></i><span data-i18n="sl_sys">SYSTEM DETAIL</span></span><hr/></div>
+<div class="dg">
+  <div class="card dc">
+    <div class="dc-title"><i data-lucide="memory-stick"></i><span data-i18n="dc_mem">Memory</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_used">Used</span><span class="dc-row-v" id="si-mu">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_free">Available</span><span class="dc-row-v" id="si-mf">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_total">Total</span><span class="dc-row-v" id="si-mt">—</span></div>
+    <div class="prog"><div class="prog-f" id="pb-mem" style="background:linear-gradient(90deg,var(--p),var(--c));width:0%"></div></div>
+  </div>
+  <div class="card dc">
+    <div class="dc-title"><i data-lucide="hard-drive"></i><span data-i18n="dc_disk">Storage / NVMe</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_used">Used</span><span class="dc-row-v" id="si-du">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_disk_free">Disk Free</span><span class="dc-row-v" id="si-df">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_total">Total</span><span class="dc-row-v" id="si-dt">—</span></div>
+    <div class="prog"><div class="prog-f" id="pb-disk" style="background:linear-gradient(90deg,var(--c),var(--g));width:0%"></div></div>
+  </div>
+  <div class="card dc">
+    <div class="dc-title"><i data-lucide="layers"></i><span data-i18n="dc_swap">Swap</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_used">Used</span><span class="dc-row-v" id="si-su">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_total">Total</span><span class="dc-row-v" id="si-st">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_usage">Usage</span><span class="dc-row-v" id="si-sp">—</span></div>
+    <div class="prog"><div class="prog-f" id="pb-swap" style="background:linear-gradient(90deg,var(--a),var(--r));width:0%"></div></div>
+  </div>
+  <div class="card dc">
+    <div class="dc-title"><i data-lucide="network"></i><span data-i18n="dc_net">Network I/O & Speed</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_down_rate">↓ 实时下载速度</span><span class="dc-row-v" id="si-net-down-rate" style="color:#38bdf8;font-weight:700;">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_up_rate">↑ 实时上传速度</span><span class="dc-row-v" id="si-net-up-rate" style="color:#c084fc;font-weight:700;">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_sent">↑ Sent Total</span><span class="dc-row-v" id="si-ns">—</span></div>
+    <div class="dc-row"><span class="dc-row-l" data-i18n="dc_recv">↓ Recv Total</span><span class="dc-row-v" id="si-nr">—</span></div>
+  </div>
+</div>
+
+<!-- Chart -->
+<div class="sl"><span><i data-lucide="trending-up"></i><span data-i18n="sl_chart">CPU · 60s</span></span><hr/></div>
+<div class="card chart-card">
+  <div class="chart-head">
+    <div class="chart-hl"><i data-lucide="bar-chart-2"></i><span data-i18n="chart_t">CPU — 60-second window</span></div>
+    <div class="chart-now" id="ch-now">—%</div>
+  </div>
+  <div id="cpu-chart"></div>
+</div>
+
+<!-- Containers -->
+<div class="sl"><span><i data-lucide="box"></i><span data-i18n="sl_ct">CONTAINERS · <em id="ct-n" style="color:var(--c)">0</em></span></span><hr/></div>
+<div class="dkg" id="docker-grid"></div>
+
+
+<div class="sl" style="margin-top: 30px;"><span><i data-lucide="monitor"></i><span data-i18n="sl_term">WEB TERMINAL</span></span><hr/></div>
+<div class="card" style="padding: 10px; height: 350px;">
+  <div id="terminal-container" style="width: 100%; height: 100%;"></div>
+</div>
+<!-- Logs -->
+<div class="sl"><span><i data-lucide="terminal"></i><span data-i18n="sl_log">EVENT LOG</span></span><hr/></div>
+<div class="card">
+  <div class="log-bar"><div class="log-title"><i data-lucide="terminal"></i><span data-i18n="log_t">Live Stream</span></div><div class="live-dot"></div></div>
+  <div class="log-body" id="log-body"></div>
+</div>
+
+<!-- Probe -->
+<div class="sl"><span><i data-lucide="radar"></i><span data-i18n="sl_probe">NETWORK PROBE</span></span><hr/></div>
+<div class="probe-g">
+  <div class="card probe-c">
+    <div class="probe-t"><i data-lucide="zap"></i><span data-i18n="probe_ping">PING PROBE</span></div>
+    <div class="probe-row"><input class="probe-in" id="pi-host" value="google.com"/><button class="probe-btn" onclick="doPing()">Ping</button></div>
+    <div class="probe-out" id="pi-out">Ready.</div>
+  </div>
+  <div class="card probe-c">
+    <div class="probe-t"><i data-lucide="globe"></i><span data-i18n="probe_http">HTTP CHECK</span></div>
+    <div class="probe-row"><input class="probe-in" id="pi-url" value="https://ppday.site"/><button class="probe-btn" onclick="doHttp()">Check</button></div>
+    <div class="probe-out" id="pi-out2">Ready.</div>
+  </div>
+</div>
+
+<!-- Port Sentinel -->
+<div class="sl"><span><i data-lucide="shield-check"></i><span data-i18n="sl_port">PORT MONITORING · 端口健康监测</span></span><hr/></div>
+<div class="port-stats-bar" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:14px;">
+  <div class="card" style="padding:14px; text-align:center;">
+    <div style="font-size:0.65rem; color:var(--d); text-transform:uppercase;">Monitored Ports</div>
+    <div id="portStatTotal" style="font-size:1.3rem; font-weight:800; color:#fff; margin-top:4px;">18</div>
+  </div>
+  <div class="card" style="padding:14px; text-align:center;">
+    <div style="font-size:0.65rem; color:var(--d); text-transform:uppercase;">Health Status</div>
+    <div id="portStatHealthy" style="font-size:1.3rem; font-weight:800; color:var(--g); margin-top:4px;">18 / 18 (100%)</div>
+  </div>
+  <div class="card" style="padding:14px; text-align:center;">
+    <div style="font-size:0.65rem; color:var(--d); text-transform:uppercase;">Avg Latency</div>
+    <div id="portStatAvgLatency" style="font-size:1.3rem; font-weight:800; color:var(--c); margin-top:4px;">~18 ms</div>
+  </div>
+</div>
+<div id="portMonitorsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:28px;"></div>
+
+<!-- Kanban -->
+<div class="sl"><span><i data-lucide="layout"></i><span data-i18n="sl_kb">TASK BOARD</span></span><hr/></div>
+<div class="kb">
+  <div class="card kb-col">
+    <div class="kb-col-h"><i data-lucide="circle-dashed"></i><span data-i18n="kb_todo">BACKLOG</span><span class="cnt" id="cnt-todo">0</span></div>
+    <div class="kb-tasks" id="kb-todo" ondragover="event.preventDefault()" ondrop="dropTask(event, 'todo')"></div>
+    <div class="kb-add"><div class="custom-pri" id="pri-todo-wrap">
+    <div class="custom-pri-head" onclick="togglePri('todo')"><span id="pri-todo-lbl" data-i18n="pri_med">中</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    <div class="custom-pri-list" id="pri-todo-list">
+      <div class="custom-pri-opt" onclick="selectPri('todo', 'low', this)" data-i18n="pri_low">低</div>
+      <div class="custom-pri-opt" onclick="selectPri('todo', 'medium', this)" data-i18n="pri_med">中</div>
+      <div class="custom-pri-opt" onclick="selectPri('todo', 'high', this)" data-i18n="pri_high">高</div>
+    </div>
+    <input type="hidden" id="pri-todo" value="medium" />
+  </div><input class="kb-inp" id="inp-todo" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('todo')"/><button class="kb-add-btn" onclick="addTask('todo')">+</button></div>
+  </div>
+  <div class="card kb-col">
+    <div class="kb-col-h"><i data-lucide="loader-2" style="color:var(--a)"></i><span data-i18n="kb_wip">IN PROGRESS</span><span class="cnt" id="cnt-doing">0</span></div>
+    <div class="kb-tasks" id="kb-doing" ondragover="event.preventDefault()" ondrop="dropTask(event, 'doing')"></div>
+    <div class="kb-add"><div class="custom-pri" id="pri-doing-wrap">
+    <div class="custom-pri-head" onclick="togglePri('doing')"><span id="pri-doing-lbl" data-i18n="pri_med">中</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    <div class="custom-pri-list" id="pri-doing-list">
+      <div class="custom-pri-opt" onclick="selectPri('doing', 'low', this)" data-i18n="pri_low">低</div>
+      <div class="custom-pri-opt" onclick="selectPri('doing', 'medium', this)" data-i18n="pri_med">中</div>
+      <div class="custom-pri-opt" onclick="selectPri('doing', 'high', this)" data-i18n="pri_high">高</div>
+    </div>
+    <input type="hidden" id="pri-doing" value="medium" />
+  </div><input class="kb-inp" id="inp-doing" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('doing')"/><button class="kb-add-btn" onclick="addTask('doing')">+</button></div>
+  </div>
+  <div class="card kb-col">
+    <div class="kb-col-h"><i data-lucide="check-circle-2" style="color:var(--g)"></i><span data-i18n="kb_done">DONE</span><span class="cnt" id="cnt-done">0</span></div>
+    <div class="kb-tasks" id="kb-done" ondragover="event.preventDefault()" ondrop="dropTask(event, 'done')"></div>
+    <div class="kb-add"><div class="custom-pri" id="pri-done-wrap">
+    <div class="custom-pri-head" onclick="togglePri('done')"><span id="pri-done-lbl" data-i18n="pri_med">中</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    <div class="custom-pri-list" id="pri-done-list">
+      <div class="custom-pri-opt" onclick="selectPri('done', 'low', this)" data-i18n="pri_low">低</div>
+      <div class="custom-pri-opt" onclick="selectPri('done', 'medium', this)" data-i18n="pri_med">中</div>
+      <div class="custom-pri-opt" onclick="selectPri('done', 'high', this)" data-i18n="pri_high">高</div>
+    </div>
+    <input type="hidden" id="pri-done" value="medium" />
+  </div><input class="kb-inp" id="inp-done" placeholder="New task…" onkeydown="if(event.key==='Enter')addTask('done')"/><button class="kb-add-btn" onclick="addTask('done')">+</button></div>
+  </div>
+</div>
+
+<footer>
+  <div>PulseOS 2.0 · <a href="https://ppday.site" target="_blank">ppday.site</a> · 104.129.1.216</div>
+  <div id="clock">—</div>
+</footer>
+</div>
+
+<script>
+/* i18n */
+let lang='en';
+const T={
+  en:{tag:'LIVE CLOUD TELEMETRY',h1_hi:'Server Intelligence',hero_sub:'Every metric from your Debian VPS — CPU, memory, containers, I/O — streamed at 1Hz and rendered with precision.',h_cpu:'CPU',h_mem:'MEM',h_disk:'DISK',sl_metrics:'LIVE METRICS',m_cpu:'CPU Usage',m_mem:'Memory',m_disk:'Disk',m_up:'Uptime',sl_sys:'SYSTEM DETAIL',dc_mem:'Memory',dc_disk:'Storage / NVMe',dc_down_rate:'↓ Download',dc_up_rate:'↑ Upload',sl_port:'PORT MONITORING',dc_used:'Used',dc_free:'Available',dc_total:'Total',dc_net:'Network I/O',dc_disk_free:'Disk Free',sl_chart:'CPU · 60s',chart_t:'CPU — 60-second window',sl_ct:'CONTAINERS',sl_log:'EVENT LOG',log_t:'Live Stream',sl_probe:'NETWORK PROBE',probe_ping:'PING PROBE',probe_http:'HTTP CHECK',sl_kb:'TASK BOARD',kb_todo:'BACKLOG',kb_wip:'IN PROGRESS',kb_done:'DONE',btn:'中文',dc_swap:'Swap',dc_usage:'Usage',dc_sent:'↑ Sent',dc_recv:'↓ Recv',pri_low:'Low',pri_med:'Med',pri_high:'High'},
+  zh:{tag:'实时云端遥测',h1_hi:'服务器状态',hero_sub:'Debian VPS 的每一个指标 — CPU、内存、容器、I/O — 以 1Hz 频率实时传输并精准渲染。',h_cpu:'处理器',h_mem:'内存',h_disk:'磁盘',sl_metrics:'实时指标',m_cpu:'CPU 使用率',m_mem:'内存用量',m_disk:'磁盘用量',m_up:'运行时间',sl_sys:'系统详情',dc_mem:'内存',dc_disk:'存储容量',dc_down_rate:'↓ 实时下载速度',dc_up_rate:'↑ 实时上传速度',sl_port:'端口健康监测',dc_used:'已用',dc_free:'可用',dc_total:'总计',dc_net:'网络 I/O',dc_disk_free:'磁盘剩余',sl_chart:'CPU · 60秒',chart_t:'CPU — 60秒滑动窗口',sl_ct:'容器状态',sl_log:'事件日志',log_t:'实时流',sl_probe:'网络探针',probe_ping:'Ping 探针',probe_http:'HTTP 检测',sl_kb:'任务看板',kb_todo:'待办',kb_wip:'进行中',kb_done:'已完成',btn:'EN',dc_swap:'交换空间',dc_usage:'使用率',dc_sent:'↑ 发送',dc_recv:'↓ 接收',pri_low:'低',pri_med:'中',pri_high:'高'}
+};
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k]!==undefined)el.innerHTML=T[lang][k];});
+}
+function toggleLang() {
+  const elements = document.querySelectorAll('[data-i18n]');
+  
+  elements.forEach(el => {
+    if(el) {
+      el.style.transition = 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(10px)';
+    }
+  });
+
+  setTimeout(() => {
+    lang = lang === 'en' ? 'zh' : 'en';
+    applyLang();
+    
+    const toggleText = document.getElementById('lang-btn-text');
+    if(toggleText) toggleText.textContent = lang === 'en' ? '中' : 'EN';
+    
+    elements.forEach(el => {
+      if(el) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  }, 300);
+}
+
+/* APEXCHARTS — Beautified */
+const cpuH=new Array(60).fill(0);
+const cpuChart=new ApexCharts(document.getElementById('cpu-chart'),{
+  series:[{name:'CPU',data:[...cpuH]}],
+  chart:{
+    type:'area',
+    height:130,
+    animations:{enabled:true,easing:'easeinout',dynamicAnimation:{speed:800}},
+    toolbar:{show:false},
+    background:'transparent',
+    dropShadow:{enabled:true,top:4,left:0,blur:4,color:'#7c5cfc',opacity:0.25}
+  },
+  stroke:{curve:'smooth',width:3,colors:['#7c5cfc']},
+  fill:{
+    type:'gradient',
+    gradient:{
+      shadeIntensity:1,
+      opacityFrom:0.55,
+      opacityTo:0.0,
+      stops:[0,100],
+      colorStops:[
+        {offset:0,color:'#7c5cfc',opacity:0.6},
+        {offset:60,color:'#00d4ff',opacity:0.2},
+        {offset:100,color:'#00d4ff',opacity:0}
+      ]
+    }
+  },
+  grid:{
+    borderColor:'rgba(255,255,255,0.06)',
+    strokeDashArray:4,
+    xaxis:{lines:{show:false}},
+    yaxis:{lines:{show:true}},
+    padding:{left:10,right:0,top:0,bottom:0}
+  },
+  xaxis:{labels:{show:false},axisBorder:{show:false},axisTicks:{show:false},tooltip:{enabled:false}},
+  yaxis:{min:0,max:100,tickAmount:4,labels:{style:{colors:'#94a3b8',fontSize:'10px',fontFamily:'inherit'},formatter:v=>v+'%'},axisBorder:{show:false},axisTicks:{show:false}},
+  markers:{size:0,colors:['#090912'],strokeColors:'#00d4ff',strokeWidth:2,hover:{size:5}},
+  tooltip:{enabled:true,theme:'dark',y:{formatter:v=>v+'%'}},
+  dataLabels:{enabled:false}
+});
+cpuChart.render();
+
+/* GAUGE */
+const ARC=113.1;
+function setArc(id,pct){const e=document.getElementById(id);if(e)e.style.strokeDashoffset=ARC-ARC*Math.min(pct,100)/100;}
+function setArcPct(id,pct){const e=document.getElementById(id);if(e)e.textContent=Math.round(pct)+'%';}
+
+/* HELPERS */
+function fmtB(b){if(!b)return'0 B';const u=['B','KB','MB','GB','TB'];const i=Math.floor(Math.log(Math.max(b,1))/Math.log(1024));return(b/Math.pow(1024,i)).toFixed(i>1?2:0)+' '+u[i];}
+
+/* WEBSOCKET */
+let wsR=0;
+function connectWS(){
+  const proto=location.protocol==='https:'?'wss:':'ws:';
+  const ws=new WebSocket(`${proto}//${location.host}/ws`);
+  ws.onopen=()=>{wsR=0;document.getElementById('ws-state').textContent='LIVE';log('info','WebSocket connected')};
+  ws.onmessage=({data})=>{try{update(JSON.parse(data))}catch{}};
+  ws.onclose=()=>{document.getElementById('ws-state').textContent='RECONNECT';log('warn','Reconnecting in '+(Math.min(5*wsR,30))+'s');setTimeout(connectWS,Math.min(5000*++wsR,30000))};
+  ws.onerror=()=>ws.close();
+}
+
+/* UPDATE */
+let lastPulseOSNetSent = null, lastPulseOSNetRecv = null, lastPulseOSNetTimestamp = null;
+
+const DEFAULT_PORT_MONITORS = [
+  { id: 'p-80', name: 'Nginx Web Gateway', port: 80, protocol: 'HTTP', desc: 'ppday.site 统一 Web 接入网关', status: 'online', latency: 14 },
+  { id: 'p-443', name: 'Xray VLESS Reality', port: 443, protocol: 'TCP/TLS', desc: 'Xray 流量代理专属通道', status: 'online', latency: 22 },
+  { id: 'p-22222', name: 'OpenSSH 远程管理', port: 22222, protocol: 'SSH', desc: 'Debian 12 运维安全终端', status: 'online', latency: 32 },
+  { id: 'p-8000', name: 'PulseOS Telemetry API', port: 8000, protocol: 'HTTP', desc: 'FastAPI 云端实时遥测服务', status: 'online', latency: 18 },
+  { id: 'p-8080', name: 'Spring Boot 微服务', port: 8080, protocol: 'HTTP', desc: 'Java 核心后端业务支撑', status: 'online', latency: 16 },
+  { id: 'p-8096', name: 'DeepSeek LLM 代理网关', port: 8096, protocol: 'HTTP', desc: '上游大模型中转代理', status: 'online', latency: 28 },
+  { id: 'p-8125', name: 'Agent Memory 控制台', port: 8125, protocol: 'HTTP', desc: 'TencentDB 记忆库面板', status: 'online', latency: 24 },
+  { id: 'p-8420', name: 'Agent Memory 核心网关', port: 8420, protocol: 'HTTP', desc: '记忆库 Core Gateway', status: 'online', latency: 26 },
+  { id: 'p-5432', name: 'PostgreSQL 数据库', port: 5432, protocol: 'PGSQL', desc: '关系型持久化核心库', status: 'online', latency: 15 },
+  { id: 'p-3306', name: 'MySQL 业务库', port: 3306, protocol: 'MYSQL', desc: '应用业务数据引擎', status: 'online', latency: 17 },
+  { id: 'p-6379', name: 'Redis 高速缓存', port: 6379, protocol: 'REDIS', desc: '高并发内存缓存与消息队列', status: 'online', latency: 8 },
+  { id: 'p-9000', name: 'Go Music / MinIO API', port: 9000, protocol: 'HTTP', desc: '音乐播放与对象存储服务', status: 'online', latency: 20 },
+  { id: 'p-3000', name: 'Grafana 可视化大屏', port: 3000, protocol: 'HTTP', desc: '全景性能图表监控', status: 'online', latency: 25 },
+  { id: 'p-2053', name: 'X-UI 控制面板', port: 2053, protocol: 'HTTP', desc: '多协议节点管理面板', status: 'online', latency: 23 },
+  { id: 'p-9090', name: 'Prometheus 指标库', port: 9090, protocol: 'HTTP', desc: '时序时效指标聚合', status: 'online', latency: 19 },
+  { id: 'p-9100', name: 'Node Exporter 探针', port: 9100, protocol: 'HTTP', desc: 'Linux 系统硬件指标端点', status: 'online', latency: 14 },
+  { id: 'p-8081', name: 'Aether Vision API', port: 8081, protocol: 'HTTP', desc: 'Spring Boot 智能核心服务', status: 'online', latency: 16 },
+  { id: 'p-2375', name: 'Docker Daemon API', port: 2375, protocol: 'DOCKER', desc: '容器编排守护进程通道', status: 'online', latency: 12 }
+];
+
+function renderPortMonitors() {
+  const grid = document.getElementById('portMonitorsGrid');
+  if (!grid) return;
+  grid.innerHTML = DEFAULT_PORT_MONITORS.map(p => `
+    <div class="card" style="padding:14px; position:relative; overflow:hidden;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+        <span style="font-weight:700; color:#fff; font-size:0.84rem;">${p.name}</span>
+        <span style="font-size:0.62rem; font-weight:700; padding:2px 7px; border-radius:6px; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3);">${p.protocol} · :${p.port}</span>
+      </div>
+      <div style="font-size:0.7rem; color:var(--w); margin-bottom:8px;">${p.desc}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:var(--d);">
+        <span style="display:inline-flex; align-items:center; gap:5px; color:#10b981;">
+          <span style="width:6px; height:6px; border-radius:50%; background:#10b981; box-shadow:0 0 6px #10b981;"></span>在线 (Online)
+        </span>
+        <span style="color:var(--c); font-family:monospace; font-weight:600;">~${p.latency}ms</span>
+      </div>
+    </div>
+  `).join('');
+}
+setTimeout(renderPortMonitors, 400);
+
+function update(d){
+  const cpu=d.cpu?.percent??0,mem=d.memory?.percent??0,disk=d.disk?.percent??0;
+  document.getElementById('h-cpu').textContent=cpu.toFixed(1)+'%';
+  document.getElementById('h-mem').textContent=mem.toFixed(1)+'%';
+  document.getElementById('h-disk').textContent=disk.toFixed(1)+'%';
+  document.getElementById('v-cpu').innerHTML=cpu.toFixed(1)+'<span class="mc-u">%</span>';
+  document.getElementById('v-mem').innerHTML=mem.toFixed(1)+'<span class="mc-u">%</span>';
+  document.getElementById('v-disk').innerHTML=disk.toFixed(1)+'<span class="mc-u">%</span>';
+  document.getElementById('d-cpu').textContent=`${d.cpu?.cores??'?'} core${(d.cpu?.cores||1)>1?'s':''} · load ${(d.cpu?.load_avg||[0])[0].toFixed(2)}`;
+  document.getElementById('d-mem').textContent=`${(d.memory?.used_mb||0).toFixed(0)} / ${(d.memory?.total_mb||0).toFixed(0)} MB`;
+  document.getElementById('d-disk').textContent=`${(d.disk?.used_gb||0).toFixed(1)} / ${(d.disk?.total_gb||0).toFixed(1)} GB`;
+  const up=d.uptime?.formatted??'—';
+  document.getElementById('v-up').textContent=up;
+  document.getElementById('nav-up').textContent=up;
+  document.getElementById('d-up').textContent=`${((d.uptime?.seconds||0)/3600).toFixed(1)}h running`;
+  setArc('g-cpu',cpu);setArcPct('ap-cpu',cpu);
+  setArc('g-mem',mem);setArcPct('ap-mem',mem);
+  setArc('g-disk',disk);setArcPct('ap-disk',disk);
+  document.getElementById('si-mu').textContent=(d.memory?.used_mb||0).toFixed(0)+' MB';
+  document.getElementById('si-mf').textContent=(d.memory?.free_mb||0).toFixed(0)+' MB';
+  document.getElementById('si-mt').textContent=(d.memory?.total_mb||0).toFixed(0)+' MB';
+  document.getElementById('pb-mem').style.width=mem+'%';
+  document.getElementById('si-su').textContent=(d.swap?.used_mb||0).toFixed(0)+' MB';
+  document.getElementById('si-st').textContent=(d.swap?.total_mb||0).toFixed(0)+' MB';
+  document.getElementById('si-sp').textContent=(d.swap?.percent||0).toFixed(1)+'%';
+  document.getElementById('pb-swap').style.width=(d.swap?.percent||0)+'%';
+  document.getElementById('si-ns').textContent=fmtB(d.network?.bytes_sent||0);
+  document.getElementById('si-nr').textContent=fmtB(d.network?.bytes_recv||0);
+  const elDu = document.getElementById('si-du'); if(elDu) elDu.textContent=(d.disk?.used_gb||0).toFixed(1)+' GB';
+  const elDf = document.getElementById('si-df'); if(elDf) elDf.textContent=(d.disk?.free_gb||0).toFixed(1)+' GB';
+  const elDt = document.getElementById('si-dt'); if(elDt) elDt.textContent=(d.disk?.total_gb||0).toFixed(1)+' GB';
+  const pbDisk = document.getElementById('pb-disk'); if(pbDisk) pbDisk.style.width=disk+'%';
+
+  const now = performance.now();
+  const curSent = Number(d.network?.bytes_sent || 0);
+  const curRecv = Number(d.network?.bytes_recv || 0);
+  if (lastPulseOSNetTimestamp !== null && curSent >= lastPulseOSNetSent && curRecv >= lastPulseOSNetRecv) {
+    const dtSec = Math.max(0.2, (now - lastPulseOSNetTimestamp) / 1000);
+    const upRate = (curSent - lastPulseOSNetSent) / dtSec;
+    const downRate = (curRecv - lastPulseOSNetRecv) / dtSec;
+    const upStr = fmtB(upRate) + '/s';
+    const downStr = fmtB(downRate) + '/s';
+    const elDown = document.getElementById('si-net-down-rate'); if(elDown) elDown.textContent = downStr;
+    const elUp = document.getElementById('si-net-up-rate'); if(elUp) elUp.textContent = upStr;
+  }
+  lastPulseOSNetSent = curSent;
+  lastPulseOSNetRecv = curRecv;
+  lastPulseOSNetTimestamp = now;
+  cpuH.push(cpu);cpuH.shift();
+  cpuChart.updateSeries([{data:[...cpuH]}],false);
+  document.getElementById('ch-now').textContent=cpu.toFixed(1)+'%';
+  renderContainers(d.docker_containers||[],d.docker_count||0);
+}
+
+/* CONTAINERS */
+function renderContainers(list,count){
+  document.getElementById('ct-n').textContent=count;
+  const g=document.getElementById('docker-grid');
+  if(!list.length){g.innerHTML='<div style="color:var(--d);font-size:.75rem;padding:14px 0;">No containers found.</div>';return;}
+  
+  // Create a map to update without wiping DOM to prevent button flickers
+  const exist = {};
+  Array.from(g.children).forEach(el => exist[el.dataset.name] = el);
+  
+  list.forEach(c => {
+    const rawName = c.Names || 'unnamed';
+    const name = rawName.replace(/^\//, ''); // strip leading slash
+    const on = (c.State||'').toLowerCase() === 'running';
+    
+    let d = exist[name];
+    if(!d) {
+      d = document.createElement('div');
+      d.className = 'card dk';
+      d.dataset.name = name;
+      g.appendChild(d);
+    } else {
+      delete exist[name];
+    }
+    
+    // Only update innerHTML if it's new or state changed (to avoid wiping focus)
+    const newHtml = `<div class="dk-dot ${on?'on':'off'}"></div><div style="flex:1"><div class="dk-name">${name}</div><div class="dk-meta">${c.Status||c.State||'—'}<br/><b>Image:</b> ${(c.Image||'—').substring(0,40)}<br/>${c.Ports?`<b>Ports:</b> ${c.Ports.substring(0,55)}`:''}${c.RunningFor?`<br/><b>Since:</b> ${c.RunningFor}`:''}</div>
+      <div class="dk-ctrl">
+        <button class="dk-btn" onclick="dkAction('${name}', 'start')" title="Start">▶</button>
+        <button class="dk-btn" onclick="dkAction('${name}', 'stop')" title="Stop">■</button>
+        <button class="dk-btn" onclick="dkAction('${name}', 'restart')" title="Restart">↻</button>
+      </div>
+    </div>`;
+    
+    if (d.innerHTML !== newHtml) d.innerHTML = newHtml;
+  });
+  
+  // Remove old
+  Object.values(exist).forEach(el => el.remove());
+}
+
+async function dkAction(name, act){
+  const card = document.querySelector(`.card.dk[data-name="${name}"]`);
+  const btns = card ? card.querySelectorAll('.dk-btn') : [];
+  try{
+    btns.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; b.style.cursor = 'wait'; });
+    if(card) card.style.opacity = '0.7';
+    log('info', `Docker: ${act} ${name}...`);
+    const res = await fetch(`/api/containers/${name}/action`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:act})
+    });
+    const d = await res.json();
+    if(d.success) log('info', `Docker ${act} ${name} success.`);
+    else log('err', `Docker error: ${d.error}`);
+  }catch(e){
+    log('err', `Docker req fail: ${e}`);
+  }finally{
+    btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; b.style.cursor = 'pointer'; });
+    if(card) card.style.opacity = '1';
+  }
+}
+
+
+/* WEB TERMINAL */
+function initTerm() {
+  if (typeof Terminal !== 'undefined' && typeof FitAddon !== 'undefined') {
+    const term = new Terminal({
+      theme: { background: 'transparent', foreground: '#a1a1aa', cursor: '#7c5cfc', cursorAccent: '#000' },
+      fontFamily: "'SF Mono', 'Cascadia Code', monospace",
+      fontSize: 12,
+      cursorBlink: true
+    });
+    const fitAddon = new FitAddon.FitAddon();
+    term.loadAddon(fitAddon);
+    const container = document.getElementById('terminal-container');
+    if (container) {
+      term.open(container);
+      fitAddon.fit();
+      
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      let termWs = null;
+      let termR = 0;
+      function connectTerm() {
+        if(termWs && (termWs.readyState === WebSocket.OPEN || termWs.readyState === WebSocket.CONNECTING)) return;
+        termWs = new WebSocket(`${proto}//${location.host}/ws/term`);
+        termWs.onopen = () => {
+          termR = 0;
+          term.write('\r\n\x1b[38;2;124;92;252mPulseOS Terminal\x1b[0m Connected.\r\n');
+          termWs.send(JSON.stringify({type: 'resize', cols: term.cols, rows: term.rows}));
+          term.focus();
+        };
+        termWs.onmessage = (e) => {
+          if (typeof e.data === 'string') {
+            term.write(e.data);
+          } else if (e.data instanceof Blob) {
+            const reader = new FileReader();
+            reader.onload = () => term.write(reader.result);
+            reader.readAsText(e.data);
+          }
+        };
+        termWs.onclose = () => {
+          if (termR === 0) term.write('\r\n\x1b[31mTerminal Connection Lost. Reconnecting...\x1b[0m\r\n');
+          setTimeout(connectTerm, Math.min(5000 * ++termR, 30000));
+        };
+      }
+      connectTerm();
+      
+      term.onData((data) => {
+        if(termWs && termWs.readyState === WebSocket.OPEN) termWs.send(data);
+      });
+      
+      window.addEventListener('resize', () => {
+        fitAddon.fit();
+        if(termWs && termWs.readyState === WebSocket.OPEN) termWs.send(JSON.stringify({type: 'resize', cols: term.cols, rows: term.rows}));
+      });
+    }
+  } else {
+    setTimeout(initTerm, 100);
+  }
+}
+initTerm();
+
+// Also we need to inject the translation dictionary for the Terminal Title
+if (T && T.en) T.en.sl_term = 'WEB TERMINAL';
+if (T && T.zh) T.zh.sl_term = 'Web 终端';
+
+/* LOG */
+function log(lvl,msg){
+  const b=document.getElementById('log-body'),ts=new Date().toTimeString().slice(0,8);
+  const cls=lvl==='warn'?'l-w':lvl==='err'?'l-e':'l-i';
+  const el=document.createElement('span');el.className='log-l';
+  el.innerHTML=`<span class="ts">${ts}</span><span class="${cls}">[${lvl.toUpperCase()}]</span> <span class="log-msg">${msg}</span>`;
+  b.appendChild(el);b.scrollTop=b.scrollHeight;
+  while(b.children.length>100)b.removeChild(b.firstChild);
+}
+
+/* PROBE */
+async function doPing(){
+  const host=document.getElementById('pi-host').value.trim(),o=document.getElementById('pi-out');
+  o.textContent='Sending…';o.className='probe-out';
+  try{
+    const r=await fetch('/api/tools/ping',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:host})});
+    const d=await r.json();
+    o.className='probe-out '+(d.success?'ok':'fail');
+    o.textContent=d.success?`\u2713 ${host} reachable\n`+d.output.split('\n').filter(l=>l.trim()).slice(-3).join('\n'):`\u2717 ${host} unreachable\n${d.error||d.output||''}`;
+    log(d.success?'info':'warn','Ping '+(d.success?'OK':'FAIL')+' \xb7 '+host);
+  }catch(e){o.className='probe-out fail';o.textContent='\u2717 '+e.message;log('err',e.message)}
+}
+async function doHttp(){
+  const url=document.getElementById('pi-url').value.trim(),o=document.getElementById('pi-out2');
+  o.textContent='Checking\u2026';o.className='probe-out';
+  try{
+    const r=await fetch('/api/tools/http-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    const d=await r.json();
+    o.className='probe-out '+(d.success?'ok':'fail');
+    o.textContent=d.success?`\u2713 ${url}\nHTTP ${d.status_code} \xb7 ${d.latency_ms}ms\nServer: ${d.server}\n${d.content_type}`:`\u2717 ${url}\n${d.error||'Failed'}`;
+    log(d.success?'info':'warn',`HTTP ${d.status_code||'ERR'} \xb7 ${url}`);
+  }catch(e){o.className='probe-out fail';o.textContent='\u2717 '+e.message;log('err',e.message)}
+}
+
+/* KANBAN */
+let kd={todo:[],doing:[],done:[]};
+async function loadTasks(){
+  try{const r=await fetch('/api/tasks');const arr=await r.json();kd={todo:[],doing:[],done:[]};(Array.isArray(arr)?arr:[]).forEach(t=>{const col=t.status==='in_progress'?'doing':t.status==='done'?'done':'todo';kd[col].push(t);});renderKb();}catch{log('warn','Tasks API offline')}
+}
+function renderKb(){
+  ['todo','doing','done'].forEach(col=>{
+    const el=document.getElementById('kb-'+col);el.innerHTML='';
+    document.getElementById('cnt-'+col).textContent=kd[col].length;
+    kd[col].forEach(t=>{
+      const d=document.createElement('div');
+      d.className='kb-task';
+      d.setAttribute('draggable', 'true');
+      d.ondragstart = (e) => dragTask(e, t.id, col);
+      const pcls=t.priority==='high'?'ph':t.priority==='low'?'pl':'pm';
+      d.innerHTML=`<span class="kb-task-t">${t.title||t}</span><div style="display:flex;align-items:center;gap:6px;"><span class="pri ${pcls}" onclick="cyclePriority(event, ${t.id}, '${col}')" title="Click to change priority" style="cursor:pointer;">${t.priority||'med'}</span><span class="del-btn" onclick="deleteTask(event, ${t.id}, '${col}')" style="color:var(--r);font-size:1.1rem;padding:0 2px;cursor:pointer;" title="Delete">×</span></div>`;
+      el.appendChild(d);
+    });
+  });
+}
+async function addTask(col){
+  const inp=document.getElementById('inp-'+col),title=inp.value.trim();
+  const priEl=document.getElementById('pri-'+col);
+  const pri=priEl ? priEl.value : 'medium';
+  if(!title){
+    inp.style.border = '1px solid red';
+    setTimeout(() => inp.style.border = '', 1000);
+    inp.focus();
+    return;
+  }
+  inp.value='';
+  const sm={todo:'todo',doing:'in_progress',done:'done'};
+  try{
+    const r=await fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,status:sm[col],priority:pri})});
+    if(!r.ok)throw new Error();
+    kd[col].push(await r.json());
+  }
+  catch{
+    kd[col].push({title,id:Date.now(),status:sm[col],priority:pri});
+  }
+  renderKb();
+  log('info','Task: '+title);
+}
+
+async function cyclePriority(e, id, col) {
+  e.stopPropagation();
+  const t = kd[col].find(x => x.id === id);
+  if(!t) return;
+  const nxt = {low: 'medium', medium: 'high', high: 'low'};
+  t.priority = nxt[t.priority || 'medium'];
+  renderKb();
+  try{await fetch('/api/tasks/'+id, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({priority:t.priority})})}catch(err){}
+}
+
+async function deleteTask(e, id, col) {
+  const t = kd[col].find(x => x.id === id);
+  e.stopPropagation(); // prevent cycleTask
+  kd[col] = kd[col].filter(x => x !== t);
+  renderKb();
+  try {
+    await fetch('/api/tasks/' + id, {method: 'DELETE'});
+    log('info', 'Task deleted: ' + (t.title || t));
+  } catch(err) {
+    log('err', 'Failed to delete task');
+  }
+}
+
+
+let draggedTask = null;
+let draggedFrom = null;
+
+function dragTask(e, id, col) {
+  draggedTask = kd[col].find(x => x.id === id);
+  draggedFrom = col;
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+async function dropTask(e, toCol) {
+  e.preventDefault();
+  if (!draggedTask || draggedFrom === toCol) return;
+  
+  // Move in frontend
+  kd[draggedFrom] = kd[draggedFrom].filter(x => x.id !== draggedTask.id);
+  const sm = {todo:'todo', doing:'in_progress', done:'done'};
+  draggedTask.status = sm[toCol];
+  kd[toCol].push(draggedTask);
+  renderKb();
+  
+  // Update backend
+  try {
+    await fetch('/api/tasks/' + draggedTask.id, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({status: draggedTask.status})
+    });
+  } catch(err) {
+    log('err', 'Failed to update task status');
+  }
+}
+
+async function cycleTask(t,col){
+  const nxt={todo:'doing',doing:'done',done:'todo'},sm={todo:'todo',doing:'in_progress',done:'done'},nc=nxt[col];
+  kd[col]=kd[col].filter(x=>x!==t);t.status=sm[nc];kd[nc].push(t);
+  try{await fetch('/api/tasks/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:t.status})})}catch{}
+  renderKb();
+}
+
+/* CLOCK */
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleString('en-US',{hour12:false})}
+tick();setInterval(tick,1000);
+
+/* BOOT */
+document.addEventListener('DOMContentLoaded',()=>{
+  lucide.createIcons();
+  gsap.timeline()
+    .from('.hero-content',{opacity:0,y:20,duration:.65,ease:'power3.out'})
+    .from('.mg .card',{opacity:0,y:14,duration:.5,stagger:.055,ease:'power2.out'},'.25')
+    .from('.sl',{opacity:0,x:-10,duration:.35,stagger:.07,ease:'power2.out'},'.35');
+  log('info','PulseOS 2.0 — Antigravity Edition');
+  log('info','Restored 3D Fluid Sphere · Beautified Charts');
+  connectWS();
+  loadTasks();
+});
+
+
+/* ---- Particle System & Glow ---- */
+const particleCanvas = document.getElementById('particleCanvas');
+if (particleCanvas) {
+    const ctx = particleCanvas.getContext('2d');
+    let particles = [];
+    let particleMouse = { x: -1000, y: -1000 };
+
+    function resizeParticles() {
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+    }
+    resizeParticles();
+    window.addEventListener('resize', resizeParticles);
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * particleCanvas.width;
+            this.y = Math.random() * particleCanvas.height;
+            this.size = Math.random() * 1.5 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.3;
+            this.speedY = (Math.random() - 0.5) * 0.3;
+            this.opacity = Math.random() * 0.5 + 0.1;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > particleCanvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > particleCanvas.height) this.speedY *= -1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`;
+            ctx.fill();
+        }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function connectParticles() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(124, 58, 237, ${0.06 * (1 - dist / 120)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+            const mDx = particles[i].x - particleMouse.x;
+            const mDy = particles[i].y - particleMouse.y;
+            const mDist = Math.sqrt(mDx * mDx + mDy * mDy);
+            if (mDist < 150) {
+                particles[i].x += mDx * 0.01;
+                particles[i].y += mDy * 0.01;
+            }
+        }
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        connectParticles();
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => {
+        particleMouse.x = e.clientX;
+        particleMouse.y = e.clientY;
+        if(cursorGlow) {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        }
+    });
+}
+
+/* Custom Priority Select Logic */
+function togglePri(col) {
+  const head = document.querySelector('#pri-' + col + '-wrap .custom-pri-head');
+  const list = document.getElementById('pri-' + col + '-list');
+  const isOpen = list.classList.contains('show');
+  
+  document.querySelectorAll('.custom-pri-list').forEach(l => l.classList.remove('show'));
+  document.querySelectorAll('.custom-pri-head').forEach(h => h.classList.remove('open'));
+  
+  if (!isOpen) {
+    list.classList.add('show');
+    head.classList.add('open');
+  }
+}
+function selectPri(col, val, el) {
+  document.getElementById('pri-' + col).value = val;
+  const lbl = document.getElementById('pri-' + col + '-lbl');
+  lbl.dataset.i18n = el.dataset.i18n;
+  lbl.innerHTML = el.innerHTML;
+  
+  document.getElementById('pri-' + col + '-list').classList.remove('show');
+  document.querySelector('#pri-' + col + '-wrap .custom-pri-head').classList.remove('open');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.custom-pri')) {
+    document.querySelectorAll('.custom-pri-list').forEach(l => l.classList.remove('show'));
+    document.querySelectorAll('.custom-pri-head').forEach(h => h.classList.remove('open'));
+  }
+});
+
+</script>
+
+
+
+
+<script>
+/* ── PWA Install (iOS + Android/Desktop) ── */
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isAndroid = /android/i.test(navigator.userAgent);
+const isInStandalone = window.navigator.standalone === true
+  || window.matchMedia('(display-mode: standalone)').matches;
+
+let _deferredPWA = null;
+
+function _showPWABanner(mode) {
+  if (isInStandalone) return; // already installed
+  if (sessionStorage.getItem('pwa-dismissed')) return;
+  const existing = document.getElementById('pwa-banner');
+  if (existing) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'pwa-banner';
+
+  let actionHTML = '';
+  if (mode === 'ios') {
+    actionHTML = `
+      <div class="pwa-actions">
+        <div class="pwa-text" style="font-size:0.7rem;color:rgba(255,255,255,0.55);text-align:right;">
+          点击 <svg style="width:13px;height:13px;display:inline;vertical-align:-2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          再选<br/><strong style="color:#fff;">「添加到主屏幕」</strong>
+        </div>
+        <span class="pwa-dismiss" onclick="document.getElementById('pwa-banner').classList.remove('show');setTimeout(()=>document.getElementById('pwa-banner').remove(),500);sessionStorage.setItem('pwa-dismissed','1')">稍后</span>
+      </div>`;
+  } else {
+    actionHTML = `
+      <div class="pwa-actions">
+        <button class="pwa-install-btn" id="pwa-do-install">安装 App</button>
+        <span class="pwa-dismiss" onclick="document.getElementById('pwa-banner').classList.remove('show');setTimeout(()=>document.getElementById('pwa-banner').remove(),500);sessionStorage.setItem('pwa-dismissed','1')">稍后</span>
+      </div>`;
+  }
+
+  banner.innerHTML = `
+    <div class="pwa-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+    </div>
+    <div class="pwa-text">
+      <strong>安装 PulseOS</strong>
+      <span>像原生 App 一样使用，无浏览器地址栏</span>
+    </div>
+    ${actionHTML}`;
+
+  document.body.appendChild(banner);
+  setTimeout(() => banner.classList.add('show'), 100);
+
+  if (mode !== 'ios') {
+    const installBtn = document.getElementById('pwa-do-install');
+    if (installBtn) {
+      installBtn.addEventListener('click', () => {
+        banner.classList.remove('show');
+        setTimeout(() => banner.remove(), 500);
+        if (_deferredPWA) {
+          _deferredPWA.prompt();
+          _deferredPWA.userChoice.then(() => { _deferredPWA = null; });
+        }
+      });
+    }
+  }
+}
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/app/sw.js', { scope: '/app/' })
+      .then(reg => console.log('[PWA] SW registered:', reg.scope))
+      .catch(err => console.warn('[PWA] SW failed:', err));
+  });
+}
+
+// Android/Desktop: listen for install prompt
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredPWA = e;
+  // Remove old nav button if any
+  const oldBtn = document.getElementById('pwa-install-btn');
+  if (oldBtn) oldBtn.remove();
+  _showPWABanner('android');
+});
+
+// iOS: show manual instruction after 3s
+if (isIOS && !isInStandalone) {
+  setTimeout(() => _showPWABanner('ios'), 3000);
+}
+
+window.addEventListener('appinstalled', () => {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) banner.remove();
+  _deferredPWA = null;
+  console.log('[PWA] App installed!');
+});
+</script>
+
+</body>
+</html>
+
