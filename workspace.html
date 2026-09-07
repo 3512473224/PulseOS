@@ -61,7 +61,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       --glow: rgba(124, 58, 237, 0.15);
       --green: #22c55e;
       --sidebar-width: 250px;
-      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
       --font-mono: 'JetBrains Mono', monospace;
       --ppos-icon-bg: #0d0d1c;
       --ppos-icon-border: rgba(124, 58, 237, 0.35);
@@ -120,38 +122,40 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: var(--text);
       font-family: var(--font-main);
       overflow: hidden;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.01em;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
       image-rendering: -webkit-optimize-contrast;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       scroll-behavior: smooth;
-      transform: translate3d(0, 0, 0);
-      -webkit-transform: translate3d(0, 0, 0);
     }
 
-    /* 120Hz Independent GPU Hardware Compositing Layers */
-    .sidebar,
-    .main-wrapper,
-    .glass-card,
-    .card,
-    .news-card,
-    .news-hero-card,
-    .vps-status-card,
-    .metric-card,
-    .quick-launch-grid,
-    .quick-link-item,
-    .sidebar-player-card,
-    .modal-container,
-    .weather-card-modern,
-    .btn,
-    .nav-item {
-      transform: translateZ(0);
-      -webkit-transform: translateZ(0);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      perspective: 1000px;
-      will-change: transform, opacity;
+    /* Windows Crisp Subpixel Text Rendering */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* High-Definition Contrast Typography in Light Mode */
+    html.theme-light {
+      --text: #0f172a;
+      --text-dim: #475569;
+    }
+    html.theme-light body {
+      color: #0f172a !important;
+    }
+    html.theme-light .home-card-title span,
+    html.theme-light .card-title,
+    html.theme-light h1, html.theme-light h2, html.theme-light h3, html.theme-light h4 {
+      color: #0f172a !important;
+      font-weight: 700 !important;
+    }
+
+    /* Smooth Micro-Interactions (Zero Text Blur) */
+    .btn, .nav-item, .quick-link-item {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     /* 120Hz Subpixel 0.5px Ultra-Refined Hairline Borders & Deep Glass Depth */
@@ -1120,35 +1124,56 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .w-weather-card[data-scene="sunny"] .weather-bg-atmosphere {
       background: radial-gradient(circle at 85% 15%, rgba(245, 158, 11, 0.22) 0%, rgba(251, 191, 36, 0.12) 45%, transparent 75%);
     }
+    .w-weather-card[data-scene="partly-cloudy"] .weather-bg-atmosphere,
     .w-weather-card[data-scene="cloudy"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.16) 0%, rgba(148, 163, 184, 0.1) 50%, transparent 75%);
+      background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.18) 0%, rgba(245, 158, 11, 0.12) 40%, transparent 75%);
+    }
+    .w-weather-card[data-scene="overcast"] .weather-bg-atmosphere {
+      background: radial-gradient(circle at 85% 15%, rgba(148, 163, 184, 0.22) 0%, rgba(100, 116, 139, 0.12) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="rain"] .weather-bg-atmosphere {
       background: radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.22) 0%, rgba(99, 102, 241, 0.12) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="thunder"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.25) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%);
+      background: radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.28) 0%, rgba(56, 189, 248, 0.18) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="snow"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(224, 242, 254, 0.3) 0%, rgba(186, 230, 253, 0.15) 50%, transparent 75%);
+      background: radial-gradient(circle at 85% 15%, rgba(224, 242, 254, 0.35) 0%, rgba(186, 230, 253, 0.18) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="fog"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(148, 163, 184, 0.2) 0%, rgba(203, 213, 225, 0.1) 50%, transparent 75%);
+      background: radial-gradient(circle at 85% 15%, rgba(148, 163, 184, 0.22) 0%, rgba(203, 213, 225, 0.12) 50%, transparent 75%);
     }
 
     /* Light Theme Contrast & Atmospheric Tinting */
     html.theme-light .w-weather-card[data-scene="sunny"] {
       background: linear-gradient(150deg, #ffffff 0%, #f0f7ff 50%, #fef3c7 100%) !important;
-      border: 1px solid rgba(245, 158, 11, 0.28) !important;
+      border: 1px solid rgba(245, 158, 11, 0.32) !important;
       box-shadow: 0 4px 20px rgba(245, 158, 11, 0.08) !important;
     }
+    html.theme-light .w-weather-card[data-scene="partly-cloudy"],
     html.theme-light .w-weather-card[data-scene="cloudy"] {
       background: linear-gradient(150deg, #ffffff 0%, #f8fafc 55%, #e2e8f0 100%) !important;
-      border: 1px solid rgba(203, 213, 225, 0.7) !important;
+      border: 1px solid rgba(203, 213, 225, 0.8) !important;
+    }
+    html.theme-light .w-weather-card[data-scene="overcast"] {
+      background: linear-gradient(150deg, #ffffff 0%, #f1f5f9 55%, #cbd5e1 100%) !important;
+      border: 1px solid rgba(148, 163, 184, 0.5) !important;
     }
     html.theme-light .w-weather-card[data-scene="rain"] {
       background: linear-gradient(150deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%) !important;
-      border: 1px solid rgba(56, 189, 248, 0.3) !important;
+      border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    }
+    html.theme-light .w-weather-card[data-scene="thunder"] {
+      background: linear-gradient(150deg, #ffffff 0%, #faf5ff 55%, #f3e8ff 100%) !important;
+      border: 1px solid rgba(168, 85, 247, 0.35) !important;
+    }
+    html.theme-light .w-weather-card[data-scene="snow"] {
+      background: linear-gradient(150deg, #ffffff 0%, #f0fdf4 55%, #e0f2fe 100%) !important;
+      border: 1px solid rgba(186, 230, 253, 0.45) !important;
+    }
+    html.theme-light .w-weather-card[data-scene="fog"] {
+      background: linear-gradient(150deg, #ffffff 0%, #f8fafc 55%, #e2e8f0 100%) !important;
+      border: 1px solid rgba(203, 213, 225, 0.7) !important;
     }
 
     .weather-ctrl-group {
@@ -1234,7 +1259,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* 🌤️ CELESTIAL ARTBOARD STAGE (Cinematic 100% Centered) */
+    /* 🌤️ CELESTIAL ARTBOARD STAGE (Apple Weather Cinematic Centerpiece) */
     .weather-visual-stage {
       display: flex;
       align-items: center;
@@ -1244,7 +1269,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       width: 100%;
       position: relative;
       margin: 2px 0 6px;
-      pointer-events: none;
+      cursor: pointer;
       background: transparent !important;
       border: none !important;
       overflow: visible;
@@ -1268,12 +1293,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       pointer-events: none;
       z-index: 0;
     }
-    .glow-cloudy { background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%, transparent 75%); }
-    .glow-sunny  { background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(251, 191, 36, 0.25) 45%, transparent 75%); }
-    .glow-rain   { background: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, rgba(99, 102, 241, 0.2) 50%, transparent 75%); }
-    .glow-thunder{ background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(56, 189, 248, 0.25) 50%, transparent 75%); }
-    .glow-snow   { background: radial-gradient(circle, rgba(224, 242, 254, 0.5) 0%, rgba(186, 230, 253, 0.3) 50%, transparent 75%); }
-    .glow-fog    { background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(203, 213, 225, 0.15) 60%, transparent 75%); }
+    .glow-sunny   { background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(251, 191, 36, 0.25) 45%, transparent 75%); }
+    .glow-cloudy  { background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%, transparent 75%); }
+    .glow-overcast{ background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(100, 116, 139, 0.2) 50%, transparent 75%); }
+    .glow-rain    { background: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, rgba(99, 102, 241, 0.2) 50%, transparent 75%); }
+    .glow-thunder { background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(56, 189, 248, 0.25) 50%, transparent 75%); }
+    .glow-snow    { background: radial-gradient(circle, rgba(224, 242, 254, 0.5) 0%, rgba(186, 230, 253, 0.3) 50%, transparent 75%); }
+    .glow-fog     { background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(203, 213, 225, 0.15) 60%, transparent 75%); }
 
     .weather-artboard {
       position: relative;
@@ -1286,10 +1312,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       z-index: 2;
     }
 
-    /* 1. SUNNY (晴朗 - 耀眼多层日冕天体) */
-    .artboard-sunny {
-      position: relative;
-    }
+    /* 1. SUNNY (晴朗) */
+    .artboard-sunny { position: relative; }
     .art-sun-rays-wrap {
       position: absolute;
       width: 130px;
@@ -1346,7 +1370,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { opacity: 0.3; transform: scale(0.85); }
     }
 
-    /* 2. CLOUDY (多云/阴天 - 立体双层白云加透光日核) */
+    /* 2. CLOUDY & OVERCAST (多云 / 阴天) */
     .art-cloudy-sun {
       position: absolute;
       top: 8px;
@@ -1371,6 +1395,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 80px;
       z-index: 2;
       animation: cloudFloatSubtle 4.2s ease-in-out infinite alternate;
+    }
+    .art-back-cloud {
+      position: absolute;
+      left: 28px;
+      top: 10px;
+      width: 120px;
+      height: 68px;
+      z-index: 1;
+      opacity: 0.7;
+      animation: cloudFloatSubtle 5s ease-in-out infinite alternate-reverse;
     }
     @keyframes cloudFloatSubtle {
       0% { transform: translateY(0); }
@@ -1401,13 +1435,38 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .st4 { left: 74%; height: 14px; animation-delay: 0.15s; }
     .st5 { left: 90%; height: 12px; animation-delay: 0.35s; }
     @keyframes streakGlide {
-      0% { transform: translateY(-14px); opacity: 0; }
-      30% { opacity: 0.9; }
-      100% { transform: translateY(48px); opacity: 0; }
+      0% { transform: translateY(-14px) rotate(-10deg); opacity: 0; }
+      30% { opacity: 0.95; }
+      100% { transform: translateY(48px) rotate(-10deg); opacity: 0; }
+    }
+    .rain-splash-ripples {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 8px;
+      display: flex;
+      justify-content: space-around;
+      z-index: 3;
+    }
+    .ripple {
+      width: 8px;
+      height: 3px;
+      border-radius: 50%;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      animation: rippleExpand 1s ease-out infinite;
+    }
+    .rp1 { animation-delay: 0.1s; }
+    .rp2 { animation-delay: 0.4s; }
+    .rp3 { animation-delay: 0.7s; }
+    @keyframes rippleExpand {
+      0% { transform: scale(0.3); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
     }
 
-    /* 4. THUNDER, SNOW, FOG */
-    .art-lightning {
+    /* 4. THUNDERSTORM (雷雨) */
+    .art-lightning-dual {
       position: absolute;
       bottom: 2px;
       left: 50%;
@@ -1417,50 +1476,57 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     @keyframes thunderStrobe {
       0%, 88%, 100% { opacity: 0; transform: translateX(-50%) scale(0.9); }
-      90%, 94% { opacity: 1; transform: translateX(-50%) scale(1.08); filter: drop-shadow(0 0 10px #fbbf24); }
+      90%, 94% { opacity: 1; transform: translateX(-50%) scale(1.08); filter: drop-shadow(0 0 12px #fbbf24); }
       92% { opacity: 0.2; }
     }
+
+    /* 5. SNOW (雪天) */
     .snow-crystals-box {
       position: absolute;
-      top: 45px;
+      top: 44px;
       left: 50%;
       transform: translateX(-50%);
-      width: 96px;
-      height: 45px;
+      width: 110px;
+      height: 48px;
       overflow: hidden;
       z-index: 3;
     }
     .crystal {
       position: absolute;
       color: #e0f2fe;
-      filter: drop-shadow(0 0 4px rgba(224, 242, 254, 0.8));
-      animation: crystalFall 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 5px rgba(224, 242, 254, 0.85));
+      animation: crystalFall 2.4s ease-in-out infinite;
     }
-    .cr1 { left: 16%; animation-delay: 0s; font-size: 0.9rem; }
-    .cr2 { left: 42%; animation-delay: 0.5s; font-size: 1.15rem; }
-    .cr3 { left: 74%; animation-delay: 0.25s; font-size: 0.85rem; }
+    .cr1 { left: 12%; animation-delay: 0s; font-size: 0.95rem; }
+    .cr2 { left: 32%; animation-delay: 0.6s; font-size: 1.15rem; }
+    .cr3 { left: 56%; animation-delay: 0.2s; font-size: 0.8rem; }
+    .cr4 { left: 78%; animation-delay: 0.8s; font-size: 1rem; }
+    .cr5 { left: 92%; animation-delay: 0.4s; font-size: 0.75rem; }
     @keyframes crystalFall {
-      0% { transform: translateY(-14px) translateX(0); opacity: 0; }
+      0% { transform: translateY(-14px) translateX(0) rotate(0deg); opacity: 0; }
       25% { opacity: 0.95; }
-      50% { transform: translateY(16px) translateX(5px); }
-      100% { transform: translateY(48px) translateX(-5px); opacity: 0; }
+      50% { transform: translateY(16px) translateX(6px) rotate(90deg); }
+      100% { transform: translateY(50px) translateX(-6px) rotate(180deg); opacity: 0; }
     }
+
+    /* 6. FOG (雾霾) */
     .art-fog-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       z-index: 2;
     }
     .art-fog-bar {
       height: 6px;
       border-radius: 3px;
-      background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.5) 25%, rgba(241, 245, 249, 0.8) 50%, rgba(203, 213, 225, 0.5) 75%, transparent);
+      background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.5) 25%, rgba(241, 245, 249, 0.85) 50%, rgba(203, 213, 225, 0.5) 75%, transparent);
       animation: fogDrift 3.5s ease-in-out infinite alternate;
     }
-    .fb1 { width: 110px; animation-delay: 0s; }
-    .fb2 { width: 140px; animation-delay: 0.6s; height: 7px; }
-    .fb3 { width: 95px; animation-delay: 1.2s; }
+    .fb1 { width: 115px; animation-delay: 0s; }
+    .fb2 { width: 145px; animation-delay: 0.6s; height: 7px; }
+    .fb3 { width: 100px; animation-delay: 1.2s; }
+    .fb4 { width: 130px; animation-delay: 1.8s; height: 5px; }
     @keyframes fogDrift {
       0% { transform: translateX(-6px); opacity: 0.5; }
       100% { transform: translateX(6px); opacity: 0.9; }
@@ -1510,6 +1576,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-radius: 8px;
       white-space: nowrap;
       letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .weather-cond-badge:hover {
+      transform: scale(1.05);
+      border-color: rgba(245, 158, 11, 0.5);
     }
     .weather-range-pill {
       font-size: 0.68rem;
@@ -1609,52 +1681,55 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #0f172a !important;
     }
     html.theme-light .temp-unit {
-      color: #64748b !important;
+      color: #475569 !important;
     }
     html.theme-light .weather-cond-badge {
       background: rgba(245, 158, 11, 0.16) !important;
       color: #d97706 !important;
-      border-color: rgba(245, 158, 11, 0.32) !important;
+      border-color: rgba(245, 158, 11, 0.35) !important;
     }
     html.theme-light .weather-range-pill {
-      color: #64748b !important;
+      color: #475569 !important;
     }
     html.theme-light .w-meta-card {
-      background: rgba(255, 255, 255, 0.88) !important;
-      border: 1px solid rgba(0, 0, 0, 0.07) !important;
+      background: rgba(255, 255, 255, 0.92) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
     }
     html.theme-light .w-meta-card:hover {
       background: #ffffff !important;
-      border-color: rgba(0, 145, 255, 0.35) !important;
-      box-shadow: 0 4px 12px rgba(0, 145, 255, 0.1) !important;
+      border-color: rgba(0, 145, 255, 0.4) !important;
+      box-shadow: 0 4px 12px rgba(0, 145, 255, 0.12) !important;
     }
     html.theme-light .w-meta-lbl {
-      color: #64748b !important;
+      color: #475569 !important;
+      font-weight: 600 !important;
     }
     html.theme-light .w-meta-val {
       color: #0f172a !important;
+      font-weight: 700 !important;
     }
     html.theme-light .w-meta-sub {
-      color: #64748b !important;
+      color: #475569 !important;
+      font-weight: 600 !important;
     }
     html.theme-light .w-meta-aqi-bar-wrap {
-      background: rgba(0, 0, 0, 0.08) !important;
+      background: rgba(0, 0, 0, 0.1) !important;
     }
     html.theme-light .weather-city-btn {
       background: #f1f5f9 !important;
-      border-color: #e2e8f0 !important;
-      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
     }
     html.theme-light .weather-city-btn:hover {
       background: #e2e8f0 !important;
-      border-color: #cbd5e1 !important;
+      border-color: #94a3b8 !important;
       color: #0284c7 !important;
     }
     html.theme-light .weather-refresh-btn {
       background: #f1f5f9 !important;
-      border-color: #e2e8f0 !important;
-      color: #64748b !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
     }
     html.theme-light .weather-refresh-btn:hover {
       background: #e2e8f0 !important;
@@ -5612,87 +5687,53 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: center;
       gap: 16px;
     }
-    .converter-mascot-badge {
-      position: relative;
-      width: 58px;
-      height: 58px;
+    .converter-mascot-img-wrap {
+      width: 62px;
+      height: 62px;
       border-radius: 18px;
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(56, 189, 248, 0.12) 100%);
-      border: 1px solid rgba(168, 85, 247, 0.35);
-      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       user-select: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      animation: mascotGentleFloat 3.5s ease-in-out infinite alternate;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
       flex-shrink: 0;
+      overflow: hidden;
     }
-    .converter-mascot-badge:hover {
+    .converter-mascot-img-wrap:hover {
       transform: scale(1.08) rotate(3deg);
-      border-color: rgba(168, 85, 247, 0.6);
-      box-shadow: 0 6px 24px rgba(124, 58, 237, 0.45);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(124, 58, 237, 0.45);
+      box-shadow: 0 6px 22px rgba(124, 58, 237, 0.35);
     }
-    @keyframes mascotGentleFloat {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-3px) rotate(1deg); }
+    .converter-mascot-img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .converter-mascot-badge.state-dragover {
-      transform: scale(1.15);
-      border-color: #fbbf24;
-      box-shadow: 0 0 28px rgba(251, 191, 36, 0.65);
-      animation: mascotDragoverPulse 0.8s ease-in-out infinite alternate;
+    .converter-mascot-img.mascot-bounce {
+      animation: mascotBounceAnim 0.45s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    @keyframes mascotDragoverPulse {
-      0% { transform: scale(1.1); }
-      100% { transform: scale(1.18); }
+    @keyframes mascotBounceAnim {
+      0% { transform: scale(0.85); }
+      50% { transform: scale(1.15) rotate(4deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
-    .converter-mascot-badge.state-analyzing {
-      border-color: #38bdf8;
-      box-shadow: 0 0 24px rgba(56, 189, 248, 0.5);
-    }
-    .converter-mascot-badge.state-batch {
-      border-color: #c084fc;
-      box-shadow: 0 0 24px rgba(192, 132, 252, 0.5);
-      animation: mascotBatchWiggle 0.6s ease-in-out infinite alternate;
-    }
-    @keyframes mascotBatchWiggle {
-      0% { transform: rotate(-3deg); }
-      100% { transform: rotate(3deg); }
-    }
-    .converter-mascot-badge.state-success {
-      border-color: #10b981;
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.6);
-      animation: mascotSuccessBounce 0.6s cubic-bezier(0.16, 1, 0.3, 1) 2;
-    }
-    @keyframes mascotSuccessBounce {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-8px) scale(1.12); }
-    }
-    .converter-mascot-badge.state-error {
-      border-color: #ef4444;
-      box-shadow: 0 0 24px rgba(239, 68, 68, 0.5);
-      animation: mascotErrorShake 0.4s ease-in-out;
-    }
-    @keyframes mascotErrorShake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-    html.theme-light .converter-mascot-badge {
-      background: linear-gradient(135deg, rgba(243, 232, 255, 0.9) 0%, rgba(224, 242, 254, 0.8) 100%) !important;
-      border: 1px solid rgba(168, 85, 247, 0.35) !important;
-      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.12) !important;
+    html.theme-light .converter-mascot-img-wrap {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
     }
     html.theme-light .converter-mascot-box span {
       color: #0f172a !important;
     }
-    html.theme-light .converter-header-card div {
-      color: #0f172a;
-    }
     html.theme-light #mouseMascotHint {
-      color: #64748b !important;
+      color: #475569 !important;
     }
     .converter-categories {
       display: flex;
@@ -10870,7 +10911,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
                 
                 <!-- 🌤️ Animated Celestial Weather Scene (Apple Dynamic Atmosphere) -->
-                <div class="weather-visual-stage" id="weatherVisualStage">
+                <div class="weather-visual-stage" id="weatherVisualStage" onclick="cycleWeatherScenePreview(event)" title="点击切换演示全部天气动效 (晴/多云/阴/雨/雷/雪/雾)">
                   <div class="weather-anim-box scene-sunny">
                     <div class="weather-ambient-glow glow-sunny"></div>
                     <div class="weather-artboard artboard-sunny">
@@ -12470,72 +12511,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <!-- Top Mascot Icon as Signature Element -->
             <div class="converter-header-card" style="padding: 16px 24px; justify-content: flex-start;">
               <div class="converter-mascot-box" style="gap: 16px;">
-                <!-- 🐱 100% Vector Cyber Kitten Mascot (Zero 404, Interactive Expressions) -->
-                <div id="mouseMascotBadge" class="converter-mascot-badge state-idle" onclick="setMouseMascotState('dragover')" title="飞鼠/小猫小助手 (点击互动)">
-                  <svg viewBox="0 0 64 64" width="46" height="46" style="overflow: visible;">
-                    <defs>
-                      <linearGradient id="catEarGradL" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#c084fc"/>
-                        <stop offset="100%" stop-color="#818cf8"/>
-                      </linearGradient>
-                      <linearGradient id="catHeadGrad" x1="20%" y1="0%" x2="80%" y2="100%">
-                        <stop offset="0%" stop-color="#ffffff"/>
-                        <stop offset="60%" stop-color="#f8fafc"/>
-                        <stop offset="100%" stop-color="#e2e8f0"/>
-                      </linearGradient>
-                      <linearGradient id="catWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.85"/>
-                        <stop offset="100%" stop-color="#818cf8" stop-opacity="0.5"/>
-                      </linearGradient>
-                      <filter id="mascotGlow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(124, 58, 237, 0.3)"/>
-                      </filter>
-                    </defs>
-                    
-                    <!-- Cyber Wings -->
-                    <path d="M 12 36 C 4 30, 4 22, 14 26 C 8 20, 16 16, 20 25 Z" fill="url(#catWingGrad)" opacity="0.9" />
-                    <path d="M 52 36 C 60 30, 60 22, 50 26 C 56 20, 48 16, 44 25 Z" fill="url(#catWingGrad)" opacity="0.9" />
-
-                    <!-- Ears -->
-                    <polygon points="17,25 24,11 31,23" fill="url(#catEarGradL)" />
-                    <polygon points="20,24 24,15 28,23" fill="#f472b6" opacity="0.75" />
-                    <polygon points="47,25 40,11 33,23" fill="url(#catEarGradL)" />
-                    <polygon points="44,24 40,15 36,23" fill="#f472b6" opacity="0.75" />
-
-                    <!-- Fluffy Face -->
-                    <circle cx="32" cy="34" r="19" fill="url(#catHeadGrad)" filter="url(#mascotGlow)" />
-
-                    <!-- Cheeks -->
-                    <ellipse cx="22" cy="38" rx="3.5" ry="2" fill="#fb7185" opacity="0.45" />
-                    <ellipse cx="42" cy="38" rx="3.5" ry="2" fill="#fb7185" opacity="0.45" />
-
-                    <!-- Eyes -->
-                    <g class="mascot-eyes-normal">
-                      <ellipse cx="25" cy="33" rx="3.2" ry="4" fill="#0f172a" />
-                      <circle cx="26" cy="31.5" r="1.3" fill="#ffffff" />
-                      <circle cx="23.8" cy="34.5" r="0.7" fill="#ffffff" />
-                      <ellipse cx="39" cy="33" rx="3.2" ry="4" fill="#0f172a" />
-                      <circle cx="40" cy="31.5" r="1.3" fill="#ffffff" />
-                      <circle cx="37.8" cy="34.5" r="0.7" fill="#ffffff" />
-                    </g>
-
-                    <!-- Nose & Mouth -->
-                    <polygon points="32,36.5 30.5,35 33.5,35" fill="#f43f5e" />
-                    <path d="M 29.5 38 Q 32 40 32 38 Q 32 40 34.5 38" stroke="#475569" stroke-width="1.2" fill="none" stroke-linecap="round" />
-
-                    <!-- Whiskers -->
-                    <line x1="13" y1="36" x2="19" y2="37" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
-                    <line x1="13" y1="39" x2="19" y2="39" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
-                    <line x1="51" y1="36" x2="45" y2="37" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
-                    <line x1="51" y1="39" x2="45" y2="39" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
-
-                    <!-- Star Sparkle -->
-                    <polygon points="32,6 33.5,10 37.5,11 33.5,12 32,16 30.5,12 26.5,11 30.5,10" fill="#fbbf24" />
-                  </svg>
+                <!-- 🐭 Original Iconic FlyingMouse Mascot (Interactive 8-State Expression Switcher) -->
+                <div class="converter-mascot-img-wrap" onclick="cycleMouseMascotTest(event)" title="飞鼠小助手 (点击切换丰富表情)">
+                  <img id="mouseMascotImg" class="converter-mascot-img" src="/assets/mouse-format/mouse-idle.png?v=2" alt="FlyingMouse Mascot" style="width: 58px; height: 58px; object-fit: contain;">
                 </div>
                 <div>
                   <div style="font-size:1.15rem; font-weight:700; color:var(--text, #fff); display:flex; align-items:center; gap:8px;">
-                    <span>飞鼠格式转换工坊</span>
+                    <span style="letter-spacing: -0.02em;">飞鼠格式转换工坊</span>
                   </div>
                   <div id="mouseMascotHint" style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">
                     纯本地极速离线转换 · 100% 隐私安全
@@ -19365,10 +19347,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       lucide.createIcons();
     }
 
+    const MASCOT_STATE_IMAGES = {
+      idle: '/assets/mouse-format/mouse-idle.png?v=2',
+      dragover: '/assets/mouse-format/mouse-upload.png?v=2',
+      analyzing: '/assets/mouse-format/mouse-analyzing.png?v=2',
+      batch: '/assets/mouse-format/mouse-batch.png?v=2',
+      converting: '/assets/mouse-format/mouse-converting.png?v=2',
+      success: '/assets/mouse-format/mouse-success.png?v=2',
+      error: '/assets/mouse-format/mouse-error.png?v=2',
+      ocr: '/assets/mouse-format/mouse-ocr.png?v=2'
+    };
+
     window.setMouseMascotState = function(state) {
-      const badge = document.getElementById('mouseMascotBadge');
-      if (badge) {
-        badge.className = 'converter-mascot-badge state-' + state;
+      const img = document.getElementById('mouseMascotImg');
+      if (img && MASCOT_STATE_IMAGES[state]) {
+        img.src = MASCOT_STATE_IMAGES[state];
+        img.classList.remove('mascot-bounce');
+        void img.offsetWidth;
+        img.classList.add('mascot-bounce');
       }
       const hint = document.getElementById('mouseMascotHint');
       const hints = {
@@ -19376,13 +19372,22 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         dragover: '松开鼠标即可极速装载文件 ⚡',
         analyzing: '正在智能嗅探文件格式编码...',
         batch: '正在多线程批量转换中...',
-        success: '转换完成！已自动就绪 ✨',
+        converting: '正在极速离线转换中，请稍候...',
+        success: '转换完成！文件已就绪 ✨',
         error: '转换遇到异常，请重试',
         ocr: '正在进行高精 OCR 智能文字识别...'
       };
       if (hint && hints[state]) {
         hint.textContent = hints[state];
       }
+    };
+
+    let _testMascotIdx = 0;
+    const _testMascotStates = ['idle', 'dragover', 'analyzing', 'batch', 'converting', 'success', 'ocr', 'error'];
+    window.cycleMouseMascotTest = function(e) {
+      if (e) e.stopPropagation();
+      _testMascotIdx = (_testMascotIdx + 1) % _testMascotStates.length;
+      setMouseMascotState(_testMascotStates[_testMascotIdx]);
     };
 
     function initConverterDropzone() {
@@ -24632,42 +24637,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const text = (condText || '').trim();
       let scene = 'sunny';
       if (text.includes('雷')) scene = 'thunder';
-      else if (text.includes('雪')) scene = 'snow';
-      else if (text.includes('雨') || text.includes('毛毛雨') || text.includes('阵雨')) scene = 'rain';
-      else if (text.includes('多云') || text.includes('阴')) scene = 'cloudy';
-      else if (text.includes('雾') || text.includes('霾')) scene = 'fog';
+      else if (text.includes('雪') || text.includes('霰') || text.includes('冰雹')) scene = 'snow';
+      else if (text.includes('暴雨') || text.includes('大雨') || text.includes('中雨') || text.includes('小雨') || text.includes('阵雨') || text.includes('雨') || text.includes('毛毛雨')) scene = 'rain';
+      else if (text.includes('阴')) scene = 'overcast';
+      else if (text.includes('多云') || text.includes('晴间多云')) scene = 'cloudy';
+      else if (text.includes('雾') || text.includes('霾') || text.includes('浮尘') || text.includes('扬沙')) scene = 'fog';
+      else if (text.includes('晴')) scene = 'sunny';
 
       if (card) {
         card.setAttribute('data-scene', scene);
       }
 
-      if (scene === 'cloudy') {
-        stage.innerHTML = `
-          <div class="weather-anim-box scene-cloudy">
-            <div class="weather-ambient-glow glow-cloudy"></div>
-            <div class="weather-artboard artboard-cloudy">
-              <div class="art-cloudy-sun">
-                <div class="cloudy-sun-body"></div>
-              </div>
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="cloudyGrad1" x1="20%" y1="0%" x2="60%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
-                      <stop offset="40%" stop-color="#f1f5f9" stop-opacity="0.94"/>
-                      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.88"/>
-                    </linearGradient>
-                    <filter id="cloudyShadow1" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgba(15, 23, 42, 0.22)" />
-                    </filter>
-                  </defs>
-                  <path filter="url(#cloudyShadow1)" fill="url(#cloudyGrad1)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        `;
-      } else if (scene === 'sunny') {
+      if (scene === 'sunny') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-sunny">
             <div class="weather-ambient-glow glow-sunny"></div>
@@ -24678,12 +24659,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="art-sun-rays-wrap">
                 <svg class="art-sun-rays-svg" viewBox="0 0 160 160" width="130" height="130">
                   <defs>
-                    <linearGradient id="sunRayGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="sunRayGradFull" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95" />
-                      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.2" />
+                      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.25" />
                     </linearGradient>
                   </defs>
-                  <g stroke="url(#sunRayGrad2)" stroke-width="2.5" stroke-linecap="round">
+                  <g stroke="url(#sunRayGradFull)" stroke-width="2.5" stroke-linecap="round">
                     <line x1="80" y1="14" x2="80" y2="28" />
                     <line x1="80" y1="132" x2="80" y2="146" />
                     <line x1="14" y1="80" x2="28" y2="80" />
@@ -24709,6 +24690,68 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             </div>
           </div>
         `;
+      } else if (scene === 'cloudy') {
+        stage.innerHTML = `
+          <div class="weather-anim-box scene-cloudy">
+            <div class="weather-ambient-glow glow-cloudy"></div>
+            <div class="weather-artboard artboard-cloudy">
+              <div class="art-cloudy-sun">
+                <div class="cloudy-sun-body"></div>
+              </div>
+              <div class="art-cloud-group">
+                <svg viewBox="0 0 160 90" width="144" height="80">
+                  <defs>
+                    <linearGradient id="cloudyGrad2" x1="20%" y1="0%" x2="60%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
+                      <stop offset="40%" stop-color="#f1f5f9" stop-opacity="0.94"/>
+                      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.88"/>
+                    </linearGradient>
+                    <filter id="cloudyShadow2" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgba(15, 23, 42, 0.22)" />
+                    </filter>
+                  </defs>
+                  <path filter="url(#cloudyShadow2)" fill="url(#cloudyGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (scene === 'overcast') {
+        stage.innerHTML = `
+          <div class="weather-anim-box scene-overcast">
+            <div class="weather-ambient-glow glow-overcast"></div>
+            <div class="weather-artboard">
+              <!-- Back Cloud Deck -->
+              <div class="art-back-cloud">
+                <svg viewBox="0 0 160 90" width="120" height="68">
+                  <defs>
+                    <linearGradient id="overcastGradBack" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#cbd5e1" />
+                      <stop offset="100%" stop-color="#94a3b8" />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#overcastGradBack)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                </svg>
+              </div>
+              <!-- Front Cloud Deck -->
+              <div class="art-cloud-group">
+                <svg viewBox="0 0 160 90" width="144" height="80">
+                  <defs>
+                    <linearGradient id="overcastGradFront" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#f1f5f9" />
+                      <stop offset="50%" stop-color="#e2e8f0" />
+                      <stop offset="100%" stop-color="#94a3b8" />
+                    </linearGradient>
+                    <filter id="overcastShadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="rgba(15, 23, 42, 0.3)" />
+                    </filter>
+                  </defs>
+                  <path filter="url(#overcastShadow)" fill="url(#overcastGradFront)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        `;
       } else if (scene === 'rain') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-rain">
@@ -24717,16 +24760,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="art-cloud-group">
                 <svg viewBox="0 0 160 90" width="144" height="80">
                   <defs>
-                    <linearGradient id="artRainCloudGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id="rainCloudGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stop-color="#94a3b8" />
-                      <stop offset="60%" stop-color="#64748b" />
+                      <stop offset="50%" stop-color="#64748b" />
                       <stop offset="100%" stop-color="#475569" />
                     </linearGradient>
-                    <filter id="rainCloudShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <filter id="rainShadow3" x="-20%" y="-20%" width="140%" height="140%">
                       <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgba(15, 23, 42, 0.4)" />
                     </filter>
                   </defs>
-                  <path filter="url(#rainCloudShadow)" fill="url(#artRainCloudGrad)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                  <path filter="url(#rainShadow3)" fill="url(#rainCloudGrad3)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
                 </svg>
               </div>
               <div class="rain-streaks-box">
@@ -24735,6 +24778,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <span class="rain-streak st3"></span>
                 <span class="rain-streak st4"></span>
                 <span class="rain-streak st5"></span>
+              </div>
+              <div class="rain-splash-ripples">
+                <span class="ripple rp1"></span>
+                <span class="ripple rp2"></span>
+                <span class="ripple rp3"></span>
               </div>
             </div>
           </div>
@@ -24747,18 +24795,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="art-cloud-group">
                 <svg viewBox="0 0 160 90" width="144" height="80">
                   <defs>
-                    <linearGradient id="artThunderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id="artThunderGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stop-color="#64748b" />
                       <stop offset="60%" stop-color="#334155" />
-                      <stop offset="100%" stop-color="#1e293b" />
+                      <stop offset="100%" stop-color="#1e1b4b" />
                     </linearGradient>
                   </defs>
-                  <path fill="url(#artThunderGrad)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                  <path fill="url(#artThunderGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
                 </svg>
               </div>
-              <svg class="art-lightning" viewBox="0 0 28 44" width="22" height="36">
-                <polygon points="16,0 4,20 13,20 10,44 26,17 17,17" fill="#fbbf24"/>
-              </svg>
+              <div class="art-lightning-dual">
+                <svg viewBox="0 0 32 46" width="26" height="40">
+                  <polygon points="18,0 4,22 14,22 10,46 28,18 18,18" fill="#fbbf24"/>
+                </svg>
+              </div>
+              <div class="rain-streaks-box" style="opacity:0.75;">
+                <span class="rain-streak st1"></span>
+                <span class="rain-streak st3"></span>
+                <span class="rain-streak st5"></span>
+              </div>
             </div>
           </div>
         `;
@@ -24770,24 +24825,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="art-cloud-group">
                 <svg viewBox="0 0 160 90" width="144" height="80">
                   <defs>
-                    <linearGradient id="artSnowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#f8fafc" />
-                      <stop offset="60%" stop-color="#e2e8f0" />
-                      <stop offset="100%" stop-color="#cbd5e1" />
+                    <linearGradient id="artSnowGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" />
+                      <stop offset="60%" stop-color="#e0f2fe" />
+                      <stop offset="100%" stop-color="#bae6fd" />
                     </linearGradient>
                   </defs>
-                  <path fill="url(#artSnowGrad)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+                  <path fill="url(#artSnowGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
                 </svg>
               </div>
               <div class="snow-crystals-box">
                 <span class="crystal cr1">❄</span>
                 <span class="crystal cr2">❅</span>
-                <span class="crystal cr3">❄</span>
+                <span class="crystal cr3">❆</span>
+                <span class="crystal cr4">❄</span>
+                <span class="crystal cr5">❅</span>
               </div>
             </div>
           </div>
         `;
       } else {
+        // Fog & Mist & Haze
         stage.innerHTML = `
           <div class="weather-anim-box scene-fog">
             <div class="weather-ambient-glow glow-fog"></div>
@@ -24796,6 +24854,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div class="art-fog-bar fb1"></div>
                 <div class="art-fog-bar fb2"></div>
                 <div class="art-fog-bar fb3"></div>
+                <div class="art-fog-bar fb4"></div>
               </div>
             </div>
           </div>
@@ -24904,6 +24963,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (window.lucide) lucide.createIcons();
       }
     }
+
+    // Weather Scene Preview Cycler (Interactive inspection)
+    let _previewSceneIdx = 0;
+    const _previewScenes = [
+      { cond: '晴朗', temp: 30, hum: 58, wind: '1.2 m/s', aqi: '良 65' },
+      { cond: '多云', temp: 28, hum: 65, wind: '2.1 m/s', aqi: '优 42' },
+      { cond: '阴天', temp: 24, hum: 76, wind: '3.4 m/s', aqi: '轻度 108' },
+      { cond: '小雨', temp: 22, hum: 88, wind: '4.2 m/s', aqi: '优 28' },
+      { cond: '雷阵雨', temp: 21, hum: 92, wind: '6.8 m/s', aqi: '优 25' },
+      { cond: '小雪', temp: -2, hum: 45, wind: '3.0 m/s', aqi: '优 35' },
+      { cond: '有雾', temp: 18, hum: 95, wind: '0.8 m/s', aqi: '中度 155' }
+    ];
+    window.cycleWeatherScenePreview = function(e) {
+      if (e) e.stopPropagation();
+      _previewSceneIdx = (_previewSceneIdx + 1) % _previewScenes.length;
+      const s = _previewScenes[_previewSceneIdx];
+      updateWeatherUI({
+        city: document.getElementById('homeWeatherCity')?.textContent || '深圳',
+        temp: s.temp,
+        conditionCn: s.cond,
+        humidity: s.hum,
+        windSpeed: s.wind,
+        aqiDesc: s.aqi
+      });
+      showToast(`🌤️ 已切换天气预览：【${s.cond}】`);
+    };
 
     function cycleWeatherCity() {
       currentCityIndex = (currentCityIndex + 1) % WEATHER_CITIES.length;
