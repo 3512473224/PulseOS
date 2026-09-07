@@ -18,3 +18,8 @@ ENV/
 *.swo
 .DS_Store
 Thumbs.db
+
+*.bak*
+*.tar
+scratch/
+*.log
