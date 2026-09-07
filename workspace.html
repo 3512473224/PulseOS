@@ -490,6 +490,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       white-space: nowrap;
       overflow: hidden;
       max-width: 180px;
+      letter-spacing: 0 !important;
       opacity: 1;
       transform: translateX(0);
       transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
@@ -904,6 +905,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .top-breadcrumbs .curr-view {
       color: #fff;
       font-weight: 600;
+      letter-spacing: 0 !important;
     }
 
     .top-actions {
@@ -11689,7 +11691,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <span class="island-eq-bar bar-3"></span>
             <span class="island-eq-bar bar-4"></span>
           </div>
-          <button class="island-pill-btn" onclick="toggleKuGouPlay(event)" title="播放/暂停">
+          <button class="island-pill-btn" onclick="event.stopPropagation(); toggleKuGouPlay(event);" title="播放/暂停">
             <svg id="islandPillPlaySvg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
@@ -14693,6 +14695,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       devtools: '开发者',
       graph: '全景知识图谱 (Retina)',
       mail: '通用邮箱',
+      ai: 'DeepSeek AI 思考胶囊',
     };
 
     
@@ -14852,6 +14855,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     window.animateIslandOnViewSwitch = animateIslandOnViewSwitch;
 
     function switchView(viewKey) {
+      const target = document.getElementById('view-' + viewKey);
+      if (!target) {
+        console.warn('switchView: target view not found: ' + viewKey);
+        return;
+      }
+
       // 🌟 STEP 0: ANIMATE DYNAMIC ISLAND IN SYNC WITH VIEW SWITCHING!
       animateIslandOnViewSwitch(viewKey);
 
@@ -14877,8 +14886,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       // 🌟 STEP 3: ACTIVATE TARGET SECTION & TRIGGER TOP-TO-BOTTOM BLUR REVEAL
       if (viewKey === 'mail') { loadMailViewData(); }
-
-      const target = document.getElementById('view-' + viewKey);
       if (target) {
         target.classList.add('active');
         target.style.animation = '';
@@ -18077,7 +18084,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       // ⚡ 3. System Actions (系统快捷指令)
       // View Navigators
       { id: 'act-view-home', category: 'actions', title: '打开 个人主页看板 (Home)', desc: '个人专属数字时钟、今日天气、专注番茄钟、快捷入口与酷狗随身听', keywords: 'home dashboard 主页 首页 待办 天气 番茄钟 看板 酷狗 音乐', action: 'view:home', icon: 'layout-dashboard', badge: 'HOME' },
-      { id: 'act-view-overview', category: 'actions', title: '查看 PulseOS 云端遥测总览', desc: '实时监控服务器负载、CPU 波动窗口与系统遥测', keywords: 'overview dashboard pulseos 监控 遥测 大屏 概览', action: 'view:overview', icon: 'activity', badge: 'VIEW' },
       { id: 'act-view-news', category: 'actions', title: '打开 每日热讯快报 (Global Headlines)', desc: '聚合国内外头条要闻、科技前沿、国际风云与 AI 前沿洞察', keywords: 'news headline daily 热点 头条 新闻 快报 科技 资讯', action: 'view:news', icon: 'newspaper', badge: 'NEWS' },
       { id: 'act-view-obsidian', category: 'actions', title: '打开 Obsidian 笔记库 (Notes)', desc: '双向链接知识库、Markdown 实时渲染与架构白板', keywords: 'obsidian notes markdown 笔记 文档 知识库 双链', action: 'view:obsidian', icon: 'book-open', badge: 'NOTES' },
       { id: 'act-view-converter', category: 'actions', title: '打开 飞书全能格式转换工坊 (Converter)', desc: 'Word DOCX 转 PDF、PDF 拆分提字、Excel 转换与离线 OCR', keywords: 'converter format docx pdf excel ocr 格式转换 飞书 飞鼠', action: 'view:converter', icon: 'repeat', badge: 'CONVERT' },
@@ -18102,21 +18108,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       { id: 'act-git-sync', category: 'actions', title: '立即与 GitHub 远端双向同步', desc: '静默执行 Git Pull 与 Push，保持云端本地一致', keywords: 'git sync pull push github 同步 云端 仓库', action: 'action:git-sync', icon: 'refresh-cw', badge: 'SYNC' },
       { id: 'act-git-cfg', category: 'actions', title: '配置 GitHub 访问令牌 (PAT)', desc: '设置 Personal Access Token 与目标同步分支', keywords: 'git token pat config 配置 密钥', action: 'action:git-cfg', icon: 'settings', badge: 'CONFIG' },
       { id: 'act-toggle-theme', category: 'actions', title: '切换日间 / 夜间主题 (Day & Night)', desc: '一键在深邃星空黑与清爽白昼模式之间切换', keywords: 'theme light dark day night 主题 切换 白天 黑夜', action: 'action:toggle-theme', icon: 'sun-medium', badge: 'THEME' },
-      { id: 'act-view-home', category: 'actions', title: '打开 个人主页看板 (Home)', desc: '个人专属数字时钟、今日天气、专注番茄钟、快捷入口、任务看板与酷狗随身听', keywords: 'home dashboard 主页 首页 待办 天气 番茄钟 看板 酷狗 音乐', action: 'view:home', icon: 'layout-dashboard', badge: 'HOME' },
-      { id: 'act-view-news', category: 'actions', title: '打开 每日热讯快报 (Global Headlines)', desc: '聚合 5 条国内外头条要闻、科技前沿、国际风云与 AI 前沿洞察', keywords: 'news headline daily 热点 头条 新闻 快报 新华社 彭博社 科技', action: 'view:news', icon: 'newspaper', badge: 'NEWS' },
-      { id: 'act-view-health', category: 'actions', title: '打开 手机硬件计步与健康中枢', desc: '手机物理传感器步数同步、卡路里消耗、久坐提醒与饮水打卡', keywords: 'health sensor k60 redmi 手机 硬件 运动 步数 健康 久坐 饮水 心率', action: 'view:health', icon: 'heart-pulse', badge: 'HEALTH' },
       { id: 'act-wechat-sync', category: 'actions', title: '一键刷新手机传感器步数', desc: '拉取并刷新今日手机硬件 手机硬件传感器步数与体征指标', keywords: 'k60 sensor sync step 手机 传感器 步数 刷新', action: 'action:wechat-sync', icon: 'refresh-cw', badge: 'SYNC' },
       { id: 'act-wechat-cfg', category: 'actions', title: '配置 手机传感器推送接口 (POST)', desc: '设置 WeRun Token、FastAPI 后端云端中继或手动校准步数', keywords: 'sensor config api macrodroid 手机 传感器 配置 接口', action: 'action:wechat-cfg', icon: 'settings', badge: 'CONFIG' },
-      { id: 'act-view-graph', category: 'actions', title: '查看 3D 全景知识图谱', desc: '以 Force-Directed 物理力导向图可视化全部笔记关联', keywords: 'graph 3d 关系图 知识图谱 关联 双链', action: 'view:graph', icon: 'share-2', badge: 'VIEW' },
       { id: 'act-view-overview', category: 'actions', title: '查看 PulseOS 云端遥测总览', desc: '实时监控服务器负载、CPU 波动窗口与系统遥测', keywords: 'overview dashboard pulseos 监控 遥测 大屏 概览', action: 'view:overview', icon: 'activity', badge: 'VIEW' },
       { id: 'act-port-monitor', category: 'actions', title: '服务器 18 核心端口健康监测雷达 (Port Sentinel)', desc: '实时全量探测生产节点 18 个核心服务端口握手连通性与响应延迟', keywords: 'port monitor sentinel 端口 监测 监控 80 443 22222 8000 8080 8125 8420 8096 5432 3306 6379 9000 3000 2053 tcp http', action: 'view:overview', icon: 'shield-check', badge: 'PORT' },
       { id: 'act-probe-ports', category: 'actions', title: '立即全量扫描 18 个服务器端口', desc: '并发发起 HTTP/TCP 探针测试，刷新全量端口延迟与状态', keywords: 'probe scan port 扫描 探测 端口 刷新', action: 'action:probe-ports', icon: 'rotate-cw', badge: 'SCAN' },
-      { id: 'act-view-cluster', category: 'actions', title: '查看 服务器集群与架构监控', desc: '实时监控 Debian 节点、Docker 容器与网络流速', keywords: 'cluster server vps cpu memory 监控 服务器 集群', action: 'view:cluster', icon: 'server', badge: 'VIEW' },
+      { id: 'act-view-cluster', category: 'actions', title: '查看 服务器集群与架构监控', desc: '实时监控 Debian 节点、Docker 容器与网络流速', keywords: 'cluster server vps cpu memory 监控 服务器 集群', action: 'view:overview', icon: 'server', badge: 'VIEW' },
       { id: 'act-view-ai', category: 'actions', title: '打开 DeepSeek AI 灵感思考胶囊', desc: '与 DeepSeek 智能模型对话，润色笔记与代码推导', keywords: 'ai deepseek r1 gpt 智能 思考 对话', action: 'view:ai', icon: 'sparkles', badge: 'AI' },
       { id: 'act-kugou-play', category: 'actions', title: '酷狗音乐 · 播放 / 暂停', desc: '播放或暂停当前正在试听的酷狗精选歌单曲目', keywords: 'kugou music play pause 酷狗 音乐 播放 暂停 歌曲 听歌 周杰伦', action: 'action:kugou-play', icon: 'music', badge: 'MUSIC' },
       { id: 'act-kugou-search', category: 'actions', title: '酷狗音乐 · 在线搜歌', desc: '输入歌曲名或歌手全网检索酷狗音乐曲库', keywords: 'kugou search music song 酷狗 搜索 搜歌 歌曲 歌手 周杰伦 林俊杰', action: 'action:kugou-search', icon: 'search', badge: 'MUSIC' },
       { id: 'act-kugou-bind', category: 'actions', title: '酷狗音乐 · 绑定个人账号与歌单', desc: '配置酷狗用户 ID、歌单链接或切换预置精选歌单', keywords: 'kugou bind account playlist 酷狗 绑定 账号 歌单 配置', action: 'action:kugou-bind', icon: 'link-2', badge: 'CONFIG' },
-      { id: 'act-view-scratch', category: 'actions', title: '打开 随手记便签簿 (Scratchpad)', desc: '本地持久化暂存草稿、待办清单与临时代码', keywords: 'scratchpad todo note 便签 暂存 草稿', action: 'view:scratchpad', icon: 'edit-3', badge: 'VIEW' },
+      { id: 'act-view-scratch', category: 'actions', title: '打开 随手记便签簿 (Scratchpad)', desc: '本地持久化暂存草稿、待办清单与临时代码', keywords: 'scratchpad todo note 便签 暂存 草稿', action: 'action:toggle-scratchpad', icon: 'edit-3', badge: 'MEMO' },
 
       // 🌐 4. Bookmarks (高频书签导航)
       { id: 'bm-github', category: 'bookmarks', title: 'GitHub 代码仓库', desc: 'https://github.com/3512473224', keywords: 'github git repo 代码 仓库 链接', action: 'url:https://github.com/3512473224', icon: 'git-branch', badge: 'LINK' },
@@ -22137,6 +22139,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     function onPomoSessionComplete() {
       playPomoChime();
+      if (typeof syncCyberCatState === 'function') syncCyberCatState();
       if (pomoMode === 'focus') {
         const newCount = incrementTodayPomoCount();
         updatePomoStatsUI();
@@ -22183,6 +22186,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (window.lucide) lucide.createIcons();
 
       updatePomoDisplay();
+      if (typeof syncCyberCatState === 'function') syncCyberCatState();
     }
 
     function updatePomoDisplay() {
@@ -23757,6 +23761,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         }
         if (typeof isImmersiveCanvasActive !== 'undefined' && isImmersiveCanvasActive) {
           try { syncImmersiveCanvasTrack(); } catch(e){}
+        }
+        if (typeof updateTopDynamicIslandMusicUI === 'function') {
+          updateTopDynamicIslandMusicUI(track, kugouIsPlaying);
         }
       }
 
@@ -27897,6 +27904,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const textarea = document.getElementById('scratchpadTextarea');
       if (!panel) return;
       panel.classList.add('active');
+      if (textarea && (!textarea.value || !textarea.value.trim())) {
+        try {
+          const saved = localStorage.getItem('pulseos_quick_scratchpad');
+          if (saved) {
+            textarea.value = saved;
+            if (typeof updateScratchpadStats === 'function') updateScratchpadStats(saved);
+          }
+        } catch(e) {}
+      }
       setTimeout(() => {
         if (textarea) textarea.focus();
       }, 80);
@@ -27974,6 +27990,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             content: content,
             updatedAt: now.toISOString()
           });
+          try {
+            localStorage.setItem('ppday_vault_notes', JSON.stringify(vaultNotes));
+          } catch(e) {
+            console.warn('Failed to save vaultNotes to localStorage', e);
+          }
           if (typeof renderTreeDOM === 'function') renderTreeDOM();
           if (typeof showToast === 'function') showToast(`📁 已存入 Obsidian 笔记库: 《${filename}》`);
           closeQuickScratchpad();
@@ -27988,10 +28009,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
 
-    // Auto Boot All New Feature Engines on Startup
-    try { initAudioVisualizerEngine(); } catch(e) { console.warn('initAudioVisualizerEngine error', e); }
-    try { initCyberCatCompanion(); } catch(e) { console.warn('initCyberCatCompanion error', e); }
-    try { initQuickScratchpad(); } catch(e) { console.warn('initQuickScratchpad error', e); }
+    // Auto Boot All New Feature Engines on Startup (DOM Ready Guaranteed)
+    function bootWorkspaceEngines() {
+      try { initAudioVisualizerEngine(); } catch(e) { console.warn('initAudioVisualizerEngine error', e); }
+      try { initCyberCatCompanion(); } catch(e) { console.warn('initCyberCatCompanion error', e); }
+      try { initQuickScratchpad(); } catch(e) { console.warn('initQuickScratchpad error', e); }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bootWorkspaceEngines);
+    } else {
+      bootWorkspaceEngines();
+    }
 
 </script>
   <!-- 🖼️ APPLE MUSIC STYLE IMMERSIVE CANVAS VIEW (全屏沉浸画报模式) -->
