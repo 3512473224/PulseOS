@@ -10596,6 +10596,23 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: block;
       background: transparent;
     }
+    html.theme-light .mail-reader-pane {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light .mail-reader-header {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light .mail-body-frame-wrap {
+      background: #ffffff !important;
+    }
+    .mail-reader-pane.mail-eyecare-active,
+    .mail-reader-pane.mail-eyecare-active .mail-reader-header,
+    .mail-reader-pane.mail-eyecare-active .mail-body-frame-wrap {
+      background: #faf6ee !important;
+      border-color: rgba(217, 119, 6, 0.2) !important;
+    }
 </style>
 </head>
 <body>
@@ -11444,9 +11461,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
               </div>
               <div class="mail-hero-actions">
-                <div class="mail-auto-sync-badge" id="mailAutoSyncBadge" title="已启用 5 秒极速全自动轮询同步，无需手动拉取">
+                <div class="mail-auto-sync-badge" id="mailAutoSyncBadge" title="全渠道邮箱极速自动轮询同步已就绪，无需手动拉取">
                   <span class="mail-auto-sync-dot"></span>
-                  <span>5s 极速自动同步中</span>
+                  <span>自动同步中</span>
                 </div>
                 <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest" title="由 DeepSeek 提炼全量信件关键信息">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -11619,9 +11636,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                           <i data-lucide="sparkles" id="readerAiIcon" style="width:13px;height:13px;color:#9333ea;"></i>
                           <span>AI 智能速读</span>
                         </button>
-                        <button class="btn btn-ghost" onclick="toggleMailReaderAppearance()" id="btnReaderAppearance" title="切换信件浅色原貌/护眼暗色底色">
-                          <i data-lucide="sun-moon" id="readerThemeIcon" style="width:13px;height:13px;"></i>
-                          <span id="lblReaderAppearance">信件底色</span>
+                        <button class="btn btn-ghost" onclick="toggleMailReaderAppearance()" id="btnReaderAppearance" title="切换信件浅色原貌 / 柔和护眼 / 深色护眼">
+                          <i data-lucide="eye" id="readerThemeIcon" style="width:13px;height:13px;"></i>
+                          <span id="lblReaderAppearance">浅色原貌</span>
                         </button>
                         <button class="btn btn-ghost" onclick="copyCurrentEmailBody()" title="复制纯文本正文">
                           <i data-lucide="copy" style="width:13px;height:13px;"></i>
@@ -25196,7 +25213,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     try { fetchDailyNews(); } catch (e) { console.warn('fetchDailyNews error', e); }
     try { initPomodoroTimer(); } catch (e) { console.warn('initPomodoroTimer error', e); }
     try { initKuGouMusicPlayer(); } catch (e) { console.warn('initKuGouMusicPlayer error', e); }
-    try { initMailAutoSyncEngine(); } catch (e) { console.warn('initMailAutoSyncEngine error', e); }
     try { updateQualityUI(); } catch (e) { console.warn('updateQualityUI error', e); }
     try { 
       switchView('home');
@@ -25899,7 +25915,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     let currentMailSearch = '';
     let currentSelectedMailId = null;
     let mailListCache = [];
-    let userManualEmailTheme = null;   // null: 跟随系统, 'light': 浅色原貌, 'dark': 护眼深色
+    let userManualEmailTheme = null;   // null: 跟随系统, 'light': 浅色原貌, 'eyecare': 柔和护眼, 'dark': 深色护眼
+    let mailAutoSyncTimer = null;
+    let isMailAutoSyncing = false;
 
     function escapeMailSafe(str) {
       if (!str) return '';
@@ -25919,12 +25937,43 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     function syncMailReaderThemeWithWorkspace() {
       const activeTheme = userManualEmailTheme || getWorkspaceTheme();
       const iframe = document.getElementById('readerHtmlIframe');
-      if (iframe && iframe.contentWindow) {
+      const wrap = document.querySelector('.mail-body-frame-wrap');
+      const readerPane = document.querySelector('.mail-reader-pane');
+      
+      // 1. Immediately style container wrap and reader pane
+      if (wrap) {
+        if (activeTheme === 'eyecare') {
+          wrap.style.background = '#faf6ee';
+          if (readerPane) readerPane.classList.add('mail-eyecare-active');
+        } else if (activeTheme === 'light') {
+          wrap.style.background = '#ffffff';
+          if (readerPane) readerPane.classList.remove('mail-eyecare-active');
+        } else {
+          wrap.style.background = '#0f172a';
+          if (readerPane) readerPane.classList.remove('mail-eyecare-active');
+        }
+      }
+
+      // 2. Direct DOM & Window synchronization into iframe
+      if (iframe) {
         try {
-          if (iframe.contentWindow.setPulseosTheme) {
-            iframe.contentWindow.setPulseosTheme(activeTheme);
-          } else if (iframe.contentDocument && iframe.contentDocument.documentElement) {
+          if (iframe.contentWindow) {
+            if (typeof iframe.contentWindow.setPulseosTheme === 'function') {
+              iframe.contentWindow.setPulseosTheme(activeTheme);
+            }
+            if (typeof iframe.contentWindow.applyTheme === 'function') {
+              iframe.contentWindow.applyTheme(activeTheme);
+            }
+            iframe.contentWindow.postMessage({ action: 'setTheme', theme: activeTheme }, '*');
+          }
+          if (iframe.contentDocument && iframe.contentDocument.documentElement) {
+            const cls = (activeTheme === 'eyecare') ? 'theme-eyecare' : ((activeTheme === 'light') ? 'theme-light' : 'theme-dark');
+            iframe.contentDocument.documentElement.className = cls;
             iframe.contentDocument.documentElement.setAttribute('data-pulseos-theme', activeTheme);
+            if (iframe.contentDocument.body) {
+              iframe.contentDocument.body.style.backgroundColor = (activeTheme === 'eyecare') ? '#faf6ee' : ((activeTheme === 'light') ? '#ffffff' : '#0f172a');
+              iframe.contentDocument.body.style.color = (activeTheme === 'eyecare') ? '#2d261e' : ((activeTheme === 'light') ? '#0f172a' : '#e2e8f0');
+            }
           }
         } catch (e) {
           // Cross-origin fallback: reload with theme parameter
@@ -25949,17 +25998,49 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     mailThemeObserver.observe(document.documentElement, { attributes: true });
 
     function toggleMailReaderAppearance() {
-      const current = userManualEmailTheme || getWorkspaceTheme();
-      userManualEmailTheme = (current === 'light') ? 'dark' : 'light';
+      const workspaceTheme = getWorkspaceTheme();
+      const current = userManualEmailTheme || workspaceTheme;
+
+      if (current === 'light') {
+        userManualEmailTheme = 'eyecare';
+      } else if (current === 'eyecare') {
+        userManualEmailTheme = 'dark';
+      } else {
+        userManualEmailTheme = 'light';
+      }
+
       syncMailReaderThemeWithWorkspace();
     }
 
     function updateReaderAppearanceButtonText() {
       const lbl = document.getElementById('lblReaderAppearance');
-      const icon = document.getElementById('readerThemeIcon');
-      const current = userManualEmailTheme || getWorkspaceTheme();
-      if (lbl) {
-        lbl.textContent = (current === 'light') ? '浅色原貌' : '护眼深色';
+      const btn = document.getElementById('btnReaderAppearance');
+      const workspaceTheme = getWorkspaceTheme();
+      const current = userManualEmailTheme || workspaceTheme;
+
+      if (!lbl) return;
+
+      if (current === 'eyecare') {
+        lbl.textContent = '柔和护眼';
+        if (btn) {
+          btn.style.borderColor = 'rgba(217, 119, 6, 0.4)';
+          btn.style.color = '#d97706';
+          btn.style.background = 'rgba(245, 158, 11, 0.12)';
+        }
+      } else if (current === 'dark') {
+        lbl.textContent = '深色护眼';
+        if (btn) {
+          btn.style.borderColor = 'rgba(125, 125, 125, 0.25)';
+          btn.style.color = 'var(--mail-text-main)';
+          btn.style.background = 'var(--mail-card-bg)';
+        }
+      } else {
+        lbl.textContent = '浅色原貌';
+        if (btn) {
+          btn.style.borderColor = 'var(--mail-border)';
+          btn.style.color = 'var(--mail-text-main)';
+          btn.style.background = 'var(--mail-card-bg)';
+        }
       }
     }
 
@@ -26181,6 +26262,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           const targetTheme = userManualEmailTheme || getWorkspaceTheme();
           const iframe = document.getElementById('readerHtmlIframe');
           if (iframe) {
+            iframe.onload = () => { syncMailReaderThemeWithWorkspace(); };
             iframe.src = `/api/mail/raw_html/${mailId}?theme=${targetTheme}`;
           }
         }
@@ -26260,10 +26342,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     });
 
-    // 5s Automatic Refresh & Silent IMAP Sync Engine
-    let mailAutoSyncTimer = null;
-    let isMailAutoSyncing = false;
-
+    // Automatic Background Refresh & Silent IMAP Sync Engine
     function initMailAutoSyncEngine() {
       if (mailAutoSyncTimer) clearInterval(mailAutoSyncTimer);
       
