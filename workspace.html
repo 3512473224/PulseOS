@@ -9984,6 +9984,100 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       line-height: 1.65;
     }
 
+    /* 🌟 AI Digest Glowing & Shimmer Loading Animation */
+    @keyframes aiShimmerSweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    @keyframes aiOrbPulse {
+      0% { transform: scale(0.92); box-shadow: 0 0 8px rgba(168, 85, 247, 0.35); }
+      100% { transform: scale(1.08); box-shadow: 0 0 22px rgba(168, 85, 247, 0.75), 0 0 35px rgba(56, 189, 248, 0.4); }
+    }
+    .mail-ai-loading-stage {
+      padding: 12px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .mail-ai-glow-pill {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .mail-ai-orb {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #c084fc, #9333ea 55%, #4f46e5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+      animation: aiOrbPulse 1.8s ease-in-out infinite alternate;
+    }
+    .mail-ai-orb-sparkle {
+      animation: mailSpin 4s linear infinite;
+    }
+    .mail-ai-loading-status {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .mail-ai-step-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #9333ea;
+      letter-spacing: -0.01em;
+    }
+    html:not(.theme-light) .mail-ai-step-title {
+      color: #c084fc;
+    }
+    .mail-ai-step-desc {
+      font-size: 0.77rem;
+      color: var(--mail-text-dim);
+      line-height: 1.4;
+      transition: all 0.3s ease;
+    }
+    .mail-ai-skeleton-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding-top: 2px;
+    }
+    .mail-ai-shimmer-bar {
+      height: 11px;
+      border-radius: 6px;
+      background: rgba(168, 85, 247, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    html.theme-light .mail-ai-shimmer-bar {
+      background: rgba(147, 51, 234, 0.08);
+    }
+    .mail-ai-shimmer-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      animation: aiShimmerSweep 1.6s infinite;
+    }
+    html:not(.theme-light) .mail-ai-shimmer-bar::after {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    }
+    .mail-ai-badge-live {
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: #059669;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    html:not(.theme-light) .mail-ai-badge-live {
+      color: #10b981;
+    }
+
     /* Stats Chips & Folder Switcher */
     .mail-stats-bar {
       display: flex;
@@ -11466,10 +11560,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <span>自动同步中</span>
                 </div>
                 <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest" title="由 DeepSeek 提炼全量信件关键信息">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg id="mailAiDigestIcon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M7.757 16.243l-2.121 2.121m12.728 0l-2.121-2.121M7.757 7.757L5.636 5.636"/>
                   </svg>
-                  <span>AI 资产早报</span>
+                  <span id="mailAiDigestBtnLabel">AI 资产早报</span>
                 </button>
               </div>
             </div>
@@ -11478,10 +11572,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <div class="mail-ai-digest-card" id="mailAiDigestCard" style="display:none;">
               <div class="mail-ai-digest-header">
                 <div style="display:flex; align-items:center; gap:8px; color:#9333ea; font-weight:700; font-size:0.88rem;">
-                  <i data-lucide="bot" style="width:16px;height:16px;"></i>
+                  <i data-lucide="sparkles" style="width:16px;height:16px;color:#9333ea;"></i>
                   <span>DeepSeek 全渠道邮件资产早报</span>
+                  <span class="mail-ai-badge-live" id="mailAiBadgeLive" style="display:none;">已就绪</span>
                 </div>
-                <button class="btn btn-ghost" onclick="document.getElementById('mailAiDigestCard').style.display='none'" style="padding:2px 8px; font-size:0.75rem;">关闭</button>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <button class="btn btn-ghost" id="btnCopyMailDigest" onclick="copyMailAiDigest()" style="padding:2px 8px; font-size:0.75rem; display:none;" title="一键复制早报 Markdown 内容">
+                    <i data-lucide="copy" style="width:12px;height:12px;"></i>
+                    <span id="lblCopyMailDigest">复制早报</span>
+                  </button>
+                  <button class="btn btn-ghost" onclick="document.getElementById('mailAiDigestCard').style.display='none'" style="padding:2px 8px; font-size:0.75rem;">关闭</button>
+                </div>
               </div>
               <div class="mail-ai-digest-body" id="mailAiDigestBody"></div>
             </div>
@@ -26377,33 +26478,113 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }, 5000);
     }
 
+    let lastMailAiDigestReport = '';
+    let mailAiProgressTimer = null;
+
     async function generateMailAiDigest() {
       const card = document.getElementById('mailAiDigestCard');
       const body = document.getElementById('mailAiDigestBody');
+      const btn = document.getElementById('btnMailAiDigest');
       const icon = document.getElementById('mailAiDigestIcon');
-      if (icon) icon.classList.add('animate-spin');
+      const lbl = document.getElementById('mailAiDigestBtnLabel');
+      const copyBtn = document.getElementById('btnCopyMailDigest');
+      const liveBadge = document.getElementById('mailAiBadgeLive');
 
-      if (card) card.style.display = 'block';
-      if (body) body.innerHTML = '<div style="display:flex; align-items:center; gap:8px;"><i data-lucide="loader-2" class="animate-spin" style="width:16px;height:16px;"></i> DeepSeek 正在深度研读聚合信件，生成资产与待办早报...</div>';
-      if (window.lucide) lucide.createIcons();
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add('animate-spin');
+      if (lbl) lbl.textContent = 'DeepSeek 研析中...';
+      if (copyBtn) copyBtn.style.display = 'none';
+      if (liveBadge) liveBadge.style.display = 'none';
+
+      if (card) {
+        card.style.display = 'block';
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      if (body) {
+        body.innerHTML = `
+          <div class="mail-ai-loading-stage">
+            <div class="mail-ai-glow-pill">
+              <div class="mail-ai-orb">
+                <svg class="mail-ai-orb-sparkle" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M12 2L14.2 8.3L20.5 10.5L14.2 12.7L12 19L9.8 12.7L3.5 10.5L9.8 8.3L12 2Z"/>
+                </svg>
+              </div>
+              <div class="mail-ai-loading-status">
+                <div class="mail-ai-step-title">DeepSeek 正在深度研析全量邮件资产...</div>
+                <div class="mail-ai-step-desc" id="mailAiStepDesc">正在并行聚合 4 大核心邮箱最近信件流水与安全日志...</div>
+              </div>
+            </div>
+            <div class="mail-ai-skeleton-wrap">
+              <div class="mail-ai-shimmer-bar" style="width: 82%;"></div>
+              <div class="mail-ai-shimmer-bar" style="width: 96%;"></div>
+              <div class="mail-ai-shimmer-bar" style="width: 68%;"></div>
+              <div class="mail-ai-shimmer-bar" style="width: 88%;"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Dynamic multi-stage progress description
+      const steps = [
+        '正在并行聚合 4 大核心邮箱最近信件流水与安全日志...',
+        'DeepSeek 正在深度研判关键待办、工作技术订阅与安全变动...',
+        '正在快速过滤推销邮件，智能提炼资产动态与核心行动项...',
+        '研报生成完毕，正在精美格式化 Markdown 资产简报...'
+      ];
+      let stepIdx = 0;
+      if (mailAiProgressTimer) clearInterval(mailAiProgressTimer);
+      mailAiProgressTimer = setInterval(() => {
+        stepIdx = (stepIdx + 1) % steps.length;
+        const descEl = document.getElementById('mailAiStepDesc');
+        if (descEl) descEl.textContent = steps[stepIdx];
+      }, 2500);
 
       try {
-        const res = await fetch('/api/mail/ai_digest', { method: 'POST' });
+        let res;
+        try {
+          res = await fetch('/api/mail/ai_digest', { method: 'POST' });
+        } catch (netErr) {
+          res = await fetch('/api/mail/ai-digest', { method: 'POST' });
+        }
         const json = await res.json();
-        if (json && json.data && json.data.report) {
+        const report = (json.data && (json.data.report || json.data.summary)) || json.summary || json.report;
+
+        if (report) {
+          lastMailAiDigestReport = report;
           if (window.marked) {
-            body.innerHTML = marked.parse(json.data.report);
+            body.innerHTML = marked.parse(report);
           } else {
-            body.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(json.data.report)}</pre>`;
+            body.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(report)}</pre>`;
           }
+          if (copyBtn) copyBtn.style.display = 'inline-flex';
+          if (liveBadge) liveBadge.style.display = 'inline-block';
         } else {
-          body.innerHTML = `<div style="color:#ef4444;">${json.detail || '暂无邮件或生成早报失败'}</div>`;
+          body.innerHTML = `<div style="color:#ef4444; padding:8px 0;">${json.message || json.detail || '暂无邮件或生成早报失败'}</div>`;
         }
       } catch (e) {
-        body.innerHTML = '<div style="color:#ef4444;">网络请求失败，请稍后重试</div>';
+        body.innerHTML = `
+          <div style="color:#ef4444; padding:8px 0; display:flex; align-items:center; gap:8px;">
+            <span>AI 早报生成超时或异常，请检查网络后重试</span>
+            <button class="btn btn-ghost" onclick="generateMailAiDigest()" style="padding:2px 8px; font-size:0.75rem;">重试</button>
+          </div>
+        `;
       } finally {
+        if (mailAiProgressTimer) clearInterval(mailAiProgressTimer);
+        if (btn) btn.disabled = false;
         if (icon) icon.classList.remove('animate-spin');
+        if (lbl) lbl.textContent = 'AI 资产早报';
         if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function copyMailAiDigest() {
+      if (!lastMailAiDigestReport) return;
+      navigator.clipboard.writeText(lastMailAiDigestReport);
+      const lbl = document.getElementById('lblCopyMailDigest');
+      if (lbl) {
+        lbl.textContent = '已复制!';
+        setTimeout(() => { lbl.textContent = '复制早报'; }, 2000);
       }
     }
 
@@ -26416,22 +26597,39 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       if (aiIcon) aiIcon.classList.add('animate-spin');
       if (aiBox) aiBox.style.display = 'block';
-      if (aiText) aiText.innerHTML = 'DeepSeek 正在提炼要点...';
+      if (aiText) {
+        aiText.innerHTML = `
+          <div style="padding:4px 0; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:0.78rem; color:#9333ea; font-weight:600;">
+              <span class="mail-live-dot" style="background:#9333ea; box-shadow:0 0 6px #9333ea;"></span>
+              <span>DeepSeek 正在提炼此邮件核心要点与行动项...</span>
+            </div>
+            <div class="mail-ai-shimmer-bar" style="width:92%; height:9px;"></div>
+            <div class="mail-ai-shimmer-bar" style="width:78%; height:9px;"></div>
+          </div>
+        `;
+      }
 
       try {
-        const res = await fetch(`/api/mail/summarize/${currentSelectedMailId}`, { method: 'POST' });
+        let res;
+        try {
+          res = await fetch(`/api/mail/ai-summary/${currentSelectedMailId}`, { method: 'POST' });
+        } catch(e) {
+          res = await fetch(`/api/mail/summarize/${currentSelectedMailId}`, { method: 'POST' });
+        }
         const json = await res.json();
-        if (json && json.data && json.data.summary) {
+        const summary = (json.data && json.data.summary) || json.summary;
+        if (summary) {
           if (window.marked) {
-            aiText.innerHTML = marked.parse(json.data.summary);
+            aiText.innerHTML = marked.parse(summary);
           } else {
-            aiText.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(json.data.summary)}</pre>`;
+            aiText.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(summary)}</pre>`;
           }
         } else {
-          aiText.innerHTML = `<div style="color:#ef4444;">${json.detail || '提炼失败'}</div>`;
+          aiText.innerHTML = `<div style="color:#ef4444;">${json.message || json.detail || '提炼失败'}</div>`;
         }
       } catch (e) {
-        aiText.innerHTML = '<div style="color:#ef4444;">请求异常</div>';
+        aiText.innerHTML = '<div style="color:#ef4444;">请求异常，请稍后重试</div>';
       } finally {
         if (aiIcon) aiIcon.classList.remove('animate-spin');
       }
