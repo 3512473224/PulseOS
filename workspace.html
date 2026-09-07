@@ -9016,7 +9016,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   
 
     /* ======================================================== */
-    /* 🌟 TOP DYNAMIC ISLAND OTP TOAST (极客灵动岛悬浮验证码弹窗) */
+    /* 🌟 TOP DYNAMIC ISLAND OTP TOAST (灵动岛悬浮验证码弹窗) */
     /* ======================================================== */
     .top-dynamic-island {
       position: fixed;
@@ -9407,24 +9407,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
 
 
-    /* ========================================================================= */
+        /* ========================================================================= */
     /* 📬 ULTRA-PREMIUM THEME-ADAPTIVE MAILBOX HUB (全域自适应通用邮箱中枢)       */
     /* ========================================================================= */
+    @keyframes mailSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: mailSpin 0.9s linear infinite !important;
+    }
+
     :root {
-      --mail-bg: #050510;
-      --mail-panel-bg: rgba(13, 15, 26, 0.78);
-      --mail-card-bg: rgba(255, 255, 255, 0.025);
-      --mail-card-hover: rgba(255, 255, 255, 0.055);
-      --mail-card-active: rgba(56, 189, 248, 0.1);
+      --mail-bg: #090d16;
+      --mail-panel-bg: rgba(15, 23, 42, 0.65);
+      --mail-card-bg: rgba(255, 255, 255, 0.03);
+      --mail-card-hover: rgba(255, 255, 255, 0.06);
+      --mail-card-active: rgba(56, 189, 248, 0.08);
       --mail-card-active-border: rgba(56, 189, 248, 0.4);
-      --mail-border: rgba(255, 255, 255, 0.07);
+      --mail-border: rgba(255, 255, 255, 0.08);
       --mail-border-subtle: rgba(255, 255, 255, 0.04);
       --mail-text-main: #f8fafc;
       --mail-text-sub: #cbd5e1;
       --mail-text-dim: #94a3b8;
-      --mail-hero-grad: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
-      --mail-hero-border: rgba(56, 189, 248, 0.25);
-      --mail-header-bg: rgba(255, 255, 255, 0.015);
+      --mail-hero-grad: rgba(15, 23, 42, 0.7);
+      --mail-hero-border: rgba(255, 255, 255, 0.09);
+      --mail-header-bg: rgba(255, 255, 255, 0.02);
       --mail-reader-bg: #0b0d18;
       --mail-body-bg: #0d0f1a;
       --mail-chip-bg: rgba(255, 255, 255, 0.035);
@@ -9433,38 +9441,38 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       --mail-chip-active-color: #38bdf8;
       --mail-search-bg: rgba(255, 255, 255, 0.035);
       --mail-search-border: rgba(255, 255, 255, 0.08);
-      --mail-tabs-bg: rgba(255, 255, 255, 0.03);
-      --mail-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+      --mail-tabs-bg: rgba(255, 255, 255, 0.035);
+      --mail-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
       --mail-art-grad-start: rgba(56, 189, 248, 0.12);
       --mail-art-grad-end: rgba(168, 85, 247, 0.04);
     }
 
-    /* ☀️ High-Contrast Daytime Light Theme Adaptation */
+    /* ☀️ High-End Minimalist Daytime Light Theme (Linear / Apple Clean Pro) */
     html.theme-light {
       --mail-bg: #f8fafc;
       --mail-panel-bg: #ffffff;
       --mail-card-bg: #ffffff;
       --mail-card-hover: #f8fafc;
-      --mail-card-active: rgba(2, 132, 199, 0.08);
-      --mail-card-active-border: rgba(2, 132, 199, 0.45);
+      --mail-card-active: #f0f9ff;
+      --mail-card-active-border: #7dd3fc;
       --mail-border: #e2e8f0;
       --mail-border-subtle: #f1f5f9;
       --mail-text-main: #0f172a;
       --mail-text-sub: #334155;
       --mail-text-dim: #64748b;
-      --mail-hero-grad: linear-gradient(135deg, #ffffff 0%, #f8fafc 55%, #f0f9ff 100%);
-      --mail-hero-border: rgba(2, 132, 199, 0.22);
+      --mail-hero-grad: #ffffff;
+      --mail-hero-border: #e2e8f0;
       --mail-header-bg: #f8fafc;
       --mail-reader-bg: #ffffff;
       --mail-body-bg: #ffffff;
       --mail-chip-bg: #ffffff;
       --mail-chip-border: #e2e8f0;
-      --mail-chip-active-bg: rgba(2, 132, 199, 0.1);
-      --mail-chip-active-color: #0284c7;
+      --mail-chip-active-bg: #0f172a;
+      --mail-chip-active-color: #ffffff;
       --mail-search-bg: #ffffff;
       --mail-search-border: #e2e8f0;
       --mail-tabs-bg: #f1f5f9;
-      --mail-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06);
+      --mail-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
       --mail-art-grad-start: rgba(2, 132, 199, 0.08);
       --mail-art-grad-end: rgba(147, 51, 234, 0.04);
     }
@@ -9484,17 +9492,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-sizing: border-box;
     }
 
-    /* 🌟 Hero Header Card */
+    /* 🌟 Hero Header Card (Apple Clean Pro Style) */
     .mail-hero-card {
       background: var(--mail-hero-grad) !important;
       border: 1px solid var(--mail-hero-border) !important;
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 16px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 18px;
       box-shadow: var(--mail-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .mail-hero-main-content {
@@ -9505,44 +9515,46 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1px solid rgba(2, 132, 199, 0.2);
       color: #0284c7;
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 5px;
     }
     html:not(.theme-light) .mail-hero-badge {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.3);
       color: #38bdf8;
     }
     .mail-live-ring {
       position: relative;
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
     .mail-live-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 6px #10b981;
       display: inline-block;
       animation: mailLivePulse 2s infinite ease-in-out;
     }
     @keyframes mailLivePulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.35; transform: scale(0.8); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
     .mail-hero-title {
-      font-size: 1.3rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 700;
       color: var(--mail-text-main) !important;
-      margin: 3px 0 5px;
+      margin: 2px 0 5px;
       letter-spacing: -0.02em;
       display: flex;
       align-items: baseline;
@@ -9550,10 +9562,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       flex-wrap: wrap;
     }
     .mail-hero-title-sub {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 500;
       color: var(--mail-text-dim) !important;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
     }
     .mail-hero-summary {
       display: flex;
@@ -9565,7 +9577,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .mail-hero-pill {
       padding: 1px 7px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 0.71rem;
       font-weight: 600;
       font-family: var(--font-mono);
@@ -9573,10 +9585,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: center;
       gap: 4px;
     }
-    .pill-qq { background: rgba(2, 132, 199, 0.1); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.25); }
-    .pill-g1 { background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); }
-    .pill-g2 { background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25); }
-    .pill-g3 { background: rgba(168, 85, 247, 0.1); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.25); }
+    .pill-qq { background: rgba(2, 132, 199, 0.08); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.2); }
+    .pill-g1 { background: rgba(16, 185, 129, 0.08); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .pill-g2 { background: rgba(245, 158, 11, 0.08); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .pill-g3 { background: rgba(168, 85, 247, 0.08); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.2); }
     html:not(.theme-light) .pill-qq { color: #38bdf8; }
     html:not(.theme-light) .pill-g1 { color: #34d399; }
     html:not(.theme-light) .pill-g2 { color: #fbbf24; }
@@ -9590,7 +9602,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-size: 0.76rem;
     }
 
-    /* 🌟 Elevated Action Buttons (Matching Frosted Glass Styling) */
+    /* 🌟 Action Buttons (Modern Linear / Apple Minimalist Clean Design) */
     .mail-hero-actions {
       display: flex;
       align-items: center;
@@ -9600,80 +9612,79 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-btn-action {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      height: 38px;
-      padding: 0 16px;
-      border-radius: 9999px;
-      font-size: 0.8rem;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: -0.01em;
       cursor: pointer;
       white-space: nowrap;
       user-select: none;
       box-sizing: border-box;
-      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .mail-btn-action:active {
       transform: scale(0.97) !important;
     }
+    .mail-btn-action:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
 
     /* Primary Live Sync Button */
     .mail-btn-sync {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      background: #0284c7;
       color: #ffffff !important;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
     .mail-btn-sync:hover {
-      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
+      background: #0369a1;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
     }
     html:not(.theme-light) .mail-btn-sync {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.35) 0%, rgba(3, 105, 161, 0.55) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      color: #e0f2fe !important;
+      background: rgba(2, 132, 199, 0.25);
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
     }
     html:not(.theme-light) .mail-btn-sync:hover {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.5) 0%, rgba(3, 105, 161, 0.7) 100%);
+      background: rgba(2, 132, 199, 0.4);
       border-color: #38bdf8;
-      box-shadow: 0 0 24px rgba(56, 189, 248, 0.35);
-      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
     }
 
     /* AI Digest Button */
     .mail-btn-ai {
-      background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-      color: #7e22ce !important;
-      border: 1px solid rgba(168, 85, 247, 0.35);
-      box-shadow: 0 2px 10px rgba(168, 85, 247, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      background: #f5f3ff;
+      color: #7c3aed !important;
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     .mail-btn-ai:hover {
-      background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-      color: #6b21a8 !important;
-      border-color: rgba(168, 85, 247, 0.5);
-      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.22);
-      transform: translateY(-1px);
+      background: #ede9fe;
+      border-color: rgba(124, 58, 237, 0.35);
     }
     html:not(.theme-light) .mail-btn-ai {
-      background: linear-gradient(135deg, rgba(147, 51, 234, 0.22) 0%, rgba(126, 34, 206, 0.35) 100%);
-      border: 1px solid rgba(192, 132, 252, 0.4);
-      box-shadow: 0 0 16px rgba(168, 85, 247, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      color: #f3e8ff !important;
+      background: rgba(124, 58, 237, 0.15);
+      color: #c084fc !important;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.15);
     }
     html:not(.theme-light) .mail-btn-ai:hover {
-      background: linear-gradient(135deg, rgba(147, 51, 234, 0.35) 0%, rgba(126, 34, 206, 0.5) 100%);
+      background: rgba(124, 58, 237, 0.25);
       border-color: #c084fc;
-      box-shadow: 0 0 24px rgba(168, 85, 247, 0.35);
-      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.25);
     }
 
     /* AI Digest Banner */
     .mail-ai-digest-card {
       background: linear-gradient(135deg, rgba(88, 28, 135, 0.2), rgba(15, 23, 42, 0.9));
       border: 1px solid rgba(168, 85, 247, 0.35);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 16px 20px;
       box-shadow: 0 8px 24px -8px rgba(168, 85, 247, 0.2);
     }
@@ -9704,17 +9715,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-stat-chip {
       background: var(--mail-chip-bg) !important;
       border: 1px solid var(--mail-chip-border) !important;
-      border-radius: 9999px;
-      padding: 6px 14px;
+      border-radius: 8px;
+      padding: 6px 12px;
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 550;
       color: var(--mail-text-dim) !important;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.18s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      gap: 7px;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
       user-select: none;
     }
     .mail-stat-chip:hover {
@@ -9723,8 +9734,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .mail-stat-chip.active {
       background: var(--mail-chip-active-bg) !important;
-      border-color: var(--mail-chip-active-color) !important;
+      border-color: var(--mail-chip-active-bg) !important;
       color: var(--mail-chip-active-color) !important;
+      font-weight: 600;
+    }
+    html:not(.theme-light) .mail-stat-chip.active {
+      background: rgba(56, 189, 248, 0.15) !important;
+      border-color: rgba(56, 189, 248, 0.4) !important;
+      color: #38bdf8 !important;
     }
     .mail-stat-chip.chip-otp.active {
       background: rgba(16, 185, 129, 0.15) !important;
@@ -9733,14 +9750,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .mail-chip-count {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 1px 6px;
-      border-radius: 8px;
+      font-size: 0.68rem;
+      padding: 1px 5px;
+      border-radius: 5px;
       background: rgba(125,125,125,0.12);
       color: inherit;
     }
 
-    /* 🌟 Toolbar: Account Filter Tabs & Search Bar (Modern Capsule Design) */
+    /* 🌟 Toolbar: Account Filter Tabs & Search Bar (Modern Segmented Design) */
     .mail-toolbar-row {
       display: flex;
       align-items: center;
@@ -9751,50 +9768,50 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-account-tabs {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       flex-wrap: wrap;
       background: var(--mail-tabs-bg);
-      padding: 4px;
-      border-radius: 9999px;
+      padding: 3px;
+      border-radius: 8px;
       border: 1px solid var(--mail-border);
     }
     .mail-acc-pill {
-      padding: 5px 13px;
-      border-radius: 9999px;
-      font-size: 0.77rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
       font-weight: 500;
       color: var(--mail-text-dim) !important;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 6px;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
       border: 1px solid transparent;
     }
     .mail-acc-pill:hover {
       color: var(--mail-text-main) !important;
-      background: rgba(125, 125, 125, 0.08);
+      background: rgba(125, 125, 125, 0.06);
     }
     .mail-acc-pill.active {
       background: var(--mail-panel-bg) !important;
       color: #0284c7 !important;
-      font-weight: 700;
-      border-color: rgba(2, 132, 199, 0.35) !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      font-weight: 600;
+      border-color: rgba(2, 132, 199, 0.25) !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     html:not(.theme-light) .mail-acc-pill.active {
-      background: rgba(56, 189, 248, 0.14) !important;
+      background: rgba(56, 189, 248, 0.12) !important;
       color: #38bdf8 !important;
-      border-color: rgba(56, 189, 248, 0.45) !important;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.35) !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
     }
     .mail-acc-badge {
       font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 1px 6px;
-      border-radius: 8px;
-      background: rgba(125, 125, 125, 0.12);
+      font-size: 0.66rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(125, 125, 125, 0.1);
       color: inherit;
       font-weight: 600;
     }
@@ -9809,66 +9826,78 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .dot-gmail-2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
     .dot-gmail-3 { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
     .mail-pill-icon {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       flex-shrink: 0;
     }
 
+    /* 🔍 Precision Search Box (Zero-displacement, always aligned) */
     .mail-search-box {
       position: relative;
+      display: inline-flex;
+      align-items: center;
       width: 270px;
-    }
-    .mail-search-box input {
-      width: 100%;
-      background: var(--mail-search-bg) !important;
-      border: 1px solid var(--mail-search-border) !important;
-      border-radius: 9999px;
-      padding: 6px 30px 6px 34px;
-      font-size: 0.78rem;
-      color: var(--mail-text-main) !important;
-      outline: none;
+      height: 32px;
       box-sizing: border-box;
-      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .mail-search-box input:focus {
-      border-color: #0284c7 !important;
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
-    }
+    .mail-search-box .mail-search-icon,
+    .mail-search-box svg,
     .mail-search-box i {
       position: absolute;
-      left: 12px;
+      left: 10px;
       top: 50%;
       transform: translateY(-50%);
       width: 14px;
       height: 14px;
       color: var(--mail-text-dim);
       pointer-events: none;
+      z-index: 2;
+    }
+    .mail-search-box input {
+      width: 100%;
+      height: 32px;
+      line-height: 32px;
+      background: var(--mail-search-bg) !important;
+      border: 1px solid var(--mail-search-border) !important;
+      border-radius: 8px;
+      padding: 0 28px 0 32px;
+      font-size: 0.78rem;
+      color: var(--mail-text-main) !important;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .mail-search-box input:focus {
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
     }
     .mail-search-clear {
       position: absolute;
-      right: 10px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
       width: 16px;
       height: 16px;
       line-height: 16px;
       text-align: center;
-      font-size: 14px;
+      font-size: 11px;
       color: var(--mail-text-dim);
       cursor: pointer;
       user-select: none;
       border-radius: 50%;
+      z-index: 2;
+      transition: all 0.15s;
     }
     .mail-search-clear:hover {
       color: var(--mail-text-main);
-      background: rgba(125,125,125,0.2);
+      background: rgba(125,125,125,0.15);
     }
 
-    /* 🌟 RIGID ZERO-JITTER SPLIT CONTAINER (CSS GRID FIXED 390px / 1fr) */
+    /* 🌟 RIGID ZERO-JITTER SPLIT CONTAINER (CSS GRID FIXED 380px / 1fr) */
     .mail-split-container {
       display: grid;
-      grid-template-columns: 390px minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 14px;
       width: 100%;
       height: calc(100vh - 270px);
       min-height: 580px;
@@ -9884,15 +9913,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-sizing: border-box;
       background: var(--mail-panel-bg) !important;
       border: 1px solid var(--mail-border) !important;
-      border-radius: 16px;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       box-shadow: var(--mail-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
     .mail-list-header {
-      padding: 12px 18px;
+      padding: 11px 16px;
       border-bottom: 1px solid var(--mail-border);
       display: flex;
       align-items: center;
@@ -9919,10 +9950,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     /* Email Card Rows */
     .mail-item-row {
-      padding: 12px 14px;
-      border-radius: 12px;
+      padding: 11px 13px;
+      border-radius: 10px;
       border: 1px solid transparent;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       cursor: pointer;
       transition: all 0.15s ease;
       background: var(--mail-card-bg) !important;
@@ -9944,22 +9975,22 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-account-tag {
       font-size: 0.65rem;
       font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 8px;
+      padding: 2px 6px;
+      border-radius: 6px;
       letter-spacing: 0.02em;
     }
-    .tag-qq { background: rgba(56, 189, 248, 0.14); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.35); }
+    .tag-qq { background: rgba(56, 189, 248, 0.12); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.25); }
     html:not(.theme-light) .tag-qq { color: #38bdf8; }
-    .tag-gmail-1 { background: rgba(16, 185, 129, 0.14); color: #059669; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .tag-gmail-1 { background: rgba(16, 185, 129, 0.12); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); }
     html:not(.theme-light) .tag-gmail-1 { color: #34d399; }
-    .tag-gmail-2 { background: rgba(245, 158, 11, 0.14); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .tag-gmail-2 { background: rgba(245, 158, 11, 0.12); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.25); }
     html:not(.theme-light) .tag-gmail-2 { color: #fbbf24; }
-    .tag-gmail-3 { background: rgba(168, 85, 247, 0.14); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .tag-gmail-3 { background: rgba(168, 85, 247, 0.12); color: #9333ea; border: 1px solid rgba(168, 85, 247, 0.25); }
     html:not(.theme-light) .tag-gmail-3 { color: #c084fc; }
 
     .mail-item-sender {
       font-size: 0.78rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--mail-text-main) !important;
       white-space: nowrap;
       overflow: hidden;
@@ -9967,24 +9998,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       max-width: 170px;
     }
     .mail-item-date {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--mail-text-dim) !important;
       white-space: nowrap;
     }
     .mail-item-subject {
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--mail-text-main) !important;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.4;
     }
     .mail-item-snippet {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       color: var(--mail-text-dim) !important;
-      line-height: 1.45;
+      line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -9994,26 +10025,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(16, 185, 129, 0.16);
-      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
       color: #059669;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       font-family: var(--font-mono);
-      margin-top: 6px;
+      margin-top: 5px;
       transition: all 0.15s;
     }
     html:not(.theme-light) .mail-otp-pill-mini {
       color: #10b981;
     }
     .mail-otp-pill-mini:hover {
-      background: rgba(16, 185, 129, 0.28);
+      background: rgba(16, 185, 129, 0.25);
       transform: scale(1.02);
     }
 
-    /* 🌟 Right Column: Detail Reader Pane (Fixed Grid Column with zero overflow) */
+    /* 🌟 Right Column: Detail Reader Pane */
     .mail-reader-pane {
       width: 100%;
       min-width: 0;
@@ -10021,11 +10052,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-sizing: border-box;
       background: var(--mail-panel-bg) !important;
       border: 1px solid var(--mail-border) !important;
-      border-radius: 16px;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       box-shadow: var(--mail-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
@@ -10095,24 +10128,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-empty-shortcuts {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
     }
     .mail-empty-key {
-      font-size: 0.73rem;
+      font-size: 0.72rem;
       color: var(--mail-text-dim);
       background: var(--mail-card-bg);
       border: 1px solid var(--mail-border);
-      padding: 3px 10px;
-      border-radius: 20px;
+      padding: 3px 9px;
+      border-radius: 6px;
     }
     .mail-empty-key b {
       color: var(--mail-text-main);
       font-weight: 600;
     }
 
-    /* Reader Content (Strict zero-stretch layout) */
+    /* Reader Content */
     .mail-reader-content {
       display: flex;
       flex-direction: column;
@@ -10123,7 +10156,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       overflow: hidden;
     }
     .mail-reader-header {
-      padding: 16px 20px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--mail-border);
       background: var(--mail-header-bg);
       flex-shrink: 0;
@@ -10136,13 +10169,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       width: 100%;
       min-width: 0;
     }
     .mail-reader-subject {
-      font-size: 1.15rem;
-      font-weight: 800;
+      font-size: 1.1rem;
+      font-weight: 700;
       color: var(--mail-text-main) !important;
       line-height: 1.4;
       margin: 0;
@@ -10159,9 +10192,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       flex-shrink: 0;
     }
     .mail-reader-actions .btn {
-      padding: 5px 10px;
-      font-size: 0.74rem;
-      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 0.73rem;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -10179,8 +10212,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-meta-grid {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      font-size: 0.78rem;
+      gap: 4px;
+      font-size: 0.77rem;
       width: 100%;
       min-width: 0;
     }
@@ -10206,23 +10239,23 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     /* Dedicated OTP Hero Card inside Reader */
     .mail-otp-hero-card {
-      margin-top: 12px;
-      padding: 12px 16px;
-      border-radius: 10px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       box-sizing: border-box;
       min-width: 0;
     }
     .mail-otp-code-big {
       font-family: var(--font-mono);
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       color: #059669;
     }
     html:not(.theme-light) .mail-otp-code-big {
@@ -10232,16 +10265,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #10b981;
       color: #ffffff;
       border: none;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.15s;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 1px 4px rgba(16, 185, 129, 0.25);
       flex-shrink: 0;
     }
     .mail-otp-copy-btn:hover {
@@ -10251,11 +10284,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     /* Single Email AI Summary Box */
     .mail-single-ai-card {
-      margin-top: 12px;
-      padding: 12px 16px;
-      border-radius: 10px;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
       background: rgba(168, 85, 247, 0.08);
-      border: 1px solid rgba(168, 85, 247, 0.28);
+      border: 1px solid rgba(168, 85, 247, 0.25);
       box-sizing: border-box;
       min-width: 0;
     }
@@ -10264,7 +10297,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: #e9d5ff;
     }
 
-    /* Body Viewport & Iframe (Strict zero-stretch) */
+    /* Body Viewport & Iframe */
     .mail-body-frame-wrap {
       flex: 1;
       width: 100%;
@@ -10284,11 +10317,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: block;
       background: transparent;
     }
-
 </style>
 </head>
 <body>
-  <!-- 🌟 TOP DYNAMIC ISLAND OTP TOAST (极客灵动岛悬浮验证码弹窗) -->
+  <!-- 🌟 TOP DYNAMIC ISLAND OTP TOAST (灵动岛悬浮验证码弹窗) -->
   <div class="top-dynamic-island" id="topDynamicIsland" onclick="copyCurrentIslandCode(event)" onmouseenter="pauseOtpTimer()" onmouseleave="resumeOtpTimer()" title="点击一键复制验证码">
     <div class="dynamic-island-glow"></div>
     <div class="island-content">
@@ -11086,12 +11118,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
               </div>
               <div class="mail-hero-actions">
-                <button class="mail-btn-action mail-btn-sync" onclick="triggerMailSyncManual()" id="btnMailSync">
-                  <i data-lucide="refresh-cw" id="mailSyncIcon" style="width:14px;height:14px;"></i>
+                <button class="mail-btn-action mail-btn-sync" onclick="triggerMailSyncManual()" id="btnMailSync" title="全量检查并同步最新信件">
+                  <svg class="mail-sync-icon" id="mailSyncIcon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                  </svg>
                   <span id="mailSyncText">实时同步拉取</span>
                 </button>
-                <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest">
-                  <i data-lucide="sparkles" id="mailAiDigestIcon" style="width:14px;height:14px;"></i>
+                <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest" title="由 DeepSeek 提炼全量信件关键信息">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M7.757 16.243l-2.121 2.121m12.728 0l-2.121-2.121M7.757 7.757L5.636 5.636"/>
+                  </svg>
                   <span>AI 资产早报</span>
                 </button>
               </div>
@@ -11163,9 +11199,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
               </div>
               <div class="mail-search-box">
-                <i data-lucide="search"></i>
-                <input type="text" id="mailSearchInput" placeholder="搜索主题、发件人或摘要..." oninput="handleMailSearch(this.value)">
-                <span class="mail-search-clear" onclick="clearMailSearch()" id="mailSearchClear" style="display:none;" title="清空搜索">×</span>
+                <svg class="mail-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="mailSearchInput" placeholder="搜索主题、发件人或摘要..." oninput="handleMailSearch(this.value)" autocomplete="off" spellcheck="false">
+                <span class="mail-search-clear" onclick="clearMailSearch()" id="mailSearchClear" style="display:none;" title="清空搜索">✕</span>
               </div>
             </div>
 
@@ -25616,6 +25655,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const inp = document.getElementById('mailSearchInput');
       if (inp) {
         inp.value = '';
+        inp.focus();
         handleMailSearch('');
       }
     }
@@ -25642,21 +25682,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     });
 
+    let isMailSyncing = false;
     async function triggerMailSyncManual() {
+      if (isMailSyncing) return;
+      isMailSyncing = true;
+      const btn = document.getElementById('btnMailSync');
       const icon = document.getElementById('mailSyncIcon');
       const text = document.getElementById('mailSyncText');
+      if (btn) btn.disabled = true;
       if (icon) icon.classList.add('animate-spin');
       if (text) text.textContent = '正在极速拉取...';
 
       try {
         const res = await fetch('/api/mail/sync', { method: 'POST' });
         const json = await res.json();
-        if (json && json.data) {
+        if (res.ok && (json.code === 200 || json.synced_count !== undefined)) {
           await fetchMailList();
           await fetchMailStats();
-          if (text) text.textContent = '拉取完成';
+          if (text) {
+            const countStr = json.new_count > 0 ? ` (+${json.new_count}封)` : '';
+            text.textContent = `同步完成${countStr}`;
+          }
         } else {
-          if (text) text.textContent = '拉取结束';
+          if (text) text.textContent = json.message || '拉取完成';
         }
       } catch (e) {
         console.warn('Sync failed', e);
@@ -25665,7 +25713,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         setTimeout(() => {
           if (icon) icon.classList.remove('animate-spin');
           if (text) text.textContent = '实时同步拉取';
-        }, 1500);
+          if (btn) btn.disabled = false;
+          isMailSyncing = false;
+        }, 1200);
       }
     }
 
