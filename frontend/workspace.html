@@ -10840,6 +10840,624 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #faf6ee !important;
       border-color: rgba(217, 119, 6, 0.2) !important;
     }
+
+    /* ======================================================== */
+    /* 🌟 TOPBAR COMMAND PALETTE PILL & DYNAMIC ISLAND MUSIC PILL */
+    /* ======================================================== */
+    .top-bar {
+      gap: 16px !important;
+    }
+    .top-breadcrumbs {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      min-width: 130px !important;
+    }
+    .top-search-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 0 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      min-width: 180px;
+      max-width: 220px;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      user-select: none;
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    }
+    .top-search-pill:hover {
+      border-color: var(--accent);
+      background: var(--surface-hover);
+      box-shadow: 0 0 14px rgba(124, 58, 237, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+    .top-search-pill .search-placeholder {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .top-search-pill .search-kbd {
+      font-size: 0.65rem;
+      font-family: var(--font-mono, monospace);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-dim);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+    html.theme-light .top-search-pill {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+    }
+    html.theme-light .top-search-pill:hover {
+      background: #f8fafc !important;
+      border-color: #7c3aed !important;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.12) !important;
+    }
+    html.theme-light .top-search-pill .search-kbd {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+      color: #64748b !important;
+    }
+
+    /* Top Dynamic Island Music Pill (Apple Style) */
+    .top-island-music-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 2px 10px 2px 4px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(0, 145, 255, 0.28);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 12px rgba(0, 145, 255, 0.15);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 260px;
+      flex-shrink: 0;
+    }
+    .top-island-music-pill:hover {
+      border-color: #0091ff;
+      background: rgba(15, 23, 42, 0.9);
+      box-shadow: 0 6px 20px rgba(0, 145, 255, 0.28);
+      transform: translateY(-1px);
+    }
+    .island-pill-disc {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid #0091ff;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(0, 145, 255, 0.5);
+    }
+    .island-pill-disc img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .island-pill-disc.playing {
+      animation: islandDiscSpin 8s linear infinite;
+    }
+    @keyframes islandDiscSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .island-pill-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1;
+      max-width: 120px;
+      overflow: hidden;
+    }
+    .island-pill-title {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .island-pill-artist {
+      font-size: 0.63rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .island-pill-visualizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+      padding: 0 2px;
+    }
+    .island-eq-bar {
+      width: 2px;
+      height: 3px;
+      background: #0091ff;
+      border-radius: 1px;
+      transition: height 0.12s ease;
+    }
+    .top-island-music-pill.is-playing .island-eq-bar.bar-1 { animation: eqJump 0.55s ease-in-out infinite alternate; }
+    .top-island-music-pill.is-playing .island-eq-bar.bar-2 { animation: eqJump 0.72s ease-in-out infinite alternate 0.12s; }
+    .top-island-music-pill.is-playing .island-eq-bar.bar-3 { animation: eqJump 0.48s ease-in-out infinite alternate 0.22s; }
+    .top-island-music-pill.is-playing .island-eq-bar.bar-4 { animation: eqJump 0.65s ease-in-out infinite alternate 0.08s; }
+    @keyframes eqJump {
+      0% { height: 2px; }
+      100% { height: 12px; }
+    }
+    .island-pill-btn {
+      background: transparent;
+      border: none;
+      color: #0091ff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      border-radius: 50%;
+      transition: transform 0.15s ease;
+    }
+    .island-pill-btn:hover {
+      transform: scale(1.18);
+      color: #38bdf8;
+    }
+    html.theme-light .top-island-music-pill {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: #bae6fd !important;
+      box-shadow: 0 4px 16px rgba(0, 145, 255, 0.1) !important;
+    }
+    html.theme-light .island-pill-title {
+      color: #0f172a !important;
+    }
+    html.theme-light .island-pill-artist {
+      color: #64748b !important;
+    }
+
+    /* ======================================================== */
+    /* 🌊 KINETIC AUDIO FREQUENCY WAVE VISUALIZER IN KUGOU PLAYER */
+    /* ======================================================== */
+    .kugou-wave-visualizer-box {
+      width: 100%;
+      height: 28px;
+      position: relative;
+      margin: 4px 0 2px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(0, 145, 255, 0.03);
+      border: 1px solid rgba(0, 145, 255, 0.08);
+    }
+    .kugou-wave-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    html.theme-light .kugou-wave-visualizer-box {
+      background: rgba(0, 145, 255, 0.02) !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* ======================================================== */
+    /* 🐱 AMBIENT CYBER CAT COMPANION (USER FAVORITE ppday)     */
+    /* ======================================================== */
+    .cyber-cat-companion {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 99990;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: auto;
+      user-select: none;
+      font-family: var(--font-main, -apple-system, sans-serif);
+    }
+    .cyber-cat-capsule {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px 6px 8px;
+      background: rgba(10, 14, 28, 0.88);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      border-radius: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 18px rgba(124, 58, 237, 0.22);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .cyber-cat-capsule:hover {
+      border-color: #a78bfa;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.6), 0 0 24px rgba(124, 58, 237, 0.4);
+      transform: translateY(-3px) scale(1.03);
+    }
+    .cyber-cat-svg-wrap {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .cat-svg-root {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 6px rgba(124, 58, 237, 0.4));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cyber-cat-capsule:hover .cat-svg-root {
+      transform: scale(1.08);
+    }
+    .cat-breathe {
+      animation: catBreathing 3.6s ease-in-out infinite alternate;
+      transform-origin: 50% 85%;
+    }
+    @keyframes catBreathing {
+      0% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.03) translateY(-1px); }
+    }
+    .cat-tail {
+      transform-origin: 20% 85%;
+      animation: catTailWag 4s ease-in-out infinite alternate;
+    }
+    @keyframes catTailWag {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(14deg); }
+    }
+    .cat-ear-l {
+      transform-origin: 30% 30%;
+      animation: earTwitchL 6s ease-in-out infinite;
+    }
+    .cat-ear-r {
+      transform-origin: 70% 30%;
+      animation: earTwitchR 7s ease-in-out infinite 0.8s;
+    }
+    @keyframes earTwitchL {
+      0%, 94%, 100% { transform: rotate(0deg); }
+      96% { transform: rotate(-8deg); }
+      98% { transform: rotate(4deg); }
+    }
+    @keyframes earTwitchR {
+      0%, 92%, 100% { transform: rotate(0deg); }
+      94% { transform: rotate(7deg); }
+      96% { transform: rotate(-3deg); }
+    }
+    .cat-eye-dot {
+      fill: #06b6d4;
+      transition: all 0.2s ease;
+    }
+    .cat-eye-dot.is-blinking {
+      transform: scaleY(0.08);
+      transform-origin: 50% 50%;
+    }
+    .cyber-cat-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .cyber-cat-name {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cyber-cat-status-badge {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono, monospace);
+    }
+    .cat-purr-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 32px;
+      border: 1.5px solid #a855f7;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cat-purr-ring.purring {
+      animation: purrRipple 0.8s ease-out forwards;
+    }
+    @keyframes purrRipple {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      100% { transform: scale(1.25); opacity: 0; }
+    }
+
+    /* Cyber Cat Thought Bubble */
+    .cyber-cat-bubble {
+      position: absolute;
+      bottom: 54px;
+      right: 0;
+      width: 270px;
+      background: rgba(15, 20, 36, 0.94);
+      border: 1px solid rgba(124, 58, 237, 0.35);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(124, 58, 237, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+      pointer-events: none;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cyber-cat-bubble.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .bubble-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #a78bfa;
+    }
+    .bubble-text {
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: #e2e8f0;
+    }
+    .bubble-cuddle-tag {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono, monospace);
+    }
+    .bubble-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .bubble-btn {
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .bubble-btn:hover {
+      background: rgba(124, 58, 237, 0.25);
+      border-color: #a78bfa;
+      color: #fff;
+    }
+    .bubble-btn.primary {
+      background: linear-gradient(135deg, #7c3aed, #6366f1);
+      border: none;
+      color: #fff;
+    }
+
+    html.theme-light .cyber-cat-capsule {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 16px rgba(124, 58, 237, 0.1) !important;
+    }
+    html.theme-light .cyber-cat-name {
+      color: #0f172a !important;
+    }
+    html.theme-light .cyber-cat-bubble {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .bubble-text {
+      color: #1e293b !important;
+    }
+    html.theme-light .bubble-btn {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+
+    /* ======================================================== */
+    /* 📝 QUICK SCRATCHPAD / INSTANT STICKY NOTE WIDGET         */
+    /* ======================================================== */
+    .quick-scratchpad-panel {
+      position: fixed;
+      right: 24px;
+      bottom: 88px;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      background: rgba(12, 16, 32, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 24px rgba(245, 158, 11, 0.15);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      z-index: 99995;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+    .quick-scratchpad-panel.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .scratchpad-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .scratchpad-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f59e0b;
+    }
+    .scratchpad-meta {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono, monospace);
+    }
+    .scratchpad-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .scratchpad-close-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .scratchpad-body {
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .scratchpad-textarea {
+      width: 100%;
+      height: 160px;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: vertical;
+      color: var(--text);
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      line-height: 1.55;
+      box-sizing: border-box;
+    }
+    .scratchpad-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .scratchpad-sync-hint {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .scratchpad-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scratchpad-btn {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .scratchpad-btn:hover {
+      background: var(--surface-hover);
+      border-color: #f59e0b;
+      color: #fff;
+    }
+    .scratchpad-btn.primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+    }
+    html.theme-light .quick-scratchpad-panel {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12) !important;
+    }
+    html.theme-light .scratchpad-textarea {
+      color: #0f172a !important;
+    }
+    html.theme-light .scratchpad-btn {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+
+    /* ======================================================== */
+    /* 🎨 GLOBAL VISUAL HARMONIZATION (APPLE / LINEAR LUXURY)   */
+    /* ======================================================== */
+    /* Unified Card Corner Radii & Borders Across All Views */
+    .card, .panel-card, .home-card, .news-card, .stat-tile,
+    .health-steps-box, .health-trend-card, .format-matrix-card,
+    .mail-hero-card, .mail-reader-pane, .pulseos-chart-box {
+      border-radius: 16px !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    /* Subtle Hover Elevation */
+    .card:hover, .panel-card:hover, .home-card:hover, .stat-tile:hover {
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    /* Unified Inner Controls & Pills */
+    .btn, .git-tool-btn, .vault-tool-btn, .quote-refresh-btn, .kugou-quality-trigger-btn {
+      border-radius: 10px !important;
+    }
+    /* Enhanced Glassmorphism in Light Mode for All Cards */
+    html.theme-light .card,
+    html.theme-light .panel-card,
+    html.theme-light .home-card,
+    html.theme-light .news-card,
+    html.theme-light .stat-tile,
+    html.theme-light .health-steps-box,
+    html.theme-light .health-trend-card,
+    html.theme-light .format-matrix-card,
+    html.theme-light .pulseos-chart-box {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 8px 24px rgba(37, 99, 235, 0.04) !important;
+    }
+
 </style>
 </head>
 <body>
@@ -11048,9 +11666,44 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         <div class="top-breadcrumbs">
           <span class="curr-view" id="topCrumbTitle">个人主页</span>
         </div>
+
+        <!-- 🔍 Global Command Palette Trigger Pill -->
+        <div class="top-search-pill" onclick="openCmdModal()" title="全局超级指令 (Ctrl+K / ⌘K)">
+          <i data-lucide="command" style="width:13px; height:13px; color:var(--accent);"></i>
+          <span class="search-placeholder">全局功能、笔记、指令...</span>
+          <span class="search-kbd">⌘K</span>
+        </div>
+
+        <!-- 🌟 Top Dynamic Island Music Pill (Apple Style Center Pill) -->
+        <div class="top-island-music-pill" id="topDynamicIslandMusicPill" onclick="jumpToMusicDashboard(event)" title="点击直达音乐播放器 (或按 F 展开全屏沉浸画报)">
+          <div class="island-pill-disc" id="islandPillDisc">
+            <img id="islandPillCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=60&auto=format&fit=crop&q=80" alt="Cover" />
+          </div>
+          <div class="island-pill-info">
+            <span class="island-pill-title" id="islandPillTitle">酷狗随身听</span>
+            <span class="island-pill-artist" id="islandPillArtist">待播放</span>
+          </div>
+          <div class="island-pill-visualizer" id="islandPillVisualizer">
+            <span class="island-eq-bar bar-1"></span>
+            <span class="island-eq-bar bar-2"></span>
+            <span class="island-eq-bar bar-3"></span>
+            <span class="island-eq-bar bar-4"></span>
+          </div>
+          <button class="island-pill-btn" onclick="toggleKuGouPlay(event)" title="播放/暂停">
+            <svg id="islandPillPlaySvg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+        </div>
+
         <!-- Clean Topbar Spacer (Minimalist Apple/Linear Layout) -->
         <div class="topbar-center-spacer" style="flex: 1;"></div>
         <div class="top-actions">
+          <!-- 📝 Quick Scratchpad Drawer Trigger -->
+          <button class="btn btn-ghost top-action-btn" id="quickScratchpadBtn" onclick="toggleQuickScratchpad()" title="随手记便签簿 (Ctrl+Shift+S / Alt+S)" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:10px; background:var(--surface); border:1px solid var(--border); font-size:0.78rem; font-weight:600; cursor:pointer; color:var(--text); position:relative;">
+            <i data-lucide="edit-3" style="width:14px; height:14px; color:#f59e0b;"></i>
+            <span>随手记</span>
+          </button>
           <!-- Theme Switcher (Day & Night) -->
           <div style="display:flex; align-items:center; gap:8px; padding:3px 8px; background:var(--surface); border:1px solid var(--border); border-radius:12px;" title="日夜主题切换 / Day & Night Theme">
             <i data-lucide="moon" id="themeIconMoon" style="width:14px;height:14px;color:#a78bfa;transition:all 0.3s ease;"></i>
@@ -11596,6 +12249,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div class="music-lyrics-line" id="kugouLyricsLine" onclick="openImmersiveCanvas(event)" style="font-size:0.75rem; color:#38bdf8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; font-weight:500; min-height:18px; line-height:18px; will-change:transform,opacity,filter; transition:color 0.2s ease; cursor:pointer;" title="点击开启 Apple Music 全屏沉浸画报模式 (快捷键 F)">
                       🎵 纯净音质 · 随心而听，点击曲目载入实时歌词
                     </div>
+                  </div>
+
+                  <!-- 🌊 Kinetic Live Dynamic Frequency Wave Visualizer Canvas -->
+                  <div class="kugou-wave-visualizer-box" id="kugouWaveVisualizerBox">
+                    <canvas id="kugouWaveVisualizerCanvas" class="kugou-wave-canvas" height="28"></canvas>
                   </div>
 
                   <!-- Progress Seekbar -->
@@ -17417,6 +18075,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       { id: 'cv-ocr', category: 'converter', title: 'OCR 离线文字识别 (图片提字)', desc: '中英文双语高精度离线光学文字识别', keywords: 'ocr tesseract 文字识别 图片提取 格式转换', action: 'converter:ocr', icon: 'scan-text', badge: 'CONVERT' },
 
       // ⚡ 3. System Actions (系统快捷指令)
+      // View Navigators
+      { id: 'act-view-home', category: 'actions', title: '打开 个人主页看板 (Home)', desc: '个人专属数字时钟、今日天气、专注番茄钟、快捷入口与酷狗随身听', keywords: 'home dashboard 主页 首页 待办 天气 番茄钟 看板 酷狗 音乐', action: 'view:home', icon: 'layout-dashboard', badge: 'HOME' },
+      { id: 'act-view-overview', category: 'actions', title: '查看 PulseOS 云端遥测总览', desc: '实时监控服务器负载、CPU 波动窗口与系统遥测', keywords: 'overview dashboard pulseos 监控 遥测 大屏 概览', action: 'view:overview', icon: 'activity', badge: 'VIEW' },
+      { id: 'act-view-news', category: 'actions', title: '打开 每日热讯快报 (Global Headlines)', desc: '聚合国内外头条要闻、科技前沿、国际风云与 AI 前沿洞察', keywords: 'news headline daily 热点 头条 新闻 快报 科技 资讯', action: 'view:news', icon: 'newspaper', badge: 'NEWS' },
+      { id: 'act-view-obsidian', category: 'actions', title: '打开 Obsidian 笔记库 (Notes)', desc: '双向链接知识库、Markdown 实时渲染与架构白板', keywords: 'obsidian notes markdown 笔记 文档 知识库 双链', action: 'view:obsidian', icon: 'book-open', badge: 'NOTES' },
+      { id: 'act-view-converter', category: 'actions', title: '打开 飞书全能格式转换工坊 (Converter)', desc: 'Word DOCX 转 PDF、PDF 拆分提字、Excel 转换与离线 OCR', keywords: 'converter format docx pdf excel ocr 格式转换 飞书 飞鼠', action: 'view:converter', icon: 'repeat', badge: 'CONVERT' },
+      { id: 'act-view-health', category: 'actions', title: '打开 手机硬件计步与健康中枢', desc: '手机物理传感器步数同步、卡路里消耗、久坐提醒与饮水打卡', keywords: 'health sensor k60 redmi 手机 硬件 运动 步数 健康', action: 'view:health', icon: 'heart-pulse', badge: 'HEALTH' },
+      { id: 'act-view-mail', category: 'actions', title: '打开 通用邮箱与验证码中枢 (Mailbox)', desc: '全渠道邮件聚合查阅、实时安全验证码提炼与自适应阅读器', keywords: 'mail mailbox email 邮件 邮箱 验证码 otp 通用邮箱', action: 'view:mail', icon: 'mail', badge: 'MAIL' },
+      { id: 'act-view-devtools', category: 'actions', title: '打开 开发者瑞士军刀 (DevTools)', desc: 'JSON 格式化、JWT 解密、时间戳转换与 Base64 编解码', keywords: 'devtools developer tool json jwt timestamp base64 开发者 工具', action: 'view:devtools', icon: 'terminal', badge: 'TOOLS' },
+      { id: 'act-view-graph', category: 'actions', title: '查看 3D 全景知识图谱 (Retina)', desc: '以 Force-Directed 物理力导向图可视化全部笔记关联', keywords: 'graph 3d 关系图 知识图谱 关联 双链', action: 'view:graph', icon: 'share-2', badge: 'VIEW' },
+
+      // AI, Music & Productive Operations
+      { id: 'act-ai-digest', category: 'actions', title: '每日新闻 AI 深度重研 & 智能提炼', desc: '调用 DeepSeek 大模型深度重研今日焦点要闻并生成智能快报', keywords: 'ai digest deepseek news research 智能 研报 提炼 新闻', action: 'action:ai-digest', icon: 'sparkles', badge: 'AI' },
+      { id: 'act-kugou-playlists', category: 'actions', title: '酷狗音乐 · 云端歌单与精选列表', desc: '打开酷狗官方精选歌单与个人歌单抽屉', keywords: 'kugou playlists list song 酷狗 歌单 列表 歌曲 音乐', action: 'action:kugou-playlists', icon: 'list-music', badge: 'MUSIC' },
+      { id: 'act-kugou-canvas', category: 'actions', title: '酷狗音乐 · Apple Music 沉浸画报', desc: '展开 60fps 全屏沉浸动态歌词与流体画报 (快捷键 F)', keywords: 'kugou canvas apple music lyrics 全屏 画报 沉浸 歌词', action: 'action:kugou-canvas', icon: 'maximize-2', badge: 'CANVAS' },
+      { id: 'act-toggle-pomo', category: 'actions', title: '专注番茄钟 · 开始 / 暂停专注', desc: '开启 25 分钟深度心流专注状态，自动联动赛博猫进入沉思模式', keywords: 'pomodoro focus timer 番茄钟 专注 时钟 心流', action: 'action:toggle-pomo', icon: 'timer', badge: 'FOCUS' },
+      { id: 'act-pomo-target', category: 'actions', title: '专注番茄钟 · 设置专注目标与时长', desc: '自定义专注任务名称与倒计时规格', keywords: 'pomodoro target time 设置 目标 时长 任务', action: 'action:pomo-target', icon: 'target', badge: 'FOCUS' },
+      { id: 'act-toggle-scratchpad', category: 'actions', title: '随手记便签 · 打开快捷备忘录 (Ctrl+Shift+S)', desc: '快速暂存灵感与代码片段，支持一键转存 Obsidian 笔记库', keywords: 'scratchpad memo sticky note 便签 备忘录 随手记 暂存', action: 'action:toggle-scratchpad', icon: 'edit-3', badge: 'MEMO' },
+      { id: 'act-pet-cat', category: 'actions', title: '赛博机械猫 🐱 · 互动摸摸陪伴', desc: '与底栏机械赛博猫互动，获取猫猫鼓励、清除 Bug 并补充能量', keywords: 'cat kitten pet cyber companion 赛博猫 机械猫 摸摸 吸猫 宠物', action: 'action:pet-cat', icon: 'heart', badge: 'CAT' },
+      { id: 'act-otp-center', category: 'actions', title: '全渠道验证码中枢 · 历史提取', desc: '实时拦截展示全渠道 OTP 验证码与一键复制', keywords: 'otp code verify 验证码 安全 提取 历史', action: 'action:otp-center', icon: 'shield-check', badge: 'OTP' },
+
       { id: 'act-new-note', category: 'actions', title: '新建 Markdown 笔记', desc: '快速创建并打开一篇全新 Markdown 笔记 (Ctrl+N)', keywords: 'new note create markdown 新建笔记 创建 笔记', action: 'action:new-note', icon: 'file-plus-2', badge: 'CTRL+N' },
       { id: 'act-new-canvas', category: 'actions', title: '新建 Obsidian 架构图谱白板', desc: '创建全新 .canvas 自由拖拽与双向连线白板', keywords: 'new canvas board 白板 流程图 架构图 新建', action: 'action:new-canvas', icon: 'layout-grid', badge: 'CANVAS' },
       { id: 'act-new-folder', category: 'actions', title: '新建目录文件夹', desc: '在笔记库中创建子目录分类层级', keywords: 'new folder directory 新建文件夹 目录', action: 'action:new-folder', icon: 'folder-plus', badge: 'ACTION' },
@@ -17720,6 +18399,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       } else if (action === 'action:probe-ports') {
         switchView('overview');
         probeAllPortMonitors();
+      } else if (action === 'action:ai-digest') {
+        switchView('news');
+        setTimeout(() => {
+          const btn = document.getElementById('newsRefreshBtn');
+          if (btn) btn.click();
+        }, 200);
+      } else if (action === 'action:kugou-playlists') {
+        openKuGouPlaylistModal();
+      } else if (action === 'action:kugou-canvas') {
+        openImmersiveCanvas();
+      } else if (action === 'action:toggle-pomo') {
+        togglePomodoro();
+      } else if (action === 'action:pomo-target') {
+        openPomodoroTargetModal();
+      } else if (action === 'action:toggle-scratchpad') {
+        toggleQuickScratchpad();
+      } else if (action === 'action:pet-cat') {
+        petCyberCat();
+      } else if (action === 'action:otp-center') {
+        toggleOtpHistoricalDrawer(true);
       } else if (action.startsWith('view:')) {
         const viewKey = action.replace('view:', '');
         switchView(viewKey);
@@ -17734,7 +18433,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         e.preventDefault();
         openCmdModal();
       }
+      if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's') || (e.altKey && e.key.toLowerCase() === 's')) {
+        e.preventDefault();
+        toggleQuickScratchpad();
+      }
       if (e.key === 'Escape') {
+        closeQuickScratchpad();
+        closeCatBubble();
         closeCmdModal();
         closeShadcnInputModal();
         closeShadcnConfirmModal();
@@ -26867,6 +27572,427 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
     
+
+    // ========================================================
+    // 🌊 KINETIC AUDIO VISUALIZER & DYNAMIC ISLAND PILL ENGINE
+    // ========================================================
+    let waveAnimFrameId = null;
+    let wavePhase = 0;
+
+    function initAudioVisualizerEngine() {
+      const canvas = document.getElementById('kugouWaveVisualizerCanvas');
+      if (!canvas) return;
+
+      function resizeWaveCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0) {
+          canvas.width = rect.width * (window.devicePixelRatio || 1);
+          canvas.height = (rect.height || 28) * (window.devicePixelRatio || 1);
+        }
+      }
+      window.addEventListener('resize', resizeWaveCanvas, { passive: true });
+      setTimeout(resizeWaveCanvas, 100);
+
+      function drawWave() {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const isPlaying = typeof kugouIsPlaying !== 'undefined' && kugouIsPlaying;
+        const speed = isPlaying ? 0.08 : 0.02;
+        wavePhase += speed;
+
+        const amplitude = isPlaying ? (h * 0.35) : (h * 0.12);
+        const midY = h * 0.5;
+
+        // Draw Ambient Wave 1 (Gradient Cyan to Purple)
+        const grad1 = ctx.createLinearGradient(0, 0, w, 0);
+        grad1.addColorStop(0, '#0091ff');
+        grad1.addColorStop(0.5, '#06b6d4');
+        grad1.addColorStop(1, '#a855f7');
+
+        ctx.beginPath();
+        ctx.moveTo(0, midY);
+        const steps = 40;
+        for (let i = 0; i <= steps; i++) {
+          const x = (i / steps) * w;
+          const freq = (i / steps) * Math.PI * 4;
+          const y = midY + Math.sin(freq + wavePhase) * amplitude * (0.8 + 0.2 * Math.sin(wavePhase * 0.7));
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = grad1;
+        ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+        ctx.shadowColor = 'rgba(0, 145, 255, 0.6)';
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Draw Ambient Wave 2 (Subtle Violet Counter-Wave)
+        if (isPlaying) {
+          const grad2 = ctx.createLinearGradient(0, 0, w, 0);
+          grad2.addColorStop(0, '#7c3aed');
+          grad2.addColorStop(0.5, '#38bdf8');
+          grad2.addColorStop(1, '#ec4899');
+
+          ctx.beginPath();
+          ctx.moveTo(0, midY);
+          for (let i = 0; i <= steps; i++) {
+            const x = (i / steps) * w;
+            const freq = (i / steps) * Math.PI * 3.5;
+            const y = midY + Math.cos(freq - wavePhase * 1.2) * (amplitude * 0.65);
+            ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = grad2;
+          ctx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
+          ctx.stroke();
+        }
+
+        waveAnimFrameId = requestAnimationFrame(drawWave);
+      }
+
+      if (waveAnimFrameId) cancelAnimationFrame(waveAnimFrameId);
+      waveAnimFrameId = requestAnimationFrame(drawWave);
+    }
+
+    function updateTopDynamicIslandMusicUI(track, isPlaying) {
+      const pill = document.getElementById('topDynamicIslandMusicPill');
+      const disc = document.getElementById('islandPillDisc');
+      const coverImg = document.getElementById('islandPillCover');
+      const titleEl = document.getElementById('islandPillTitle');
+      const artistEl = document.getElementById('islandPillArtist');
+      const playSvg = document.getElementById('islandPillPlaySvg');
+
+      if (!pill) return;
+
+      if (track) {
+        if (titleEl) titleEl.textContent = track.title || '酷狗随身听';
+        if (artistEl) artistEl.textContent = track.artist || '随心而听';
+        if (coverImg && track.cover) coverImg.src = track.cover;
+      }
+
+      if (typeof isPlaying === 'boolean') {
+        if (isPlaying) {
+          pill.classList.add('is-playing');
+          if (disc) disc.classList.add('playing');
+          if (playSvg) playSvg.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect>';
+        } else {
+          pill.classList.remove('is-playing');
+          if (disc) disc.classList.remove('playing');
+          if (playSvg) playSvg.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+        }
+      }
+
+      // Also sync Cyber Cat Companion mode
+      if (typeof syncCyberCatState === 'function') {
+        syncCyberCatState();
+      }
+    }
+
+    // Hook into existing setKuGouPlayingState
+    const _orig_setKuGouPlayingState = typeof setKuGouPlayingState === 'function' ? setKuGouPlayingState : null;
+    window.setKuGouPlayingState = function(isPlaying) {
+      if (_orig_setKuGouPlayingState) _orig_setKuGouPlayingState(isPlaying);
+      const track = (typeof kugouCurrentPlaylist !== 'undefined' && kugouCurrentTrackIdx >= 0 && kugouCurrentTrackIdx < kugouCurrentPlaylist.length)
+        ? kugouCurrentPlaylist[kugouCurrentTrackIdx] : null;
+      updateTopDynamicIslandMusicUI(track, isPlaying);
+    };
+
+    // ========================================================
+    // 🐱 AMBIENT CYBER CAT COMPANION ENGINE
+    // ========================================================
+    let catCuddleCount = 0;
+    let catBlinkInterval = null;
+    let catMode = 'idle'; // 'idle' | 'focus' | 'music'
+
+    const CAT_DIALOGUES = [
+      "喵呜~ 今天的代码写得超棒！主人继续加油！🐾",
+      "已帮主人检测到 0 个 Bug，各项性能指标平稳运行中！✨",
+      "主人 ppday，写代码累了记得多喝水、眨眨眼喔~ 🐱",
+      "呼噜呼噜... 赛博肉垫已充满能量！💖",
+      "主人今天也要元气满满地奔赴山海呀！🚀",
+      "(=^･ω･^=) 赛博猫猫在此守候您的云端遥测！",
+      "咕噜咕噜~ 机械心脏因主人的抚摸正在加速跳动！⚡",
+      "主人，听听轻音乐或者进入番茄钟专注一下吧？🎶"
+    ];
+
+    function initCyberCatCompanion() {
+      try {
+        const saved = localStorage.getItem('pulseos_cat_cuddles');
+        if (saved) catCuddleCount = parseInt(saved, 10) || 0;
+      } catch (e) {}
+
+      updateCatCuddleDisplay();
+
+      // Eye Blinking Engine
+      if (catBlinkInterval) clearInterval(catBlinkInterval);
+      catBlinkInterval = setInterval(() => {
+        if (catMode === 'focus') return; // sleeping, don't blink
+        const eyeL = document.getElementById('catEyeL');
+        const eyeR = document.getElementById('catEyeR');
+        if (eyeL && eyeR) {
+          eyeL.classList.add('is-blinking');
+          eyeR.classList.add('is-blinking');
+          setTimeout(() => {
+            eyeL.classList.remove('is-blinking');
+            eyeR.classList.remove('is-blinking');
+          }, 180);
+        }
+      }, 4200);
+
+      syncCyberCatState();
+    }
+
+    function updateCatCuddleDisplay() {
+      const tag = document.getElementById('catCuddleTag');
+      if (tag) tag.textContent = `已吸猫 ${catCuddleCount} 次`;
+    }
+
+    function toggleCatBubble(event) {
+      if (event) event.stopPropagation();
+      const bubble = document.getElementById('cyberCatBubble');
+      if (!bubble) return;
+      if (bubble.classList.contains('active')) {
+        closeCatBubble();
+      } else {
+        openCatBubble();
+      }
+    }
+
+    function openCatBubble() {
+      const bubble = document.getElementById('cyberCatBubble');
+      if (!bubble) return;
+      const textEl = document.getElementById('catBubbleText');
+      if (textEl) {
+        const randMsg = CAT_DIALOGUES[Math.floor(Math.random() * CAT_DIALOGUES.length)];
+        textEl.textContent = randMsg;
+      }
+      bubble.classList.add('active');
+    }
+
+    function closeCatBubble() {
+      const bubble = document.getElementById('cyberCatBubble');
+      if (bubble) bubble.classList.remove('active');
+    }
+
+    function petCyberCat(event) {
+      if (event) event.stopPropagation();
+      catCuddleCount++;
+      try { localStorage.setItem('pulseos_cat_cuddles', catCuddleCount); } catch (e) {}
+      updateCatCuddleDisplay();
+
+      // Ripple purr animation
+      const ring = document.getElementById('catPurrRing');
+      if (ring) {
+        ring.classList.remove('purring');
+        void ring.offsetWidth;
+        ring.classList.add('purring');
+      }
+
+      // Happy Eye Face Shift
+      const eyesNorm = document.getElementById('catEyesNormal');
+      const eyesSleep = document.getElementById('catEyesSleep');
+      const eyesHappy = document.getElementById('catEyesHappy');
+      if (eyesNorm && eyesHappy) {
+        eyesNorm.style.display = 'none';
+        if (eyesSleep) eyesSleep.style.display = 'none';
+        eyesHappy.style.display = 'block';
+        setTimeout(() => {
+          if (catMode === 'focus') {
+            if (eyesSleep) eyesSleep.style.display = 'block';
+            eyesHappy.style.display = 'none';
+          } else {
+            eyesNorm.style.display = 'block';
+            eyesHappy.style.display = 'none';
+          }
+        }, 1200);
+      }
+
+      const textEl = document.getElementById('catBubbleText');
+      if (textEl) {
+        const happyQuotes = [
+          "(=^ω^=) 呼噜呼噜~ 好舒服！机械猫向主人 ppday 表达最高亲密度！💖",
+          "(=^ω^=) 喵呜~ 赛博肉垫充能 100%！今天的所有代码都会一次通过！✨",
+          "(=^ω^=) 咕噜咕噜... 主人的手好温柔，猫猫为您守护全栈系统！🐾"
+        ];
+        textEl.textContent = happyQuotes[Math.floor(Math.random() * happyQuotes.length)];
+      }
+
+      openCatBubble();
+      if (typeof showToast === 'function') {
+        showToast('🐾 赛博机械猫感到无比幸福，亲密度 +1！');
+      }
+    }
+
+    function syncCyberCatState() {
+      const statusBadge = document.getElementById('catStatusBadge');
+      const eyesNorm = document.getElementById('catEyesNormal');
+      const eyesSleep = document.getElementById('catEyesSleep');
+      const eyesHappy = document.getElementById('catEyesHappy');
+      const headphones = document.getElementById('catHeadphones');
+
+      const isPomo = typeof pomoIsRunning !== 'undefined' && pomoIsRunning;
+      const isMusic = typeof kugouIsPlaying !== 'undefined' && kugouIsPlaying;
+
+      if (isPomo) {
+        catMode = 'focus';
+        if (statusBadge) statusBadge.textContent = '心流专注中 · Zzz';
+        if (eyesNorm) eyesNorm.style.display = 'none';
+        if (eyesHappy) eyesHappy.style.display = 'none';
+        if (eyesSleep) eyesSleep.style.display = 'block';
+        if (headphones) headphones.style.display = 'none';
+      } else if (isMusic) {
+        catMode = 'music';
+        if (statusBadge) statusBadge.textContent = '音乐律动中 · 🎶';
+        if (eyesSleep) eyesSleep.style.display = 'none';
+        if (eyesNorm) eyesNorm.style.display = 'block';
+        if (headphones) headphones.style.display = 'block';
+      } else {
+        catMode = 'idle';
+        if (statusBadge) statusBadge.textContent = '陪伴中 · 呼噜';
+        if (eyesSleep) eyesSleep.style.display = 'none';
+        if (eyesHappy) eyesHappy.style.display = 'none';
+        if (eyesNorm) eyesNorm.style.display = 'block';
+        if (headphones) headphones.style.display = 'none';
+      }
+    }
+
+    // Hook Pomodoro toggle to sync cat state
+    const _orig_togglePomodoro = typeof togglePomodoro === 'function' ? togglePomodoro : null;
+    window.togglePomodoro = function() {
+      if (_orig_togglePomodoro) _orig_togglePomodoro();
+      setTimeout(syncCyberCatState, 100);
+    };
+
+    // ========================================================
+    // 📝 QUICK SCRATCHPAD ENGINE (LOCAL AUTO-SYNC)
+    // ========================================================
+    function initQuickScratchpad() {
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!textarea) return;
+
+      try {
+        const saved = localStorage.getItem('pulseos_quick_scratchpad');
+        if (saved) {
+          textarea.value = saved;
+          updateScratchpadStats(saved);
+        }
+      } catch (e) {}
+    }
+
+    function toggleQuickScratchpad() {
+      const panel = document.getElementById('quickScratchpadPanel');
+      if (!panel) return;
+      if (panel.classList.contains('active')) {
+        closeQuickScratchpad();
+      } else {
+        openQuickScratchpad();
+      }
+    }
+
+    function openQuickScratchpad() {
+      const panel = document.getElementById('quickScratchpadPanel');
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!panel) return;
+      panel.classList.add('active');
+      setTimeout(() => {
+        if (textarea) textarea.focus();
+      }, 80);
+    }
+
+    function closeQuickScratchpad() {
+      const panel = document.getElementById('quickScratchpadPanel');
+      if (panel) panel.classList.remove('active');
+    }
+
+    function onScratchpadInput() {
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!textarea) return;
+      const text = textarea.value;
+      updateScratchpadStats(text);
+
+      try {
+        localStorage.setItem('pulseos_quick_scratchpad', text);
+        const status = document.getElementById('scratchpadSaveStatus');
+        if (status) {
+          status.textContent = '已保存 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        }
+      } catch (e) {}
+    }
+
+    function updateScratchpadStats(text) {
+      const countEl = document.getElementById('scratchpadWordCount');
+      if (countEl) {
+        countEl.textContent = `${(text || '').length} 字符`;
+      }
+    }
+
+    function copyScratchpadText() {
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!textarea || !textarea.value) {
+        if (typeof showToast === 'function') showToast('⚠️ 便签内容为空');
+        return;
+      }
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        if (typeof showToast === 'function') showToast('📋 便签内容已成功复制到剪贴板！');
+      }).catch(() => {
+        alert('复制失败，请手动选取复制');
+      });
+    }
+
+    function clearScratchpadText() {
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!textarea) return;
+      if (!textarea.value) return;
+      if (confirm('确认清空当前随手记便签簿吗？')) {
+        textarea.value = '';
+        onScratchpadInput();
+        if (typeof showToast === 'function') showToast('🗑️ 便签已清空');
+      }
+    }
+
+    function exportScratchpadToObsidian() {
+      const textarea = document.getElementById('scratchpadTextarea');
+      if (!textarea || !textarea.value.trim()) {
+        if (typeof showToast === 'function') showToast('⚠️ 便签内容为空，无法存入笔记库');
+        return;
+      }
+
+      const content = textarea.value;
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+      const timeStr = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+      const filename = `随手记_${dateStr}_${timeStr}.md`;
+
+      try {
+        if (typeof vaultNotes !== 'undefined' && Array.isArray(vaultNotes)) {
+          vaultNotes.unshift({
+            name: filename,
+            path: filename,
+            content: content,
+            updatedAt: now.toISOString()
+          });
+          if (typeof renderTreeDOM === 'function') renderTreeDOM();
+          if (typeof showToast === 'function') showToast(`📁 已存入 Obsidian 笔记库: 《${filename}》`);
+          closeQuickScratchpad();
+          switchView('obsidian');
+          if (typeof openNote === 'function') openNote(filename);
+        } else {
+          showToast('⚠️ Obsidian 笔记库尚未就绪');
+        }
+      } catch (err) {
+        console.warn('Export scratchpad error', err);
+        showToast('⚠️ 存入笔记失败');
+      }
+    }
+
+    // Auto Boot All New Feature Engines on Startup
+    try { initAudioVisualizerEngine(); } catch(e) { console.warn('initAudioVisualizerEngine error', e); }
+    try { initCyberCatCompanion(); } catch(e) { console.warn('initCyberCatCompanion error', e); }
+    try { initQuickScratchpad(); } catch(e) { console.warn('initQuickScratchpad error', e); }
+
 </script>
   <!-- 🖼️ APPLE MUSIC STYLE IMMERSIVE CANVAS VIEW (全屏沉浸画报模式) -->
   <div class="immersive-canvas-overlay" id="immersiveMusicCanvas" style="display:none;" aria-hidden="true">
@@ -27013,6 +28139,153 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     </main>
   </div>
+
+  <!-- ======================================================== -->
+  <!-- 🐱 AMBIENT CYBER CAT COMPANION WIDGET (ppday's Kitten)     -->
+  <!-- ======================================================== -->
+  <aside class="cyber-cat-companion" id="cyberCatCompanion">
+    <!-- Thought Bubble -->
+    <div class="cyber-cat-bubble" id="cyberCatBubble">
+      <div class="bubble-header">
+        <span id="catBubbleTitle">(=^･ω･^=) 机械赛博猫</span>
+        <span class="bubble-cuddle-tag" id="catCuddleTag">已吸猫 0 次</span>
+      </div>
+      <div class="bubble-text" id="catBubbleText">
+        喵呜~ 今天的代码写得超棒！主人继续加油！🐾
+      </div>
+      <div class="bubble-actions">
+        <button class="bubble-btn primary" onclick="petCyberCat(event)">
+          <span>🐾 摸摸它</span>
+        </button>
+        <button class="bubble-btn" onclick="togglePomodoro(); closeCatBubble();">
+          <span>⏱️ 专注</span>
+        </button>
+        <button class="bubble-btn" onclick="toggleKuGouPlay(); closeCatBubble();">
+          <span>🎵 随身听</span>
+        </button>
+        <button class="bubble-btn" onclick="toggleQuickScratchpad(); closeCatBubble();">
+          <span>📝 便签</span>
+        </button>
+        <button class="bubble-btn" onclick="closeCatBubble();" style="margin-left:auto;">
+          <span>✕</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Cat Capsule -->
+    <div class="cyber-cat-capsule" id="cyberCatCapsule" onclick="toggleCatBubble(event)" title="点击与机械赛博猫互动">
+      <div class="cat-purr-ring" id="catPurrRing"></div>
+      <div class="cyber-cat-svg-wrap">
+        <svg class="cat-svg-root" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cat Body & Tail -->
+          <g class="cat-breathe">
+            <path class="cat-tail" d="M 12 36 C 8 38 4 32 6 26 C 7 22 10 24 9 27 C 8 30 11 32 14 34" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <ellipse cx="24" cy="32" rx="14" ry="10" fill="#121324" stroke="#7c3aed" stroke-width="1.8"/>
+            <!-- Cyber Circuit Accents -->
+            <path d="M 18 32 L 24 35 L 30 32" stroke="rgba(6,182,212,0.6)" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+
+          <!-- Cat Head -->
+          <g class="cat-head-group">
+            <!-- Left Ear -->
+            <polygon class="cat-ear-l" points="13,20 18,7 24,17" fill="#181930" stroke="#7c3aed" stroke-width="1.8"/>
+            <polygon points="15,18 18,10 22,16" fill="rgba(6,182,212,0.3)"/>
+            <!-- Right Ear -->
+            <polygon class="cat-ear-r" points="35,20 30,7 24,17" fill="#181930" stroke="#7c3aed" stroke-width="1.8"/>
+            <polygon points="33,18 30,10 26,16" fill="rgba(6,182,212,0.3)"/>
+
+            <!-- Face Base -->
+            <circle cx="24" cy="22" r="12" fill="#15172b" stroke="#7c3aed" stroke-width="1.8"/>
+
+            <!-- Cyber Glow Cheek Accents -->
+            <circle cx="16" cy="25" r="1.5" fill="rgba(244,63,94,0.5)"/>
+            <circle cx="32" cy="25" r="1.5" fill="rgba(244,63,94,0.5)"/>
+
+            <!-- Whiskers -->
+            <line x1="8" y1="22" x2="16" y2="23" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="9" y1="26" x2="16" y2="25" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="40" y1="22" x2="32" y2="23" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="39" y1="26" x2="32" y2="25" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+
+            <!-- Nose & Mouth -->
+            <polygon points="24,24 22.5,22.5 25.5,22.5" fill="#f43f5e"/>
+            <path d="M 22 25 Q 24 27 26 25" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+
+            <!-- Eyes (Normal, Focus/Sleep, or Happy) -->
+            <g id="catEyesNormal">
+              <ellipse id="catEyeL" class="cat-eye-dot" cx="19" cy="19" rx="2.4" ry="3.2"/>
+              <ellipse id="catEyeR" class="cat-eye-dot" cx="29" cy="19" rx="2.4" ry="3.2"/>
+              <circle cx="18.2" cy="18" r="0.8" fill="#ffffff"/>
+              <circle cx="28.2" cy="18" r="0.8" fill="#ffffff"/>
+            </g>
+            <g id="catEyesSleep" style="display:none;">
+              <path d="M 16 20 Q 19 23 22 20" stroke="#a855f7" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M 26 20 Q 29 23 32 20" stroke="#a855f7" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </g>
+            <g id="catEyesHappy" style="display:none;">
+              <path d="M 16 19 Q 19 15 22 19" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path d="M 26 19 Q 29 15 32 19" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </g>
+
+            <!-- Cyber Headphones (Dynamic for Music Mode) -->
+            <g id="catHeadphones" style="display:none;">
+              <path d="M 12 17 C 12 8 36 8 36 17" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+              <rect x="9" y="15" width="4" height="9" rx="2" fill="#7c3aed" stroke="#00d4ff" stroke-width="1.2"/>
+              <rect x="35" y="15" width="4" height="9" rx="2" fill="#7c3aed" stroke="#00d4ff" stroke-width="1.2"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="cyber-cat-meta">
+        <div class="cyber-cat-name">
+          <span>赛博猫猫</span>
+          <span style="font-size:0.7rem;">🐱</span>
+        </div>
+        <div class="cyber-cat-status-badge" id="catStatusBadge">陪伴中 · 呼噜</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======================================================== -->
+  <!-- 📝 QUICK SCRATCHPAD PANEL (INSTANT MEMO & NOTE TAKING)   -->
+  <!-- ======================================================== -->
+  <aside class="quick-scratchpad-panel" id="quickScratchpadPanel">
+    <div class="scratchpad-header">
+      <div class="scratchpad-title">
+        <i data-lucide="edit-3" style="width:15px; height:15px;"></i>
+        <span>随手记 · 便签簿</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="scratchpad-meta" id="scratchpadWordCount">0 字</span>
+        <button class="scratchpad-close-btn" onclick="toggleQuickScratchpad()" title="关闭便签">
+          <i data-lucide="x" style="width:14px; height:14px;"></i>
+        </button>
+      </div>
+    </div>
+    <div class="scratchpad-body">
+      <textarea class="scratchpad-textarea" id="scratchpadTextarea" placeholder="随手记灵感、待办清单、临时代码或会议要点... (自动持久化存储，支持转存 Obsidian)" oninput="onScratchpadInput()"></textarea>
+    </div>
+    <div class="scratchpad-footer">
+      <div class="scratchpad-sync-hint">
+        <i data-lucide="check" style="width:12px; height:12px; color:#10b981;"></i>
+        <span id="scratchpadSaveStatus">已本地保存</span>
+      </div>
+      <div class="scratchpad-actions">
+        <button class="scratchpad-btn" onclick="copyScratchpadText()" title="复制全文">
+          <i data-lucide="copy" style="width:12px; height:12px;"></i>
+          <span>复制</span>
+        </button>
+        <button class="scratchpad-btn" onclick="clearScratchpadText()" title="清空便签">
+          <i data-lucide="trash-2" style="width:12px; height:12px;"></i>
+          <span>清空</span>
+        </button>
+        <button class="scratchpad-btn primary" onclick="exportScratchpadToObsidian()" title="存入 Obsidian 笔记库">
+          <i data-lucide="save" style="width:12px; height:12px;"></i>
+          <span>存入笔记</span>
+        </button>
+      </div>
+    </div>
+  </aside>
 
 </body>
 </html>
