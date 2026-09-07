@@ -9634,6 +9634,39 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       pointer-events: none;
     }
 
+        /* Live 5s Auto-Sync Badge (Apple / Linear Minimalist) */
+    .mail-auto-sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 550;
+      letter-spacing: -0.01em;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      color: #059669;
+      user-select: none;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+    html:not(.theme-light) .mail-auto-sync-badge {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+    .mail-auto-sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      display: inline-block;
+      animation: mailLivePulse 1.8s infinite ease-in-out;
+    }
+
     /* Primary Live Sync Button */
     .mail-btn-sync {
       background: #0284c7;
@@ -11118,12 +11151,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
               </div>
               <div class="mail-hero-actions">
-                <button class="mail-btn-action mail-btn-sync" onclick="triggerMailSyncManual()" id="btnMailSync" title="全量检查并同步最新信件">
-                  <svg class="mail-sync-icon" id="mailSyncIcon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                  </svg>
-                  <span id="mailSyncText">实时同步拉取</span>
-                </button>
+                <div class="mail-auto-sync-badge" id="mailAutoSyncBadge" title="已启用 5 秒极速全自动轮询同步，无需手动拉取">
+                  <span class="mail-auto-sync-dot"></span>
+                  <span>5s 极速自动同步中</span>
+                </div>
                 <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest" title="由 DeepSeek 提炼全量信件关键信息">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M7.757 16.243l-2.121 2.121m12.728 0l-2.121-2.121M7.757 7.757L5.636 5.636"/>
@@ -18612,8 +18643,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
 
+    let lastPoppedOtpId = '';
+    try { lastPoppedOtpId = localStorage.getItem('last_popped_otp_id') || ''; } catch(e){}
+    let otpFastPoller = null;
+
+    async function pollLatestOtp() {
+      try {
+        const res = await fetch('/api/otp/latest', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json && json.data && json.data.code) {
+          const otp = json.data;
+          const now = Date.now();
+          const age = now - (otp.timestamp || 0);
+
+          // If code is fresh (within 3 minutes / 180s) and not yet popped in this browser session
+          if (age <= 180000 && otp.id !== lastPoppedOtpId) {
+            lastPoppedOtpId = otp.id;
+            try { localStorage.setItem('last_popped_otp_id', otp.id); } catch(e){}
+            handleNewOtpArrival(otp);
+          }
+        }
+      } catch (err) {
+        // Silent network catch
+      }
+    }
+
     function initOtpClient() {
-      // Connect to SSE stream
+      // 1. Connect to SSE stream (Engine A: Push)
       try {
         const evtSource = new EventSource('/api/otp/stream');
         evtSource.onmessage = function(e) {
@@ -18622,19 +18679,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             if (parsed.event === 'otp' && parsed.data) {
               handleNewOtpArrival(parsed.data);
             }
-          } catch (err) {
-            // Ignore keepalive ping or json error
-          }
+          } catch (err) {}
         };
         evtSource.onerror = function() {
-          // Auto reconnects natively
+          // SSE auto reconnects natively
         };
       } catch (e) {
         console.warn('SSE not supported or connection error', e);
       }
 
-      // Initial fetch of recent OTPs
+      // 2. Immediate Poll & History Fetch (Instant pop-up on page load if code waiting)
+      pollLatestOtp();
       fetchOtpHistory();
+
+      // 3. Engine B: Fast Active Poller (1000ms / 1s interval)
+      if (otpFastPoller) clearInterval(otpFastPoller);
+      otpFastPoller = setInterval(pollLatestOtp, 1000);
+
+      // 4. Engine C: Wakeup on tab switch or window focus (<50ms response)
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          pollLatestOtp();
+        }
+      });
+      window.addEventListener('focus', () => {
+        pollLatestOtp();
+      });
 
       // Request Web Notification permission on first user click
       document.addEventListener('click', function requestNotif() {
@@ -18646,8 +18716,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     function handleNewOtpArrival(otp) {
+      if (!otp || !otp.code) return;
+      lastPoppedOtpId = otp.id;
+      try { localStorage.setItem('last_popped_otp_id', otp.id); } catch(e){}
+
       currentOtpData = otp;
-      otpHistoryCache.unshift(otp);
+      if (!otpHistoryCache.some(x => x.id === otp.id || (x.code === otp.code && x.service === otp.service))) {
+        otpHistoryCache.unshift(otp);
+      }
       
       // 1. Show Dynamic Island
       showOtpIsland(otp);
@@ -18657,16 +18733,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       // 3. Trigger Desktop Notification if tab is hidden or background
       if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-        const notif = new Notification(`【${otp.service}】验证码: ${otp.code}`, {
-          body: `目标邮箱: ${otp.target_email}\n点击直接复制`,
-          icon: '/favicon.ico',
-          tag: otp.id
-        });
-        notif.onclick = function() {
-          window.focus();
-          navigator.clipboard.writeText(otp.code);
-          notif.close();
-        };
+        try {
+          const notif = new Notification(`【${otp.service}】验证码: ${otp.code}`, {
+            body: `目标邮箱: ${otp.target_email}\n点击直接复制`,
+            icon: '/favicon.ico',
+            tag: otp.id
+          });
+          notif.onclick = function() {
+            window.focus();
+            navigator.clipboard.writeText(otp.code);
+            notif.close();
+          };
+        } catch(e){}
       }
 
       // 4. Update top bar badge dot
@@ -18689,11 +18767,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const copyBtn = document.getElementById('islandCopyBtn');
       if (copyBtn) {
         copyBtn.classList.remove('copied');
-        document.getElementById('islandCopyText').textContent = '复制';
-        if (window.lucide) {
-          document.getElementById('islandCopyBtn').innerHTML = '<i data-lucide="copy" style="width:13px; height:13px;"></i> <span>复制</span>';
-          lucide.createIcons();
-        }
+        copyBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="islandCopyText">复制</span>
+        `;
       }
 
       island.classList.add('island-active');
@@ -18749,8 +18829,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         const copyBtn = document.getElementById('islandCopyBtn');
         if (copyBtn) {
           copyBtn.classList.add('copied');
-          copyBtn.innerHTML = '<i data-lucide="check" style="width:13px; height:13px;"></i> <span>已复制!</span>';
-          if (window.lucide) lucide.createIcons();
+          copyBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span id="islandCopyText" style="color:#10b981;font-weight:700;">已复制!</span>
+          `;
         }
         // Auto dismiss after 1.5s
         setTimeout(() => {
@@ -24619,6 +24703,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     try { fetchDailyNews(); } catch (e) { console.warn('fetchDailyNews error', e); }
     try { initPomodoroTimer(); } catch (e) { console.warn('initPomodoroTimer error', e); }
     try { initKuGouMusicPlayer(); } catch (e) { console.warn('initKuGouMusicPlayer error', e); }
+    try { initMailAutoSyncEngine(); } catch (e) { console.warn('initMailAutoSyncEngine error', e); }
     try { updateQualityUI(); } catch (e) { console.warn('updateQualityUI error', e); }
     try { 
       switchView('home');
@@ -25682,41 +25767,42 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     });
 
-    let isMailSyncing = false;
-    async function triggerMailSyncManual() {
-      if (isMailSyncing) return;
-      isMailSyncing = true;
-      const btn = document.getElementById('btnMailSync');
-      const icon = document.getElementById('mailSyncIcon');
-      const text = document.getElementById('mailSyncText');
-      if (btn) btn.disabled = true;
-      if (icon) icon.classList.add('animate-spin');
-      if (text) text.textContent = '正在极速拉取...';
+    // 5s Automatic Refresh & Silent IMAP Sync Engine
+    let mailAutoSyncTimer = null;
+    let isMailAutoSyncing = false;
 
-      try {
-        const res = await fetch('/api/mail/sync', { method: 'POST' });
-        const json = await res.json();
-        if (res.ok && (json.code === 200 || json.synced_count !== undefined)) {
+    function initMailAutoSyncEngine() {
+      if (mailAutoSyncTimer) clearInterval(mailAutoSyncTimer);
+      
+      mailAutoSyncTimer = setInterval(async () => {
+        if (document.hidden) return;
+
+        // 1. Refresh list and stats from SQLite
+        const mailView = document.getElementById('view-mail');
+        if (mailView && mailView.classList.contains('active')) {
           await fetchMailList();
           await fetchMailStats();
-          if (text) {
-            const countStr = json.new_count > 0 ? ` (+${json.new_count}封)` : '';
-            text.textContent = `同步完成${countStr}`;
-          }
-        } else {
-          if (text) text.textContent = json.message || '拉取完成';
         }
-      } catch (e) {
-        console.warn('Sync failed', e);
-        if (text) text.textContent = '同步异常';
-      } finally {
-        setTimeout(() => {
-          if (icon) icon.classList.remove('animate-spin');
-          if (text) text.textContent = '实时同步拉取';
-          if (btn) btn.disabled = false;
-          isMailSyncing = false;
-        }, 1200);
-      }
+
+        // 2. Perform background IMAP sync across accounts every 5s if not already running
+        if (!isMailAutoSyncing) {
+          isMailAutoSyncing = true;
+          try {
+            const res = await fetch('/api/mail/sync?limit=10', { method: 'POST' });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.new_count > 0) {
+                await fetchMailList();
+                await fetchMailStats();
+              }
+            }
+          } catch (err) {
+            // Ignore background network blips
+          } finally {
+            isMailAutoSyncing = false;
+          }
+        }
+      }, 5000);
     }
 
     async function generateMailAiDigest() {
@@ -25816,6 +25902,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       fetchMailList();
       fetchMailStats();
       syncMailReaderThemeWithWorkspace();
+      
+      // Ensure auto-sync engine is running
+      initMailAutoSyncEngine();
+
+      // Trigger immediate background sync
+      if (!isMailAutoSyncing) {
+        isMailAutoSyncing = true;
+        fetch('/api/mail/sync?limit=10', { method: 'POST' })
+          .then(res => res.json())
+          .then(json => {
+            if (json && json.new_count > 0) {
+              fetchMailList();
+              fetchMailStats();
+            }
+          })
+          .catch(() => {})
+          .finally(() => { isMailAutoSyncing = false; });
+      }
     }
     
 </script>
