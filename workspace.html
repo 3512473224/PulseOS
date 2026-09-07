@@ -315,8 +315,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .logo span:first-child {
-      color: #fff;
-      transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 45%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 14px rgba(124, 92, 252, 0.45), 0 0 24px rgba(0, 212, 255, 0.35);
+      filter: drop-shadow(0 0 6px rgba(124, 92, 252, 0.35));
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .logo span:last-child {
       background: linear-gradient(135deg, #00d4ff 0%, #7c5cfc 35%, #f43f5e 70%, #00d4ff 100%);
@@ -7079,7 +7083,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       animation: fluidRainbowShift 6s ease infinite;
     }
     html.theme-light .logo span:first-child {
-      color: #0f172a !important;
+      background: linear-gradient(135deg, #0f172a 0%, #312e81 60%, #4338ca 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      text-shadow: none !important;
+      filter: drop-shadow(0 1px 2px rgba(99, 102, 241, 0.15)) !important;
     }
     html.theme-light .top-breadcrumbs .curr-view {
       color: #0f172a !important;
@@ -9982,6 +9990,131 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-size: 0.84rem;
       color: var(--mail-text-sub) !important;
       line-height: 1.65;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .mail-ai-digest-body h1,
+    .mail-ai-digest-body h2,
+    .mail-ai-digest-body h3,
+    .mail-ai-digest-body h4 {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 18px;
+      margin-bottom: 10px;
+      color: #f1f5f9 !important;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    html.theme-light .mail-ai-digest-body h1,
+    html.theme-light .mail-ai-digest-body h2,
+    html.theme-light .mail-ai-digest-body h3,
+    html.theme-light .mail-ai-digest-body h4 {
+      color: #0f172a !important;
+    }
+    .mail-ai-digest-body h1 { font-size: 1.15rem; border-bottom: 1px solid rgba(168, 85, 247, 0.25); padding-bottom: 8px; }
+    .mail-ai-digest-body h2 { font-size: 1.02rem; }
+    .mail-ai-digest-body h3 { font-size: 0.92rem; }
+    .mail-ai-digest-body p {
+      width: 100%;
+      margin: 8px 0 12px 0;
+      line-height: 1.7;
+      color: #cbd5e1 !important;
+    }
+    html.theme-light .mail-ai-digest-body p {
+      color: #334155 !important;
+    }
+    .mail-ai-digest-body ul, .mail-ai-digest-body ol {
+      width: 100%;
+      padding-left: 20px;
+      margin: 8px 0 12px 0;
+      box-sizing: border-box;
+    }
+    .mail-ai-digest-body li {
+      margin-bottom: 6px;
+      color: #cbd5e1 !important;
+      line-height: 1.65;
+    }
+    html.theme-light .mail-ai-digest-body li {
+      color: #334155 !important;
+    }
+    .mail-ai-digest-body strong {
+      color: #f8fafc !important;
+      font-weight: 600;
+    }
+    html.theme-light .mail-ai-digest-body strong {
+      color: #0f172a !important;
+    }
+    .mail-ai-table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      margin: 14px 0 20px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      background: rgba(15, 23, 42, 0.6);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      box-sizing: border-box;
+    }
+    html.theme-light .mail-ai-table-wrap {
+      background: #ffffff;
+      border-color: rgba(168, 85, 247, 0.25);
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.08);
+    }
+    .mail-ai-table-wrap table {
+      width: 100% !important;
+      min-width: 100% !important;
+      margin: 0 !important;
+      border: none !important;
+      border-collapse: collapse !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      table-layout: auto !important;
+    }
+    .mail-ai-table-wrap th {
+      background: rgba(168, 85, 247, 0.16) !important;
+      color: #c084fc !important;
+      font-weight: 600 !important;
+      font-size: 0.8rem !important;
+      letter-spacing: 0.03em !important;
+      padding: 11px 16px !important;
+      text-align: left !important;
+      border-bottom: 1px solid rgba(168, 85, 247, 0.25) !important;
+      white-space: nowrap !important;
+    }
+    html.theme-light .mail-ai-table-wrap th {
+      background: rgba(168, 85, 247, 0.08) !important;
+      color: #7e22ce !important;
+      border-bottom: 1px solid rgba(168, 85, 247, 0.2) !important;
+    }
+    .mail-ai-table-wrap td {
+      padding: 12px 16px !important;
+      font-size: 0.82rem !important;
+      line-height: 1.65 !important;
+      color: #cbd5e1 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      vertical-align: top !important;
+      word-wrap: break-word !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    html.theme-light .mail-ai-table-wrap td {
+      color: #1e293b !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+    }
+    .mail-ai-table-wrap tr:last-child td {
+      border-bottom: none !important;
+    }
+    .mail-ai-table-wrap tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.02) !important;
+    }
+    html.theme-light .mail-ai-table-wrap tr:nth-child(even) td {
+      background: #fdfcff !important;
+    }
+    .mail-ai-table-wrap tr:hover td {
+      background: rgba(168, 85, 247, 0.08) !important;
     }
 
     /* 🌟 AI Digest Glowing & Shimmer Loading Animation */
@@ -12927,9 +13060,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     <div class="dialog-box" style="max-width:390px; padding:20px; background:rgba(13, 17, 28, 0.94); border:1px solid rgba(255, 255, 255, 0.08); border-radius:20px; backdrop-filter:blur(28px); box-shadow:0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(0, 145, 255, 0.15);" onclick="event.stopPropagation()">
       <!-- Header -->
       <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid rgba(255, 255, 255, 0.06);">
-        <div class="dialog-title" style="display:flex; align-items:center; gap:8px;">
-          <div style="width:24px; height:24px; font-size:0.75rem; background:linear-gradient(135deg, #0091ff, #00d4ff); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:bold;">K</div>
-          <span style="font-weight:700; font-size:0.9rem; color:var(--text);">酷狗音乐账号</span>
+        <div class="dialog-title" style="display:flex; align-items:center; gap:10px;">
+          <div style="width:28px; height:28px; background:linear-gradient(135deg, #0091ff, #6366f1); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
+            <i data-lucide="disc-3" style="width:16px;height:16px;"></i>
+          </div>
+          <div>
+            <div style="font-weight:700; font-size:0.92rem; color:var(--text); letter-spacing:-0.01em;">酷狗音乐账户</div>
+            <div style="font-size:0.68rem; color:var(--text-dim); margin-top:1px;">云端高保真串流与歌单管理</div>
+          </div>
         </div>
         <button class="btn-icon" onclick="closeKuGouBindModal()" style="font-size:0.85rem; width:26px; height:26px; border-radius:8px; cursor:pointer; color:var(--text-dim); background:transparent; border:none;">✕</button>
       </div>
@@ -12983,44 +13121,54 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       <!-- Login Section (Only shown when explicitly clicking '切换账号') -->
       <div id="kgLoginSection" style="display:none; margin-top:12px;">
-        <div class="kg-tabs" style="display:flex; gap:6px; margin-bottom:12px; background:rgba(0,0,0,0.3); padding:4px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
-          <button id="tabKgQR" class="kg-tab-btn active" style="flex:1; padding:6px 10px; font-size:0.75rem; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-weight:600; border:none; background:#0091ff; color:#fff;" onclick="switchKgLoginTab('qr')">
+        <div class="kg-tabs" style="display:flex; gap:6px; margin-bottom:14px; background:rgba(0,0,0,0.35); padding:4px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+          <button id="tabKgQR" class="kg-tab-btn active" style="flex:1; padding:7px 12px; font-size:0.75rem; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-weight:600; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.12); color:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.25);" onclick="switchKgLoginTab('qr')">
+            <i data-lucide="qr-code" style="width:13px;height:13px;"></i>
             <span>扫码登录</span>
           </button>
-          <button id="tabKgManual" class="kg-tab-btn" style="flex:1; padding:6px 10px; font-size:0.75rem; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-weight:500; border:none; background:transparent; color:var(--text-dim);" onclick="switchKgLoginTab('manual')">
+          <button id="tabKgManual" class="kg-tab-btn" style="flex:1; padding:7px 12px; font-size:0.75rem; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; font-weight:500; border:1px solid transparent; background:transparent; color:var(--text-dim);" onclick="switchKgLoginTab('manual')">
+            <i data-lucide="user-check" style="width:13px;height:13px;"></i>
             <span>用户 ID 绑定</span>
           </button>
         </div>
 
         <!-- Pane 1: QR -->
-        <div id="kgPaneQR" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:8px 0;">
-          <div style="font-size:0.72rem; color:var(--text-dim);">
-            打开手机酷狗音乐 App 扫码登录
+        <div id="kgPaneQR" style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:6px 0 10px;">
+          <div style="font-size:0.74rem; color:var(--text-sub); display:flex; align-items:center; gap:6px; font-weight:500;">
+            <i data-lucide="smartphone" style="width:13px;height:13px;color:#38bdf8;"></i>
+            <span>使用手机酷狗音乐 App 扫码登录</span>
           </div>
-          <div style="position:relative; width:170px; height:170px; background:#ffffff; padding:10px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center;" id="kgQRCodeWrap">
-            <div id="kgQRCodeCanvas" style="display:flex; align-items:center; justify-content:center;"></div>
-            <div id="kgQRMask" style="display:none; position:absolute; inset:0; background:rgba(15,23,42,0.92); backdrop-filter:blur(4px); border-radius:12px; flex-direction:column; align-items:center; justify-content:center; padding:10px; text-align:center;">
-              <div id="kgQRMaskText" style="font-size:0.72rem; color:#fff; margin-bottom:8px;">二维码已失效</div>
-              <button class="btn" style="padding:3px 12px; font-size:0.68rem; border-radius:12px; background:#0091ff; color:#fff; border:none; cursor:pointer;" onclick="generateKuGouQR()">重新刷新</button>
+          <div style="position:relative; width:184px; height:184px; background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:16px; box-shadow:0 12px 32px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; overflow:hidden;" id="kgQRCodeWrap">
+            <div id="kgQRCodeCanvas" style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;"></div>
+            <div id="kgQRMask" style="display:none; position:absolute; inset:0; background:rgba(15,23,42,0.92); backdrop-filter:blur(6px); border-radius:16px; flex-direction:column; align-items:center; justify-content:center; padding:12px; text-align:center;">
+              <div id="kgQRMaskText" style="font-size:0.75rem; color:#fff; margin-bottom:10px; font-weight:500;">二维码已过期</div>
+              <button class="btn" style="padding:5px 14px; font-size:0.72rem; border-radius:8px; background:linear-gradient(135deg, #0284c7, #2563eb); color:#fff; border:none; cursor:pointer; font-weight:600; box-shadow:0 2px 10px rgba(37,99,235,0.3);" onclick="generateKuGouQR()">刷新二维码</button>
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:6px; font-size:0.7rem; color:#38bdf8;" id="kgQRStatusBox">
-            <span style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#0091ff; animation:pulse 1.5s infinite;"></span>
-            <span id="kgQRStatusText">等待扫码...</span>
+          <div style="display:flex; align-items:center; gap:6px; font-size:0.72rem; color:#38bdf8;" id="kgQRStatusBox">
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#0284c7; box-shadow:0 0 8px #0284c7; animation:pulse 1.5s infinite;" id="kgQRDot"></span>
+            <span id="kgQRStatusText">等待扫码授权中...</span>
           </div>
         </div>
 
         <!-- Pane 2: Manual -->
-        <div id="kgPaneManual" style="display:none; flex-direction:column; gap:10px; padding:8px 0;">
-          <div style="font-size:0.72rem; color:var(--text-dim);">
-            输入酷狗数字 UserID：
+        <div id="kgPaneManual" style="display:none; flex-direction:column; gap:12px; padding:8px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.75rem; font-weight:600; color:var(--text);">酷狗数字 UserID</span>
+            <span style="font-size:0.68rem; color:var(--text-dim);">支持公开歌单直连同步</span>
           </div>
-          <input type="text" id="inputKuGouUser" style="width:100%; padding:8px 12px; font-size:0.78rem; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#fff; outline:none;" placeholder="例如：1355034092" value="1355034092">
-          <button class="btn btn-glow" style="width:100%; padding:8px 0; font-size:0.75rem; border-radius:8px;" onclick="saveKuGouManualBind()">保存并同步歌单</button>
+          <input type="text" id="inputKuGouUser" style="width:100%; padding:9px 12px; font-size:0.82rem; font-family:var(--font-mono); border-radius:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#fff; outline:none; transition:all 0.2s; box-sizing:border-box;" placeholder="例如：1355034092" value="1355034092" onfocus="this.style.borderColor='rgba(0,145,255,0.6)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.15)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
+          <button class="btn" style="width:100%; padding:9px 0; font-size:0.78rem; font-weight:600; border-radius:10px; background:linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%); color:#ffffff; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,0.35); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'" onclick="saveKuGouManualBind()">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+            <span>同步云端歌单</span>
+          </button>
         </div>
 
         <div style="text-align:center; margin-top:8px;">
-          <button onclick="cancelReLoginKuGou()" style="background:none; border:none; color:var(--text-dim); font-size:0.7rem; cursor:pointer;">返回已登录状态</button>
+          <button onclick="cancelReLoginKuGou()" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:var(--text-dim); font-size:0.72rem; cursor:pointer; padding:5px 14px; border-radius:8px; transition:all 0.2s; display:inline-flex; align-items:center; gap:5px;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.color='var(--text-dim)';this.style.background='rgba(255,255,255,0.04)'">
+            <i data-lucide="arrow-left" style="width:12px;height:12px;"></i>
+            <span>返回当前账号</span>
+          </button>
         </div>
       </div>
     </div>
@@ -13071,7 +13219,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           </div>
           <span id="modalUserNickBadge" style="font-size:0.68rem; color:#10b981; background:rgba(16,185,129,0.12); padding:3px 10px; border-radius:14px; border:1px solid rgba(16,185,129,0.3); font-weight:600; display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="shield-check" style="width:12px;height:12px;"></i>
-            <span>酷狗已认证</span>
+            <span>ppday</span>
           </span>
         </div>
         <button class="btn-icon" onclick="closeKuGouPlaylistModal()" style="font-size:0.85rem; width:28px; height:28px; cursor:pointer; border-radius:8px;">✕</button>
@@ -21689,7 +21837,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         el.style.background = 'rgba(16,185,129,0.08)';
       }
       if (modalBadge) {
-        modalBadge.innerHTML = `<i data-lucide="shield-check" style="width:12px;height:12px;color:#10b981;"></i><span>${escapeHtml(nick)} (会话有效)</span>`;
+        modalBadge.innerHTML = `<i data-lucide="shield-check" style="width:12px;height:12px;color:#10b981;"></i><span>${escapeHtml(nick)}</span>`;
         if (window.lucide) lucide.createIcons();
       }
     }
@@ -24037,10 +24185,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (tab === 'qr') {
         if (qrBtn) {
           qrBtn.className = 'kg-tab-btn active';
-          qrBtn.style.background = 'linear-gradient(135deg, rgba(0, 145, 255, 0.18), rgba(56, 189, 248, 0.12))';
-          qrBtn.style.border = '1px solid rgba(0, 145, 255, 0.4)';
-          qrBtn.style.color = '#0091ff';
-          qrBtn.style.boxShadow = '0 2px 10px rgba(0, 145, 255, 0.15)';
+          qrBtn.style.background = 'rgba(255, 255, 255, 0.12)';
+          qrBtn.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+          qrBtn.style.color = '#ffffff';
+          qrBtn.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.25)';
         }
         if (manBtn) {
           manBtn.className = 'kg-tab-btn';
@@ -24062,10 +24210,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         }
         if (manBtn) {
           manBtn.className = 'kg-tab-btn active';
-          manBtn.style.background = 'linear-gradient(135deg, rgba(0, 145, 255, 0.18), rgba(56, 189, 248, 0.12))';
-          manBtn.style.border = '1px solid rgba(0, 145, 255, 0.4)';
-          manBtn.style.color = '#0091ff';
-          manBtn.style.boxShadow = '0 2px 10px rgba(0, 145, 255, 0.15)';
+          manBtn.style.background = 'rgba(255, 255, 255, 0.12)';
+          manBtn.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+          manBtn.style.color = '#ffffff';
+          manBtn.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.25)';
         }
         if (paneQR) paneQR.style.display = 'none';
         if (paneMan) paneMan.style.display = 'flex';
@@ -24084,7 +24232,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       // mobile direct link removed
 
       if (mask) mask.style.display = 'none';
-      if (container) container.innerHTML = '<div style="color:#0091ff;font-size:0.75rem;padding:40px 0;text-align:center;">⚡ 正在生成酷狗官方登录二维码...</div>';
+      if (container) {
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:20px 0;">
+            <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, rgba(0,145,255,0.2), rgba(99,102,241,0.2)); border:1px solid rgba(0,145,255,0.4); display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(0,145,255,0.3);">
+              <i data-lucide="loader-2" class="animate-spin" style="width:18px;height:18px;color:#38bdf8;"></i>
+            </div>
+            <div style="font-size:0.75rem; color:#94a3b8; font-weight:500; letter-spacing:0.02em;">正在生成官方登录码...</div>
+          </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+      }
       if (statusText) statusText.textContent = '正在直连酷狗官方生成登录会话...';
 
       try {
@@ -24099,24 +24257,33 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           const qrUrl = data.url || data.qr_url || `https://h5.kugou.com/apps/loginQRCode/html/index.html?qrcode=${kgCurrentQRKey}`;
           
           if (container) {
-            container.innerHTML = '';
+            container.innerHTML = `<div style="background:#ffffff; padding:10px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center;" id="kgQrCodeInnerBox"></div>`;
+            const innerBox = document.getElementById('kgQrCodeInnerBox');
             if (typeof QRCode !== 'undefined') {
-              new QRCode(container, {
+              new QRCode(innerBox, {
                 text: qrUrl,
-                width: 170,
-                height: 170,
-                colorDark: '#000000',
+                width: 148,
+                height: 148,
+                colorDark: '#0f172a',
                 colorLight: '#ffffff',
                 correctLevel: QRCode.CorrectLevel.M
               });
             } else {
-              container.innerHTML = `<img src="https://quickchart.io/qr?size=170&text=${encodeURIComponent(qrUrl)}" style="width:170px;height:170px;border-radius:8px;" alt="QR Code"/>`;
+              innerBox.innerHTML = `<img src="https://quickchart.io/qr?size=148&text=${encodeURIComponent(qrUrl)}" style="width:148px;height:148px;border-radius:6px;display:block;" alt="QR Code"/>`;
             }
           }
 
 // mobile link removed
 
-          if (statusText) statusText.innerHTML = '<span style="color:#10b981;">●</span> 请使用手机【酷狗音乐 App】右上角【扫一扫】授权登录';
+          const dot = document.getElementById('kgQRDot');
+          if (dot) {
+            dot.style.background = '#10b981';
+            dot.style.boxShadow = '0 0 8px #10b981';
+          }
+          if (statusText) {
+            statusText.style.color = '#10b981';
+            statusText.textContent = '请在手机端确认授权登录';
+          }
           startKuGouQRPoll(kgCurrentQRKey);
         } else {
           if (statusText) statusText.textContent = '会话创建失败，请点击刷新重试';
@@ -26554,6 +26721,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           lastMailAiDigestReport = report;
           if (window.marked) {
             body.innerHTML = marked.parse(report);
+            body.querySelectorAll('table').forEach(tbl => {
+              if (!tbl.parentElement.classList.contains('mail-ai-table-wrap')) {
+                const wrap = document.createElement('div');
+                wrap.className = 'mail-ai-table-wrap';
+                tbl.parentNode.insertBefore(wrap, tbl);
+                wrap.appendChild(tbl);
+              }
+            });
           } else {
             body.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(report)}</pre>`;
           }
