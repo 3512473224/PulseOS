@@ -11136,6 +11136,111 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     /* ======================================================== */
     /* 🐱 ULTRA-HD CYBER CAT (TITANIUM OBSIDIAN & ZERO PURPLE)  */
     /* ======================================================== */
+        /* 🐱 CYBER CAT DEEPSEEK AI INTEGRATION STYLES */
+    .bubble-btn.primary-ai {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.22), rgba(56, 189, 248, 0.12)) !important;
+      border-color: rgba(56, 189, 248, 0.4) !important;
+      color: #38bdf8 !important;
+    }
+    .bubble-btn.primary-ai:hover {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.38), rgba(56, 189, 248, 0.25)) !important;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35) !important;
+      color: #fff !important;
+    }
+    .cat-ai-prompt-box {
+      margin-top: 10px;
+      width: 100%;
+    }
+    .cat-ai-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 5px 8px 5px 10px;
+      transition: all 0.2s ease;
+    }
+    html.theme-light .cat-ai-input-wrap {
+      background: rgba(241, 245, 249, 0.85);
+      border-color: rgba(203, 213, 225, 0.8);
+    }
+    .cat-ai-input-wrap:focus-within {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.22);
+    }
+    html.theme-light .cat-ai-input-wrap:focus-within {
+      background: #fff;
+      border-color: #0284c7;
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.2);
+    }
+    .cat-ai-icon {
+      font-size: 0.82rem;
+      line-height: 1;
+      color: #38bdf8;
+      animation: catAiSparklePulse 3s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+    @keyframes catAiSparklePulse {
+      0%, 100% { opacity: 0.6; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    .cat-ai-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.76rem;
+      color: #f1f5f9;
+      font-family: inherit;
+      min-width: 0;
+    }
+    html.theme-light .cat-ai-input {
+      color: #0f172a;
+    }
+    .cat-ai-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+    html.theme-light .cat-ai-input::placeholder {
+      color: #94a3b8;
+    }
+    .cat-ai-send-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border: none;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      flex-shrink: 0;
+    }
+    .cat-ai-send-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
+    }
+    .cat-ai-send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .cat-thinking-shimmer {
+      display: inline-block;
+      background: linear-gradient(90deg, #38bdf8 0%, #a855f7 50%, #38bdf8 100%);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      animation: catShimmer 1.8s linear infinite;
+      font-weight: 600;
+    }
+    @keyframes catShimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
     .cyber-cat-companion {
       position: fixed;
       right: 24px;
@@ -12187,7 +12292,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                   <!-- Today's Real Dynamic Stats (Keyed by Date, 100% Dynamic!) -->
                   <div class="pomo-stats-text" id="pomoStatsText" style="font-size:0.72rem; color:var(--text-dim); text-align:center; margin-top:2px;">
-                    今日专注：<b style="color:#0091ff;" id="pomoTodayCount">0</b> 组 · <span id="pomoTodayMins">0 min</span> · <span onclick="showPomoIsland()" style="cursor:pointer; color:#38bdf8; text-decoration:underline;" title="点击即刻测试番茄钟喝水灵动岛与提示音">💧 测试灵动岛</span>
+                    今日专注：<b style="color:#0091ff;" id="pomoTodayCount">0</b> 组 · <span id="pomoTodayMins">0 min</span>
                   </div>
                 </div>
               </div>
@@ -22327,6 +22432,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         else if (mode === 'long') badge.textContent = '15 min 长休';
       }
 
+      const goalEl = document.getElementById('pomoTaskTitleText');
+      const goalBtn = document.getElementById('pomoGoalTriggerBtn');
+      if (goalEl) {
+        if (mode === 'focus') {
+          goalEl.textContent = pomoCustomFocusGoal || '系统架构与深度编码';
+          if (goalBtn) goalBtn.style.maxWidth = '170px';
+        } else {
+          goalEl.textContent = '💧 补水休息中 · 喝口温水远眺放松';
+          if (goalBtn) goalBtn.style.maxWidth = '240px';
+        }
+      }
+
       const startBtnText = document.getElementById('pomoStartText');
       if (startBtnText) startBtnText.textContent = '开始专注';
       const playIcon = document.getElementById('pomoPlayIcon');
@@ -28211,7 +28328,135 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
 
-    function petCyberCat(event) {
+    // ========================================================
+    // 🧠 CYBER CAT DEEPSEEK AI DIALOGUE & INSPIRATION ENGINE
+    // ========================================================
+    let isCatAiBusy = false;
+
+    function playCatPurrChime() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const notes = [
+          { freq: 659.25, time: 0, dur: 0.35, gain: 0.08 },
+          { freq: 880.0, time: 0.12, dur: 0.6, gain: 0.12 }
+        ];
+        notes.forEach(note => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.time);
+          gain.gain.setValueAtTime(0, ctx.currentTime + note.time);
+          gain.gain.linearRampToValueAtTime(note.gain, ctx.currentTime + note.time + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + note.time + note.dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + note.time);
+          osc.stop(ctx.currentTime + note.time + note.dur);
+        });
+      } catch (e) {}
+    }
+
+    async function askCatAiInspiration(event) {
+      if (event) event.stopPropagation();
+      if (isCatAiBusy) return;
+
+      const textEl = document.getElementById('catBubbleText');
+      const tagEl = document.getElementById('catCuddleTag');
+      const btn = document.getElementById('catAiInspireBtn');
+
+      isCatAiBusy = true;
+      if (btn) btn.style.opacity = '0.6';
+      if (tagEl) tagEl.textContent = '✨ AI 思考中';
+      if (textEl) {
+        textEl.innerHTML = '<span class="cat-thinking-shimmer">赛博灵猫量子突触思考中... 🐾✨</span>';
+      }
+
+      openCatBubble();
+
+      try {
+        const res = await fetch('/api/ai/cat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'inspire' })
+        });
+        const data = await res.json();
+        if (data && data.reply) {
+          renderCatAiReply(data.reply, '✨ DeepSeek AI');
+        } else {
+          throw new Error('No reply');
+        }
+      } catch (err) {
+        renderCatAiReply('喵~ 主人，无论算法如何喧嚣，专注架构的本心就是最纯粹的代码美学。✨🐾', '✨ 神经缓存');
+      } finally {
+        isCatAiBusy = false;
+        if (btn) btn.style.opacity = '1';
+      }
+    }
+
+    async function sendCatAiChat(event) {
+      if (event) event.stopPropagation();
+      if (isCatAiBusy) return;
+
+      const input = document.getElementById('catAiInput');
+      if (!input) return;
+      const query = input.value.trim();
+      if (!query) return;
+
+      input.value = '';
+      const sendBtn = document.getElementById('catAiSendBtn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      const textEl = document.getElementById('catBubbleText');
+      const tagEl = document.getElementById('catCuddleTag');
+
+      isCatAiBusy = true;
+      if (tagEl) tagEl.textContent = '✨ 神经演算中';
+      if (textEl) {
+        textEl.innerHTML = `<span class="cat-thinking-shimmer">赛博猫猫正在为你分析：“${query.slice(0, 14)}” 🐾⚡</span>`;
+      }
+
+      openCatBubble();
+
+      try {
+        const res = await fetch('/api/ai/cat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'chat', message: query })
+        });
+        const data = await res.json();
+        if (data && data.reply) {
+          renderCatAiReply(data.reply, '✨ 灵犀问答');
+        } else {
+          throw new Error('No reply');
+        }
+      } catch (err) {
+        renderCatAiReply('喵呜~ 网络微光扰动，但猫猫听到了你的声音！休息一下，灵感自会涌现喔。🐾⚡', '✨ 离线守护');
+      } finally {
+        isCatAiBusy = false;
+        if (sendBtn) sendBtn.disabled = false;
+      }
+    }
+
+    function renderCatAiReply(text, tagLabel) {
+      const textEl = document.getElementById('catBubbleText');
+      const tagEl = document.getElementById('catCuddleTag');
+      if (tagEl) tagEl.textContent = tagLabel || '✨ DeepSeek AI';
+      if (textEl) {
+        textEl.textContent = text;
+        textEl.dataset.isPet = "1";
+        textEl.dataset.petTime = String(Date.now());
+      }
+      playCatPurrChime();
+    }
+
+    window.askCatAiInspiration = askCatAiInspiration;
+    window.sendCatAiChat = sendCatAiChat;
+    window.renderCatAiReply = renderCatAiReply;
+    window.playCatPurrChime = playCatPurrChime;
+
+        function petCyberCat(event) {
       if (event) event.stopPropagation();
       catCuddleCount++;
       try { localStorage.setItem('pulseos_cat_cuddles', catCuddleCount); } catch (e) {}
@@ -28761,10 +29006,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
           <span>音乐律动</span>
         </button>
-        <button class="bubble-btn" onclick="showPomoIsland(); closeCatBubble();" title="提醒喝水与灵动岛预览">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0a4 4 0 0 1-4 4H6a4 4 0 0 0-4 4v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a4 4 0 0 0-4-4h-2a4 4 0 0 1-4-4V2z"></path></svg>
-          <span>喝水提醒</span>
+        <button class="bubble-btn primary-ai" onclick="askCatAiInspiration(event)" id="catAiInspireBtn" title="DeepSeek AI 实时赋能 · 汲取赛博灵感">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span id="catAiBtnText">AI 灵感</span>
         </button>
+      </div>
+      <div class="cat-ai-prompt-box">
+        <div class="cat-ai-input-wrap">
+          <span class="cat-ai-icon">✨</span>
+          <input type="text" id="catAiInput" class="cat-ai-input" placeholder="与赛博灵猫自由对话... (Enter 发送)" onkeydown="if(event.key==='Enter') sendCatAiChat(event)" autocomplete="off">
+          <button class="cat-ai-send-btn" onclick="sendCatAiChat(event)" id="catAiSendBtn" title="发送提问给赛博灵猫">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
       </div>
       <div class="bubble-footer-hint">
         <span>按住左侧拖拽点可移动位置 · 点击外部区域自动收起</span>
