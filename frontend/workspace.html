@@ -1882,28 +1882,35 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     /* 🎧 AMBIENT FOCUS SOUNDSCAPE DOCK (双耳节拍与沉浸式声景) */
     .pomo-soundscape-container {
       width: 100%;
-      max-width: 270px;
-      margin-top: 8px;
+      max-width: 280px;
+      margin-top: 6px;
       border-top: 1px dashed rgba(255, 255, 255, 0.08);
-      padding-top: 8px;
+      padding-top: 6px;
     }
     html.theme-light .pomo-soundscape-container {
       border-top-color: rgba(0, 0, 0, 0.08);
     }
-    .pomo-soundscape-inner {
+    .pomo-soundscape-card {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       gap: 6px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.07);
       border-radius: 12px;
-      padding: 4px 8px;
+      padding: 6px 8px;
       transition: all 0.2s ease;
+      box-sizing: border-box;
+      width: 100%;
     }
-    html.theme-light .pomo-soundscape-inner {
+    html.theme-light .pomo-soundscape-card {
       background: #f8fafc;
       border-color: #e2e8f0;
+    }
+    .soundscape-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
     .soundscape-power-btn {
       display: inline-flex;
@@ -1964,48 +1971,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       0% { height: 2px; }
       100% { height: 10px; }
     }
-    .soundscape-preset-group {
-      display: flex;
-      gap: 3px;
-      align-items: center;
-      flex: 1;
-      justify-content: center;
-    }
-    .soundscape-preset-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      padding: 2px 5px;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-    .soundscape-preset-btn:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .soundscape-preset-btn.active {
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.25);
-      font-weight: 600;
-    }
-    html.theme-light .soundscape-preset-btn.active {
-      color: #0284c7;
-      background: #e0f2fe;
-      border-color: #93c5fd;
-    }
     .soundscape-vol-group {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 5px;
       color: var(--text-dim);
       flex-shrink: 0;
     }
     .soundscape-vol-slider {
-      width: 36px;
+      width: 52px;
       height: 3px;
       appearance: none;
       -webkit-appearance: none;
@@ -2027,6 +2001,48 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #38bdf8;
       cursor: pointer;
       box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+    }
+    .soundscape-preset-segmented {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 2px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    html.theme-light .soundscape-preset-segmented {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+    }
+    .soundscape-preset-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 3px 0;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .soundscape-preset-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .soundscape-preset-btn.active {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.3);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    html.theme-light .soundscape-preset-btn.active {
+      color: #0284c7;
+      background: #e0f2fe;
+      border-color: #93c5fd;
     }
 
     /* Shortcuts (Luxury Glassmorphic 8-Grid) */
@@ -11298,27 +11314,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #fff !important;
     }
     .cat-quick-chips {
-      display: flex;
-      gap: 5px;
-      margin-top: 6px;
-      margin-bottom: 2px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-top: 2px;
+      margin-bottom: 1px;
     }
-    .cat-quick-chips::-webkit-scrollbar { display: none; }
     .cat-chip {
-      flex: 1;
-      padding: 4px 7px;
-      font-size: 0.67rem;
+      height: 25px;
+      padding: 0 4px;
+      font-size: 0.65rem;
       font-weight: 500;
       color: #94a3b8;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
+      border-radius: 7px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -11642,27 +11656,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { transform: scale(1.35); opacity: 0; }
     }
 
-    /* Cyber Cat Thought Popover Card */
+    /* Cyber Cat Thought Popover Card (Compact Luxury & Anti-Wrap) */
     .cyber-cat-bubble {
       position: absolute;
       bottom: 56px;
       right: 0;
-      width: 290px;
+      width: 320px;
+      max-width: calc(100vw - 32px);
       background: rgba(13, 17, 26, 0.94);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 18px;
-      padding: 14px 16px;
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      padding: 12px 14px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
       opacity: 0;
       transform: translateY(12px) scale(0.96);
       pointer-events: none;
       transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 7px;
       box-sizing: border-box;
+      z-index: 10001;
     }
     .cyber-cat-bubble.active {
       opacity: 1;
@@ -11673,13 +11689,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 8px;
+      padding-bottom: 7px;
+      flex-wrap: nowrap;
     }
     .bubble-brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     .cat-live-dot {
       width: 6px;
@@ -11687,28 +11707,50 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-radius: 50%;
       background: #00f0ff;
       box-shadow: 0 0 8px #00f0ff;
+      flex-shrink: 0;
     }
     .bubble-brand-text {
       font-size: 0.68rem;
       font-family: var(--font-mono, monospace);
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       color: #38bdf8;
       text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .bubble-telemetry-pill {
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 6px;
+      padding: 1px 5px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    html.theme-light .bubble-telemetry-pill {
+      color: #0284c7;
+      background: #e0f2fe;
+      border-color: #bae6fd;
     }
     .bubble-header-right {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     .bubble-cuddle-tag {
-      font-size: 0.68rem;
+      font-size: 0.62rem;
       color: var(--text-dim);
       font-family: var(--font-mono, monospace);
       background: rgba(255, 255, 255, 0.06);
-      padding: 2px 7px;
-      border-radius: 10px;
+      padding: 2px 6px;
+      border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
     }
     .bubble-close-btn {
       background: transparent;
@@ -11718,54 +11760,47 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 3px;
+      padding: 2px;
       border-radius: 6px;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
     }
     .bubble-close-btn:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.1);
     }
     .bubble-body {
-      padding: 2px 0;
+      padding: 1px 0;
     }
     .bubble-text {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       line-height: 1.5;
       color: #f1f5f9;
       font-weight: 400;
       white-space: pre-wrap;
       word-break: break-word;
     }
-    .bubble-telemetry-pill {
-      font-size: 0.62rem;
-      font-weight: 500;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 6px;
-      padding: 1px 5px;
-      margin-left: 6px;
-      letter-spacing: 0.02em;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    html.theme-light .bubble-telemetry-pill {
-      color: #0284c7;
-      background: #e0f2fe;
-      border-color: #bae6fd;
+    .bubble-reply-tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 3px;
     }
     .bubble-save-scratchpad-btn {
       background: rgba(56, 189, 248, 0.1);
       border: 1px solid rgba(56, 189, 248, 0.25);
       color: #38bdf8;
       border-radius: 6px;
-      font-size: 0.63rem;
+      font-size: 0.62rem;
       font-weight: 500;
-      padding: 1px 6px;
+      padding: 2px 7px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       transition: all 0.15s ease;
-      margin-right: 4px;
+      white-space: nowrap;
     }
     .bubble-save-scratchpad-btn:hover {
       background: rgba(56, 189, 248, 0.2);
@@ -11786,17 +11821,76 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       0% { box-shadow: 0 0 2px rgba(0, 240, 255, 0.2); }
       100% { box-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
     }
-    .bubble-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+
+    /* Action Deck: Compact Streamlined 1-Row Toolbar */
+    .cat-action-deck {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       margin-top: 2px;
+    }
+    .cat-deck-btn {
+      flex: 1;
+      height: 27px;
+      padding: 0 8px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cat-deck-btn.pet-btn {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+    }
+    .cat-deck-btn.pet-btn:hover {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      transform: translateY(-1px);
+    }
+    .cat-deck-btn.ai-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+    }
+    .cat-deck-btn.ai-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .cat-deck-icon-btn {
+      width: 27px;
+      height: 27px;
+      padding: 0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cat-deck-icon-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
     }
     .bubble-btn {
       font-size: 0.72rem;
       font-weight: 500;
-      padding: 6px 10px;
-      border-radius: 10px;
+      padding: 5px 10px;
+      border-radius: 9px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
@@ -11804,33 +11898,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .bubble-btn:hover {
-      background: rgba(56, 189, 248, 0.18);
-      border-color: #38bdf8;
-      color: #fff;
-      transform: translateY(-1px);
-    }
-    .bubble-btn.primary {
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      border-color: rgba(56, 189, 248, 0.4);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(14, 165, 233, 0.3);
-    }
-    .bubble-btn.primary:hover {
-      background: linear-gradient(135deg, #0369a1, #0284c7);
-      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.45);
-      transform: translateY(-1px);
-    }
     .bubble-footer-hint {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       color: var(--text-dim);
       text-align: center;
-      margin-top: 2px;
-      opacity: 0.75;
-      line-height: 1.3;
+      opacity: 0.7;
+      line-height: 1.2;
     }
 
     /* High-contrast Light Mode Support */
@@ -11846,6 +11922,28 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: rgba(255, 255, 255, 0.98) !important;
       border-color: #cbd5e1 !important;
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 16px rgba(2, 132, 199, 0.1) !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .bubble-brand-text {
+      color: #0284c7 !important;
+    }
+    html.theme-light .bubble-cuddle-tag {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+      color: #475569 !important;
+    }
+    html.theme-light .cat-deck-btn.ai-btn {
+      background: #e0f2fe !important;
+      border-color: #93c5fd !important;
+      color: #0284c7 !important;
+    }
+    html.theme-light .cat-deck-icon-btn {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+      color: #475569 !important;
+    }
+    html.theme-light .cat-deck-icon-btn:hover {
+      background: #e2e8f0 !important;
       color: #0f172a !important;
     }
     html.theme-light .bubble-brand-text {
@@ -12548,26 +12646,30 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                   <!-- 🎧 AMBIENT FOCUS SOUNDSCAPE DOCK (双耳节拍与沉浸式声景) -->
                   <div class="pomo-soundscape-container" id="pomoSoundscapeContainer">
-                    <div class="pomo-soundscape-inner">
-                      <button class="soundscape-power-btn" id="soundscapePowerBtn" onclick="toggleSoundscape(event)" title="开启/关闭沉浸式心流声景伴奏">
-                        <span class="soundscape-waves-icon" id="soundscapeWavesIcon">
-                          <span class="sw-bar b1"></span>
-                          <span class="sw-bar b2"></span>
-                          <span class="sw-bar b3"></span>
-                        </span>
-                        <span class="soundscape-title-text" id="soundscapePowerText">心流伴奏</span>
-                      </button>
+                    <div class="pomo-soundscape-card">
+                      <!-- Row 1: Power Status & Volume Slider -->
+                      <div class="soundscape-header-row">
+                        <button class="soundscape-power-btn" id="soundscapePowerBtn" onclick="toggleSoundscape(event)" title="开启/关闭沉浸式心流声景伴奏">
+                          <span class="soundscape-waves-icon" id="soundscapeWavesIcon">
+                            <span class="sw-bar b1"></span>
+                            <span class="sw-bar b2"></span>
+                            <span class="sw-bar b3"></span>
+                          </span>
+                          <span class="soundscape-title-text" id="soundscapePowerText">心流伴奏</span>
+                        </button>
 
-                      <div class="soundscape-preset-group">
-                        <button class="soundscape-preset-btn active" id="spBtn-alpha" onclick="selectSoundscapePreset('alpha', event)" title="双耳节拍 10Hz Alpha 波 · 脑波调谐">Alpha 节拍</button>
-                        <button class="soundscape-preset-btn" id="spBtn-rain" onclick="selectSoundscapePreset('rain', event)" title="深林雨打芭蕉 · 赛博雨滴">深林细雨</button>
-                        <button class="soundscape-preset-btn" id="spBtn-pink" onclick="selectSoundscapePreset('pink', event)" title="Paul Kellet 纯净 1/f 粉红噪声">深空粉噪</button>
-                        <button class="soundscape-preset-btn" id="spBtn-tide" onclick="selectSoundscapePreset('tide', event)" title="432Hz 黄金波 · 舒缓海潮涌动">专注潮汐</button>
+                        <div class="soundscape-vol-group" title="调节声景音量">
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                          <input type="range" class="soundscape-vol-slider" id="soundscapeVolSlider" min="0" max="1" step="0.02" value="0.4" oninput="setSoundscapeVolume(this.value)">
+                        </div>
                       </div>
 
-                      <div class="soundscape-vol-group" title="调节声景音量">
-                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                        <input type="range" class="soundscape-vol-slider" id="soundscapeVolSlider" min="0" max="1" step="0.02" value="0.4" oninput="setSoundscapeVolume(this.value)">
+                      <!-- Row 2: 4-Segmented Preset Selector -->
+                      <div class="soundscape-preset-segmented">
+                        <button class="soundscape-preset-btn active" id="spBtn-alpha" onclick="selectSoundscapePreset('alpha', event)" title="双耳节拍 10Hz Alpha 波 · 脑波调谐">Alpha</button>
+                        <button class="soundscape-preset-btn" id="spBtn-rain" onclick="selectSoundscapePreset('rain', event)" title="深林雨打芭蕉 · 赛博雨滴">细雨</button>
+                        <button class="soundscape-preset-btn" id="spBtn-pink" onclick="selectSoundscapePreset('pink', event)" title="Paul Kellet 纯净 1/f 粉红噪声">粉噪</button>
+                        <button class="soundscape-preset-btn" id="spBtn-tide" onclick="selectSoundscapePreset('tide', event)" title="432Hz 黄金波 · 舒缓海潮涌动">潮汐</button>
                       </div>
                     </div>
                   </div>
@@ -28550,7 +28652,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         bubble.style.bottom = (companion.offsetHeight + 10) + 'px';
       }
       // If near left edge of viewport, align left instead of right
-      if (rect.left < 300) {
+      if (rect.left < 340) {
         bubble.style.right = 'auto';
         bubble.style.left = '0';
       } else {
@@ -29810,7 +29912,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- 🐱 ULTRA-HD CYBER CAT (TITANIUM OBSIDIAN & ZERO PURPLE)  -->
   <!-- ======================================================== -->
   <aside class="cyber-cat-companion" id="cyberCatCompanion">
-    <!-- Thought Bubble / Companion Control Card -->
+    <!-- Thought Bubble / Companion Control Card (Ultra-Sleek Luxury & Anti-Wrap) -->
     <div class="cyber-cat-bubble" id="cyberCatBubble">
       <div class="bubble-header">
         <div class="bubble-brand">
@@ -29819,7 +29921,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <span class="bubble-telemetry-pill" id="catBubbleTelemetryPill">24°C · CPU 11%</span>
         </div>
         <div class="bubble-header-right">
-          <button class="bubble-save-scratchpad-btn" id="catSaveScratchpadBtn" onclick="saveCatReplyToScratchpad(event)" title="将伴侣灵感存入便签" style="display:none;">存入便签</button>
           <span class="bubble-cuddle-tag" id="catCuddleTag">互动 0 次</span>
           <button class="bubble-close-btn" onclick="closeCatBubble(event)" title="收起卡片 (ESC)">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -29830,23 +29931,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         <div class="bubble-text" id="catBubbleText">
           云端遥测与系统指标平稳运行，随时为您伴随守护。
         </div>
+        <div class="bubble-reply-tools" id="catReplyTools">
+          <button class="bubble-save-scratchpad-btn" id="catSaveScratchpadBtn" onclick="saveCatReplyToScratchpad(event)" title="将伴侣灵感存入便签" style="display:none;">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>存入便签</span>
+          </button>
+        </div>
       </div>
-      <div class="bubble-actions">
-        <button class="bubble-btn primary" onclick="petCyberCat(event)" title="抚摸赛博伴侣，增加默契与充能">
+
+      <!-- Action Deck: Compact High-Density Toolbar -->
+      <div class="cat-action-deck">
+        <button class="cat-deck-btn pet-btn" onclick="petCyberCat(event)" title="抚摸赛博伴侣，增加默契并充能">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
           <span>抚摸充能</span>
         </button>
-        <button class="bubble-btn" onclick="togglePomodoro(); closeCatBubble();" title="开启番茄钟心流专注">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <span>心流专注</span>
-        </button>
-        <button class="bubble-btn" onclick="toggleKuGouPlay(); closeCatBubble();" title="随身听音乐播放与律动">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
-          <span>音乐律动</span>
-        </button>
-        <button class="bubble-btn primary-ai" onclick="askCatAiInspiration(event)" id="catAiInspireBtn" title="DeepSeek AI 实时赋能 · 汲取赛博灵感">
+        <button class="cat-deck-btn ai-btn" onclick="askCatAiInspiration(event)" id="catAiInspireBtn" title="DeepSeek AI 实时赋能 · 汲取赛博灵感">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path></svg>
           <span id="catAiBtnText">AI 灵感</span>
+        </button>
+        <button class="cat-deck-icon-btn" onclick="togglePomodoro(); closeCatBubble();" title="开启番茄钟心流专注">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </button>
+        <button class="cat-deck-icon-btn" onclick="toggleKuGouPlay(); closeCatBubble();" title="随身听音乐播放与律动">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
         </button>
       </div>
 
@@ -29871,14 +29978,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <span class="cat-ai-icon" title="DeepSeek AI 智能体">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
           </span>
-          <input type="text" id="catAiInput" class="cat-ai-input" placeholder="与赛博灵猫自由对话... (Enter 发送)" onkeydown="if(event.key==='Enter') sendCatAiChat(event)" autocomplete="off">
+          <input type="text" id="catAiInput" class="cat-ai-input" placeholder="问灵猫任何事... (Enter 发送)" onkeydown="if(event.key==='Enter') sendCatAiChat(event)" autocomplete="off">
           <button class="cat-ai-send-btn" onclick="sendCatAiChat(event)" id="catAiSendBtn" title="发送提问给赛博灵猫">
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
         </div>
       </div>
       <div class="bubble-footer-hint">
-        <span>按住拖拽点可移动 · Alt+C 快捷呼出 · 点击外部收起</span>
+        <span>Alt + C 唤起 · ESC 收起 · 拖动小猫定位</span>
       </div>
     </div>
 
