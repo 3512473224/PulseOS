@@ -11056,8 +11056,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: #e2e8f0 !important;
     }
 
-    /* ======================================================== */
-    /* 🐱 AMBIENT CYBER CAT COMPANION (USER FAVORITE ppday)     */
+        /* ======================================================== */
+    /* 🐱 ULTRA-HD CYBER CAT COMPANION (RETINA 4K & NON-OBSTRUCTIVE) */
     /* ======================================================== */
     .cyber-cat-companion {
       position: fixed;
@@ -11069,27 +11069,47 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: flex-end;
       pointer-events: auto;
       user-select: none;
-      font-family: var(--font-main, -apple-system, sans-serif);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Segoe UI", Roboto, sans-serif;
+      touch-action: none;
     }
     .cyber-cat-capsule {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 6px 14px 6px 8px;
-      background: rgba(10, 14, 28, 0.88);
-      border: 1px solid rgba(124, 58, 237, 0.35);
-      border-radius: 28px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 18px rgba(124, 58, 237, 0.22);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      gap: 9px;
+      padding: 5px 12px 5px 7px;
+      background: rgba(13, 17, 28, 0.90);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 30px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       cursor: pointer;
-      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
     .cyber-cat-capsule:hover {
       border-color: #a78bfa;
-      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.6), 0 0 24px rgba(124, 58, 237, 0.4);
-      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65), 0 0 26px rgba(124, 58, 237, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+    }
+    .cyber-cat-capsule.is-dragging {
+      cursor: grabbing;
+      transform: scale(1.04);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.75), 0 0 32px rgba(139, 92, 246, 0.55);
+      border-color: #00f0ff;
+    }
+    .cyber-cat-drag-handle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 22px;
+      cursor: grab;
+      color: var(--text-dim);
+      transition: color 0.2s;
+    }
+    .cyber-cat-drag-handle:hover {
+      color: #00f0ff;
     }
     .cyber-cat-svg-wrap {
       width: 38px;
@@ -11098,11 +11118,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: center;
       justify-content: center;
       position: relative;
+      flex-shrink: 0;
     }
     .cat-svg-root {
       width: 100%;
       height: 100%;
-      filter: drop-shadow(0 2px 6px rgba(124, 58, 237, 0.4));
+      filter: drop-shadow(0 2px 8px rgba(124, 58, 237, 0.45));
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .cyber-cat-capsule:hover .cat-svg-root {
@@ -11114,7 +11135,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     @keyframes catBreathing {
       0% { transform: scale(1) translateY(0); }
-      100% { transform: scale(1.03) translateY(-1px); }
+      100% { transform: scale(1.025) translateY(-0.8px); }
     }
     .cat-tail {
       transform-origin: 20% 85%;
@@ -11125,85 +11146,141 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { transform: rotate(14deg); }
     }
     .cat-ear-l {
-      transform-origin: 30% 30%;
-      animation: earTwitchL 6s ease-in-out infinite;
+      transform-origin: 24% 24%;
+      animation: earTwitchL 6.5s ease-in-out infinite;
     }
     .cat-ear-r {
-      transform-origin: 70% 30%;
-      animation: earTwitchR 7s ease-in-out infinite 0.8s;
+      transform-origin: 40% 24%;
+      animation: earTwitchR 7.2s ease-in-out infinite 1s;
     }
     @keyframes earTwitchL {
       0%, 94%, 100% { transform: rotate(0deg); }
-      96% { transform: rotate(-8deg); }
-      98% { transform: rotate(4deg); }
+      96% { transform: rotate(-9deg); }
+      98% { transform: rotate(5deg); }
     }
     @keyframes earTwitchR {
       0%, 92%, 100% { transform: rotate(0deg); }
-      94% { transform: rotate(7deg); }
-      96% { transform: rotate(-3deg); }
+      94% { transform: rotate(8deg); }
+      96% { transform: rotate(-4deg); }
     }
-    .cat-eye-dot {
-      fill: #06b6d4;
-      transition: all 0.2s ease;
+    .cat-eye-glow {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .cat-eye-dot.is-blinking {
+    .cat-eye-glow.is-blinking {
       transform: scaleY(0.08);
       transform-origin: 50% 50%;
+    }
+    .cat-core-pulse {
+      animation: corePulseAnim 2.5s ease-in-out infinite alternate;
+      transform-origin: 50% 50%;
+    }
+    @keyframes corePulseAnim {
+      0% { opacity: 0.65; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 3px #00f0ff); }
     }
     .cyber-cat-meta {
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
+      line-height: 1.25;
+      min-width: 82px;
     }
     .cyber-cat-name {
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      color: #e2e8f0;
+      letter-spacing: -0.01em;
+      color: #f8fafc;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+    }
+    .cat-status-dot-mini {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: statusDotPulse 2s infinite ease-in-out;
+    }
+    @keyframes statusDotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
     }
     .cyber-cat-status-badge {
       font-size: 0.65rem;
       color: var(--text-dim);
       font-family: var(--font-mono, monospace);
+      letter-spacing: 0.02em;
     }
+    .cat-mini-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .cat-mini-toggle-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    /* Compact Mini-Badge Mode (Zero Obstruction) */
+    .cyber-cat-companion.mini-mode .cyber-cat-capsule {
+      padding: 4px;
+      border-radius: 50%;
+      gap: 0;
+    }
+    .cyber-cat-companion.mini-mode .cyber-cat-meta,
+    .cyber-cat-companion.mini-mode .cyber-cat-drag-handle,
+    .cyber-cat-companion.mini-mode .cat-mini-toggle-btn {
+      display: none;
+    }
+    .cyber-cat-companion.mini-mode .cyber-cat-svg-wrap {
+      width: 36px;
+      height: 36px;
+    }
+
     .cat-purr-ring {
       position: absolute;
-      inset: -4px;
-      border-radius: 32px;
+      inset: -5px;
+      border-radius: 36px;
       border: 1.5px solid #a855f7;
       opacity: 0;
       pointer-events: none;
     }
     .cat-purr-ring.purring {
-      animation: purrRipple 0.8s ease-out forwards;
+      animation: purrRipple 0.85s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
     }
     @keyframes purrRipple {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      100% { transform: scale(1.25); opacity: 0; }
+      0% { transform: scale(0.92); opacity: 0.9; border-color: #00f0ff; }
+      50% { border-color: #a855f7; }
+      100% { transform: scale(1.35); opacity: 0; }
     }
 
-    /* Cyber Cat Thought Bubble */
+    /* Cyber Cat Thought Popover Card */
     .cyber-cat-bubble {
       position: absolute;
-      bottom: 54px;
+      bottom: 56px;
       right: 0;
-      width: 270px;
-      background: rgba(15, 20, 36, 0.94);
-      border: 1px solid rgba(124, 58, 237, 0.35);
-      border-radius: 16px;
+      width: 290px;
+      background: rgba(12, 16, 28, 0.94);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 18px;
       padding: 14px 16px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(124, 58, 237, 0.2);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 28px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       opacity: 0;
-      transform: translateY(10px) scale(0.95);
+      transform: translateY(12px) scale(0.96);
       pointer-events: none;
-      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
       gap: 10px;
+      box-sizing: border-box;
     }
     .cyber-cat-bubble.active {
       opacity: 1;
@@ -11214,54 +11291,120 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #a78bfa;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
     }
-    .bubble-text {
-      font-size: 0.78rem;
-      line-height: 1.45;
-      color: #e2e8f0;
+    .bubble-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cat-live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+    .bubble-brand-text {
+      font-size: 0.68rem;
+      font-family: var(--font-mono, monospace);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #a78bfa;
+      text-transform: uppercase;
+    }
+    .bubble-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .bubble-cuddle-tag {
       font-size: 0.68rem;
       color: var(--text-dim);
       font-family: var(--font-mono, monospace);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .bubble-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .bubble-close-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .bubble-body {
+      padding: 2px 0;
+    }
+    .bubble-text {
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #f1f5f9;
+      font-weight: 400;
     }
     .bubble-actions {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 4px;
+      margin-top: 2px;
     }
     .bubble-btn {
-      font-size: 0.7rem;
-      padding: 4px 9px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      transition: all 0.15s;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .bubble-btn:hover {
-      background: rgba(124, 58, 237, 0.25);
+      background: rgba(124, 58, 237, 0.2);
       border-color: #a78bfa;
       color: #fff;
+      transform: translateY(-1px);
     }
     .bubble-btn.primary {
-      background: linear-gradient(135deg, #7c3aed, #6366f1);
-      border: none;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.85), rgba(99, 102, 241, 0.85));
+      border-color: rgba(167, 139, 250, 0.4);
       color: #fff;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+    }
+    .bubble-btn.primary:hover {
+      background: linear-gradient(135deg, #7c3aed, #6366f1);
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.45);
+      transform: translateY(-1px);
+    }
+    .bubble-footer-hint {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 2px;
+      opacity: 0.75;
+      line-height: 1.3;
     }
 
+    /* High-contrast Light Mode Support */
     html.theme-light .cyber-cat-capsule {
-      background: rgba(255, 255, 255, 0.95) !important;
+      background: rgba(255, 255, 255, 0.94) !important;
       border-color: #cbd5e1 !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 16px rgba(124, 58, 237, 0.1) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 0 16px rgba(124, 58, 237, 0.1) !important;
     }
     html.theme-light .cyber-cat-name {
       color: #0f172a !important;
@@ -11269,16 +11412,37 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .cyber-cat-bubble {
       background: rgba(255, 255, 255, 0.98) !important;
       border-color: #cbd5e1 !important;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 16px rgba(124, 58, 237, 0.1) !important;
       color: #0f172a !important;
     }
-    html.theme-light .bubble-text {
-      color: #1e293b !important;
+    html.theme-light .bubble-brand-text {
+      color: #6366f1 !important;
     }
-    html.theme-light .bubble-btn {
+    html.theme-light .bubble-header {
+      border-bottom-color: #e2e8f0 !important;
+    }
+    html.theme-light .bubble-text {
+      color: #0f172a !important;
+    }
+    html.theme-light .bubble-cuddle-tag {
       background: #f1f5f9 !important;
       border-color: #e2e8f0 !important;
-      color: #334155 !important;
+      color: #475569 !important;
+    }
+    html.theme-light .bubble-btn {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+    html.theme-light .bubble-btn:hover {
+      background: #ede9fe !important;
+      border-color: #a78bfa !important;
+      color: #6d28d9 !important;
+    }
+    html.theme-light .bubble-btn.primary {
+      background: linear-gradient(135deg, #7c3aed, #6366f1) !important;
+      color: #fff !important;
+      border-color: transparent !important;
     }
 
     /* ======================================================== */
@@ -11669,35 +11833,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <span class="curr-view" id="topCrumbTitle">个人主页</span>
         </div>
 
-        <!-- 🔍 Global Command Palette Trigger Pill -->
-        <div class="top-search-pill" onclick="openCmdModal()" title="全局超级指令 (Ctrl+K / ⌘K)">
-          <i data-lucide="command" style="width:13px; height:13px; color:var(--accent);"></i>
-          <span class="search-placeholder">全局功能、笔记、指令...</span>
-          <span class="search-kbd">⌘K</span>
-        </div>
-
-        <!-- 🌟 Top Dynamic Island Music Pill (Apple Style Center Pill) -->
-        <div class="top-island-music-pill" id="topDynamicIslandMusicPill" onclick="jumpToMusicDashboard(event)" title="点击直达音乐播放器 (或按 F 展开全屏沉浸画报)">
-          <div class="island-pill-disc" id="islandPillDisc">
-            <img id="islandPillCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=60&auto=format&fit=crop&q=80" alt="Cover" />
-          </div>
-          <div class="island-pill-info">
-            <span class="island-pill-title" id="islandPillTitle">酷狗随身听</span>
-            <span class="island-pill-artist" id="islandPillArtist">待播放</span>
-          </div>
-          <div class="island-pill-visualizer" id="islandPillVisualizer">
-            <span class="island-eq-bar bar-1"></span>
-            <span class="island-eq-bar bar-2"></span>
-            <span class="island-eq-bar bar-3"></span>
-            <span class="island-eq-bar bar-4"></span>
-          </div>
-          <button class="island-pill-btn" onclick="event.stopPropagation(); toggleKuGouPlay(event);" title="播放/暂停">
-            <svg id="islandPillPlaySvg" viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-          </button>
-        </div>
-
         <!-- Clean Topbar Spacer (Minimalist Apple/Linear Layout) -->
         <div class="topbar-center-spacer" style="flex: 1;"></div>
         <div class="top-actions">
@@ -11715,24 +11850,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             </label>
             <i data-lucide="sun" id="themeIconSun" style="width:14px;height:14px;color:var(--text-dim);transition:all 0.3s ease;"></i>
           </div>
-
-
-
-
-          
-          <!-- 🛡️ OTP Verification Code Center Trigger -->
-          <button class="btn btn-ghost top-action-btn" id="otpHistoryBtn" onclick="toggleOtpHistoricalDrawer(true)" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:10px; background:var(--surface); border:1px solid var(--border); font-size:0.78rem; font-weight:600; cursor:pointer; color:var(--text); position:relative;" title="全渠道验证码中枢 / OTP Center">
-            <i data-lucide="shield-check" style="width:14px; height:14px; color:#38bdf8;"></i>
-            <span>验证码</span>
-            <span class="otp-badge-dot" id="otpBadgeDot" style="width:7px; height:7px; border-radius:50%; background:#10b981; box-shadow:0 0 8px #10b981; display:none;"></span>
-          </button>
-
-          <div class="clock-badge">
-            <i data-lucide="clock" style="width:13px;height:13px;"></i>
-            <span id="liveClockText" style="font-variant-numeric: tabular-nums; letter-spacing: 0.04em; font-family: var(--font-mono, monospace); font-weight: 600;">12:00:00</span>
-          </div>
-
-          </div>
+        </div>
       </header>
 
       <main class="content-viewport">
@@ -27708,21 +27826,28 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     };
 
     // ========================================================
-    // 🐱 AMBIENT CYBER CAT COMPANION ENGINE
+    // 🐱 ULTRA-HD CYBER CAT COMPANION ENGINE (DRAGGABLE & NON-OBSTRUCTIVE)
     // ========================================================
     let catCuddleCount = 0;
     let catBlinkInterval = null;
     let catMode = 'idle'; // 'idle' | 'focus' | 'music'
+    let catBubbleTimer = null;
 
     const CAT_DIALOGUES = [
-      "喵呜~ 今天的代码写得超棒！主人继续加油！🐾",
-      "已帮主人检测到 0 个 Bug，各项性能指标平稳运行中！✨",
-      "主人 ppday，写代码累了记得多喝水、眨眨眼喔~ 🐱",
-      "呼噜呼噜... 赛博肉垫已充满能量！💖",
-      "主人今天也要元气满满地奔赴山海呀！🚀",
-      "(=^･ω･^=) 赛博猫猫在此守候您的云端遥测！",
-      "咕噜咕噜~ 机械心脏因主人的抚摸正在加速跳动！⚡",
-      "主人，听听轻音乐或者进入番茄钟专注一下吧？🎶"
+      "系统各项遥测指标运转平稳，随时为您伴随守护。✨",
+      "已为您监测全域环境，主人的灵感正在全速载入中。⚡",
+      "律动与逻辑在此同频，每一行代码都在创造非凡。🚀",
+      "后台 Telemetry 与音乐流稳健运行中，适时补充水分与活动。☕",
+      "赛博动力矩阵已就绪，愿主人今天的工作如星辰般璀璨。🌌",
+      "已与 PulseOS 遥测核心握手，所有性能链路均处于峰值状态。💎",
+      "心流专注中，猫猫会安静守护您的专属思考空间。🛡️"
+    ];
+
+    const CAT_HAPPY_QUOTES = [
+      "收到主人的亲密抚摸！机械动力核心充能至 100%！💖",
+      "伴侣默契加深！赛博猫咪愿守护主人所有的创意与灵感。✨",
+      "亲密度跃升！已为主人的工作台注入一整天的专注与好运。🐾",
+      "呼噜呼噜... 核心温度适宜，赛博伴侣将常伴主人左右。⚡"
     ];
 
     function initCyberCatCompanion() {
@@ -27733,10 +27858,21 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       updateCatCuddleDisplay();
 
-      // Eye Blinking Engine
+      // Mini-mode state restore
+      try {
+        if (localStorage.getItem('pulseos_cat_mini') === '1') {
+          const companion = document.getElementById('cyberCatCompanion');
+          if (companion) companion.classList.add('mini-mode');
+        }
+      } catch (e) {}
+
+      // Draggable & Smart-Placement engine
+      setupCatDraggable();
+
+      // High-Precision Eye Blinking Engine (Organic 4.5s cadence)
       if (catBlinkInterval) clearInterval(catBlinkInterval);
       catBlinkInterval = setInterval(() => {
-        if (catMode === 'focus') return; // sleeping, don't blink
+        if (catMode === 'focus') return; // sleeping/visor mode, don't blink
         const eyeL = document.getElementById('catEyeL');
         const eyeR = document.getElementById('catEyeR');
         if (eyeL && eyeR) {
@@ -27745,16 +27881,39 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           setTimeout(() => {
             eyeL.classList.remove('is-blinking');
             eyeR.classList.remove('is-blinking');
-          }, 180);
+          }, 160);
         }
-      }, 4200);
+      }, 4500);
 
       syncCyberCatState();
     }
 
     function updateCatCuddleDisplay() {
       const tag = document.getElementById('catCuddleTag');
-      if (tag) tag.textContent = `已吸猫 ${catCuddleCount} 次`;
+      if (tag) tag.textContent = `互动 ${catCuddleCount} 次`;
+    }
+
+    function positionCatBubble() {
+      const companion = document.getElementById('cyberCatCompanion');
+      const bubble = document.getElementById('cyberCatBubble');
+      if (!companion || !bubble) return;
+      const rect = companion.getBoundingClientRect();
+      // If near top of viewport, open downward instead of upward
+      if (rect.top < 260) {
+        bubble.style.bottom = 'auto';
+        bubble.style.top = (companion.offsetHeight + 10) + 'px';
+      } else {
+        bubble.style.top = 'auto';
+        bubble.style.bottom = (companion.offsetHeight + 10) + 'px';
+      }
+      // If near left edge of viewport, align left instead of right
+      if (rect.left < 300) {
+        bubble.style.right = 'auto';
+        bubble.style.left = '0';
+      } else {
+        bubble.style.left = 'auto';
+        bubble.style.right = '0';
+      }
     }
 
     function toggleCatBubble(event) {
@@ -27771,17 +27930,40 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     function openCatBubble() {
       const bubble = document.getElementById('cyberCatBubble');
       if (!bubble) return;
+      positionCatBubble();
       const textEl = document.getElementById('catBubbleText');
-      if (textEl) {
+      if (textEl && (!textEl.dataset.isPet || Date.now() - Number(textEl.dataset.petTime || 0) > 6000)) {
         const randMsg = CAT_DIALOGUES[Math.floor(Math.random() * CAT_DIALOGUES.length)];
         textEl.textContent = randMsg;
       }
       bubble.classList.add('active');
     }
 
-    function closeCatBubble() {
+    function closeCatBubble(event) {
+      if (event) event.stopPropagation();
       const bubble = document.getElementById('cyberCatBubble');
       if (bubble) bubble.classList.remove('active');
+      if (catBubbleTimer) {
+        clearTimeout(catBubbleTimer);
+        catBubbleTimer = null;
+      }
+    }
+
+    function toggleCatMiniMode(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      const companion = document.getElementById('cyberCatCompanion');
+      if (!companion) return;
+      companion.classList.toggle('mini-mode');
+      const isMini = companion.classList.contains('mini-mode');
+      try {
+        localStorage.setItem('pulseos_cat_mini', isMini ? '1' : '0');
+      } catch (e) {}
+      if (isMini) {
+        closeCatBubble();
+      }
     }
 
     function petCyberCat(event) {
@@ -27814,27 +27996,33 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             eyesNorm.style.display = 'block';
             eyesHappy.style.display = 'none';
           }
-        }, 1200);
+        }, 1400);
       }
 
       const textEl = document.getElementById('catBubbleText');
       if (textEl) {
-        const happyQuotes = [
-          "(=^ω^=) 呼噜呼噜~ 好舒服！机械猫向主人 ppday 表达最高亲密度！💖",
-          "(=^ω^=) 喵呜~ 赛博肉垫充能 100%！今天的所有代码都会一次通过！✨",
-          "(=^ω^=) 咕噜咕噜... 主人的手好温柔，猫猫为您守护全栈系统！🐾"
-        ];
-        textEl.textContent = happyQuotes[Math.floor(Math.random() * happyQuotes.length)];
+        const quote = CAT_HAPPY_QUOTES[Math.floor(Math.random() * CAT_HAPPY_QUOTES.length)];
+        textEl.textContent = quote;
+        textEl.dataset.isPet = "1";
+        textEl.dataset.petTime = String(Date.now());
       }
 
       openCatBubble();
+
+      // Auto-dismiss after 6.5s to avoid obstruction
+      if (catBubbleTimer) clearTimeout(catBubbleTimer);
+      catBubbleTimer = setTimeout(() => {
+        closeCatBubble();
+      }, 6500);
+
       if (typeof showToast === 'function') {
-        showToast('🐾 赛博机械猫感到无比幸福，亲密度 +1！');
+        showToast('✨ 赛博猫咪感到愉悦，默契亲密度 +1！');
       }
     }
 
     function syncCyberCatState() {
       const statusBadge = document.getElementById('catStatusBadge');
+      const statusDot = document.getElementById('catStatusDot');
       const eyesNorm = document.getElementById('catEyesNormal');
       const eyesSleep = document.getElementById('catEyesSleep');
       const eyesHappy = document.getElementById('catEyesHappy');
@@ -27845,25 +28033,149 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       if (isPomo) {
         catMode = 'focus';
-        if (statusBadge) statusBadge.textContent = '心流专注中 · Zzz';
+        if (statusBadge) statusBadge.textContent = '心流守护 · 专注';
+        if (statusDot) {
+          statusDot.style.background = '#f59e0b';
+          statusDot.style.boxShadow = '0 0 8px #f59e0b';
+        }
         if (eyesNorm) eyesNorm.style.display = 'none';
         if (eyesHappy) eyesHappy.style.display = 'none';
         if (eyesSleep) eyesSleep.style.display = 'block';
         if (headphones) headphones.style.display = 'none';
       } else if (isMusic) {
         catMode = 'music';
-        if (statusBadge) statusBadge.textContent = '音乐律动中 · 🎶';
+        if (statusBadge) statusBadge.textContent = '音乐律动 · SQ';
+        if (statusDot) {
+          statusDot.style.background = '#00f0ff';
+          statusDot.style.boxShadow = '0 0 8px #00f0ff';
+        }
         if (eyesSleep) eyesSleep.style.display = 'none';
         if (eyesNorm) eyesNorm.style.display = 'block';
         if (headphones) headphones.style.display = 'block';
       } else {
         catMode = 'idle';
-        if (statusBadge) statusBadge.textContent = '陪伴中 · 呼噜';
+        if (statusBadge) statusBadge.textContent = '巡航守护 · 舒缓';
+        if (statusDot) {
+          statusDot.style.background = '#10b981';
+          statusDot.style.boxShadow = '0 0 8px #10b981';
+        }
         if (eyesSleep) eyesSleep.style.display = 'none';
         if (eyesHappy) eyesHappy.style.display = 'none';
         if (eyesNorm) eyesNorm.style.display = 'block';
         if (headphones) headphones.style.display = 'none';
       }
+    }
+
+    function setupCatDraggable() {
+      const companion = document.getElementById('cyberCatCompanion');
+      const capsule = document.getElementById('cyberCatCapsule');
+      if (!companion || !capsule) return;
+
+      // Restore saved position
+      try {
+        const savedPos = localStorage.getItem('pulseos_cat_pos');
+        if (savedPos) {
+          const { left, top } = JSON.parse(savedPos);
+          const maxX = window.innerWidth - companion.offsetWidth - 10;
+          const maxY = window.innerHeight - companion.offsetHeight - 10;
+          const safeX = Math.max(10, Math.min(left, maxX));
+          const safeY = Math.max(10, Math.min(top, maxY));
+          companion.style.left = safeX + 'px';
+          companion.style.top = safeY + 'px';
+          companion.style.right = 'auto';
+          companion.style.bottom = 'auto';
+        }
+      } catch (e) {}
+
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let startLeft = 0, startTop = 0;
+      let hasMoved = false;
+
+      const onPointerDown = (e) => {
+        if (e.button !== 0) return;
+        if (e.target.closest('.cat-mini-toggle-btn') || e.target.closest('.bubble-btn') || e.target.closest('.bubble-close-btn')) {
+          return;
+        }
+        if (!e.target.closest('.cyber-cat-capsule')) return;
+
+        isDragging = true;
+        hasMoved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = companion.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+
+        companion.style.left = startLeft + 'px';
+        companion.style.top = startTop + 'px';
+        companion.style.right = 'auto';
+        companion.style.bottom = 'auto';
+
+        document.addEventListener('pointermove', onPointerMove, { passive: false });
+        document.addEventListener('pointerup', onPointerUp);
+        document.addEventListener('pointercancel', onPointerUp);
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        if (!hasMoved && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+          hasMoved = true;
+          capsule.classList.add('is-dragging');
+        }
+
+        if (hasMoved) {
+          e.preventDefault();
+          const maxX = window.innerWidth - companion.offsetWidth - 10;
+          const maxY = window.innerHeight - companion.offsetHeight - 10;
+          const newX = Math.max(10, Math.min(startLeft + dx, maxX));
+          const newY = Math.max(10, Math.min(startTop + dy, maxY));
+
+          companion.style.left = newX + 'px';
+          companion.style.top = newY + 'px';
+        }
+      };
+
+      const onPointerUp = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        capsule.classList.remove('is-dragging');
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+        document.removeEventListener('pointercancel', onPointerUp);
+
+        if (hasMoved) {
+          try {
+            const rect = companion.getBoundingClientRect();
+            localStorage.setItem('pulseos_cat_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+          } catch (err) {}
+        }
+      };
+
+      companion.addEventListener('pointerdown', onPointerDown);
+
+      // Auto-close on click outside
+      document.addEventListener('pointerdown', (e) => {
+        const bubble = document.getElementById('cyberCatBubble');
+        if (!bubble || !bubble.classList.contains('active')) return;
+        if (!companion.contains(e.target)) {
+          closeCatBubble();
+        }
+      });
+
+      // ESC to close bubble
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const bubble = document.getElementById('cyberCatBubble');
+          if (bubble && bubble.classList.contains('active')) {
+            closeCatBubble();
+          }
+        }
+      });
     }
 
     // Hook Pomodoro toggle to sync cat state
@@ -28169,112 +28481,200 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   </div>
 
   <!-- ======================================================== -->
-  <!-- 🐱 AMBIENT CYBER CAT COMPANION WIDGET (ppday's Kitten)     -->
+  <!-- 🐱 ULTRA-HD CYBER CAT COMPANION (NON-OBSTRUCTIVE & RETINA) -->
   <!-- ======================================================== -->
   <aside class="cyber-cat-companion" id="cyberCatCompanion">
-    <!-- Thought Bubble -->
+    <!-- Thought Bubble / Companion Control Card -->
     <div class="cyber-cat-bubble" id="cyberCatBubble">
       <div class="bubble-header">
-        <span id="catBubbleTitle">(=^･ω･^=) 机械赛博猫</span>
-        <span class="bubble-cuddle-tag" id="catCuddleTag">已吸猫 0 次</span>
+        <div class="bubble-brand">
+          <span class="cat-live-dot"></span>
+          <span class="bubble-brand-text">CYBER KITTEN</span>
+        </div>
+        <div class="bubble-header-right">
+          <span class="bubble-cuddle-tag" id="catCuddleTag">互动 0 次</span>
+          <button class="bubble-close-btn" onclick="closeCatBubble(event)" title="收起卡片 (ESC)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
       </div>
-      <div class="bubble-text" id="catBubbleText">
-        喵呜~ 今天的代码写得超棒！主人继续加油！🐾
+      <div class="bubble-body">
+        <div class="bubble-text" id="catBubbleText">
+          云端遥测与系统指标平稳运行，随时为您伴随守护。
+        </div>
       </div>
       <div class="bubble-actions">
-        <button class="bubble-btn primary" onclick="petCyberCat(event)">
-          <span>🐾 摸摸它</span>
+        <button class="bubble-btn primary" onclick="petCyberCat(event)" title="抚摸赛博猫咪，增加默契与充能">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          <span>抚摸充能</span>
         </button>
-        <button class="bubble-btn" onclick="togglePomodoro(); closeCatBubble();">
-          <span>⏱️ 专注</span>
+        <button class="bubble-btn" onclick="togglePomodoro(); closeCatBubble();" title="开启番茄钟心流专注">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>心流专注</span>
         </button>
-        <button class="bubble-btn" onclick="toggleKuGouPlay(); closeCatBubble();">
-          <span>🎵 随身听</span>
+        <button class="bubble-btn" onclick="toggleKuGouPlay(); closeCatBubble();" title="随身听音乐播放与律动">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
+          <span>音乐律动</span>
         </button>
-        <button class="bubble-btn" onclick="toggleQuickScratchpad(); closeCatBubble();">
-          <span>📝 便签</span>
+        <button class="bubble-btn" onclick="toggleQuickScratchpad(); closeCatBubble();" title="快速随手记便签">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <span>速记便签</span>
         </button>
-        <button class="bubble-btn" onclick="closeCatBubble();" style="margin-left:auto;">
-          <span>✕</span>
-        </button>
+      </div>
+      <div class="bubble-footer-hint">
+        <span>按住左侧拖拽点可移动位置 · 点击外部区域自动收起</span>
       </div>
     </div>
 
-    <!-- Interactive Cat Capsule -->
-    <div class="cyber-cat-capsule" id="cyberCatCapsule" onclick="toggleCatBubble(event)" title="点击与机械赛博猫互动">
+    <!-- Interactive Cat Capsule Pill -->
+    <div class="cyber-cat-capsule" id="cyberCatCapsule" title="点击展开伴侣面板 · 可自由拖拽">
       <div class="cat-purr-ring" id="catPurrRing"></div>
-      <div class="cyber-cat-svg-wrap">
-        <svg class="cat-svg-root" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Cat Body & Tail -->
+      <div class="cyber-cat-drag-handle" title="按住拖拽移动位置">
+        <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor" opacity="0.4"><circle cx="5" cy="4" r="1.2"/><circle cx="11" cy="4" r="1.2"/><circle cx="5" cy="8" r="1.2"/><circle cx="11" cy="8" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="11" cy="12" r="1.2"/></svg>
+      </div>
+      <div class="cyber-cat-svg-wrap" onclick="toggleCatBubble(event)">
+        <!-- 4K Retina Vector SVG Cyber Feline Artwork -->
+        <svg class="cat-svg-root" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+          <defs>
+            <linearGradient id="cyberHelmGrad" x1="16" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1e1b4b" />
+              <stop offset="60%" stop-color="#0f172a" />
+              <stop offset="100%" stop-color="#020617" />
+            </linearGradient>
+            <linearGradient id="cyberEarGradL" x1="14" y1="8" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#312e81" />
+              <stop offset="100%" stop-color="#0f172a" />
+            </linearGradient>
+            <linearGradient id="cyberEarGradR" x1="50" y1="8" x2="38" y2="28" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#312e81" />
+              <stop offset="100%" stop-color="#0f172a" />
+            </linearGradient>
+            <linearGradient id="cyberEarInnerL" x1="17" y1="12" x2="25" y2="26" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+            <linearGradient id="cyberEarInnerR" x1="47" y1="12" x2="39" y2="26" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+            <linearGradient id="cyberEyeGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0284c7" />
+            </linearGradient>
+            <linearGradient id="cyberCoreGlow" x1="28" y1="44" x2="36" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#06b6d4" />
+              <stop offset="100%" stop-color="#8b5cf6" />
+            </linearGradient>
+            <filter id="catNeonFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.1" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Mecha Tail & Cyber Spine (Breathing animation) -->
           <g class="cat-breathe">
-            <path class="cat-tail" d="M 12 36 C 8 38 4 32 6 26 C 7 22 10 24 9 27 C 8 30 11 32 14 34" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-            <ellipse cx="24" cy="32" rx="14" ry="10" fill="#121324" stroke="#7c3aed" stroke-width="1.8"/>
-            <!-- Cyber Circuit Accents -->
-            <path d="M 18 32 L 24 35 L 30 32" stroke="rgba(6,182,212,0.6)" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Fluid Segmented Mecha Tail -->
+            <path class="cat-tail" d="M 17 50 C 10 52 5 44 8 36 C 9.5 32 14 34 13 38 C 12 41 15 45 20 47" stroke="#8b5cf6" stroke-width="2.6" stroke-linecap="round" fill="none" filter="url(#catNeonFilter)" />
+            <!-- Chest / Torso Chassis -->
+            <path d="M 22 44 C 20 48 20 54 22 58 C 24 60 40 60 42 58 C 44 54 44 48 42 44 Z" fill="url(#cyberHelmGrad)" stroke="#6366f1" stroke-width="1.5" />
+            <!-- Cyber Chassis Circuit Linework -->
+            <path d="M 27 50 L 32 54 L 37 50" stroke="#06b6d4" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8" />
+            <!-- Reactor Core Choker -->
+            <circle cx="32" cy="46" r="3" fill="url(#cyberCoreGlow)" class="cat-core-pulse" />
+            <circle cx="32" cy="46" r="1.2" fill="#ffffff" />
           </g>
 
-          <!-- Cat Head -->
+          <!-- Mecha Cat Head & Helm Assembly -->
           <g class="cat-head-group">
-            <!-- Left Ear -->
-            <polygon class="cat-ear-l" points="13,20 18,7 24,17" fill="#181930" stroke="#7c3aed" stroke-width="1.8"/>
-            <polygon points="15,18 18,10 22,16" fill="rgba(6,182,212,0.3)"/>
-            <!-- Right Ear -->
-            <polygon class="cat-ear-r" points="35,20 30,7 24,17" fill="#181930" stroke="#7c3aed" stroke-width="1.8"/>
-            <polygon points="33,18 30,10 26,16" fill="rgba(6,182,212,0.3)"/>
+            <!-- Left Faceted Ear with Neon Bevel -->
+            <polygon class="cat-ear-l" points="16,28 20,8 31,22" fill="url(#cyberEarGradL)" stroke="#8b5cf6" stroke-width="1.6" stroke-linejoin="round" />
+            <polygon class="cat-ear-l" points="20,24 22,12 28,21" fill="url(#cyberEarInnerL)" opacity="0.75" />
+            <circle class="cat-ear-l" cx="20" cy="8" r="1.5" fill="#00f0ff" filter="url(#catNeonFilter)" />
 
-            <!-- Face Base -->
-            <circle cx="24" cy="22" r="12" fill="#15172b" stroke="#7c3aed" stroke-width="1.8"/>
+            <!-- Right Faceted Ear with Neon Bevel -->
+            <polygon class="cat-ear-r" points="48,28 44,8 33,22" fill="url(#cyberEarGradR)" stroke="#8b5cf6" stroke-width="1.6" stroke-linejoin="round" />
+            <polygon class="cat-ear-r" points="44,24 42,12 36,21" fill="url(#cyberEarInnerR)" opacity="0.75" />
+            <circle class="cat-ear-r" cx="44" cy="8" r="1.5" fill="#00f0ff" filter="url(#catNeonFilter)" />
 
-            <!-- Cyber Glow Cheek Accents -->
-            <circle cx="16" cy="25" r="1.5" fill="rgba(244,63,94,0.5)"/>
-            <circle cx="32" cy="25" r="1.5" fill="rgba(244,63,94,0.5)"/>
+            <!-- Main Sleek Helm / Face Structure -->
+            <path d="M 18 28 C 16 35 18 44 26 47 C 29 48 35 48 38 47 C 46 44 48 35 46 28 C 44 22 38 20 32 20 C 26 20 20 22 18 28 Z" fill="url(#cyberHelmGrad)" stroke="#8b5cf6" stroke-width="1.8" stroke-linejoin="round" />
 
-            <!-- Whiskers -->
-            <line x1="8" y1="22" x2="16" y2="23" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="9" y1="26" x2="16" y2="25" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="40" y1="22" x2="32" y2="23" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
-            <line x1="39" y1="26" x2="32" y2="25" stroke="rgba(6,182,212,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Forehead Hex Armor Plate & Circuit Rune -->
+            <path d="M 28 20 L 32 23 L 36 20" stroke="#00f0ff" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.85" />
+            <polygon points="32,23 30,26 34,26" fill="#8b5cf6" opacity="0.9" />
 
-            <!-- Nose & Mouth -->
-            <polygon points="24,24 22.5,22.5 25.5,22.5" fill="#f43f5e"/>
-            <path d="M 22 25 Q 24 27 26 25" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+            <!-- Ultra-Crisp Holographic Whiskers (Laser Beams) -->
+            <line x1="8" y1="33" x2="20" y2="34" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" opacity="0.8" />
+            <line x1="10" y1="38" x2="20" y2="37" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" opacity="0.8" />
+            <line x1="56" y1="33" x2="44" y2="34" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" opacity="0.8" />
+            <line x1="54" y1="38" x2="44" y2="37" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" opacity="0.8" />
 
-            <!-- Eyes (Normal, Focus/Sleep, or Happy) -->
+            <!-- Cheek Hologram Ambient Glow Spots -->
+            <circle cx="21" cy="38" r="1.8" fill="#f43f5e" opacity="0.6" filter="url(#catNeonFilter)" />
+            <circle cx="43" cy="38" r="1.8" fill="#f43f5e" opacity="0.6" filter="url(#catNeonFilter)" />
+
+            <!-- Mecha Micro Nose & Mouth Contours -->
+            <polygon points="32,36 30.2,34.2 33.8,34.2" fill="#f43f5e" />
+            <path d="M 29 38 Q 32 40.5 35 38" stroke="#a78bfa" stroke-width="1.4" stroke-linecap="round" fill="none" />
+
+            <!-- 1. Normal / Idle Sapphire LED Optics -->
             <g id="catEyesNormal">
-              <ellipse id="catEyeL" class="cat-eye-dot" cx="19" cy="19" rx="2.4" ry="3.2"/>
-              <ellipse id="catEyeR" class="cat-eye-dot" cx="29" cy="19" rx="2.4" ry="3.2"/>
-              <circle cx="18.2" cy="18" r="0.8" fill="#ffffff"/>
-              <circle cx="28.2" cy="18" r="0.8" fill="#ffffff"/>
-            </g>
-            <g id="catEyesSleep" style="display:none;">
-              <path d="M 16 20 Q 19 23 22 20" stroke="#a855f7" stroke-width="2" stroke-linecap="round" fill="none"/>
-              <path d="M 26 20 Q 29 23 32 20" stroke="#a855f7" stroke-width="2" stroke-linecap="round" fill="none"/>
-            </g>
-            <g id="catEyesHappy" style="display:none;">
-              <path d="M 16 19 Q 19 15 22 19" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" fill="none"/>
-              <path d="M 26 19 Q 29 15 32 19" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <g id="catEyeL" class="cat-eye-glow">
+                <ellipse cx="25" cy="30" rx="3.5" ry="4.5" fill="url(#cyberEyeGrad)" filter="url(#catNeonFilter)" />
+                <ellipse cx="25" cy="30" rx="1.2" ry="3.6" fill="#0c1322" />
+                <circle cx="23.8" cy="28.5" r="1.1" fill="#ffffff" />
+                <circle cx="26.2" cy="31.8" r="0.6" fill="#ffffff" opacity="0.8" />
+              </g>
+              <g id="catEyeR" class="cat-eye-glow">
+                <ellipse cx="39" cy="30" rx="3.5" ry="4.5" fill="url(#cyberEyeGrad)" filter="url(#catNeonFilter)" />
+                <ellipse cx="39" cy="30" rx="1.2" ry="3.6" fill="#0c1322" />
+                <circle cx="37.8" cy="28.5" r="1.1" fill="#ffffff" />
+                <circle cx="40.2" cy="31.8" r="0.6" fill="#ffffff" opacity="0.8" />
+              </g>
             </g>
 
-            <!-- Cyber Headphones (Dynamic for Music Mode) -->
+            <!-- 2. Sleep / Focus Visor Slits -->
+            <g id="catEyesSleep" style="display:none;">
+              <path d="M 21 31 Q 25 35 29 31" stroke="#a855f7" stroke-width="2.4" stroke-linecap="round" fill="none" filter="url(#catNeonFilter)" />
+              <path d="M 35 31 Q 39 35 43 31" stroke="#a855f7" stroke-width="2.4" stroke-linecap="round" fill="none" filter="url(#catNeonFilter)" />
+            </g>
+
+            <!-- 3. Happy / Pet Radiant Crescents -->
+            <g id="catEyesHappy" style="display:none;">
+              <path d="M 21 31 Q 25 25 29 31" stroke="#00f0ff" stroke-width="2.4" stroke-linecap="round" fill="none" filter="url(#catNeonFilter)" />
+              <path d="M 35 31 Q 39 25 43 31" stroke="#00f0ff" stroke-width="2.4" stroke-linecap="round" fill="none" filter="url(#catNeonFilter)" />
+              <path d="M 32 27 L 33 29 L 35 29 L 33.5 30.2 L 34 32 L 32 30.8 L 30 32 L 30.5 30.2 L 29 29 L 31 29 Z" fill="#ec4899" filter="url(#catNeonFilter)" />
+            </g>
+
+            <!-- 4. Music Hi-Fi Cyber Headphones -->
             <g id="catHeadphones" style="display:none;">
-              <path d="M 12 17 C 12 8 36 8 36 17" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
-              <rect x="9" y="15" width="4" height="9" rx="2" fill="#7c3aed" stroke="#00d4ff" stroke-width="1.2"/>
-              <rect x="35" y="15" width="4" height="9" rx="2" fill="#7c3aed" stroke="#00d4ff" stroke-width="1.2"/>
+              <path d="M 15 26 C 14 13 50 13 49 26" fill="none" stroke="#00f0ff" stroke-width="3" stroke-linecap="round" filter="url(#catNeonFilter)" />
+              <rect x="11" y="23" width="5.5" height="13" rx="2.8" fill="#7c3aed" stroke="#00f0ff" stroke-width="1.5" />
+              <line x1="13.7" y1="26" x2="13.7" y2="33" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" />
+              <rect x="47.5" y="23" width="5.5" height="13" rx="2.8" fill="#7c3aed" stroke="#00f0ff" stroke-width="1.5" />
+              <line x1="50.2" y1="26" x2="50.2" y2="33" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" />
             </g>
           </g>
         </svg>
       </div>
-      <div class="cyber-cat-meta">
+      <div class="cyber-cat-meta" onclick="toggleCatBubble(event)">
         <div class="cyber-cat-name">
-          <span>赛博猫猫</span>
-          <span style="font-size:0.7rem;">🐱</span>
+          <span>Cyber Kitten</span>
+          <span class="cat-status-dot-mini" id="catStatusDot"></span>
         </div>
-        <div class="cyber-cat-status-badge" id="catStatusBadge">陪伴中 · 呼噜</div>
+        <div class="cyber-cat-status-badge" id="catStatusBadge">巡航守护 · 舒缓</div>
       </div>
+      <!-- Mini Collapse / Icon-Only Toggle -->
+      <button class="cat-mini-toggle-btn" onclick="toggleCatMiniMode(event)" title="折叠为微型徽章 / 展开胶囊">
+        <svg id="catMiniToggleSvg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </div>
   </aside>
 
-  <!-- ======================================================== -->
+<!-- ======================================================== -->
   <!-- 📝 QUICK SCRATCHPAD PANEL (INSTANT MEMO & NOTE TAKING)   -->
   <!-- ======================================================== -->
   <aside class="quick-scratchpad-panel" id="quickScratchpadPanel">
