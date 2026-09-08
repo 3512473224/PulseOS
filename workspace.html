@@ -11734,6 +11734,57 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       line-height: 1.5;
       color: #f1f5f9;
       font-weight: 400;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .bubble-telemetry-pill {
+      font-size: 0.62rem;
+      font-weight: 500;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 6px;
+      padding: 1px 5px;
+      margin-left: 6px;
+      letter-spacing: 0.02em;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    html.theme-light .bubble-telemetry-pill {
+      color: #0284c7;
+      background: #e0f2fe;
+      border-color: #bae6fd;
+    }
+    .bubble-save-scratchpad-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+      border-radius: 6px;
+      font-size: 0.63rem;
+      font-weight: 500;
+      padding: 1px 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-right: 4px;
+    }
+    .bubble-save-scratchpad-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      color: #fff;
+    }
+    html.theme-light .bubble-save-scratchpad-btn {
+      background: #e0f2fe;
+      border-color: #93c5fd;
+      color: #0284c7;
+    }
+    .cat-chip.is-active-loading {
+      border-color: #00f0ff !important;
+      background: rgba(0, 240, 255, 0.14) !important;
+      color: #00f0ff !important;
+      animation: chipPulse 1s infinite alternate ease-in-out;
+    }
+    @keyframes chipPulse {
+      0% { box-shadow: 0 0 2px rgba(0, 240, 255, 0.2); }
+      100% { box-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
     }
     .bubble-actions {
       display: grid;
@@ -12511,6 +12562,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                         <button class="soundscape-preset-btn active" id="spBtn-alpha" onclick="selectSoundscapePreset('alpha', event)" title="双耳节拍 10Hz Alpha 波 · 脑波调谐">Alpha 节拍</button>
                         <button class="soundscape-preset-btn" id="spBtn-rain" onclick="selectSoundscapePreset('rain', event)" title="深林雨打芭蕉 · 赛博雨滴">深林细雨</button>
                         <button class="soundscape-preset-btn" id="spBtn-pink" onclick="selectSoundscapePreset('pink', event)" title="Paul Kellet 纯净 1/f 粉红噪声">深空粉噪</button>
+                        <button class="soundscape-preset-btn" id="spBtn-tide" onclick="selectSoundscapePreset('tide', event)" title="432Hz 黄金波 · 舒缓海潮涌动">专注潮汐</button>
                       </div>
 
                       <div class="soundscape-vol-group" title="调节声景音量">
@@ -22668,7 +22720,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           goalEl.textContent = pomoCustomFocusGoal || '系统架构与深度编码';
           if (goalBtn) goalBtn.style.maxWidth = '170px';
         } else {
-          goalEl.textContent = '💧 补水休息中 · 喝口温水远眺放松';
+          goalEl.textContent = '补水休息中 · 喝口温水远眺放松';
           if (goalBtn) goalBtn.style.maxWidth = '240px';
         }
       }
@@ -22764,8 +22816,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         // Browser Native Desktop Notification
         if ('Notification' in window && Notification.permission === 'granted') {
           try {
-            new Notification('🍅 专注完成 · 记得喝水润喉！', {
-              body: '恭喜主人完成心流冲刺，离开屏幕走动一下，喝杯温水充能吧 💧',
+            new Notification('专注完成 · 记得喝水润喉', {
+              body: '恭喜主人完成心流冲刺，离开屏幕走动一下，补充温水充能吧',
               tag: 'pulseos-pomo-hydration'
             });
           } catch (err) {}
@@ -22790,14 +22842,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (isBreak) {
         if (badgeEl) badgeEl.textContent = '休息结束 · 重启心流';
         if (subEl) subEl.textContent = '充能完毕';
-        if (titleEl) titleEl.textContent = '精力饱满，开始新一轮专注冲刺吧！🚀';
+        if (titleEl) titleEl.textContent = '精力饱满，开始新一轮专注冲刺吧！';
         if (iconEl) iconEl.setAttribute('data-lucide', 'zap');
         if (actText) actText.textContent = '开始专注';
         if (actIcon) actIcon.setAttribute('data-lucide', 'play');
       } else {
         if (badgeEl) badgeEl.textContent = `心流达成 · 第 ${count} 组`;
         if (subEl) subEl.textContent = `已专注 ${pomoCustomFocusMinutes || 25} 分钟`;
-        if (titleEl) titleEl.textContent = '起身喝杯温水，眺望远方放松一下吧 💧';
+        if (titleEl) titleEl.textContent = '起身喝杯温水，眺望远方放松一下吧';
         if (iconEl) iconEl.setAttribute('data-lucide', 'cup-soda');
         if (actText) actText.textContent = '开启短休 5m';
         if (actIcon) actIcon.setAttribute('data-lucide', 'coffee');
@@ -22816,8 +22868,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const catTextEl = document.getElementById('catBubbleText');
       if (catTextEl) {
         catTextEl.textContent = isBreak
-          ? "喵呜~ 休息充能完毕！赛博猫猫为您守护，开启新一轮心流冲刺吧！⚡🐾"
-          : `主人 ppday 专注辛苦啦！恭喜完成第 ${count} 组番茄钟，猫猫提醒您起身喝口温水润润嗓子，休息 5 分钟喔~ 💧🐾`;
+          ? "喵呜~ 休息充能完毕！赛博伴侣为您守护，开启新一轮心流冲刺吧。"
+          : `主人 ppday 专注辛苦啦！恭喜完成第 ${count} 组番茄钟，伴侣提醒您起身喝口温水润润嗓子，休息 5 分钟喔。`;
         catTextEl.dataset.isPet = "1";
         catTextEl.dataset.petTime = String(Date.now());
       }
@@ -22871,11 +22923,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (pomoMode === 'focus') {
         setPomoMode('short');
         togglePomodoro();
-        showToast('☕ 已开启 5 分钟短休，请多补充温水润润嗓子！💧');
+        showToast('已开启 5 分钟短休，请多补充温水润润嗓子');
       } else {
         setPomoMode('focus');
         togglePomodoro();
-        showToast('🚀 已开启新一轮专注！');
+        showToast('已开启新一轮心流专注');
       }
     }
 
@@ -28522,6 +28574,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const bubble = document.getElementById('cyberCatBubble');
       if (!bubble) return;
       positionCatBubble();
+      if (typeof updateCatBubbleTelemetryPill === 'function') updateCatBubbleTelemetryPill();
       const textEl = document.getElementById('catBubbleText');
       if (textEl && (!textEl.dataset.isPet || Date.now() - Number(textEl.dataset.petTime || 0) > 6000)) {
         const randMsg = CAT_DIALOGUES[Math.floor(Math.random() * CAT_DIALOGUES.length)];
@@ -28594,8 +28647,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const cond = document.getElementById('homeWeatherCond')?.textContent?.trim() || '晴朗';
       const steps = document.getElementById('wechatStepCount')?.textContent?.trim() || '8,420';
 
-      const cpu = document.getElementById('h-cpu')?.textContent?.trim() || document.getElementById('topNodeCpuText')?.textContent?.trim() || '12%';
-      const mem = document.getElementById('h-mem')?.textContent?.trim() || '45%';
+      let cpu = document.getElementById('h-cpu')?.textContent?.trim();
+      if (!cpu || cpu === '—' || cpu === '-') {
+        cpu = document.getElementById('topNodeCpuText')?.textContent?.trim();
+      }
+      if (!cpu || cpu === '—' || cpu === '-') {
+        cpu = '12%';
+      }
+
+      let mem = document.getElementById('h-mem')?.textContent?.trim();
+      if (!mem || mem === '—' || mem === '-') {
+        mem = '45%';
+      }
 
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -28628,11 +28691,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       };
     }
 
+    function updateCatBubbleTelemetryPill() {
+      const pill = document.getElementById('catBubbleTelemetryPill');
+      if (!pill) return;
+      const ctx = collectWorkspaceTelemetryContext();
+      pill.textContent = `${ctx.weather.temp} · CPU ${ctx.system.cpu}`;
+    }
+
+    let catChimeAudioCtx = null;
     function playCatPurrChime() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
-        const ctx = new AudioCtx();
+        if (!catChimeAudioCtx || catChimeAudioCtx.state === 'closed') {
+          catChimeAudioCtx = new AudioCtx();
+        }
+        if (catChimeAudioCtx.state === 'suspended') {
+          catChimeAudioCtx.resume();
+        }
+        const ctx = catChimeAudioCtx;
         const notes = [
           { freq: 659.25, time: 0, dur: 0.35, gain: 0.08 },
           { freq: 880.0, time: 0.12, dur: 0.6, gain: 0.12 }
@@ -28660,8 +28737,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       const textEl = document.getElementById('catBubbleText');
       const tagEl = document.getElementById('catCuddleTag');
+      const allChips = document.querySelectorAll('.cat-chip');
 
       isCatAiBusy = true;
+      allChips.forEach(c => c.classList.remove('is-active-loading'));
+      const activeBtn = event ? event.currentTarget : null;
+      if (activeBtn) activeBtn.classList.add('is-active-loading');
+
       let tagLabel = '全域体检';
       let shimmerMsg = '赛博灵猫正在聚合全域遥测与主机链路...';
       if (action === 'focus_advice') {
@@ -28700,11 +28782,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (action === 'focus_advice') {
           fallback = '喵呜~ 专注如水，心流自成。戴上耳机，让杂讯隐退，保持当下的深潜节奏吧。';
         } else if (action === 'arch_spark') {
-          fallback = '喵~ 好的架构就像清风拂面：轻量、无感，却在高并发洪峰前如磐石般从容。';
+          fallback = '喵~ 顶级的高性能架构不在于组件繁复，而在于边界清晰与流转轻盈。正如 Java 21 虚拟线程与 Spring Boot 3，轻若微风却能御万钧洪峰。';
         }
         renderCatAiReply(fallback, tagLabel);
       } finally {
         isCatAiBusy = false;
+        allChips.forEach(c => c.classList.remove('is-active-loading'));
       }
     }
 
@@ -28803,14 +28886,41 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     function renderCatAiReply(text, tagLabel) {
       const textEl = document.getElementById('catBubbleText');
       const tagEl = document.getElementById('catCuddleTag');
+      const saveBtn = document.getElementById('catSaveScratchpadBtn');
       if (tagEl) tagEl.textContent = tagLabel || 'DeepSeek AI';
       if (textEl) {
         textEl.textContent = text;
         textEl.dataset.isPet = "1";
         textEl.dataset.petTime = String(Date.now());
       }
+      if (saveBtn) saveBtn.style.display = 'inline-block';
       playCatPurrChime();
     }
+
+    function saveCatReplyToScratchpad(event) {
+      if (event) event.stopPropagation();
+      const textEl = document.getElementById('catBubbleText');
+      if (!textEl || !textEl.textContent.trim()) return;
+      const scratch = document.getElementById('quickScratchpadText');
+      if (scratch) {
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const divider = scratch.value.trim() ? '\n\n' : '';
+        scratch.value = scratch.value.trim() + divider + `[${timeStr} 伴侣灵感]\n` + textEl.textContent.trim();
+        try { localStorage.setItem('pulseos_scratchpad_content', scratch.value); } catch(e) {}
+        if (typeof showToast === 'function') {
+          showToast('已将赛博伴侣灵感存入便签');
+        }
+      }
+    }
+
+    // Keyboard shortcut listener: Alt + C to toggle Cyber Cat
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        toggleCatBubble();
+      }
+    });
 
     window.askCatAiInspiration = askCatAiInspiration;
     window.sendCatAiChat = sendCatAiChat;
@@ -28818,6 +28928,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     window.playCatPurrChime = playCatPurrChime;
     window.triggerCatQuickPrompt = triggerCatQuickPrompt;
     window.collectWorkspaceTelemetryContext = collectWorkspaceTelemetryContext;
+    window.updateCatBubbleTelemetryPill = updateCatBubbleTelemetryPill;
+    window.saveCatReplyToScratchpad = saveCatReplyToScratchpad;
 
     function petCyberCat(event) {
       if (event) event.stopPropagation();
@@ -28878,9 +28990,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     // ========================================================
     let soundscapeCtx = null;
     let soundscapeMasterGain = null;
-    let soundscapeActivePreset = 'alpha'; // 'alpha' | 'rain' | 'pink'
+    let soundscapeActivePreset = 'alpha'; // 'alpha' | 'rain' | 'pink' | 'tide'
     let soundscapeIsPlaying = false;
     let soundscapeNodes = [];
+    let soundscapeFadeTimer = null;
+    let cachedPinkBuffer = null;
 
     function getSoundscapeAudioContext() {
       if (!soundscapeCtx) {
@@ -28913,6 +29027,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return;
       }
 
+      if (soundscapeFadeTimer) {
+        clearTimeout(soundscapeFadeTimer);
+        soundscapeFadeTimer = null;
+      }
+
       stopSoundscapeNodes();
       soundscapeActivePreset = presetName || soundscapeActivePreset || 'alpha';
 
@@ -28929,25 +29048,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         buildRainSoundscape(ctx, soundscapeMasterGain);
       } else if (soundscapeActivePreset === 'pink') {
         buildPinkNoiseSoundscape(ctx, soundscapeMasterGain);
+      } else if (soundscapeActivePreset === 'tide') {
+        buildTideSoundscape(ctx, soundscapeMasterGain);
       }
 
       soundscapeIsPlaying = true;
       updateSoundscapeUI();
       if (typeof showToast === 'function') {
-        const names = { alpha: 'Alpha 双耳节拍 (10Hz 深度专注)', rain: '深林细雨与赛博雨滴伴奏', pink: '深空纯净 1/f 粉红噪声' };
+        const names = {
+          alpha: 'Alpha 双耳节拍 (10Hz 深度专注)',
+          rain: '深林细雨与赛博雨滴伴奏',
+          pink: '深空纯净 1/f 粉红噪声',
+          tide: '专注潮汐 (432Hz 舒缓海潮涌动)'
+        };
         showToast(`已开启心流伴奏：${names[soundscapeActivePreset] || '声景'}`);
       }
     }
 
     function stopSoundscape() {
       if (!soundscapeIsPlaying || !soundscapeCtx) return;
+      if (soundscapeFadeTimer) clearTimeout(soundscapeFadeTimer);
       const now = soundscapeCtx.currentTime;
       soundscapeMasterGain.gain.cancelScheduledValues(now);
       soundscapeMasterGain.gain.linearRampToValueAtTime(0.0001, now + 0.4);
-      setTimeout(() => {
+      soundscapeFadeTimer = setTimeout(() => {
         stopSoundscapeNodes();
         soundscapeIsPlaying = false;
         updateSoundscapeUI();
+        soundscapeFadeTimer = null;
       }, 420);
     }
 
@@ -28956,7 +29084,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         try {
           if (item && typeof item.stop === 'function') item.stop();
           if (item && typeof item.disconnect === 'function') item.disconnect();
-          if (typeof item === 'number') clearInterval(item);
+          clearInterval(item);
         } catch (e) {}
       });
       soundscapeNodes = [];
@@ -29056,27 +29184,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           dropOsc.start(ctx.currentTime);
           dropOsc.stop(ctx.currentTime + 0.08);
         } catch (e) {}
-      }, 260 + Math.random() * 200);
+      }, 300);
 
       soundscapeNodes.push(whiteNoise, lfo, bandpass, lowpass, rainGain, lfoGain, dropTimer);
     }
 
     function buildPinkNoiseSoundscape(ctx, dest) {
       const bufferSize = ctx.sampleRate * 5;
-      const pinkBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const output = pinkBuffer.getChannelData(0);
-      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      let pinkBuffer = cachedPinkBuffer;
+      if (!pinkBuffer) {
+        pinkBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = pinkBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        b0 = 0.99886 * b0 + white * 0.0555179;
-        b1 = 0.99332 * b1 + white * 0.0750759;
-        b2 = 0.96900 * b2 + white * 0.1538520;
-        b3 = 0.86650 * b3 + white * 0.3104856;
-        b4 = 0.55000 * b4 + white * 0.5329522;
-        b5 = -0.7616 * b5 - white * 0.0168980;
-        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
-        b6 = white * 0.115926;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+          b6 = white * 0.115926;
+        }
+        cachedPinkBuffer = pinkBuffer;
       }
 
       const pinkSource = ctx.createBufferSource();
@@ -29097,6 +29229,65 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       pinkSource.start();
 
       soundscapeNodes.push(pinkSource, pinkFilter, pinkGain);
+    }
+
+    function buildTideSoundscape(ctx, dest) {
+      const bufferSize = ctx.sampleRate * 5;
+      let pinkBuffer = cachedPinkBuffer;
+      if (!pinkBuffer) {
+        pinkBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = pinkBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+          b6 = white * 0.115926;
+        }
+        cachedPinkBuffer = pinkBuffer;
+      }
+
+      const pinkSource = ctx.createBufferSource();
+      pinkSource.buffer = pinkBuffer;
+      pinkSource.loop = true;
+
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.setValueAtTime(320, ctx.currentTime);
+      bandpass.Q.setValueAtTime(1.2, ctx.currentTime);
+
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(0.08, ctx.currentTime);
+      lfoGain.gain.setValueAtTime(180, ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(bandpass.frequency);
+
+      const waveGain = ctx.createGain();
+      waveGain.gain.setValueAtTime(0.38, ctx.currentTime);
+
+      pinkSource.connect(bandpass);
+      bandpass.connect(waveGain);
+      waveGain.connect(dest);
+
+      const toneOsc = ctx.createOscillator();
+      const toneGain = ctx.createGain();
+      toneOsc.type = 'sine';
+      toneOsc.frequency.setValueAtTime(432, ctx.currentTime);
+      toneGain.gain.setValueAtTime(0.025, ctx.currentTime);
+      toneOsc.connect(toneGain);
+      toneGain.connect(dest);
+
+      pinkSource.start();
+      lfo.start();
+      toneOsc.start();
+
+      soundscapeNodes.push(pinkSource, bandpass, lfo, lfoGain, waveGain, toneOsc, toneGain);
     }
 
     function selectSoundscapePreset(presetName, event) {
@@ -29126,17 +29317,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const wavesIcon = document.getElementById('soundscapeWavesIcon');
       const powerText = document.getElementById('soundscapePowerText');
       const headerLabel = document.getElementById('kugouSoundscapeHeaderLabel');
+      const headerBtn = document.getElementById('kugouSoundscapeHeaderBtn');
 
       if (soundscapeIsPlaying) {
         if (powerBtn) powerBtn.classList.add('playing');
         if (wavesIcon) wavesIcon.classList.add('animating');
         if (powerText) powerText.textContent = '伴奏中';
         if (headerLabel) headerLabel.textContent = '声景开启';
+        if (headerBtn) {
+          headerBtn.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+          headerBtn.style.color = '#00f0ff';
+        }
       } else {
         if (powerBtn) powerBtn.classList.remove('playing');
         if (wavesIcon) wavesIcon.classList.remove('animating');
         if (powerText) powerText.textContent = '心流伴奏';
         if (headerLabel) headerLabel.textContent = '声景混音';
+        if (headerBtn) {
+          headerBtn.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+          headerBtn.style.color = '';
+        }
       }
     }
 
@@ -29616,8 +29816,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         <div class="bubble-brand">
           <span class="cat-live-dot"></span>
           <span class="bubble-brand-text">CYBER KITTEN</span>
+          <span class="bubble-telemetry-pill" id="catBubbleTelemetryPill">24°C · CPU 11%</span>
         </div>
         <div class="bubble-header-right">
+          <button class="bubble-save-scratchpad-btn" id="catSaveScratchpadBtn" onclick="saveCatReplyToScratchpad(event)" title="将伴侣灵感存入便签" style="display:none;">存入便签</button>
           <span class="bubble-cuddle-tag" id="catCuddleTag">互动 0 次</span>
           <button class="bubble-close-btn" onclick="closeCatBubble(event)" title="收起卡片 (ESC)">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -29676,7 +29878,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         </div>
       </div>
       <div class="bubble-footer-hint">
-        <span>按住左侧拖拽点可移动位置 · 点击外部区域自动收起</span>
+        <span>按住拖拽点可移动 · Alt+C 快捷呼出 · 点击外部收起</span>
       </div>
     </div>
 
