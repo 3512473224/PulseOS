@@ -1879,6 +1879,156 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #f87171;
     }
 
+    /* 🎧 AMBIENT FOCUS SOUNDSCAPE DOCK (双耳节拍与沉浸式声景) */
+    .pomo-soundscape-container {
+      width: 100%;
+      max-width: 270px;
+      margin-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      padding-top: 8px;
+    }
+    html.theme-light .pomo-soundscape-container {
+      border-top-color: rgba(0, 0, 0, 0.08);
+    }
+    .pomo-soundscape-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 4px 8px;
+      transition: all 0.2s ease;
+    }
+    html.theme-light .pomo-soundscape-inner {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+    .soundscape-power-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 3px 6px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .soundscape-power-btn:hover {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .soundscape-power-btn.playing {
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.1);
+      border-color: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+    html.theme-light .soundscape-power-btn.playing {
+      color: #0284c7;
+      background: #e0f2fe;
+      border-color: #38bdf8;
+    }
+    .soundscape-waves-icon {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 1.5px;
+      width: 10px;
+      height: 10px;
+    }
+    .sw-bar {
+      width: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      transition: height 0.2s ease;
+    }
+    .sw-bar.b1 { height: 4px; }
+    .sw-bar.b2 { height: 8px; }
+    .sw-bar.b3 { height: 5px; }
+    .soundscape-waves-icon.animating .sw-bar.b1 {
+      animation: soundWavePulse 0.9s infinite ease-in-out alternate;
+    }
+    .soundscape-waves-icon.animating .sw-bar.b2 {
+      animation: soundWavePulse 0.65s infinite ease-in-out alternate 0.2s;
+    }
+    .soundscape-waves-icon.animating .sw-bar.b3 {
+      animation: soundWavePulse 0.8s infinite ease-in-out alternate 0.4s;
+    }
+    @keyframes soundWavePulse {
+      0% { height: 2px; }
+      100% { height: 10px; }
+    }
+    .soundscape-preset-group {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+    }
+    .soundscape-preset-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 2px 5px;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .soundscape-preset-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .soundscape-preset-btn.active {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.25);
+      font-weight: 600;
+    }
+    html.theme-light .soundscape-preset-btn.active {
+      color: #0284c7;
+      background: #e0f2fe;
+      border-color: #93c5fd;
+    }
+    .soundscape-vol-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .soundscape-vol-slider {
+      width: 36px;
+      height: 3px;
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    html.theme-light .soundscape-vol-slider {
+      background: #cbd5e1;
+    }
+    .soundscape-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+    }
+
     /* Shortcuts (Luxury Glassmorphic 8-Grid) */
     .home-shortcuts-grid {
       display: grid;
@@ -8823,7 +8973,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     /* =====================================================================
-       💎 ULTRA-PREMIUM HI-RES AUDIO QUALITY DROPDOWN & MINIMALIST PLAYLIST PILL
+       🎵 ULTRA-PREMIUM HI-RES AUDIO QUALITY DROPDOWN & MINIMALIST PLAYLIST PILL
        ===================================================================== */
     .kugou-quality-trigger-btn {
       padding: 4px 10px;
@@ -11147,8 +11297,58 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35) !important;
       color: #fff !important;
     }
+    .cat-quick-chips {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+      margin-bottom: 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-quick-chips::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex: 1;
+      padding: 4px 7px;
+      font-size: 0.67rem;
+      font-weight: 500;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cat-chip svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0.85;
+      color: #38bdf8;
+      flex-shrink: 0;
+    }
+    .cat-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #f8fafc;
+      transform: translateY(-1px);
+    }
+    html.theme-light .cat-chip {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #475569;
+    }
+    html.theme-light .cat-chip:hover {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      color: #0284c7;
+    }
+
     .cat-ai-prompt-box {
-      margin-top: 10px;
+      margin-top: 8px;
       width: 100%;
     }
     .cat-ai-input-wrap {
@@ -12294,6 +12494,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <div class="pomo-stats-text" id="pomoStatsText" style="font-size:0.72rem; color:var(--text-dim); text-align:center; margin-top:2px;">
                     今日专注：<b style="color:#0091ff;" id="pomoTodayCount">0</b> 组 · <span id="pomoTodayMins">0 min</span>
                   </div>
+
+                  <!-- 🎧 AMBIENT FOCUS SOUNDSCAPE DOCK (双耳节拍与沉浸式声景) -->
+                  <div class="pomo-soundscape-container" id="pomoSoundscapeContainer">
+                    <div class="pomo-soundscape-inner">
+                      <button class="soundscape-power-btn" id="soundscapePowerBtn" onclick="toggleSoundscape(event)" title="开启/关闭沉浸式心流声景伴奏">
+                        <span class="soundscape-waves-icon" id="soundscapeWavesIcon">
+                          <span class="sw-bar b1"></span>
+                          <span class="sw-bar b2"></span>
+                          <span class="sw-bar b3"></span>
+                        </span>
+                        <span class="soundscape-title-text" id="soundscapePowerText">心流伴奏</span>
+                      </button>
+
+                      <div class="soundscape-preset-group">
+                        <button class="soundscape-preset-btn active" id="spBtn-alpha" onclick="selectSoundscapePreset('alpha', event)" title="双耳节拍 10Hz Alpha 波 · 脑波调谐">Alpha 节拍</button>
+                        <button class="soundscape-preset-btn" id="spBtn-rain" onclick="selectSoundscapePreset('rain', event)" title="深林雨打芭蕉 · 赛博雨滴">深林细雨</button>
+                        <button class="soundscape-preset-btn" id="spBtn-pink" onclick="selectSoundscapePreset('pink', event)" title="Paul Kellet 纯净 1/f 粉红噪声">深空粉噪</button>
+                      </div>
+
+                      <div class="soundscape-vol-group" title="调节声景音量">
+                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <input type="range" class="soundscape-vol-slider" id="soundscapeVolSlider" min="0" max="1" step="0.02" value="0.4" oninput="setSoundscapeVolume(this.value)">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -12531,6 +12756,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     </div>
                   </div>
 
+                  <button class="btn btn-ghost" id="kugouSoundscapeHeaderBtn" onclick="toggleSoundscape(event)" style="padding:4px 10px; font-size:0.72rem; border-radius:9px; display:inline-flex; align-items:center; gap:5px; border-color:rgba(0,212,255,0.3); cursor:pointer;" title="开启/关闭沉浸式心流声景伴奏 (与音乐混音)">
+                    <i data-lucide="waves" style="width:12px;height:12px;color:#00d4ff;"></i>
+                    <span id="kugouSoundscapeHeaderLabel">声景混音</span>
+                  </button>
                   <button class="btn btn-ghost" onclick="openKuGouSearchModal()" style="padding:4px 10px; font-size:0.72rem; border-radius:9px; display:inline-flex; align-items:center; gap:5px; border-color:rgba(0,145,255,0.3); cursor:pointer;" title="全网检索歌曲并播放">
                     <i data-lucide="search" style="width:12px;height:12px;color:#0091ff;"></i>
                     <span>搜歌</span>
@@ -23457,13 +23686,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
 
       // Display high-fidelity playback banner
-      let streamNotice = `🎶 正在播放：${track.title} · ${track.artist}`;
+      let streamNotice = `正在播放：${track.title} · ${track.artist}`;
       if (track.streamSource === 'kugou_vip' || track.streamSource === 'kugou_vip_fresh') {
-        streamNotice = `💎 正在播放酷狗官方VIP超清原版：${track.title} · ${track.artist}`;
+        streamNotice = `SQ · 正在播放酷狗超清原版：${track.title} · ${track.artist}`;
       } else if (track.streamSource && track.streamSource.startsWith('authentic_')) {
-        streamNotice = `✨ 正在播放官方原声原唱：${track.title} · ${track.artist}`;
+        streamNotice = `HQ · 正在播放官方原声原唱：${track.title} · ${track.artist}`;
       } else if (track.streamSource === 'song_relay') {
-        streamNotice = `🎶 正在接力播放本曲精选高品质音源：${track.title}`;
+        streamNotice = `接力播放精选优质音源：${track.title}`;
       }
       if (lrcEl && autoPlay) lrcEl.textContent = streamNotice;
 
@@ -28196,20 +28425,20 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     let catBubbleTimer = null;
 
     const CAT_DIALOGUES = [
-      "系统各项遥测指标运转平稳，随时为您伴随守护。✨",
-      "已为您监测全域环境，主人的灵感正在全速载入中。⚡",
-      "律动与逻辑在此同频，每一行代码都在创造非凡。🚀",
-      "后台 Telemetry 与音乐流稳健运行中，适时补充水分与活动。☕",
-      "赛博动力矩阵已就绪，愿主人今天的工作如星辰般璀璨。🌌",
-      "已与 PulseOS 遥测核心握手，所有性能链路均处于峰值状态。💎",
-      "心流专注中，猫猫会安静守护您的专属思考空间。🛡️"
+      "PulseOS 遥测链路握手正常，各核心指标均处于峰值平稳态势。",
+      "已完成工作台全域环境巡检，思维信道畅通，随时伴随守护。",
+      "律动与逻辑在此同频共振，专注的心流正在构筑高阶架构。",
+      "后台微服务与无损音频流运行稳健，攻坚之余适度舒展身心。",
+      "赛博动力矩阵全功率就绪，愿今天的每一次构建都精准优雅。",
+      "全域遥测核心已建立量子映射，算力链路延时低于一毫秒。",
+      "心流沉浸模式静默守候中，猫猫已为您滤除一切杂讯干扰。"
     ];
 
     const CAT_HAPPY_QUOTES = [
-      "收到主人的亲密抚摸！机械动力核心充能至 100%！💖",
-      "伴侣默契加深！赛博猫咪愿守护主人所有的创意与灵感。✨",
-      "亲密度跃升！已为主人的工作台注入一整天的专注与好运。🐾",
-      "呼噜呼噜... 核心温度适宜，赛博伴侣将常伴主人左右。⚡"
+      "收到主人的抚摸共鸣，赛博伴侣动力核心已满功率充能。",
+      "伴侣默契跃升，微机传感器温润平稳，守护您的每一丝灵感。",
+      "感知到主人的温润互动，已为主机工作台注入纯净心流场域。",
+      "呼噜呼噜... 量子突触共鸣良好，赛博伴侣始终在侧守护前行。"
     ];
 
     function initCyberCatCompanion() {
@@ -28329,9 +28558,75 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     // ========================================================
-    // 🧠 CYBER CAT DEEPSEEK AI DIALOGUE & INSPIRATION ENGINE
+    // 🧠 CYBER CAT AI & TELEMETRY INTELLIGENCE ENGINE
+    // Context-Aware Ambient Telemetry + DeepSeek LLM
     // ========================================================
     let isCatAiBusy = false;
+
+    // Collect complete real-time workspace telemetry signals
+    function collectWorkspaceTelemetryContext() {
+      let activeView = 'home';
+      const activeSection = document.querySelector('.view-section.active');
+      if (activeSection && activeSection.id) {
+        activeView = activeSection.id.replace(/^view-/, '');
+      }
+
+      const pomoRunning = typeof pomoIsRunning !== 'undefined' ? pomoIsRunning : false;
+      const pomoRemainingSec = typeof pomoTimeLeft !== 'undefined' ? pomoTimeLeft : 0;
+      const pomoMins = Math.floor(pomoRemainingSec / 60);
+      const pomoSecs = pomoRemainingSec % 60;
+      const pomoRemainingStr = `${String(pomoMins).padStart(2, '0')}:${String(pomoSecs).padStart(2, '0')}`;
+      const pomoTask = document.getElementById('pomoTaskTitleText')?.textContent?.trim() || '系统架构与深度编码';
+      const pomoTodayCount = document.getElementById('pomoTodayCount')?.textContent?.trim() || '0';
+
+      const musicPlaying = typeof kugouIsPlaying !== 'undefined' ? kugouIsPlaying : false;
+      let musicTrack = null;
+      if (typeof kugouCurrentPlaylist !== 'undefined' && Array.isArray(kugouCurrentPlaylist) && kugouCurrentTrackIdx >= 0 && kugouCurrentTrackIdx < kugouCurrentPlaylist.length) {
+        const t = kugouCurrentPlaylist[kugouCurrentTrackIdx];
+        musicTrack = {
+          title: t.title || '未知曲目',
+          artist: t.artist || '未知歌手'
+        };
+      }
+
+      const city = document.getElementById('homeWeatherCity')?.textContent?.trim() || '长沙';
+      const temp = document.getElementById('homeWeatherTemp')?.textContent?.replace(/[^\d-]/g, '') || '24';
+      const cond = document.getElementById('homeWeatherCond')?.textContent?.trim() || '晴朗';
+      const steps = document.getElementById('wechatStepCount')?.textContent?.trim() || '8,420';
+
+      const cpu = document.getElementById('h-cpu')?.textContent?.trim() || document.getElementById('topNodeCpuText')?.textContent?.trim() || '12%';
+      const mem = document.getElementById('h-mem')?.textContent?.trim() || '45%';
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      return {
+        view: activeView,
+        pomodoro: {
+          running: pomoRunning,
+          remaining: pomoRemainingStr,
+          task: pomoTask,
+          completedToday: pomoTodayCount
+        },
+        music: {
+          playing: musicPlaying,
+          track: musicTrack
+        },
+        weather: {
+          city,
+          temp: `${temp}°C`,
+          condition: cond
+        },
+        activity: {
+          stepCount: steps
+        },
+        system: {
+          cpu,
+          memory: mem
+        },
+        client_time: timeStr
+      };
+    }
 
     function playCatPurrChime() {
       try {
@@ -28358,6 +28653,61 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       } catch (e) {}
     }
 
+    // 1-Click Smart Quick Prompts (全域体检 / 心流建议 / 架构灵感)
+    async function triggerCatQuickPrompt(action, event) {
+      if (event) event.stopPropagation();
+      if (isCatAiBusy) return;
+
+      const textEl = document.getElementById('catBubbleText');
+      const tagEl = document.getElementById('catCuddleTag');
+
+      isCatAiBusy = true;
+      let tagLabel = '全域体检';
+      let shimmerMsg = '赛博灵猫正在聚合全域遥测与主机链路...';
+      if (action === 'focus_advice') {
+        tagLabel = '心流调谐';
+        shimmerMsg = '赛博灵猫正在感知专注心流与声学节奏...';
+      } else if (action === 'arch_spark') {
+        tagLabel = '架构洞见';
+        shimmerMsg = '赛博灵猫正在检索前沿架构灵感火花...';
+      }
+
+      if (tagEl) tagEl.textContent = tagLabel;
+      if (textEl) {
+        textEl.innerHTML = `<span class="cat-thinking-shimmer">${shimmerMsg}</span>`;
+      }
+      openCatBubble();
+
+      const ctxData = collectWorkspaceTelemetryContext();
+
+      try {
+        const res = await fetch('/api/ai/cat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: action,
+            context: ctxData
+          })
+        });
+        const data = await res.json();
+        if (data && data.reply) {
+          renderCatAiReply(data.reply, tagLabel);
+        } else {
+          throw new Error('No reply');
+        }
+      } catch (err) {
+        let fallback = '喵~ 已检查当前主机链路与各项指标，运行平稳，赛博伴侣将持续为您守护。';
+        if (action === 'focus_advice') {
+          fallback = '喵呜~ 专注如水，心流自成。戴上耳机，让杂讯隐退，保持当下的深潜节奏吧。';
+        } else if (action === 'arch_spark') {
+          fallback = '喵~ 好的架构就像清风拂面：轻量、无感，却在高并发洪峰前如磐石般从容。';
+        }
+        renderCatAiReply(fallback, tagLabel);
+      } finally {
+        isCatAiBusy = false;
+      }
+    }
+
     async function askCatAiInspiration(event) {
       if (event) event.stopPropagation();
       if (isCatAiBusy) return;
@@ -28368,27 +28718,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       isCatAiBusy = true;
       if (btn) btn.style.opacity = '0.6';
-      if (tagEl) tagEl.textContent = '✨ AI 思考中';
+      if (tagEl) tagEl.textContent = 'AI 思考中';
       if (textEl) {
-        textEl.innerHTML = '<span class="cat-thinking-shimmer">赛博灵猫量子突触思考中... 🐾✨</span>';
+        textEl.innerHTML = '<span class="cat-thinking-shimmer">赛博灵猫量子突触思考中...</span>';
       }
 
       openCatBubble();
+
+      const ctxData = collectWorkspaceTelemetryContext();
 
       try {
         const res = await fetch('/api/ai/cat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'inspire' })
+          body: JSON.stringify({
+            action: 'inspire',
+            context: ctxData
+          })
         });
         const data = await res.json();
         if (data && data.reply) {
-          renderCatAiReply(data.reply, '✨ DeepSeek AI');
+          renderCatAiReply(data.reply, 'DeepSeek AI');
         } else {
           throw new Error('No reply');
         }
       } catch (err) {
-        renderCatAiReply('喵~ 主人，无论算法如何喧嚣，专注架构的本心就是最纯粹的代码美学。✨🐾', '✨ 神经缓存');
+        renderCatAiReply('喵~ 主人，无论算法如何喧嚣，专注架构的本心就是最纯粹的代码美学。', '神经缓存');
       } finally {
         isCatAiBusy = false;
         if (btn) btn.style.opacity = '1';
@@ -28412,27 +28767,33 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const tagEl = document.getElementById('catCuddleTag');
 
       isCatAiBusy = true;
-      if (tagEl) tagEl.textContent = '✨ 神经演算中';
+      if (tagEl) tagEl.textContent = '神经演算中';
       if (textEl) {
-        textEl.innerHTML = `<span class="cat-thinking-shimmer">赛博猫猫正在为你分析：“${query.slice(0, 14)}” 🐾⚡</span>`;
+        textEl.innerHTML = `<span class="cat-thinking-shimmer">赛博灵猫正在分析：“${query.slice(0, 14)}”...</span>`;
       }
 
       openCatBubble();
+
+      const ctxData = collectWorkspaceTelemetryContext();
 
       try {
         const res = await fetch('/api/ai/cat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'chat', message: query })
+          body: JSON.stringify({
+            action: 'chat',
+            message: query,
+            context: ctxData
+          })
         });
         const data = await res.json();
         if (data && data.reply) {
-          renderCatAiReply(data.reply, '✨ 灵犀问答');
+          renderCatAiReply(data.reply, '灵犀问答');
         } else {
           throw new Error('No reply');
         }
       } catch (err) {
-        renderCatAiReply('喵呜~ 网络微光扰动，但猫猫听到了你的声音！休息一下，灵感自会涌现喔。🐾⚡', '✨ 离线守护');
+        renderCatAiReply('喵呜~ 网络微光扰动，但猫猫听到了你的声音！休息一下，灵感自会涌现喔。', '离线守护');
       } finally {
         isCatAiBusy = false;
         if (sendBtn) sendBtn.disabled = false;
@@ -28442,7 +28803,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     function renderCatAiReply(text, tagLabel) {
       const textEl = document.getElementById('catBubbleText');
       const tagEl = document.getElementById('catCuddleTag');
-      if (tagEl) tagEl.textContent = tagLabel || '✨ DeepSeek AI';
+      if (tagEl) tagEl.textContent = tagLabel || 'DeepSeek AI';
       if (textEl) {
         textEl.textContent = text;
         textEl.dataset.isPet = "1";
@@ -28455,8 +28816,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     window.sendCatAiChat = sendCatAiChat;
     window.renderCatAiReply = renderCatAiReply;
     window.playCatPurrChime = playCatPurrChime;
+    window.triggerCatQuickPrompt = triggerCatQuickPrompt;
+    window.collectWorkspaceTelemetryContext = collectWorkspaceTelemetryContext;
 
-        function petCyberCat(event) {
+    function petCyberCat(event) {
       if (event) event.stopPropagation();
       catCuddleCount++;
       try { localStorage.setItem('pulseos_cat_cuddles', catCuddleCount); } catch (e) {}
@@ -28499,16 +28862,289 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       openCatBubble();
 
-      // Auto-dismiss after 6.5s to avoid obstruction
       if (catBubbleTimer) clearTimeout(catBubbleTimer);
       catBubbleTimer = setTimeout(() => {
         closeCatBubble();
       }, 6500);
 
       if (typeof showToast === 'function') {
-        showToast('✨ 赛博猫咪感到愉悦，默契亲密度 +1！');
+        showToast('赛博伴侣微机核心充能完毕，默契度 +1');
       }
     }
+
+    // ========================================================
+    // 🎧 AMBIENT FOCUS SOUNDSCAPE ENGINE (SYNTHESIZED WEB AUDIO)
+    // 100% Pure Web Audio API: Zero Latency, Zero Bandwidth, Offline
+    // ========================================================
+    let soundscapeCtx = null;
+    let soundscapeMasterGain = null;
+    let soundscapeActivePreset = 'alpha'; // 'alpha' | 'rain' | 'pink'
+    let soundscapeIsPlaying = false;
+    let soundscapeNodes = [];
+
+    function getSoundscapeAudioContext() {
+      if (!soundscapeCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        soundscapeCtx = new AudioCtx();
+        soundscapeMasterGain = soundscapeCtx.createGain();
+        soundscapeMasterGain.gain.setValueAtTime(0.4, soundscapeCtx.currentTime);
+        soundscapeMasterGain.connect(soundscapeCtx.destination);
+      }
+      if (soundscapeCtx.state === 'suspended') {
+        soundscapeCtx.resume();
+      }
+      return soundscapeCtx;
+    }
+
+    function toggleSoundscape(event) {
+      if (event) event.stopPropagation();
+      if (soundscapeIsPlaying) {
+        stopSoundscape();
+      } else {
+        startSoundscape(soundscapeActivePreset);
+      }
+    }
+
+    function startSoundscape(presetName) {
+      const ctx = getSoundscapeAudioContext();
+      if (!ctx) {
+        if (typeof showToast === 'function') showToast('当前浏览器不支持 Web Audio API');
+        return;
+      }
+
+      stopSoundscapeNodes();
+      soundscapeActivePreset = presetName || soundscapeActivePreset || 'alpha';
+
+      const now = ctx.currentTime;
+      const volSlider = document.getElementById('soundscapeVolSlider');
+      const targetVol = volSlider ? parseFloat(volSlider.value) : 0.4;
+      soundscapeMasterGain.gain.cancelScheduledValues(now);
+      soundscapeMasterGain.gain.setValueAtTime(0.001, now);
+      soundscapeMasterGain.gain.linearRampToValueAtTime(targetVol, now + 0.6);
+
+      if (soundscapeActivePreset === 'alpha') {
+        buildAlphaSoundscape(ctx, soundscapeMasterGain);
+      } else if (soundscapeActivePreset === 'rain') {
+        buildRainSoundscape(ctx, soundscapeMasterGain);
+      } else if (soundscapeActivePreset === 'pink') {
+        buildPinkNoiseSoundscape(ctx, soundscapeMasterGain);
+      }
+
+      soundscapeIsPlaying = true;
+      updateSoundscapeUI();
+      if (typeof showToast === 'function') {
+        const names = { alpha: 'Alpha 双耳节拍 (10Hz 深度专注)', rain: '深林细雨与赛博雨滴伴奏', pink: '深空纯净 1/f 粉红噪声' };
+        showToast(`已开启心流伴奏：${names[soundscapeActivePreset] || '声景'}`);
+      }
+    }
+
+    function stopSoundscape() {
+      if (!soundscapeIsPlaying || !soundscapeCtx) return;
+      const now = soundscapeCtx.currentTime;
+      soundscapeMasterGain.gain.cancelScheduledValues(now);
+      soundscapeMasterGain.gain.linearRampToValueAtTime(0.0001, now + 0.4);
+      setTimeout(() => {
+        stopSoundscapeNodes();
+        soundscapeIsPlaying = false;
+        updateSoundscapeUI();
+      }, 420);
+    }
+
+    function stopSoundscapeNodes() {
+      soundscapeNodes.forEach(item => {
+        try {
+          if (item && typeof item.stop === 'function') item.stop();
+          if (item && typeof item.disconnect === 'function') item.disconnect();
+          if (typeof item === 'number') clearInterval(item);
+        } catch (e) {}
+      });
+      soundscapeNodes = [];
+    }
+
+    function buildAlphaSoundscape(ctx, dest) {
+      const merger = ctx.createChannelMerger(2);
+
+      const oscL = ctx.createOscillator();
+      const gainL = ctx.createGain();
+      oscL.type = 'sine';
+      oscL.frequency.setValueAtTime(216, ctx.currentTime);
+      gainL.gain.setValueAtTime(0.28, ctx.currentTime);
+      oscL.connect(gainL);
+      gainL.connect(merger, 0, 0);
+
+      const oscR = ctx.createOscillator();
+      const gainR = ctx.createGain();
+      oscR.type = 'sine';
+      oscR.frequency.setValueAtTime(226, ctx.currentTime);
+      gainR.gain.setValueAtTime(0.28, ctx.currentTime);
+      oscR.connect(gainR);
+      gainR.connect(merger, 0, 1);
+
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'triangle';
+      subOsc.frequency.setValueAtTime(108, ctx.currentTime);
+      subGain.gain.setValueAtTime(0.12, ctx.currentTime);
+      subOsc.connect(subGain);
+      subGain.connect(dest);
+
+      merger.connect(dest);
+
+      oscL.start();
+      oscR.start();
+      subOsc.start();
+
+      soundscapeNodes.push(oscL, oscR, subOsc, gainL, gainR, subGain, merger);
+    }
+
+    function buildRainSoundscape(ctx, dest) {
+      const bufferSize = ctx.sampleRate * 5;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.setValueAtTime(880, ctx.currentTime);
+      bandpass.Q.setValueAtTime(0.9, ctx.currentTime);
+
+      const lowpass = ctx.createBiquadFilter();
+      lowpass.type = 'lowpass';
+      lowpass.frequency.setValueAtTime(2600, ctx.currentTime);
+
+      const rainGain = ctx.createGain();
+      rainGain.gain.setValueAtTime(0.35, ctx.currentTime);
+
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(0.15, ctx.currentTime);
+      lfoGain.gain.setValueAtTime(220, ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(bandpass.frequency);
+
+      whiteNoise.connect(bandpass);
+      bandpass.connect(lowpass);
+      lowpass.connect(rainGain);
+      rainGain.connect(dest);
+
+      whiteNoise.start();
+      lfo.start();
+
+      const dropTimer = setInterval(() => {
+        if (!soundscapeIsPlaying) return;
+        try {
+          const dropOsc = ctx.createOscillator();
+          const dropGain = ctx.createGain();
+          const dropFreq = 1600 + Math.random() * 1400;
+          dropOsc.type = 'sine';
+          dropOsc.frequency.setValueAtTime(dropFreq, ctx.currentTime);
+          dropOsc.frequency.exponentialRampToValueAtTime(dropFreq * 0.7, ctx.currentTime + 0.06);
+
+          dropGain.gain.setValueAtTime(0, ctx.currentTime);
+          dropGain.gain.linearRampToValueAtTime(0.04 + Math.random() * 0.03, ctx.currentTime + 0.005);
+          dropGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.07);
+
+          dropOsc.connect(dropGain);
+          dropGain.connect(dest);
+          dropOsc.start(ctx.currentTime);
+          dropOsc.stop(ctx.currentTime + 0.08);
+        } catch (e) {}
+      }, 260 + Math.random() * 200);
+
+      soundscapeNodes.push(whiteNoise, lfo, bandpass, lowpass, rainGain, lfoGain, dropTimer);
+    }
+
+    function buildPinkNoiseSoundscape(ctx, dest) {
+      const bufferSize = ctx.sampleRate * 5;
+      const pinkBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = pinkBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+        b6 = white * 0.115926;
+      }
+
+      const pinkSource = ctx.createBufferSource();
+      pinkSource.buffer = pinkBuffer;
+      pinkSource.loop = true;
+
+      const pinkFilter = ctx.createBiquadFilter();
+      pinkFilter.type = 'lowpass';
+      pinkFilter.frequency.setValueAtTime(1400, ctx.currentTime);
+
+      const pinkGain = ctx.createGain();
+      pinkGain.gain.setValueAtTime(0.42, ctx.currentTime);
+
+      pinkSource.connect(pinkFilter);
+      pinkFilter.connect(pinkGain);
+      pinkGain.connect(dest);
+
+      pinkSource.start();
+
+      soundscapeNodes.push(pinkSource, pinkFilter, pinkGain);
+    }
+
+    function selectSoundscapePreset(presetName, event) {
+      if (event) event.stopPropagation();
+      soundscapeActivePreset = presetName;
+      document.querySelectorAll('.soundscape-preset-btn').forEach(btn => {
+        if (btn.id === 'spBtn-' + presetName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      if (soundscapeIsPlaying) {
+        startSoundscape(presetName);
+      }
+    }
+
+    function setSoundscapeVolume(val) {
+      const v = parseFloat(val) || 0;
+      if (soundscapeMasterGain && soundscapeCtx) {
+        soundscapeMasterGain.gain.setValueAtTime(v, soundscapeCtx.currentTime);
+      }
+    }
+
+    function updateSoundscapeUI() {
+      const powerBtn = document.getElementById('soundscapePowerBtn');
+      const wavesIcon = document.getElementById('soundscapeWavesIcon');
+      const powerText = document.getElementById('soundscapePowerText');
+      const headerLabel = document.getElementById('kugouSoundscapeHeaderLabel');
+
+      if (soundscapeIsPlaying) {
+        if (powerBtn) powerBtn.classList.add('playing');
+        if (wavesIcon) wavesIcon.classList.add('animating');
+        if (powerText) powerText.textContent = '伴奏中';
+        if (headerLabel) headerLabel.textContent = '声景开启';
+      } else {
+        if (powerBtn) powerBtn.classList.remove('playing');
+        if (wavesIcon) wavesIcon.classList.remove('animating');
+        if (powerText) powerText.textContent = '心流伴奏';
+        if (headerLabel) headerLabel.textContent = '声景混音';
+      }
+    }
+
+    window.toggleSoundscape = toggleSoundscape;
+    window.selectSoundscapePreset = selectSoundscapePreset;
+    window.setSoundscapeVolume = setSoundscapeVolume;
+    window.startSoundscape = startSoundscape;
+    window.stopSoundscape = stopSoundscape;
 
     function syncCyberCatState() {
       const statusBadge = document.getElementById('catStatusBadge');
@@ -28994,7 +29630,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         </div>
       </div>
       <div class="bubble-actions">
-        <button class="bubble-btn primary" onclick="petCyberCat(event)" title="抚摸赛博猫咪，增加默契与充能">
+        <button class="bubble-btn primary" onclick="petCyberCat(event)" title="抚摸赛博伴侣，增加默契与充能">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
           <span>抚摸充能</span>
         </button>
@@ -29007,13 +29643,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <span>音乐律动</span>
         </button>
         <button class="bubble-btn primary-ai" onclick="askCatAiInspiration(event)" id="catAiInspireBtn" title="DeepSeek AI 实时赋能 · 汲取赛博灵感">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path></svg>
           <span id="catAiBtnText">AI 灵感</span>
         </button>
       </div>
+
+      <!-- 🌟 SMART QUICK-PROMPT CHIPS (全域体检 · 心流建议 · 架构灵感) -->
+      <div class="cat-quick-chips" id="catQuickChips">
+        <button class="cat-chip" onclick="triggerCatQuickPrompt('system_check', event)" title="实时诊断全域遥测与服务器态势">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>全域体检</span>
+        </button>
+        <button class="cat-chip" onclick="triggerCatQuickPrompt('focus_advice', event)" title="基于当前时刻、番茄钟与音乐提供建议">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>心流建议</span>
+        </button>
+        <button class="cat-chip" onclick="triggerCatQuickPrompt('arch_spark', event)" title="汲取 Java 21 / Spring Boot 3 前沿架构美学">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>架构灵感</span>
+        </button>
+      </div>
+
       <div class="cat-ai-prompt-box">
         <div class="cat-ai-input-wrap">
-          <span class="cat-ai-icon">✨</span>
+          <span class="cat-ai-icon" title="DeepSeek AI 智能体">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+          </span>
           <input type="text" id="catAiInput" class="cat-ai-input" placeholder="与赛博灵猫自由对话... (Enter 发送)" onkeydown="if(event.key==='Enter') sendCatAiChat(event)" autocomplete="off">
           <button class="cat-ai-send-btn" onclick="sendCatAiChat(event)" id="catAiSendBtn" title="发送提问给赛博灵猫">
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
