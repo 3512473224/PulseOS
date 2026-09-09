@@ -5559,6 +5559,87 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     /* ======================================================== */
+    /* 🖼️ IMAGE LIGHTBOX & PAN-ZOOM SUITE (RETINA LUXURY) */
+    /* ======================================================== */
+    #imageLightboxModal {
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      background: rgba(3, 6, 15, 0.92) !important;
+      backdrop-filter: blur(28px) !important;
+      -webkit-backdrop-filter: blur(28px) !important;
+      cursor: default;
+      user-select: none;
+      z-index: 1200 !important;
+    }
+    .lightbox-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .lightbox-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+    .lightbox-btn.close-btn:hover {
+      background: rgba(239, 68, 68, 0.85);
+      border-color: rgba(239, 68, 68, 0.95);
+      color: #fff;
+    }
+    .lightbox-dock-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .lightbox-dock-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+    .lightbox-dock-btn.text-btn {
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: -0.5px;
+    }
+    .lightbox-dock-percent {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #38bdf8;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono, monospace);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-width: 54px;
+      text-align: center;
+    }
+    .lightbox-dock-percent:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    /* ======================================================== */
     /* 🕸️ NATIVE OBSIDIAN RETINA KNOWLEDGE GRAPH (MINIMALIST) */
     /* ======================================================== */
     .graph-viewport {
@@ -14760,12 +14841,77 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     </div>
   </div>
 
-  <!-- Image Lightbox Modal (全屏大图预览与缩放) -->
-  <div class="modal-backdrop" id="imageLightboxModal" onclick="closeImageLightbox()" style="cursor:zoom-out;">
-    <div style="position:relative; max-width:92vw; max-height:92vh; display:flex; flex-direction:column; align-items:center;" onclick="event.stopPropagation()">
-      <div id="lightboxTitleElement" style="position:absolute; top:-38px; left:0; font-size:0.8rem; color:#94a3b8; font-family:var(--font-mono, monospace); max-width:70vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
-      <button class="btn-icon" style="position:absolute; top:-38px; right:0; font-size:1.1rem; color:#fff; background:rgba(0,0,0,0.6); border-radius:8px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="closeImageLightbox()">✕</button>
-      <img id="lightboxImgElement" src="" onerror="handleLightboxImageError()" style="max-width:92vw; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 24px 70px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.15);">
+  <!-- Image Lightbox Modal (全屏大图预览与滚轮缩放/拖拽漫游) -->
+  <div class="modal-backdrop" id="imageLightboxModal" style="padding:0; overflow:hidden; background:rgba(3, 5, 12, 0.88); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); cursor:default; user-select:none; z-index:1200 !important;">
+    
+    <!-- Top Floating Header Bar -->
+    <div class="lightbox-header" style="position:absolute; top:20px; left:24px; right:24px; display:flex; align-items:center; justify-content:space-between; z-index:10; pointer-events:none;">
+      <div style="display:flex; align-items:center; gap:12px; pointer-events:auto; max-width:70vw;">
+        <div style="width:32px; height:32px; border-radius:10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; color:#38bdf8; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
+          <i data-lucide="image" style="width:16px; height:16px;"></i>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <span id="lightboxTitleElement" style="font-size:0.9rem; font-weight:600; color:#f8fafc; font-family:var(--font-sans); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 2px 8px rgba(0,0,0,0.8);">图片预览</span>
+          <span id="lightboxMetaElement" style="font-size:0.72rem; color:#94a3b8; font-family:var(--font-mono, monospace);">正在解析图像尺寸...</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; pointer-events:auto;">
+        <button type="button" class="lightbox-btn" onclick="downloadLightboxImage()" title="下载/保存原图">
+          <i data-lucide="download" style="width:15px; height:15px;"></i>
+        </button>
+        <button type="button" class="lightbox-btn" onclick="openLightboxImageInNewTab()" title="在新标签页中打开">
+          <i data-lucide="external-link" style="width:15px; height:15px;"></i>
+        </button>
+        <button type="button" class="lightbox-btn close-btn" onclick="closeImageLightbox()" title="关闭预览 (Esc)">
+          <i data-lucide="x" style="width:17px; height:17px;"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Viewport Stage -->
+    <div id="lightboxViewport" style="position:absolute; inset:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab;">
+      <div id="lightboxTransformLayer" style="position:relative; transform-origin:center center; will-change:transform; display:flex; align-items:center; justify-content:center; transition:none;">
+        <img id="lightboxImgElement" src="" onerror="handleLightboxImageError()" draggable="false" style="max-width:88vw; max-height:82vh; object-fit:contain; border-radius:10px; box-shadow:0 30px 80px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.12); pointer-events:auto; user-select:none; -webkit-user-drag:none; display:block;">
+        <div id="lightboxLoadingSpinner" style="position:absolute; display:none; flex-direction:column; align-items:center; gap:10px; color:#38bdf8; pointer-events:none;">
+          <div style="width:36px; height:36px; border:2px solid rgba(56,189,248,0.2); border-top-color:#38bdf8; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+          <span style="font-size:0.75rem; color:#94a3b8; font-family:var(--font-mono, monospace);">加载高清图像中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Floating Controls Capsule -->
+    <div class="lightbox-bottom-dock" style="position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;">
+      <div class="lightbox-controls-pill" style="pointer-events:auto; display:flex; align-items:center; gap:4px; padding:6px 14px; background:rgba(15, 23, 42, 0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255, 255, 255, 0.12); border-radius:9999px; box-shadow:0 16px 40px rgba(0,0,0,0.7);">
+        <button type="button" class="lightbox-dock-btn" onclick="zoomLightboxStep(-1)" title="缩小 (滚轮向下 / -)">
+          <i data-lucide="minus" style="width:14px; height:14px;"></i>
+        </button>
+        <button type="button" id="lightboxZoomPercent" class="lightbox-dock-percent" onclick="resetLightboxZoom()" title="点击重置 100%">
+          100%
+        </button>
+        <button type="button" class="lightbox-dock-btn" onclick="zoomLightboxStep(1)" title="放大 (滚轮向上 / +)">
+          <i data-lucide="plus" style="width:14px; height:14px;"></i>
+        </button>
+        <div style="width:1px; height:16px; background:rgba(255,255,255,0.12); margin:0 4px;"></div>
+        <button type="button" class="lightbox-dock-btn text-btn" onclick="setLightbox100Percent()" title="1:1 物理像素原图大小">
+          1:1
+        </button>
+        <button type="button" class="lightbox-dock-btn" onclick="resetLightboxZoom()" title="适应屏幕 (双击画面)">
+          <i data-lucide="maximize-2" style="width:13px; height:13px;"></i>
+        </button>
+        <div style="width:1px; height:16px; background:rgba(255,255,255,0.12); margin:0 4px;"></div>
+        <button type="button" class="lightbox-dock-btn" onclick="rotateLightboxImage()" title="顺时针旋转 90°">
+          <i data-lucide="rotate-cw" style="width:13px; height:13px;"></i>
+        </button>
+      </div>
+      <div style="font-size:0.7rem; color:rgba(255,255,255,0.48); text-shadow:0 1px 3px rgba(0,0,0,0.9); font-family:var(--font-sans); display:flex; align-items:center; gap:8px;">
+        <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">滚轮</kbd> 自由缩放</span>
+        <span>•</span>
+        <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">拖拽</kbd> 漫游平移</span>
+        <span>•</span>
+        <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">双击</kbd> 快速切换</span>
+        <span>•</span>
+        <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">ESC</kbd> 退出</span>
+      </div>
     </div>
   </div>
 
@@ -16820,11 +16966,120 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       return clean;
     }
 
+    // ========================================================
+    // 🖼️ HIGH-PERFORMANCE IMAGE LIGHTBOX & PAN-ZOOM ENGINE
+    // ========================================================
+    const lightboxState = {
+      scale: 1.0,
+      translateX: 0,
+      translateY: 0,
+      rotation: 0,
+      isDragging: false,
+      hasMoved: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      initX: 0,
+      initY: 0,
+      naturalWidth: 0,
+      naturalHeight: 0
+    };
+
+    function applyLightboxTransform(animate = false) {
+      const layer = document.getElementById('lightboxTransformLayer');
+      const percentEl = document.getElementById('lightboxZoomPercent');
+      const viewport = document.getElementById('lightboxViewport');
+      if (!layer) return;
+
+      if (animate) {
+        layer.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+      } else {
+        layer.style.transition = 'none';
+      }
+
+      layer.style.transform = `translate3d(${lightboxState.translateX}px, ${lightboxState.translateY}px, 0) scale(${lightboxState.scale}) rotate(${lightboxState.rotation}deg)`;
+      
+      if (percentEl) {
+        percentEl.textContent = `${Math.round(lightboxState.scale * 100)}%`;
+      }
+      if (viewport) {
+        viewport.style.cursor = lightboxState.scale > 1.05 ? 'grab' : 'default';
+      }
+    }
+
+    function resetLightboxZoom() {
+      lightboxState.scale = 1.0;
+      lightboxState.translateX = 0;
+      lightboxState.translateY = 0;
+      lightboxState.rotation = 0;
+      applyLightboxTransform(true);
+    }
+
+    function zoomLightboxStep(dir) {
+      const factor = dir > 0 ? 1.3 : 0.77;
+      let targetScale = lightboxState.scale * factor;
+      targetScale = Math.min(Math.max(targetScale, 0.2), 10.0);
+      const ratio = targetScale / lightboxState.scale;
+      lightboxState.translateX *= ratio;
+      lightboxState.translateY *= ratio;
+      lightboxState.scale = targetScale;
+      applyLightboxTransform(true);
+    }
+
+    function setLightbox100Percent() {
+      const img = document.getElementById('lightboxImgElement');
+      if (img && img.naturalWidth && img.offsetWidth) {
+        lightboxState.scale = img.naturalWidth / img.offsetWidth;
+      } else {
+        lightboxState.scale = 1.0;
+      }
+      lightboxState.translateX = 0;
+      lightboxState.translateY = 0;
+      applyLightboxTransform(true);
+    }
+
+    function rotateLightboxImage() {
+      lightboxState.rotation = (lightboxState.rotation + 90) % 360;
+      applyLightboxTransform(true);
+    }
+
+    function downloadLightboxImage() {
+      const img = document.getElementById('lightboxImgElement');
+      if (!img || !img.src) return;
+      const titleEl = document.getElementById('lightboxTitleElement');
+      const filename = (titleEl && titleEl.textContent) ? titleEl.textContent.trim() : 'image.png';
+      
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(`📥 正在下载：${filename}`);
+    }
+
+    function openLightboxImageInNewTab() {
+      const img = document.getElementById('lightboxImgElement');
+      if (img && img.src) {
+        window.open(img.src, '_blank');
+      }
+    }
+
     function openImageLightbox(src, title) {
       const modal = document.getElementById('imageLightboxModal');
       const img = document.getElementById('lightboxImgElement');
       const titleEl = document.getElementById('lightboxTitleElement');
+      const metaEl = document.getElementById('lightboxMetaElement');
+      const spinner = document.getElementById('lightboxLoadingSpinner');
       if (!modal || !img) return;
+
+      // Reset state
+      lightboxState.scale = 1.0;
+      lightboxState.translateX = 0;
+      lightboxState.translateY = 0;
+      lightboxState.rotation = 0;
+      lightboxState.isDragging = false;
+      lightboxState.hasMoved = false;
+      applyLightboxTransform(false);
 
       let finalSrc = src;
       if (finalSrc && !finalSrc.startsWith('http://') && !finalSrc.startsWith('https://') && !finalSrc.startsWith('data:') && !finalSrc.startsWith('/api/')) {
@@ -16833,9 +17088,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         finalSrc = `/api/notes/raw_image?path=${encodeURIComponent(apiPath)}`;
       }
 
+      if (spinner) spinner.style.display = 'flex';
+      img.style.opacity = '0.3';
+
+      img.onload = function() {
+        if (spinner) spinner.style.display = 'none';
+        img.style.opacity = '1';
+        lightboxState.naturalWidth = img.naturalWidth;
+        lightboxState.naturalHeight = img.naturalHeight;
+        if (metaEl) {
+          metaEl.textContent = `${img.naturalWidth} × ${img.naturalHeight} 像素 · 原始尺寸`;
+        }
+      };
+
+      img.onerror = function() {
+        if (spinner) spinner.style.display = 'none';
+        img.style.opacity = '1';
+        handleLightboxImageError();
+      };
+
       img.src = finalSrc;
       if (titleEl) titleEl.textContent = title || (finalSrc.split('/').pop() || '图片预览');
+      if (metaEl) metaEl.textContent = '正在解析图像尺寸...';
+
       modal.classList.add('active');
+      if (window.lucide) lucide.createIcons();
     }
 
     function handleLightboxImageError() {
@@ -16852,9 +17129,187 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
       showToast('⚠️ 图片加载中，正在从云端节点提取...');
     }
+
     function closeImageLightbox() {
       const modal = document.getElementById('imageLightboxModal');
       if (modal) modal.classList.remove('active');
+      lightboxState.scale = 1.0;
+      lightboxState.translateX = 0;
+      lightboxState.translateY = 0;
+      lightboxState.rotation = 0;
+      applyLightboxTransform(false);
+    }
+
+    function initLightboxInteractions() {
+      const modal = document.getElementById('imageLightboxModal');
+      const viewport = document.getElementById('lightboxViewport');
+      if (!modal || !viewport) return;
+
+      // 1. Mouse Wheel Zoom (Scroll to zoom)
+      viewport.addEventListener('wheel', function(e) {
+        if (!modal.classList.contains('active')) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const delta = -e.deltaY;
+        const zoomFactor = delta > 0 ? 1.15 : 0.87;
+        const oldScale = lightboxState.scale;
+        let newScale = oldScale * zoomFactor;
+        newScale = Math.min(Math.max(newScale, 0.2), 10.0);
+
+        const ratio = newScale / oldScale;
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = e.clientX - (rect.left + rect.width / 2);
+        const mouseY = e.clientY - (rect.top + rect.height / 2);
+
+        lightboxState.translateX = mouseX - (mouseX - lightboxState.translateX) * ratio;
+        lightboxState.translateY = mouseY - (mouseY - lightboxState.translateY) * ratio;
+        lightboxState.scale = newScale;
+
+        applyLightboxTransform(false);
+      }, { passive: false });
+
+      // 2. Mouse Drag / Pan
+      viewport.addEventListener('mousedown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.button !== 0 && e.button !== 1) return;
+        if (e.target.closest('.lightbox-header') || e.target.closest('.lightbox-bottom-dock')) return;
+
+        lightboxState.isDragging = true;
+        lightboxState.hasMoved = false;
+        lightboxState.dragStartX = e.clientX;
+        lightboxState.dragStartY = e.clientY;
+        lightboxState.initX = lightboxState.translateX;
+        lightboxState.initY = lightboxState.translateY;
+
+        viewport.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        if (!lightboxState.isDragging) return;
+        const dx = e.clientX - lightboxState.dragStartX;
+        const dy = e.clientY - lightboxState.dragStartY;
+
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+          lightboxState.hasMoved = true;
+        }
+
+        lightboxState.translateX = lightboxState.initX + dx;
+        lightboxState.translateY = lightboxState.initY + dy;
+        applyLightboxTransform(false);
+      });
+
+      window.addEventListener('mouseup', function(e) {
+        if (!lightboxState.isDragging) return;
+        lightboxState.isDragging = false;
+        viewport.style.cursor = lightboxState.scale > 1.05 ? 'grab' : 'default';
+
+        // Click on background without dragging closes modal
+        if (!lightboxState.hasMoved) {
+          if (e.target === viewport) {
+            closeImageLightbox();
+          }
+        }
+      });
+
+      // 3. Double click to zoom / reset
+      viewport.addEventListener('dblclick', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.target.closest('.lightbox-header') || e.target.closest('.lightbox-bottom-dock')) return;
+
+        if (lightboxState.scale > 1.05) {
+          resetLightboxZoom();
+        } else {
+          const rect = viewport.getBoundingClientRect();
+          const mouseX = e.clientX - (rect.left + rect.width / 2);
+          const mouseY = e.clientY - (rect.top + rect.height / 2);
+          const targetScale = 2.5;
+          const ratio = targetScale / lightboxState.scale;
+
+          lightboxState.translateX = mouseX - (mouseX - lightboxState.translateX) * ratio;
+          lightboxState.translateY = mouseY - (mouseY - lightboxState.translateY) * ratio;
+          lightboxState.scale = targetScale;
+          applyLightboxTransform(true);
+        }
+      });
+
+      // 4. Keyboard Shortcuts
+      window.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
+          closeImageLightbox();
+          e.preventDefault();
+        } else if (e.key === '=' || e.key === '+') {
+          zoomLightboxStep(1);
+          e.preventDefault();
+        } else if (e.key === '-' || e.key === '_') {
+          zoomLightboxStep(-1);
+          e.preventDefault();
+        } else if (e.key === '0') {
+          resetLightboxZoom();
+          e.preventDefault();
+        } else if (e.key === 'r' || e.key === 'R') {
+          rotateLightboxImage();
+          e.preventDefault();
+        } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          const step = 50;
+          if (e.key === 'ArrowUp') lightboxState.translateY += step;
+          if (e.key === 'ArrowDown') lightboxState.translateY -= step;
+          if (e.key === 'ArrowLeft') lightboxState.translateX += step;
+          if (e.key === 'ArrowRight') lightboxState.translateX -= step;
+          applyLightboxTransform(true);
+          e.preventDefault();
+        }
+      });
+
+      // 5. Touch Pinch-to-Zoom & Pan
+      let initialPinchDist = 0;
+      let initialPinchScale = 1.0;
+      viewport.addEventListener('touchstart', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.touches.length === 2) {
+          initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          initialPinchScale = lightboxState.scale;
+        } else if (e.touches.length === 1) {
+          lightboxState.isDragging = true;
+          lightboxState.hasMoved = false;
+          lightboxState.dragStartX = e.touches[0].clientX;
+          lightboxState.dragStartY = e.touches[0].clientY;
+          lightboxState.initX = lightboxState.translateX;
+          lightboxState.initY = lightboxState.translateY;
+        }
+      }, { passive: true });
+
+      viewport.addEventListener('touchmove', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.touches.length === 2 && initialPinchDist > 0) {
+          const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          const factor = currentDist / initialPinchDist;
+          lightboxState.scale = Math.min(Math.max(initialPinchScale * factor, 0.2), 10.0);
+          applyLightboxTransform(false);
+          e.preventDefault();
+        } else if (e.touches.length === 1 && lightboxState.isDragging) {
+          const dx = e.touches[0].clientX - lightboxState.dragStartX;
+          const dy = e.touches[0].clientY - lightboxState.dragStartY;
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) lightboxState.hasMoved = true;
+          lightboxState.translateX = lightboxState.initX + dx;
+          lightboxState.translateY = lightboxState.initY + dy;
+          applyLightboxTransform(false);
+        }
+      }, { passive: false });
+
+      viewport.addEventListener('touchend', function(e) {
+        if (e.touches.length < 2) initialPinchDist = 0;
+        if (e.touches.length === 0) lightboxState.isDragging = false;
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLightboxInteractions);
+    } else {
+      initLightboxInteractions();
     }
 
     function renderMarkdownLive() {
