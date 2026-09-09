@@ -14763,8 +14763,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- Image Lightbox Modal (全屏大图预览与缩放) -->
   <div class="modal-backdrop" id="imageLightboxModal" onclick="closeImageLightbox()" style="cursor:zoom-out;">
     <div style="position:relative; max-width:92vw; max-height:92vh; display:flex; flex-direction:column; align-items:center;" onclick="event.stopPropagation()">
-      <button class="btn-icon" style="position:absolute; top:-38px; right:0; font-size:1.1rem; color:#fff; background:rgba(0,0,0,0.6);" onclick="closeImageLightbox()">✕</button>
-      <img id="lightboxImgElement" src="" style="max-width:92vw; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 24px 70px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.15);">
+      <div id="lightboxTitleElement" style="position:absolute; top:-38px; left:0; font-size:0.8rem; color:#94a3b8; font-family:var(--font-mono, monospace); max-width:70vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+      <button class="btn-icon" style="position:absolute; top:-38px; right:0; font-size:1.1rem; color:#fff; background:rgba(0,0,0,0.6); border-radius:8px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="closeImageLightbox()">✕</button>
+      <img id="lightboxImgElement" src="" onerror="handleLightboxImageError()" style="max-width:92vw; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 24px 70px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.15);">
     </div>
   </div>
 
@@ -16123,10 +16124,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           fileDiv.onclick = (e) => {
             e.stopPropagation();
             if (isImage) {
-              fetchGitHubImageBlob(node.path).then(url => {
-                if (url) openImageLightbox(url);
-                else showToast(`已选择图片「${node.name}」`);
-              });
+              const cleanPath = node.path.startsWith('assets/') ? node.path : `assets/${node.path}`;
+              const targetUrl = `/api/notes/raw_image?path=${encodeURIComponent(cleanPath)}`;
+              openImageLightbox(targetUrl, node.name);
             } else {
               openNote(node.path);
             }
@@ -16670,9 +16670,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (found) matchedPath = found.path;
       }
 
-      // Encode path properly for URL
+      // Encode path properly for API retrieval
       const urlPath = matchedPath.startsWith('assets/') ? matchedPath : `assets/${matchedPath}`;
-      return `/${encodeRepoPath(urlPath)}`;
+      return `/api/notes/raw_image?path=${encodeURIComponent(urlPath)}`;
     }
 
     function handleNoteImageError(imgEl, safePath, safeAlt) {
@@ -16820,13 +16820,37 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       return clean;
     }
 
-    function openImageLightbox(src) {
+    function openImageLightbox(src, title) {
       const modal = document.getElementById('imageLightboxModal');
       const img = document.getElementById('lightboxImgElement');
-      if (modal && img) {
-        img.src = src;
-        modal.classList.add('active');
+      const titleEl = document.getElementById('lightboxTitleElement');
+      if (!modal || !img) return;
+
+      let finalSrc = src;
+      if (finalSrc && !finalSrc.startsWith('http://') && !finalSrc.startsWith('https://') && !finalSrc.startsWith('data:') && !finalSrc.startsWith('/api/')) {
+        const clean = finalSrc.replace(/^\/+/, '');
+        const apiPath = clean.startsWith('assets/') ? clean : `assets/${clean}`;
+        finalSrc = `/api/notes/raw_image?path=${encodeURIComponent(apiPath)}`;
       }
+
+      img.src = finalSrc;
+      if (titleEl) titleEl.textContent = title || (finalSrc.split('/').pop() || '图片预览');
+      modal.classList.add('active');
+    }
+
+    function handleLightboxImageError() {
+      const img = document.getElementById('lightboxImgElement');
+      if (!img) return;
+      const currentSrc = img.src;
+      if (!currentSrc.includes('/api/notes/raw_image')) {
+        const parts = currentSrc.split('/assets/');
+        if (parts.length > 1) {
+          const relPath = 'assets/' + parts[1];
+          img.src = `/api/notes/raw_image?path=${encodeURIComponent(relPath)}`;
+          return;
+        }
+      }
+      showToast('⚠️ 图片加载中，正在从云端节点提取...');
     }
     function closeImageLightbox() {
       const modal = document.getElementById('imageLightboxModal');
@@ -22775,8 +22799,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     function setPomoMode(mode) {
       if (pomoIsRunning) {
-        clearInterval(pomoTimerId);
+        stopPomoEngine();
         pomoIsRunning = false;
+        document.title = 'PulseOS · 全域工作台';
       }
       pomoMode = mode;
       if (mode === 'focus') {
@@ -22836,14 +22861,109 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       updatePomoDisplay();
     }
 
+    // === 🍅 BULLETPROOF BACKGROUND POMODORO ENGINE ===
+    let pomoTargetEndTime = 0;
+    let pomoWorker = null;
+
+    function getPomoWorker() {
+      if (pomoWorker) return pomoWorker;
+      try {
+        const workerScript = `
+          var timer = null;
+          self.onmessage = function(e) {
+            if (e.data === 'start') {
+              if (!timer) {
+                timer = setInterval(function() {
+                  self.postMessage('tick');
+                }, 1000);
+              }
+            } else if (e.data === 'stop') {
+              if (timer) {
+                clearInterval(timer);
+                timer = null;
+              }
+            }
+          };
+        `;
+        const blob = new Blob([workerScript], { type: 'application/javascript' });
+        pomoWorker = new Worker(URL.createObjectURL(blob));
+        pomoWorker.onmessage = function(e) {
+          if (e.data === 'tick' && pomoIsRunning) {
+            syncPomoCountdownTick();
+          }
+        };
+      } catch (err) {
+        pomoWorker = null;
+      }
+      return pomoWorker;
+    }
+
+    function startPomoEngine() {
+      stopPomoEngine();
+      pomoTargetEndTime = Date.now() + pomoTimeLeft * 1000;
+
+      // Tier 1: Web Worker Heartbeat (Not throttled by browser background tab sleep)
+      const worker = getPomoWorker();
+      if (worker) {
+        try { worker.postMessage('start'); } catch (e) {}
+      }
+
+      // Tier 2: Main thread setInterval (Smooth active UI)
+      pomoTimerId = setInterval(() => {
+        syncPomoCountdownTick();
+      }, 1000);
+
+      // Pre-request native desktop notification permission on user click gesture
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    }
+
+    function stopPomoEngine() {
+      if (pomoTimerId) {
+        clearInterval(pomoTimerId);
+        pomoTimerId = null;
+      }
+      if (pomoWorker) {
+        try { pomoWorker.postMessage('stop'); } catch (e) {}
+      }
+    }
+
+    function syncPomoCountdownTick() {
+      if (!pomoIsRunning) return;
+      const now = Date.now();
+      const remaining = Math.max(0, Math.round((pomoTargetEndTime - now) / 1000));
+      pomoTimeLeft = remaining;
+      updatePomoDisplay();
+
+      if (remaining <= 0) {
+        stopPomoEngine();
+        pomoIsRunning = false;
+        onPomoSessionComplete();
+      }
+    }
+
+    // Tier 3: Instant Catch-up on Tab Focus & Visibility Change
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && pomoIsRunning) {
+        syncPomoCountdownTick();
+      }
+    });
+    window.addEventListener('focus', () => {
+      if (pomoIsRunning) {
+        syncPomoCountdownTick();
+      }
+    });
+
     function togglePomodoro() {
       if (pomoIsRunning) {
-        clearInterval(pomoTimerId);
+        stopPomoEngine();
         pomoIsRunning = false;
         const startBtnText = document.getElementById('pomoStartText');
         if (startBtnText) startBtnText.textContent = pomoMode === 'focus' ? '继续专注' : '继续休息';
         const playIcon = document.getElementById('pomoPlayIcon');
         if (playIcon) playIcon.setAttribute('data-lucide', 'play');
+        document.title = 'PulseOS · 全域工作台';
       } else {
         pomoIsRunning = true;
         const startBtnText = document.getElementById('pomoStartText');
@@ -22851,15 +22971,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         const playIcon = document.getElementById('pomoPlayIcon');
         if (playIcon) playIcon.setAttribute('data-lucide', 'pause');
 
-        pomoTimerId = setInterval(() => {
-          pomoTimeLeft--;
-          if (pomoTimeLeft <= 0) {
-            clearInterval(pomoTimerId);
-            pomoIsRunning = false;
-            onPomoSessionComplete();
-          }
-          updatePomoDisplay();
-        }, 1000);
+        startPomoEngine();
+        syncPomoCountdownTick();
       }
       if (window.lucide) lucide.createIcons();
     }
@@ -23035,9 +23148,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     function resetPomodoro() {
       if (pomoIsRunning) {
-        clearInterval(pomoTimerId);
+        stopPomoEngine();
         pomoIsRunning = false;
       }
+      document.title = 'PulseOS · 全域工作台';
       if (pomoMode === 'focus') pomoTimeLeft = pomoCustomFocusMinutes * 60;
       else if (pomoMode === 'short') pomoTimeLeft = 5 * 60;
       else if (pomoMode === 'long') pomoTimeLeft = 15 * 60;
@@ -23059,7 +23173,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       const m = Math.floor(pomoTimeLeft / 60);
       const s = pomoTimeLeft % 60;
-      clockEl.textContent = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+      const timeStr = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+      clockEl.textContent = timeStr;
 
       let total = pomoCustomFocusMinutes * 60;
       if (pomoMode === 'short') total = 5 * 60;
@@ -23067,6 +23182,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       const pct = total > 0 ? (pomoTimeLeft / total) * 100 : 0;
       if (barEl) barEl.style.width = `${pct}%`;
+
+      // Dynamic Browser Tab Title: View real-time countdown from any tab!
+      if (pomoIsRunning) {
+        const statusLabel = pomoMode === 'focus' ? '专注中' : '休息中';
+        document.title = `(${timeStr}) ${statusLabel} · PulseOS`;
+      } else {
+        document.title = 'PulseOS · 全域工作台';
+      }
     }
 
   // === KuGou Music Player Engine (Modern Luxury Edition - Vector Icons & Correct Order) ===
