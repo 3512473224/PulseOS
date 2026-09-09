@@ -757,7 +757,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     html.theme-light .inline-bar {
-      background: linear-gradient(180deg, #0284c7 0%, #7c3aed 100%);
+      background: linear-gradient(180deg, #0284c7 0%, #0091ff 100%);
     }
     .top-lyrics-bar.is-playing .inline-bar.bar-1 {
       animation: islandEq1 0.75s ease-in-out infinite alternate;
@@ -1020,7 +1020,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .greeting-user {
       color: var(--accent2);
-      background: linear-gradient(135deg, #a855f7, #38bdf8);
+      background: linear-gradient(135deg, #38bdf8, #0091ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -4287,9 +4287,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-family: inherit;
     }
     .btn-glow {
-      background: linear-gradient(135deg, #7c3aed, #6366f1);
+      background: linear-gradient(135deg, #0091ff, #0070f3);
       color: white;
-      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 18px rgba(0, 145, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
     .btn-glow:hover {
       transform: translateY(-2px);
@@ -4760,7 +4760,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-size: 0.78rem;
       font-weight: 600;
       color: #ffffff !important;
-      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      background: linear-gradient(135deg, #0091ff, #0070f3);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
       cursor: pointer;
@@ -4799,8 +4799,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #64748b !important;
     }
     html.theme-light .empty-create-btn {
-      background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
-      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28) !important;
+      background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28) !important;
       border: none !important;
     }
     html.theme-light .empty-create-btn:hover {
@@ -7325,7 +7325,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #0f172a !important;
     }
     html.theme-light .pulseos-hero h1 .hi {
-      background: linear-gradient(135deg, #0284c7 0%, #6366f1 35%, #e11d48 70%, #0284c7 100%);
+      background: linear-gradient(135deg, #0284c7 0%, #0091ff 35%, #e11d48 70%, #0284c7 100%);
       background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -7902,10 +7902,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     html.theme-light .sb-trans-char.char-sung {
       opacity: 0 !important;
-      color: #9333ea !important;
+      color: #0284c7 !important;
       transform: translateY(-6px) scale(1.06) rotate(-0.8deg) !important;
       filter: blur(4.5px) brightness(1.4) !important;
-      text-shadow: 0 -3px 8px rgba(147, 51, 234, 0.5) !important;
+      text-shadow: 0 -3px 8px rgba(2, 132, 199, 0.4) !important;
       pointer-events: none !important;
     }
     .s-ctrl-btn.s-lang-btn {
@@ -7998,7 +7998,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       filter: blur(0px) brightness(1.4) !important;
       text-shadow: 
         0 0 8px rgba(56, 189, 248, 0.9),
-        0 0 16px rgba(168, 85, 247, 0.7) !important;
+        0 0 16px rgba(0, 145, 255, 0.7) !important;
       z-index: 5;
     }
     html.theme-light .sb-lyric-char.char-singing {
@@ -8007,27 +8007,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transform: translateY(-1px) scale(1.04) !important;
       text-shadow: 
         0 0 8px rgba(14, 165, 233, 0.75),
-        0 0 16px rgba(99, 102, 241, 0.4) !important;
+        0 0 16px rgba(2, 132, 199, 0.4) !important;
       z-index: 5;
     }
 
     /* 3. 已唱完字 (Sung / Soul Dispersion): 魂飞魄散，轻盈微升华羽化 (柔化升腾幅度) */
     .sb-lyric-char.char-sung {
       opacity: 0 !important;
-      color: #c084fc !important;
+      color: #38bdf8 !important;
       transform: translateY(-8px) scale(1.06) rotate(-1deg) !important;
       filter: blur(6px) brightness(1.6) !important;
       text-shadow: 
-        0 -4px 14px rgba(192, 132, 252, 0.75),
+        0 -4px 14px rgba(0, 145, 255, 0.75),
         0 -1px 8px rgba(56, 189, 248, 0.6) !important;
       pointer-events: none !important;
     }
     html.theme-light .sb-lyric-char.char-sung {
       opacity: 0 !important;
-      color: #818cf8 !important;
+      color: #0284c7 !important;
       transform: translateY(-8px) scale(1.06) rotate(-1deg) !important;
       filter: blur(5px) brightness(1.5) !important;
-      text-shadow: 0 -4px 12px rgba(99, 102, 241, 0.6) !important;
+      text-shadow: 0 -4px 12px rgba(2, 132, 199, 0.4) !important;
       pointer-events: none !important;
     }
 
@@ -8037,7 +8037,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       position: absolute;
       inset: -4px -6px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(56, 189, 248, 0.2) 50%, transparent 75%);
+      background: radial-gradient(circle, rgba(0, 145, 255, 0.35) 0%, rgba(56, 189, 248, 0.2) 50%, transparent 75%);
       pointer-events: none;
       animation: soulVaporAscend 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -8124,7 +8124,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     :root {
       --canvas-c1: #3b82f6;
-      --canvas-c2: #8b5cf6;
+      --canvas-c2: #0070f3;
       --canvas-c3: #06b6d4;
       --canvas-c4: #ec4899;
     }
@@ -8199,7 +8199,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 60vw;
       top: 30%;
       right: -15%;
-      background: radial-gradient(circle, var(--canvas-c2, #8b5cf6) 0%, rgba(139, 92, 246, 0) 70%);
+      background: radial-gradient(circle, var(--canvas-c2, #0070f3) 0%, rgba(0, 112, 243, 0) 70%);
       animation: fluidDrift2 26s infinite alternate ease-in-out;
     }
 
@@ -8869,14 +8869,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       filter: blur(0px) brightness(1.3) !important;
       text-shadow: 
         0 0 16px rgba(0, 212, 255, 0.95),
-        0 0 35px rgba(168, 85, 247, 0.85),
+        0 0 35px rgba(0, 145, 255, 0.85),
         0 0 70px rgba(56, 189, 248, 0.6) !important;
       z-index: 5;
     }
 
     .canvas-lrc-char.char-sung {
       opacity: 0.28 !important;
-      color: #c084fc !important;
+      color: #38bdf8 !important;
       filter: blur(2px) !important;
       transform: translateY(-4px) scale(0.96) !important;
       pointer-events: none !important;
@@ -8905,13 +8905,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       opacity: 1 !important;
       color: #e0e7ff !important;
       transform: translateY(-1px) scale(1.06) !important;
-      text-shadow: 0 0 14px rgba(168, 85, 247, 0.9), 0 0 30px rgba(56, 189, 248, 0.7) !important;
+      text-shadow: 0 0 14px rgba(0, 145, 255, 0.9), 0 0 30px rgba(56, 189, 248, 0.7) !important;
       z-index: 5;
     }
 
     .canvas-trans-char.char-sung {
       opacity: 0.25 !important;
-      color: #c084fc !important;
+      color: #38bdf8 !important;
       filter: blur(1.8px) !important;
       transform: translateY(-3px) scale(0.96) !important;
     }
@@ -8944,7 +8944,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .canvas-lrc-line.lrc-prev .canvas-lrc-char,
     .canvas-lrc-line.lrc-prev .canvas-trans-char {
       opacity: 0.28 !important;
-      color: #c084fc !important;
+      color: #38bdf8 !important;
       filter: blur(2px) !important;
       transform: translateY(-4px) scale(0.96) !important;
       text-shadow: none !important;
@@ -9661,7 +9661,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       text-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
     }
     html.theme-light .island-code {
-      background: linear-gradient(135deg, #0f172a 0%, #0284c7 60%, #7c3aed 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #0284c7 60%, #0070f3 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -9687,7 +9687,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 5px;
       padding: 6px 14px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #0091ff, #6366f1);
+      background: linear-gradient(135deg, #0091ff, #0070f3);
       color: #fff;
       font-size: 0.78rem;
       font-weight: 700;
@@ -10193,41 +10193,41 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-shadow: 0 0 18px rgba(56, 189, 248, 0.3);
     }
 
-    /* AI Digest Button */
+    /* AI Digest Button (Linear Cyan Obsidian Style) */
     .mail-btn-ai {
-      background: #f5f3ff;
-      color: #7c3aed !important;
-      border: 1px solid rgba(124, 58, 237, 0.2);
+      background: #f0f9ff;
+      color: #0284c7 !important;
+      border: 1px solid rgba(2, 132, 199, 0.25);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     .mail-btn-ai:hover {
-      background: #ede9fe;
-      border-color: rgba(124, 58, 237, 0.35);
+      background: #e0f2fe;
+      border-color: rgba(2, 132, 199, 0.4);
     }
     html:not(.theme-light) .mail-btn-ai {
-      background: rgba(124, 58, 237, 0.15);
-      color: #c084fc !important;
-      border: 1px solid rgba(192, 132, 252, 0.3);
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.15);
+      background: rgba(0, 145, 255, 0.12);
+      color: #38bdf8 !important;
+      border: 1px solid rgba(0, 145, 255, 0.28);
+      box-shadow: 0 0 12px rgba(0, 145, 255, 0.15);
     }
     html:not(.theme-light) .mail-btn-ai:hover {
-      background: rgba(124, 58, 237, 0.25);
-      border-color: #c084fc;
-      box-shadow: 0 0 18px rgba(168, 85, 247, 0.25);
+      background: rgba(0, 145, 255, 0.22);
+      border-color: #38bdf8;
+      box-shadow: 0 0 18px rgba(0, 145, 255, 0.3);
     }
 
     /* AI Digest Banner */
     .mail-ai-digest-card {
-      background: linear-gradient(135deg, rgba(88, 28, 135, 0.2), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.15), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(0, 145, 255, 0.25);
       border-radius: 12px;
       padding: 16px 20px;
-      box-shadow: 0 8px 24px -8px rgba(168, 85, 247, 0.2);
+      box-shadow: 0 8px 24px -8px rgba(0, 145, 255, 0.2);
     }
     html.theme-light .mail-ai-digest-card {
-      background: linear-gradient(135deg, #faf5ff, #f3e8ff);
-      border-color: #d8b4fe;
-      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.1);
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border-color: #bae6fd;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08);
     }
     .mail-ai-digest-header {
       display: flex;
@@ -10263,7 +10263,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .mail-ai-digest-body h4 {
       color: #0f172a !important;
     }
-    .mail-ai-digest-body h1 { font-size: 1.15rem; border-bottom: 1px solid rgba(168, 85, 247, 0.25); padding-bottom: 8px; }
+    .mail-ai-digest-body h1 { font-size: 1.15rem; border-bottom: 1px solid rgba(0, 145, 255, 0.25); padding-bottom: 8px; }
     .mail-ai-digest-body h2 { font-size: 1.02rem; }
     .mail-ai-digest-body h3 { font-size: 0.92rem; }
     .mail-ai-digest-body p {
@@ -10302,15 +10302,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       overflow-x: auto;
       margin: 14px 0 20px 0;
       border-radius: 12px;
-      border: 1px solid rgba(168, 85, 247, 0.25);
+      border: 1px solid rgba(0, 145, 255, 0.25);
       background: rgba(15, 23, 42, 0.6);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
       box-sizing: border-box;
     }
     html.theme-light .mail-ai-table-wrap {
       background: #ffffff;
-      border-color: rgba(168, 85, 247, 0.25);
-      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.08);
+      border-color: rgba(2, 132, 199, 0.25);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
     }
     .mail-ai-table-wrap table {
       width: 100% !important;
@@ -10323,20 +10323,20 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       table-layout: auto !important;
     }
     .mail-ai-table-wrap th {
-      background: rgba(168, 85, 247, 0.16) !important;
-      color: #c084fc !important;
+      background: rgba(0, 145, 255, 0.16) !important;
+      color: #38bdf8 !important;
       font-weight: 600 !important;
       font-size: 0.8rem !important;
       letter-spacing: 0.03em !important;
       padding: 11px 16px !important;
       text-align: left !important;
-      border-bottom: 1px solid rgba(168, 85, 247, 0.25) !important;
+      border-bottom: 1px solid rgba(0, 145, 255, 0.25) !important;
       white-space: nowrap !important;
     }
     html.theme-light .mail-ai-table-wrap th {
-      background: rgba(168, 85, 247, 0.08) !important;
-      color: #7e22ce !important;
-      border-bottom: 1px solid rgba(168, 85, 247, 0.2) !important;
+      background: rgba(2, 132, 199, 0.08) !important;
+      color: #0284c7 !important;
+      border-bottom: 1px solid rgba(2, 132, 199, 0.2) !important;
     }
     .mail-ai-table-wrap td {
       padding: 12px 16px !important;
@@ -10363,17 +10363,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #fdfcff !important;
     }
     .mail-ai-table-wrap tr:hover td {
-      background: rgba(168, 85, 247, 0.08) !important;
+      background: rgba(0, 145, 255, 0.08) !important;
     }
 
-    /* 🌟 AI Digest Glowing & Shimmer Loading Animation */
+    /* 🌟 AI Digest Glowing & Shimmer Loading Animation (Linear Cyan Palette) */
     @keyframes aiShimmerSweep {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
     }
     @keyframes aiOrbPulse {
-      0% { transform: scale(0.92); box-shadow: 0 0 8px rgba(168, 85, 247, 0.35); }
-      100% { transform: scale(1.08); box-shadow: 0 0 22px rgba(168, 85, 247, 0.75), 0 0 35px rgba(56, 189, 248, 0.4); }
+      0% { transform: scale(0.92); box-shadow: 0 0 8px rgba(0, 145, 255, 0.35); }
+      100% { transform: scale(1.08); box-shadow: 0 0 22px rgba(0, 145, 255, 0.75), 0 0 35px rgba(56, 189, 248, 0.4); }
     }
     .mail-ai-loading-stage {
       padding: 12px 6px;
@@ -10390,7 +10390,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #c084fc, #9333ea 55%, #4f46e5 100%);
+      background: radial-gradient(circle at 35% 35%, #38bdf8, #0091ff 55%, #0070f3 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -10409,11 +10409,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-ai-step-title {
       font-size: 0.88rem;
       font-weight: 700;
-      color: #9333ea;
+      color: #0091ff;
       letter-spacing: -0.01em;
     }
     html:not(.theme-light) .mail-ai-step-title {
-      color: #c084fc;
+      color: #38bdf8;
     }
     .mail-ai-step-desc {
       font-size: 0.77rem;
@@ -10430,12 +10430,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .mail-ai-shimmer-bar {
       height: 11px;
       border-radius: 6px;
-      background: rgba(168, 85, 247, 0.08);
+      background: rgba(0, 145, 255, 0.08);
       position: relative;
       overflow: hidden;
     }
     html.theme-light .mail-ai-shimmer-bar {
-      background: rgba(147, 51, 234, 0.08);
+      background: rgba(2, 132, 199, 0.08);
     }
     .mail-ai-shimmer-bar::after {
       content: '';
@@ -11122,7 +11122,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .top-search-pill:hover {
       border-color: var(--accent);
       background: var(--surface-hover);
-      box-shadow: 0 0 14px rgba(124, 58, 237, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 14px rgba(0, 145, 255, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
       transform: translateY(-1px);
     }
     .top-search-pill .search-placeholder {
@@ -11151,8 +11151,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     html.theme-light .top-search-pill:hover {
       background: #f8fafc !important;
-      border-color: #7c3aed !important;
-      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.12) !important;
+      border-color: #0091ff !important;
+      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.12) !important;
     }
     html.theme-light .top-search-pill .search-kbd {
       background: #f1f5f9 !important;
@@ -11524,7 +11524,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .cat-thinking-shimmer {
       display: inline-block;
-      background: linear-gradient(90deg, #38bdf8 0%, #a855f7 50%, #38bdf8 100%);
+      background: linear-gradient(90deg, #38bdf8 0%, #0091ff 50%, #38bdf8 100%);
       background-size: 200% auto;
       color: transparent;
       -webkit-background-clip: text;
@@ -12761,10 +12761,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="home-card home-shortcuts-card">
                 <div class="home-card-header">
                   <div class="home-card-title">
-                    <i data-lucide="compass" style="color:#a855f7; width:16px; height:16px;"></i>
+                    <i data-lucide="compass" style="color:#0091ff; width:16px; height:16px;"></i>
                     <span>高频常用导航</span>
                   </div>
-                  <span style="font-size:0.68rem; color:#a855f7; background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.22); padding:2px 8px; border-radius:10px; font-weight:600;">
+                  <span style="font-size:0.68rem; color:#0091ff; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.22); padding:2px 8px; border-radius:10px; font-weight:600;">
                     8 个精选常用
                   </span>
                 </div>
@@ -12875,7 +12875,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                   <!-- 7. Gemini (Google Gemini) -->
                   <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="Google Gemini · 前沿多模态大模型">
-                    <div class="shortcut-icon-wrap" style="background:rgba(139,92,246,0.14); color:#a855f7;">
+                    <div class="shortcut-icon-wrap" style="background:rgba(0,145,255,0.12); color:#0091ff;">
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                         <path d="M12 0C12 6.627 6.627 12 0 12c6.627 0 12 5.373 12 12 0-6.627 5.373-12 12-12-6.627 0-12-5.373-12-12z"/>
                       </svg>
@@ -13093,7 +13093,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                         <i data-lucide="list-music" style="width:12px;height:12px;color:#0091ff;"></i>
                         <span>曲目</span>
                       </button>
-                      <button class="btn btn-ghost" onclick="openImmersiveCanvas(event)" title="开启全屏沉浸画报模式 (快捷键 F)" style="padding:2px 8px; font-size:0.68rem; border-radius:6px; display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#a855f7;">
+                      <button class="btn btn-ghost" onclick="openImmersiveCanvas(event)" title="开启全屏沉浸画报模式 (快捷键 F)" style="padding:2px 8px; font-size:0.68rem; border-radius:6px; display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:var(--accent, #0091ff);">
                         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <polyline points="15 3 21 3 21 9"></polyline>
                           <polyline points="9 21 3 21 3 15"></polyline>
@@ -13160,8 +13160,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <!-- 2. AI Digest Summary Card (Collapsible) -->
             <div class="mail-ai-digest-card" id="mailAiDigestCard" style="display:none;">
               <div class="mail-ai-digest-header">
-                <div style="display:flex; align-items:center; gap:8px; color:#9333ea; font-weight:700; font-size:0.88rem;">
-                  <i data-lucide="sparkles" style="width:16px;height:16px;color:#9333ea;"></i>
+                <div style="display:flex; align-items:center; gap:8px; color:#0091ff; font-weight:700; font-size:0.88rem;">
+                  <i data-lucide="sparkles" style="width:16px;height:16px;color:#0091ff;"></i>
                   <span>DeepSeek 全渠道邮件资产早报</span>
                   <span class="mail-ai-badge-live" id="mailAiBadgeLive" style="display:none;">已就绪</span>
                 </div>
@@ -13323,7 +13323,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <h2 class="mail-reader-subject" id="readerSubject">邮件主题</h2>
                       <div class="mail-reader-actions">
                         <button class="btn btn-ghost" onclick="summarizeCurrentEmail()" id="readerAiBtn" title="DeepSeek 提炼核心要点与行动项">
-                          <i data-lucide="sparkles" id="readerAiIcon" style="width:13px;height:13px;color:#9333ea;"></i>
+                          <i data-lucide="sparkles" id="readerAiIcon" style="width:13px;height:13px;color:#0091ff;"></i>
                           <span>AI 智能速读</span>
                         </button>
                         <button class="btn btn-ghost" onclick="toggleMailReaderAppearance()" id="btnReaderAppearance" title="切换信件浅色原貌 / 柔和护眼 / 深色护眼">
@@ -13355,7 +13355,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                     <!-- Single Email AI Summary Box -->
                     <div class="mail-single-ai-card" id="readerAiSummaryBox" style="display:none;">
-                      <div style="font-size:0.75rem; font-weight:700; color:#9333ea; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                      <div style="font-size:0.75rem; font-weight:700; color:#0091ff; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
                         <i data-lucide="sparkles" style="width:13px;height:13px;"></i>
                         <span>DeepSeek 智能速读报告</span>
                       </div>
@@ -13412,7 +13412,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <i data-lucide="refresh-cw" id="newsQuickRefreshIcon" style="width:12px;height:12px;"></i>
                     <span id="newsQuickRefreshText">实时刷新</span>
                   </button>
-                  <button class="btn btn-glow" id="newsRefreshBtn" onclick="refreshDailyNews(true)" style="padding:6px 14px; font-size:0.75rem; gap:5px; background:linear-gradient(135deg, #0091ff, #7c3aed); cursor:pointer; border-radius:8px;" title="全网多源权威深度重研与学术前沿同步">
+                  <button class="btn btn-glow" id="newsRefreshBtn" onclick="refreshDailyNews(true)" style="padding:6px 14px; font-size:0.75rem; gap:5px; background:linear-gradient(135deg, #0091ff, #0070f3); cursor:pointer; border-radius:8px;" title="全网多源权威深度重研与学术前沿同步">
                     <i data-lucide="sparkles" id="newsRefreshIcon" style="width:12px;height:12px;"></i>
                     <span id="newsRefreshBtnText">AI 深度重研</span>
                   </button>
@@ -14337,7 +14337,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <span id="converterProgressPercentText">0%</span>
                 </div>
                 <div style="width:100%; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;">
-                  <div id="converterProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #7c3aed, #00d4ff); transition:width 0.2s ease;"></div>
+                  <div id="converterProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #0091ff, #00d4ff); transition:width 0.2s ease;"></div>
                 </div>
               </div>
 
@@ -14517,7 +14517,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       <!-- Header -->
       <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid rgba(255, 255, 255, 0.06);">
         <div class="dialog-title" style="display:flex; align-items:center; gap:10px;">
-          <div style="width:28px; height:28px; background:linear-gradient(135deg, #0091ff, #6366f1); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
+          <div style="width:28px; height:28px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
             <i data-lucide="disc-3" style="width:16px;height:16px;"></i>
           </div>
           <div>
@@ -14614,7 +14614,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <span style="font-size:0.68rem; color:var(--text-dim);">支持公开歌单直连同步</span>
           </div>
           <input type="text" id="inputKuGouUser" style="width:100%; padding:9px 12px; font-size:0.82rem; font-family:var(--font-mono); border-radius:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#fff; outline:none; transition:all 0.2s; box-sizing:border-box;" placeholder="例如：1355034092" value="1355034092" onfocus="this.style.borderColor='rgba(0,145,255,0.6)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.15)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
-          <button class="btn" style="width:100%; padding:9px 0; font-size:0.78rem; font-weight:600; border-radius:10px; background:linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%); color:#ffffff; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,0.35); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'" onclick="saveKuGouManualBind()">
+          <button class="btn" style="width:100%; padding:9px 0; font-size:0.78rem; font-weight:600; border-radius:10px; background:linear-gradient(135deg, #0284c7 0%, #0091ff 50%, #0070f3 100%); color:#ffffff; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(0,145,255,0.35); display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'" onclick="saveKuGouManualBind()">
             <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
             <span>同步云端歌单</span>
           </button>
@@ -14630,29 +14630,60 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     </div>
   </div>
 
-  <div class="modal-backdrop" id="kugouSearchModal" onclick="if(event.target===this) closeKuGouSearchModal()">
-    <div class="dialog-box" style="max-width:480px;" onclick="event.stopPropagation()">
-      <div class="dialog-header">
-        <div class="dialog-title" style="display:flex; align-items:center; gap:8px;">
-          <i data-lucide="search" style="color:#0091ff; width:16px; height:16px;"></i>
-          <span>酷狗音乐 · 全网歌曲搜索</span>
+  <!-- 🔍 KUGOU MUSIC GLOBAL SEARCH MODAL (OBSIDIAN CYAN GLASS & LUXURY AUDIO PLAYER) -->
+  <div class="modal-backdrop" id="kugouSearchModal" onclick="if(event.target===this) closeKuGouSearchModal()" style="display:none; align-items:center; justify-content:center; z-index:99999;">
+    <div class="dialog-box" style="max-width:620px; width:92%; border-radius:16px; background:var(--surface, rgba(15,23,42,0.95)); backdrop-filter:blur(30px); border:1px solid rgba(0,145,255,0.25); box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 35px rgba(0,145,255,0.15); padding:22px; display:flex; flex-direction:column; gap:14px;" onclick="event.stopPropagation()">
+      <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+        <div class="dialog-title" style="display:flex; align-items:center; gap:10px;">
+          <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg, #0091ff, #0070f3); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
+            <i data-lucide="music-2" style="width:16px; height:16px;"></i>
+          </div>
+          <div>
+            <div style="font-weight:700; font-size:0.92rem; color:var(--text, #fff); letter-spacing:-0.01em;">曲库智能检索 · 全网无损流媒体</div>
+            <div style="font-size:0.68rem; color:var(--text-dim, #94a3b8);">酷狗官方 VIP 串流直穿 · 多源原声智能解析 · 零混流</div>
+          </div>
         </div>
-        <button class="btn-icon" onclick="closeKuGouSearchModal()">✕</button>
+        <button class="btn-icon" onclick="closeKuGouSearchModal()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; color:var(--text-dim, #94a3b8); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.color='var(--text-dim, #94a3b8)';this.style.background='rgba(255,255,255,0.06)'">✕</button>
       </div>
 
-      <div style="margin:8px 0 12px;">
-        <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="输入歌曲名、歌手 (例如: 晴天、周杰伦、江南)..." onkeydown="if(event.key==='Enter') searchKuGouMusic()">
+      <!-- Search Input Container -->
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="position:relative; flex:1; display:flex; align-items:center;">
+          <i data-lucide="search" style="position:absolute; left:12px; width:15px; height:15px; color:var(--text-dim, #64748b); pointer-events:none;"></i>
+          <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="输入歌曲名、歌手 (例如: 晴天、周杰伦、海阔天空)..." onkeydown="if(event.key==='Enter') searchKuGouMusic()" style="width:100%; padding:9px 12px 9px 36px; font-size:0.84rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text, #fff); outline:none; transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,145,255,0.6)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.18)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
+        </div>
+        <button class="btn" id="searchSubmitBtn" onclick="searchKuGouMusic()" style="padding:9px 18px; font-size:0.8rem; font-weight:600; border-radius:10px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 3px 12px rgba(0,145,255,0.32); white-space:nowrap; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.1)';this.style.transform='translateY(-1px)'" onmouseout="this.style.filter='none';this.style.transform='translateY(0)'">
+          <i data-lucide="search" style="width:13px;height:13px;"></i>
+          <span>搜索</span>
+        </button>
       </div>
 
-      <div class="search-results-list" id="kugouSearchResults" style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; min-height:100px;">
-        <div style="text-align:center; padding:30px 0; color:var(--text-dim); font-size:0.75rem;">
-          输入歌曲关键词后按回车或点击下方搜索
+      <!-- Hot Keyword Chips (Zero Purple, Obsidian Cyan Theme) -->
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:0.72rem;">
+        <span style="color:var(--text-dim, #64748b); font-size:0.7rem;">大家都在搜:</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('晴天')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">晴天</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('七里香')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">七里香</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('海阔天空')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">海阔天空</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('起风了')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">起风了</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('江南')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">江南</span>
+        <span class="search-tag-chip" onclick="quickSetSearchKeyword('夜曲')" style="padding:2px 8px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">夜曲</span>
+      </div>
+
+      <!-- Results Container -->
+      <div class="search-results-list custom-scroll" id="kugouSearchResults" style="max-height:340px; min-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
+        <div style="text-align:center; padding:40px 0; color:var(--text-dim, #64748b); font-size:0.78rem; display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <i data-lucide="sparkles" style="width:24px;height:24px;opacity:0.4;color:#0091ff;"></i>
+          <div>输入歌曲名、歌手名或点击上方热门推荐开始检索</div>
         </div>
       </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-        <button class="btn btn-ghost" style="padding:5px 12px; font-size:0.75rem;" onclick="closeKuGouSearchModal()">关闭</button>
-        <button class="btn btn-glow" style="padding:5px 16px; font-size:0.75rem; background:#0091ff;" onclick="searchKuGouMusic()">搜索歌曲</button>
+      <!-- Footer -->
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">
+        <div style="font-size:0.7rem; color:var(--text-dim, #64748b); display:flex; align-items:center; gap:6px;">
+          <i data-lucide="shield-check" style="width:13px;height:13px;color:#10b981;"></i>
+          <span>多源穿透流媒体代理已就绪 · 支持无损原声播放</span>
+        </div>
+        <button class="btn btn-ghost" style="padding:6px 14px; font-size:0.75rem; border-radius:8px; border:1px solid rgba(255,255,255,0.1);" onclick="closeKuGouSearchModal()">关闭</button>
       </div>
     </div>
   </div>
@@ -14666,7 +14697,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       <!-- Modal Header -->
       <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border, rgba(255,255,255,0.08));">
         <div class="dialog-title" style="display:flex; align-items:center; gap:10px;">
-          <div style="width:28px; height:28px; background:linear-gradient(135deg, #0091ff, #6366f1); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
+          <div style="width:28px; height:28px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
             <i data-lucide="disc-3" style="width:16px;height:16px;"></i>
           </div>
           <div>
@@ -14871,7 +14902,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     <!-- Main Viewport Stage -->
     <div id="lightboxViewport" style="position:absolute; inset:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab;">
       <div id="lightboxTransformLayer" style="position:relative; transform-origin:center center; will-change:transform; display:flex; align-items:center; justify-content:center; transition:none;">
-        <img id="lightboxImgElement" src="" onerror="handleLightboxImageError()" draggable="false" style="max-width:88vw; max-height:82vh; object-fit:contain; border-radius:10px; box-shadow:0 30px 80px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.12); pointer-events:auto; user-select:none; -webkit-user-drag:none; display:block;">
+        <img id="lightboxImgElement" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="if(typeof handleLightboxImageError==='function') handleLightboxImageError()" draggable="false" style="max-width:88vw; max-height:82vh; object-fit:contain; border-radius:10px; box-shadow:0 30px 80px rgba(0,0,0,0.95); border:1px solid rgba(255,255,255,0.12); pointer-events:auto; user-select:none; -webkit-user-drag:none; display:block;">
         <div id="lightboxLoadingSpinner" style="position:absolute; display:none; flex-direction:column; align-items:center; gap:10px; color:#38bdf8; pointer-events:none;">
           <div style="width:36px; height:36px; border:2px solid rgba(56,189,248,0.2); border-top-color:#38bdf8; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
           <span style="font-size:0.75rem; color:#94a3b8; font-family:var(--font-mono, monospace);">加载高清图像中...</span>
@@ -19227,7 +19258,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
       const box = document.getElementById('aiChatBox');
       const u = document.createElement('div');
-      u.style.cssText = 'padding:10px 14px; background:linear-gradient(135deg, var(--accent), #4f46e5); color:#fff; border-radius:10px; align-self:flex-end; max-width:85%; font-size:0.84rem;';
+      u.style.cssText = 'padding:10px 14px; background:linear-gradient(135deg, var(--accent), #0070f3); color:#fff; border-radius:10px; align-self:flex-end; max-width:85%; font-size:0.84rem;';
       u.textContent = msg;
       box.appendChild(u);
       input.value = '';
@@ -24180,15 +24211,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const queryKeyword = cleanArtist ? `${cleanArtist} ${cleanTitle}` : cleanTitle;
 
       // ========================================================
-      // TIER 1: KuGou Official VIP Direct HTTPS Stream Proxy (Zero Mixed Content!)
+      // TIER 1: Official VIP Direct HTTPS Stream Proxy (Zero Mixed Content!)
       // ========================================================
       if (track.id) {
-        // Direct HTTPS stream proxy on /api/music/api/v1/music/stream eliminates all Mixed Content & SSL mismatch errors!
-        const streamProxyUrl = `/api/music/api/v1/music/stream?id=${encodeURIComponent(track.id)}&source=kugou`;
-        audioUrlCache.set(track.id, streamProxyUrl);
-        track.url = streamProxyUrl;
+        try {
+          const uRes = await fetchWithTimeout(`/api/music/api/v1/music/url?id=${encodeURIComponent(track.id)}&source=${encodeURIComponent(track.source || 'kugou')}`, 2500);
+          if (uRes.ok) {
+            const ud = await uRes.json();
+            const raw = ud.data?.url || ud.url;
+            if (raw && (raw.startsWith('http://') || raw.startsWith('https://')) && raw.toLowerCase() !== 'none') {
+              const streamProxyUrl = raw.startsWith('http://') ? `/api/audio/stream?url=${encodeURIComponent(raw)}` : raw;
+              audioUrlCache.set(track.id, streamProxyUrl);
+              track.url = streamProxyUrl;
+              track.streamSource = (track.source || 'kugou') + '_vip';
+              return streamProxyUrl;
+            }
+          }
+        } catch(e) {}
+
+        const directProxy = `/api/audio/stream?id=${encodeURIComponent(track.id)}&source=${encodeURIComponent(track.source || 'kugou')}`;
+        audioUrlCache.set(track.id, directProxy);
+        track.url = directProxy;
         track.streamSource = 'kugou_vip';
-        return streamProxyUrl;
+        return directProxy;
       }
 
       // ========================================================
@@ -24431,8 +24476,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (audio) {
         // Guarantee 100% HTTPS playback: If URL is insecure http://, route through HTTPS audio streaming proxy!
         let safeAudioUrl = playableUrl;
-        if (safeAudioUrl && safeAudioUrl.startsWith('http://') && track.id) {
-          safeAudioUrl = `/api/music/api/v1/music/stream?id=${encodeURIComponent(track.id)}&source=${encodeURIComponent(track.source || 'kugou')}`;
+        if (safeAudioUrl && safeAudioUrl.startsWith('http://')) {
+          safeAudioUrl = `/api/audio/stream?url=${encodeURIComponent(safeAudioUrl)}`;
         }
         audio.src = safeAudioUrl;
         audio.load();
@@ -24468,7 +24513,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             audio.onerror = null; // Guard against recursive error loops
             console.warn('Audio element playback error, attempting fallback stream...');
             if (track.id) {
-              const fallbackUrl = `/api/music/api/v1/music/stream?id=${encodeURIComponent(track.id)}&source=kugou`;
+              const fallbackUrl = `/api/audio/stream?id=${encodeURIComponent(track.id)}&source=kugou`;
               if (!audio.src.includes(encodeURIComponent(track.id))) {
                 audio.src = fallbackUrl;
                 audio.play().catch(() => {});
@@ -26183,7 +26228,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       highlightActiveSongInModal();
     }
 
-    // --- Search Modal & Query Engine ---
+    // --- Search Modal & Multi-Source Query Engine (0 Purple, Linear/Apple Glassmorphic) ---
     function openKuGouSearchModal() {
       const modal = document.getElementById('kugouSearchModal');
       if (modal) {
@@ -26191,6 +26236,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         modal.style.display = 'flex';
         const inp = document.getElementById('kugouSearchKeyword');
         if (inp) setTimeout(() => inp.focus(), 150);
+        if (window.lucide) lucide.createIcons();
       }
     }
 
@@ -26202,6 +26248,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
 
+    function quickSetSearchKeyword(kw) {
+      const inp = document.getElementById('kugouSearchKeyword');
+      if (inp) {
+        inp.value = kw;
+        searchKuGouMusic();
+      }
+    }
+
     async function searchKuGouMusic() {
       const kw = document.getElementById('kugouSearchKeyword')?.value.trim();
       const resultsBox = document.getElementById('kugouSearchResults');
@@ -26210,43 +26264,89 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return;
       }
       if (resultsBox) {
-        resultsBox.innerHTML = '<div style="text-align:center; padding:25px; color:var(--text-dim); font-size:0.75rem;">正在检索曲库...</div>';
+        resultsBox.innerHTML = `
+          <div style="text-align:center; padding:36px 0; color:var(--text-dim, #94a3b8); font-size:0.8rem; display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <i data-lucide="loader-2" class="spin" style="width:24px;height:24px;color:#0091ff;"></i>
+            <span>正在全网穿透检索曲库【${escapeHtml(kw)}】...</span>
+          </div>`;
+        if (window.lucide) lucide.createIcons();
       }
 
       try {
-        let songs = [];
-        const nRes = await fetch(`/api/music/api/v1/music/search?keyword=${encodeURIComponent(kw)}&sources=netease`);
-        if (nRes.ok) {
-          const nd = await nRes.json();
-          songs = nd.data?.songs || nd.songs || [];
-        }
-
-        if (songs.length < 3) {
-          const kgRes = await fetch(`/api/music/api/v1/music/search?keyword=${encodeURIComponent(kw)}&sources=kugou`);
-          if (kgRes.ok) {
-            const kgd = await kgRes.json();
-            const kgSongs = kgd.data?.songs || kgd.songs || [];
-            songs = songs.concat(kgSongs);
+        const fetchSource = async (src) => {
+          try {
+            const res = await fetchWithTimeout(`/api/music/api/v1/music/search?keyword=${encodeURIComponent(kw)}&sources=${src}`, 3500);
+            if (!res.ok) return [];
+            const d = await res.json();
+            const list = d.data?.songs || (Array.isArray(d.data) ? d.data : (d.songs || []));
+            return (list || []).map(item => ({
+              id: item.id || item.songmid || item.hash,
+              name: item.name || item.title || kw,
+              artist: item.artist || item.singer || '音乐人',
+              album: item.album || '精选单曲',
+              source: item.source || src,
+              cover: item.cover || '',
+              duration: item.duration || 240
+            }));
+          } catch(e) {
+            return [];
           }
-        }
+        };
+
+        // Query KuGou (Primary VIP), KuWo, and NetEase in parallel
+        const [kgList, kwList, neList] = await Promise.all([
+          fetchSource('kugou'),
+          fetchSource('kuwo'),
+          fetchSource('netease')
+        ]);
+
+        let combined = [...kgList, ...kwList, ...neList].filter(s => s.id);
 
         if (resultsBox) {
-          if (songs.length === 0) {
-            resultsBox.innerHTML = '<div style="text-align:center; padding:25px; color:var(--text-dim); font-size:0.75rem;">未找到相关歌曲，请换个关键词试试</div>';
+          if (combined.length === 0) {
+            resultsBox.innerHTML = `
+              <div style="text-align:center; padding:35px 0; color:var(--text-dim, #94a3b8); font-size:0.8rem;">
+                <i data-lucide="music-2" style="width:28px;height:28px;margin-bottom:8px;opacity:0.4;"></i>
+                <div>未找到相关歌曲，请尝试更换关键词或歌手名</div>
+              </div>`;
+            if (window.lucide) lucide.createIcons();
             return;
           }
 
-          resultsBox.innerHTML = songs.slice(0, 15).map((s, idx) => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:8px; background:var(--surface, rgba(255,255,255,0.03)); margin-bottom:4px; font-size:0.75rem;">
-              <div style="overflow:hidden; flex:1; margin-right:8px;">
-                <div style="font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(s.name || s.title || kw)}</div>
-                <div style="font-size:0.68rem; color:var(--text-dim);">${escapeHtml(s.artist || s.singer || '酷狗歌手')} · ${escapeHtml(s.album || '单曲')}</div>
+          resultsBox.innerHTML = combined.slice(0, 20).map((s, idx) => {
+            const safeName = escapeHtml(s.name);
+            const safeArtist = escapeHtml(s.artist);
+            const safeAlbum = escapeHtml(s.album);
+            const safeCover = s.cover || DEFAULT_KUGOU_COVER;
+            const srcLabel = s.source === 'kugou' ? '酷狗 VIP' : (s.source === 'kuwo' ? '酷我 HQ' : '网易云');
+            const jsId = String(s.id).replace(/'/g, "\\'");
+            const jsName = safeName.replace(/'/g, "\\'");
+            const jsArtist = safeArtist.replace(/'/g, "\\'");
+            const jsSource = (s.source || 'kugou').replace(/'/g, "\\'");
+            const jsCover = (s.cover || '').replace(/'/g, "\\'");
+
+            return `
+              <div class="search-song-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:var(--surface, rgba(255,255,255,0.03)); border:1px solid rgba(255,255,255,0.06); transition:all 0.2s; margin-bottom:4px;" onmouseover="this.style.background='rgba(0,145,255,0.06)';this.style.borderColor='rgba(0,145,255,0.2)'" onmouseout="this.style.background='var(--surface, rgba(255,255,255,0.03))';this.style.borderColor='rgba(255,255,255,0.06)'">
+                <div style="display:flex; align-items:center; gap:10px; overflow:hidden; flex:1; margin-right:10px;">
+                  <img src="${safeCover}" onerror="this.src=DEFAULT_KUGOU_COVER" style="width:36px; height:36px; border-radius:8px; object-fit:cover; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.3);" referrerpolicy="no-referrer">
+                  <div style="overflow:hidden; flex:1;">
+                    <div style="font-weight:600; color:var(--text, #fff); font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:6px;">
+                      <span>${safeName}</span>
+                      <span style="font-size:0.62rem; padding:1px 5px; border-radius:4px; font-weight:600; background:rgba(0,145,255,0.12); color:#38bdf8; border:1px solid rgba(0,145,255,0.25); flex-shrink:0;">${srcLabel}</span>
+                    </div>
+                    <div style="font-size:0.7rem; color:var(--text-dim, #94a3b8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
+                      ${safeArtist} · ${safeAlbum}
+                    </div>
+                  </div>
+                </div>
+                <button class="search-play-btn" id="playBtn_${jsId}" style="padding:5px 14px; font-size:0.72rem; font-weight:600; border-radius:20px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 3px 10px rgba(0,145,255,0.3); transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 4px 14px rgba(0,145,255,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 3px 10px rgba(0,145,255,0.3)'" onclick="playSearchResultTrack('${jsId}', '${jsName}', '${jsArtist}', '${jsSource}', '${jsCover}', ${s.duration || 240})">
+                  <i data-lucide="play" style="width:11px;height:11px;fill:currentColor;"></i>
+                  <span>播放</span>
+                </button>
               </div>
-              <button class="btn btn-glow" style="padding:3px 12px; font-size:0.7rem; white-space:nowrap; border-radius:14px; cursor:pointer;" onclick="playSearchResultTrack('${s.id}', '${escapeHtml(s.name || s.title || kw).replace(/'/g, "\\'")}', '${escapeHtml(s.artist || s.singer || '').replace(/'/g, "\\'")}', '${s.source || 'netease'}', '${s.cover || ''}')">
-                ▶ 播放
-              </button>
-            </div>
-          `).join('');
+            `;
+          }).join('');
+
           if (window.lucide) lucide.createIcons();
         }
       } catch (e) {
@@ -26256,18 +26356,70 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
     }
 
-    async function playSearchResultTrack(id, title, artist, source, cover) {
+    async function playSearchResultTrack(id, title, artist, source, cover, duration = 240) {
+      const btn = document.getElementById(`playBtn_${id}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin" style="width:11px;height:11px;"></i><span>解析中</span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      showToast(`正在解析【${title}】无损音频...`);
+
+      let playableUrl = null;
+
+      // 1. First attempt: resolve directly from music API
+      try {
+        const uRes = await fetchWithTimeout(`/api/music/api/v1/music/url?id=${encodeURIComponent(id)}&source=${encodeURIComponent(source || 'kugou')}`, 3000);
+        if (uRes.ok) {
+          const ud = await uRes.json();
+          const rawUrl = ud.data?.url || ud.url;
+          if (rawUrl && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) && rawUrl.toLowerCase() !== 'none') {
+            playableUrl = rawUrl.startsWith('http://') ? `/api/audio/stream?url=${encodeURIComponent(rawUrl)}` : rawUrl;
+          }
+        }
+      } catch(e) {}
+
+      // 2. Second attempt: if direct resolution failed on this source, fallback to KuGou / KuWo
+      if (!playableUrl) {
+        try {
+          const fbSrc = source === 'kugou' ? 'kuwo' : 'kugou';
+          const query = `${artist} ${title}`.trim();
+          const fbRes = await fetchWithTimeout(`/api/music/api/v1/music/search?keyword=${encodeURIComponent(query)}&sources=${fbSrc}`, 3000);
+          if (fbRes.ok) {
+            const fbd = await fbRes.json();
+            const fbSongs = fbd.data?.songs || (Array.isArray(fbd.data) ? fbd.data : (fbd.songs || []));
+            if (fbSongs.length > 0) {
+              const altId = fbSongs[0].id;
+              const altURes = await fetchWithTimeout(`/api/music/api/v1/music/url?id=${encodeURIComponent(altId)}&source=${fbSrc}`, 3000);
+              if (altURes.ok) {
+                const altUd = await altURes.json();
+                const altRawUrl = altUd.data?.url || altUd.url;
+                if (altRawUrl && (altRawUrl.startsWith('http://') || altRawUrl.startsWith('https://')) && altRawUrl.toLowerCase() !== 'none') {
+                  playableUrl = altRawUrl.startsWith('http://') ? `/api/audio/stream?url=${encodeURIComponent(altRawUrl)}` : altRawUrl;
+                }
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 3. Third attempt: backend audio proxy with ID
+      if (!playableUrl) {
+        playableUrl = `/api/audio/stream?id=${encodeURIComponent(id)}&source=${encodeURIComponent(source || 'kugou')}`;
+      }
+
       closeKuGouSearchModal();
-      showToast(`正在载入【${title}】...`);
 
       const newTrack = {
         id: id,
         title: cleanSongTitle(title),
         artist: artist || '音乐人',
         album: '搜索精选',
-        duration: 240,
-        url: '',
-        cover: cover || 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300',
+        duration: duration || 240,
+        url: playableUrl,
+        source: source || 'kugou',
+        cover: cover || DEFAULT_KUGOU_COVER,
         quality: 'SQ 无损'
       };
 
@@ -29060,7 +29212,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         const grad1 = ctx.createLinearGradient(0, 0, w, 0);
         grad1.addColorStop(0, '#0091ff');
         grad1.addColorStop(0.5, '#06b6d4');
-        grad1.addColorStop(1, '#a855f7');
+        grad1.addColorStop(1, '#0091ff');
 
         ctx.beginPath();
         ctx.moveTo(0, midY);
@@ -29081,7 +29233,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         // Draw Ambient Wave 2 (Subtle Violet Counter-Wave)
         if (isPlaying) {
           const grad2 = ctx.createLinearGradient(0, 0, w, 0);
-          grad2.addColorStop(0, '#7c3aed');
+          grad2.addColorStop(0, '#0070f3');
           grad2.addColorStop(0.5, '#38bdf8');
           grad2.addColorStop(1, '#ec4899');
 
