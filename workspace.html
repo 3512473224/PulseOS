@@ -12280,6 +12280,79 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #ffffff !important;
       box-shadow: 0 2px 8px rgba(0, 145, 255, 0.3);
     }
+
+    /* 🔄 Global Smooth Spin Animation */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin, .animate-spin {
+      animation: spin 0.8s linear infinite !important;
+    }
+
+    /* 🎵 Sleek Kinetic Wave & Shimmer for Song Play Button */
+    .search-play-btn {
+      position: relative;
+      overflow: hidden;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 14px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #0091ff 0%, #0070f3 100%);
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 145, 255, 0.3);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .search-play-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 4px 14px rgba(0, 145, 255, 0.45);
+    }
+    .search-play-btn.is-loading {
+      background: linear-gradient(135deg, #0091ff, #0070f3, #38bdf8) !important;
+      background-size: 200% 200% !important;
+      animation: playBtnGlowShimmer 2s ease infinite !important;
+      box-shadow: 0 0 16px rgba(0, 145, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      cursor: wait !important;
+      pointer-events: none;
+    }
+    .play-btn-mini-wave {
+      display: inline-flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 2.5px;
+      height: 13px;
+      margin-right: 4px;
+    }
+    .play-btn-mini-wave .pbm-bar {
+      display: block;
+      width: 2.5px;
+      height: 13px;
+      background: #ffffff;
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: pbmWaveJump 0.7s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
+    }
+    .play-btn-mini-wave .pbm-bar:nth-child(1) { animation-delay: 0.0s; }
+    .play-btn-mini-wave .pbm-bar:nth-child(2) { animation-delay: 0.22s; }
+    .play-btn-mini-wave .pbm-bar:nth-child(3) { animation-delay: 0.11s; }
+
+    @keyframes pbmWaveJump {
+      0% { transform: scaleY(0.25); opacity: 0.5; }
+      50% { transform: scaleY(1.0); opacity: 1; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)); }
+      100% { transform: scaleY(0.4); opacity: 0.7; }
+    }
+    @keyframes playBtnGlowShimmer {
+      0% { background-position: 0% 50%; box-shadow: 0 3px 12px rgba(0, 145, 255, 0.4); }
+      50% { background-position: 100% 50%; box-shadow: 0 4px 18px rgba(0, 145, 255, 0.7); }
+      100% { background-position: 0% 50%; box-shadow: 0 3px 12px rgba(0, 145, 255, 0.4); }
+    }
+
 </style>
 </head>
 <body>
@@ -26457,7 +26530,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             const jsCover = (s.cover || '').replace(/'/g, "\\'");
 
             return `
-              <div class="search-song-row" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:var(--surface, rgba(255,255,255,0.03)); border:1px solid rgba(255,255,255,0.06); transition:all 0.2s; margin-bottom:4px;" onmouseover="this.style.background='rgba(0,145,255,0.06)';this.style.borderColor='rgba(0,145,255,0.2)'" onmouseout="this.style.background='var(--surface, rgba(255,255,255,0.03))';this.style.borderColor='rgba(255,255,255,0.06)'">
+              <div class="search-song-row" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:var(--surface, rgba(255,255,255,0.03)); border:1px solid rgba(255,255,255,0.06); transition:all 0.2s; margin-bottom:4px;" onmouseover="this.style.background='rgba(0,145,255,0.06)';this.style.borderColor='rgba(0,145,255,0.2)'" onmouseout="this.style.background='var(--surface, rgba(255,255,255,0.03))';this.style.borderColor='rgba(255,255,255,0.06)'" onclick="playSearchResultTrack('${jsId}', '${jsName}', '${jsArtist}', '${jsSource}', '${jsCover}', ${s.duration || 240})">
                 <div style="display:flex; align-items:center; gap:10px; overflow:hidden; flex:1; margin-right:10px;">
                   <img src="${safeCover}" onerror="this.src=DEFAULT_KUGOU_COVER" style="width:36px; height:36px; border-radius:8px; object-fit:cover; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.3);" referrerpolicy="no-referrer">
                   <div style="overflow:hidden; flex:1;">
@@ -26470,7 +26543,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     </div>
                   </div>
                 </div>
-                <button class="search-play-btn" id="playBtn_${jsId}" style="padding:5px 14px; font-size:0.72rem; font-weight:600; border-radius:20px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 3px 10px rgba(0,145,255,0.3); transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 4px 14px rgba(0,145,255,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 3px 10px rgba(0,145,255,0.3)'" onclick="playSearchResultTrack('${jsId}', '${jsName}', '${jsArtist}', '${jsSource}', '${jsCover}', ${s.duration || 240})">
+                <button class="search-play-btn" id="playBtn_${jsId}" onclick="event.stopPropagation(); playSearchResultTrack('${jsId}', '${jsName}', '${jsArtist}', '${jsSource}', '${jsCover}', ${s.duration || 240})">
                   <i data-lucide="play" style="width:11px;height:11px;fill:currentColor;"></i>
                   <span>播放</span>
                 </button>
@@ -26491,8 +26564,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const btn = document.getElementById(`playBtn_${id}`);
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="spin" style="width:11px;height:11px;"></i><span>载入中</span>`;
-        if (window.lucide) lucide.createIcons();
+        btn.classList.add('is-loading');
+        btn.innerHTML = `
+          <span class="play-btn-mini-wave">
+            <span class="pbm-bar"></span>
+            <span class="pbm-bar"></span>
+            <span class="pbm-bar"></span>
+          </span>
+          <span style="letter-spacing:0.02em;">载入中</span>
+        `;
       }
 
       showToast(`正在载入【${title}】...`);
