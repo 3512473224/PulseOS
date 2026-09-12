@@ -12502,22 +12502,149 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { transform: scaleY(1.0); opacity: 1; filter: drop-shadow(0 0 6px rgba(0, 145, 255, 0.7)); }
     }
 
-    .search-mode-pill {
-      background: transparent;
-      color: var(--text-dim, #94a3b8);
-      border: none;
-      cursor: pointer;
+    /* 🎵 Minimalist Search Mode & Action UI (Unified with Cloud Playlist Aesthetics) */
+    .kugou-search-unified-pill {
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: default;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      color: #f1f5f9;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      user-select: none;
       transition: all 0.2s ease;
     }
-    .search-mode-pill.active {
-      background: rgba(0, 145, 255, 0.16) !important;
-      color: #38bdf8 !important;
-      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.25);
+    .kugou-search-unified-pill i,
+    .kugou-search-unified-pill svg {
+      width: 13px;
+      height: 13px;
+      color: #38bdf8;
     }
-    html.theme-light .search-mode-pill.active {
-      background: #0091ff !important;
-      color: #ffffff !important;
-      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.3);
+    html.theme-light .kugou-search-unified-pill {
+      background: #f8fafc;
+      border: 0.5px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+    html.theme-light .kugou-search-unified-pill i,
+    html.theme-light .kugou-search-unified-pill svg {
+      color: #0284c7;
+    }
+
+    /* 🔍 Luxury Search Submit Button (Consistent with Cloud Playlist Button UI) */
+    .kugou-search-submit-btn {
+      padding: 8px 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      color: #f1f5f9;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      user-select: none;
+      white-space: nowrap;
+    }
+    .kugou-search-submit-btn i,
+    .kugou-search-submit-btn svg {
+      width: 14px;
+      height: 14px;
+      color: #38bdf8;
+      transition: transform 0.22s ease, color 0.22s ease;
+    }
+    .kugou-search-submit-btn:hover {
+      background: rgba(0, 145, 255, 0.12);
+      border-color: rgba(0, 145, 255, 0.4);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 145, 255, 0.2);
+    }
+    .kugou-search-submit-btn:hover i,
+    .kugou-search-submit-btn:hover svg {
+      transform: scale(1.1);
+      color: #00d4ff;
+    }
+    .kugou-search-submit-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+    html.theme-light .kugou-search-submit-btn {
+      background: #f8fafc;
+      border: 0.5px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+    html.theme-light .kugou-search-submit-btn i,
+    html.theme-light .kugou-search-submit-btn svg {
+      color: #0284c7;
+    }
+    html.theme-light .kugou-search-submit-btn:hover {
+      background: #f1f5f9;
+      border-color: #0284c7;
+      color: #0369a1;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.12);
+    }
+
+    /* 🎵 Header Icon in Search Modal (Frosted Glass with Accent) */
+    .kugou-search-header-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #38bdf8;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    html.theme-light .kugou-search-header-icon {
+      background: #f0f9ff;
+      border: 0.5px solid #bae6fd;
+      color: #0284c7;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    /* 🏷️ Search Recommendation Tags / Chips */
+    .search-tag-chip {
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim, #94a3b8);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 500;
+      transition: all 0.18s ease;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .search-tag-chip:hover {
+      background: rgba(0, 145, 255, 0.12);
+      border-color: rgba(0, 145, 255, 0.35);
+      color: #38bdf8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.15);
+    }
+    html.theme-light .search-tag-chip {
+      background: #f8fafc;
+      border: 0.5px solid #e2e8f0;
+      color: #475569;
+    }
+    html.theme-light .search-tag-chip:hover {
+      background: #f1f5f9;
+      border-color: #0284c7;
+      color: #0284c7;
     }
 
     /* 🔄 Global Smooth Spin Animation */
@@ -12529,11 +12656,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       animation: spin 0.8s linear infinite !important;
     }
 
-    /* 🎵 Sleek Kinetic Wave & Shimmer for Song Play Button */
+    /* 🎵 Elegant Track Play Button in Search Results (Matched to Cloud Playlist UI) */
     .search-play-btn {
       position: relative;
       overflow: hidden;
-      border: none;
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -12543,23 +12670,70 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-size: 0.72rem;
       font-weight: 600;
       border-radius: 20px;
-      background: linear-gradient(135deg, #0091ff 0%, #0070f3 100%);
-      color: #ffffff;
-      box-shadow: 0 3px 10px rgba(0, 145, 255, 0.3);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f1f5f9;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .search-play-btn i,
+    .search-play-btn svg {
+      width: 12px;
+      height: 12px;
+      color: #38bdf8;
+      transition: transform 0.2s ease, color 0.2s ease;
     }
     .search-play-btn:hover {
-      transform: scale(1.04);
-      box-shadow: 0 4px 14px rgba(0, 145, 255, 0.45);
+      background: rgba(0, 145, 255, 0.12);
+      border-color: rgba(0, 145, 255, 0.4);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 145, 255, 0.2);
+    }
+    .search-play-btn:hover i,
+    .search-play-btn:hover svg {
+      transform: scale(1.1);
+      color: #00d4ff;
+    }
+    .search-play-btn:active {
+      transform: translateY(0) scale(0.98);
     }
     .search-play-btn.is-loading {
-      background: linear-gradient(135deg, #0091ff, #0070f3, #38bdf8) !important;
-      background-size: 200% 200% !important;
-      animation: playBtnGlowShimmer 2s ease infinite !important;
-      box-shadow: 0 0 16px rgba(0, 145, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      background: rgba(0, 145, 255, 0.12) !important;
+      border-color: rgba(0, 145, 255, 0.45) !important;
+      color: #38bdf8 !important;
+      box-shadow: 0 0 14px rgba(0, 145, 255, 0.2) !important;
       cursor: wait !important;
       pointer-events: none;
     }
+    .search-play-btn.is-loading .pbm-bar {
+      background: #38bdf8 !important;
+    }
+    html.theme-light .search-play-btn {
+      background: #f8fafc;
+      border: 0.5px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+    html.theme-light .search-play-btn i,
+    html.theme-light .search-play-btn svg {
+      color: #0284c7;
+    }
+    html.theme-light .search-play-btn:hover {
+      background: #f1f5f9;
+      border-color: #0284c7;
+      color: #0369a1;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.12);
+    }
+    html.theme-light .search-play-btn.is-loading {
+      background: #f0f9ff !important;
+      border-color: #0284c7 !important;
+      color: #0284c7 !important;
+    }
+    html.theme-light .search-play-btn.is-loading .pbm-bar {
+      background: #0284c7 !important;
+    }
+
     .play-btn-mini-wave {
       display: inline-flex;
       align-items: flex-end;
@@ -12572,7 +12746,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: block;
       width: 2.5px;
       height: 13px;
-      background: #ffffff;
+      background: #38bdf8;
       border-radius: 2px;
       transform-origin: bottom center;
       animation: pbmWaveJump 0.7s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
@@ -12583,13 +12757,39 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     @keyframes pbmWaveJump {
       0% { transform: scaleY(0.25); opacity: 0.5; }
-      50% { transform: scaleY(1.0); opacity: 1; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)); }
+      50% { transform: scaleY(1.0); opacity: 1; filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.9)); }
       100% { transform: scaleY(0.4); opacity: 0.7; }
     }
-    @keyframes playBtnGlowShimmer {
-      0% { background-position: 0% 50%; box-shadow: 0 3px 12px rgba(0, 145, 255, 0.4); }
-      50% { background-position: 100% 50%; box-shadow: 0 4px 18px rgba(0, 145, 255, 0.7); }
-      100% { background-position: 0% 50%; box-shadow: 0 3px 12px rgba(0, 145, 255, 0.4); }
+
+    /* Light Theme (Day Mode) for KuGou Search Modal */
+    html.theme-light #kugouSearchModal .dialog-box {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
+    }
+    html.theme-light #kugouSearchModal .dialog-header {
+      border-bottom-color: #f1f5f9 !important;
+    }
+    html.theme-light #kugouSearchModal .dialog-title div:first-child {
+      color: #0f172a !important;
+    }
+    html.theme-light #kugouSearchKeyword {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #kugouSearchKeyword:focus {
+      background: #ffffff !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+    }
+    html.theme-light .search-song-row {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light .search-song-row:hover {
+      background: #f1f5f9 !important;
+      border-color: #0284c7 !important;
     }
 
 </style>
@@ -15002,10 +15202,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
   <!-- 🔍 KUGOU MUSIC GLOBAL SEARCH MODAL (OBSIDIAN CYAN GLASS & LUXURY AUDIO PLAYER) -->
   <div class="modal-backdrop" id="kugouSearchModal" onclick="if(event.target===this) closeKuGouSearchModal()" style="display:none; align-items:center; justify-content:center; z-index:99999;">
-    <div class="dialog-box" style="max-width:620px; width:92%; border-radius:16px; background:var(--surface, rgba(15,23,42,0.95)); backdrop-filter:blur(30px); border:1px solid rgba(0,145,255,0.25); box-shadow:0 24px 60px rgba(0,0,0,0.7), 0 0 35px rgba(0,145,255,0.15); padding:22px; display:flex; flex-direction:column; gap:14px;" onclick="event.stopPropagation()">
+    <div class="dialog-box" style="max-width:620px; width:92%; border-radius:16px; background:var(--surface, rgba(15,23,42,0.95)); backdrop-filter:blur(30px); border:1px solid var(--border, rgba(255,255,255,0.08)); box-shadow:0 24px 60px rgba(0,0,0,0.7); padding:22px; display:flex; flex-direction:column; gap:14px;" onclick="event.stopPropagation()">
       <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
         <div class="dialog-title" style="display:flex; align-items:center; gap:10px;">
-          <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg, #0091ff, #0070f3); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 2px 10px rgba(0,145,255,0.35);">
+          <div class="kugou-search-header-icon">
             <i data-lucide="music-2" style="width:16px; height:16px;"></i>
           </div>
           <div>
@@ -15016,20 +15216,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         <button class="btn-icon" onclick="closeKuGouSearchModal()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; color:var(--text-dim, #94a3b8); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.color='var(--text-dim, #94a3b8)';this.style.background='rgba(255,255,255,0.06)'">✕</button>
       </div>
 
-      <!-- Mode Selector Tabs (🎵 搜歌曲 / 歌手  vs  ✍️ 歌词寻歌) -->
+      <!-- Unified Mode Capsule (Merged into 1 button; Song + Singer + Lyric Coexist) -->
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:inline-flex; align-items:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:3px; gap:4px;">
-          <button class="search-mode-pill active" id="btnSearchModeSong" onclick="switchMusicSearchMode('song')" style="padding:5px 14px; font-size:0.75rem; font-weight:600; border-radius:7px; display:flex; align-items:center; gap:5px;">
-            <i data-lucide="music-2" style="width:12px;height:12px;"></i>
-            <span>搜歌曲 / 歌手</span>
-          </button>
-          <button class="search-mode-pill" id="btnSearchModeLyric" onclick="switchMusicSearchMode('lyric')" style="padding:5px 14px; font-size:0.75rem; font-weight:600; border-radius:7px; display:flex; align-items:center; gap:5px;">
-            <i data-lucide="quote" style="width:12px;height:12px;"></i>
-            <span>歌词寻歌</span>
-          </button>
+        <div class="kugou-search-unified-pill" id="unifiedMusicSearchBadge">
+          <i data-lucide="layers"></i>
+          <span>搜歌曲 / 歌手 / 歌词</span>
         </div>
         <div style="font-size:0.68rem; color:var(--text-dim, #64748b);" id="searchModeDesc">
-          按歌曲名或歌手检索
+          输入曲名、艺人或歌词片段即可跨库畅搜
         </div>
       </div>
 
@@ -15037,10 +15231,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       <div style="display:flex; gap:8px; align-items:center;">
         <div style="position:relative; flex:1; display:flex; align-items:center;">
           <i data-lucide="search" id="searchPrefixIcon" style="position:absolute; left:12px; width:15px; height:15px; color:var(--text-dim, #64748b); pointer-events:none;"></i>
-          <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="输入歌曲名、歌手 (例如: 晴天、周杰伦、海阔天空)..." onkeydown="if(event.key==='Enter') searchKuGouMusic()" style="width:100%; padding:9px 12px 9px 36px; font-size:0.84rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text, #fff); outline:none; transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,145,255,0.6)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.18)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
+          <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="搜索歌曲、歌手或歌词 (晴天、周杰伦、海阔天空)..." onkeydown="if(event.key==='Enter') searchKuGouMusic()" style="width:100%; padding:9px 12px 9px 36px; font-size:0.84rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text, #fff); outline:none; transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,145,255,0.4)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.12)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
         </div>
-        <button class="btn" id="searchSubmitBtn" onclick="searchKuGouMusic()" style="padding:9px 18px; font-size:0.8rem; font-weight:600; border-radius:10px; background:linear-gradient(135deg, #0091ff, #0070f3); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 3px 12px rgba(0,145,255,0.32); white-space:nowrap; transition:all 0.2s;" onmouseover="this.style.filter='brightness(1.1)';this.style.transform='translateY(-1px)'" onmouseout="this.style.filter='none';this.style.transform='translateY(0)'">
-          <i data-lucide="search" style="width:13px;height:13px;"></i>
+        <button class="kugou-search-submit-btn" id="searchSubmitBtn" onclick="searchKuGouMusic()" title="开始全域检索">
+          <i data-lucide="search"></i>
           <span>搜索</span>
         </button>
       </div>
@@ -26788,41 +26982,24 @@ window.renderContainers = renderContainers;
       highlightActiveSongInModal();
     }
 
-    // --- Search Modal & Multi-Source Query Engine (Lyric Search + Kinetic Audio Wave) ---
-    let currentMusicSearchMode = 'song'; // 'song' | 'lyric'
+    // --- Search Modal & Multi-Source Query Engine (Unified Song/Singer/Lyric Search) ---
+    let currentMusicSearchMode = 'all'; // Unified coexistence mode
 
-    const SEARCH_SONG_CHIPS = ['晴天', '七里香', '海阔天空', '起风了', '江南', '夜曲'];
-    const SEARCH_LYRIC_CHIPS = [
+    const SEARCH_UNIFIED_CHIPS = [
+      '晴天',
+      '周杰伦',
+      '海阔天空',
+      '起风了',
       '故事的小黄花',
       '天青色等烟雨',
-      '雨下整夜我的爱溢出',
-      '原谅我这一生不羁放纵爱自由',
-      '从前从前有个人爱你很久',
-      '最美的不是下雨天'
+      '江南',
+      '从前从前有个人爱你很久'
     ];
 
     function switchMusicSearchMode(mode) {
-      currentMusicSearchMode = mode;
-      const btnSong = document.getElementById('btnSearchModeSong');
-      const btnLyric = document.getElementById('btnSearchModeLyric');
+      currentMusicSearchMode = 'all';
       const inp = document.getElementById('kugouSearchKeyword');
-      const desc = document.getElementById('searchModeDesc');
-      const emptyPrompt = document.getElementById('searchEmptyPrompt');
-
-      if (mode === 'song') {
-        if (btnSong) btnSong.classList.add('active');
-        if (btnLyric) btnLyric.classList.remove('active');
-        if (inp) inp.placeholder = '输入歌曲名、歌手 (例如: 晴天、周杰伦、海阔天空)...';
-        if (desc) desc.textContent = '按歌曲名或歌手检索';
-        if (emptyPrompt) emptyPrompt.textContent = '输入歌曲名、歌手名或点击上方推荐开始检索';
-      } else {
-        if (btnSong) btnSong.classList.remove('active');
-        if (btnLyric) btnLyric.classList.add('active');
-        if (inp) inp.placeholder = '输入脑海中的一句歌词 (例如: 故事的小黄花、天青色等烟雨)...';
-        if (desc) desc.textContent = '全网歌词原声匹配';
-        if (emptyPrompt) emptyPrompt.textContent = '输入记忆中的一句歌词，自动搜出原唱曲目';
-      }
-
+      if (inp) inp.placeholder = '搜索歌曲、歌手或歌词 (晴天、周杰伦、海阔天空)...';
       renderSearchChips();
       if (inp) inp.focus();
       if (window.lucide) lucide.createIcons();
@@ -26832,17 +27009,16 @@ window.renderContainers = renderContainers;
       const wrap = document.getElementById('searchHotChipsWrap');
       if (!wrap) return;
 
-      const isLyric = currentMusicSearchMode === 'lyric';
-      const list = isLyric ? SEARCH_LYRIC_CHIPS : SEARCH_SONG_CHIPS;
-      const label = isLyric ? '经典歌词寻歌:' : '大家都在搜:';
-
       wrap.innerHTML = `
-        <span style="color:var(--text-dim, #64748b); font-size:0.7rem;">${label}</span>
-        ${list.map(txt => `
-          <span class="search-tag-chip" onclick="quickSetSearchKeyword('${escapeHtml(txt).replace(/'/g, "\\'")}')" style="padding:3px 9px; border-radius:6px; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; cursor:pointer; font-size:0.72rem; transition:all 0.15s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">
-            ${isLyric ? '❝ ' : ''}${escapeHtml(txt)}${isLyric ? ' ❞' : ''}
-          </span>
-        `).join('')}
+        <span style="color:var(--text-dim, #64748b); font-size:0.7rem; font-weight:500;">推荐热搜:</span>
+        ${SEARCH_UNIFIED_CHIPS.map(txt => {
+          const isQuote = txt.length > 5;
+          return `
+            <span class="search-tag-chip" onclick="quickSetSearchKeyword('${escapeHtml(txt).replace(/'/g, "\\'")}')">
+              ${isQuote ? '❝ ' : ''}${escapeHtml(txt)}${isQuote ? ' ❞' : ''}
+            </span>
+          `;
+        }).join('')}
       `;
     }
 
@@ -26878,13 +27054,12 @@ window.renderContainers = renderContainers;
       const kw = document.getElementById('kugouSearchKeyword')?.value.trim();
       const resultsBox = document.getElementById('kugouSearchResults');
       if (!kw) {
-        showToast(currentMusicSearchMode === 'lyric' ? '请输入想查找的歌词片段' : '请输入歌曲或歌手名');
+        showToast('请输入歌曲名、歌手或歌词片段');
         return;
       }
 
       // Kinetic Audio Equalizer Wave Animation + Sleek Minimalist Wording
       if (resultsBox) {
-        const isLyric = currentMusicSearchMode === 'lyric';
         resultsBox.innerHTML = `
           <div class="search-loading-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:45px 0; gap:16px;">
             <div class="kinetic-eq-wave">
@@ -26896,10 +27071,10 @@ window.renderContainers = renderContainers;
             </div>
             <div style="text-align:center;">
               <div style="font-size:0.86rem; font-weight:600; color:var(--text, #fff); letter-spacing:-0.01em;">
-                正在搜寻「${escapeHtml(kw)}」
+                正在检索「${escapeHtml(kw)}」
               </div>
               <div style="font-size:0.72rem; color:var(--text-dim, #64748b); margin-top:4px;">
-                ${isLyric ? '正在深度匹配全网歌词与原唱原盘...' : '正在检索官方曲库与高品音源...'}
+                正在智能跨库匹配曲目、艺人与原声歌词...
               </div>
             </div>
           </div>
@@ -26942,19 +27117,18 @@ window.renderContainers = renderContainers;
             resultsBox.innerHTML = `
               <div style="text-align:center; padding:35px 0; color:var(--text-dim, #94a3b8); font-size:0.8rem;">
                 <i data-lucide="music-2" style="width:28px;height:28px;margin-bottom:8px;opacity:0.4;"></i>
-                <div>未找到相关歌曲，请尝试缩短或更换${currentMusicSearchMode === 'lyric' ? '歌词片段' : '关键词'}</div>
+                <div>未找到相关歌曲，请尝试缩短关键词或更换歌词语句</div>
               </div>`;
             if (window.lucide) lucide.createIcons();
             return;
           }
 
-          const isLyric = currentMusicSearchMode === 'lyric';
           resultsBox.innerHTML = combined.slice(0, 20).map((s, idx) => {
             const safeName = escapeHtml(s.name);
             const safeArtist = escapeHtml(s.artist);
             const safeAlbum = escapeHtml(s.album);
             const safeCover = s.cover || DEFAULT_KUGOU_COVER;
-            const srcLabel = isLyric ? '歌词匹配' : (s.source === 'kugou' ? '酷狗 VIP' : (s.source === 'kuwo' ? '酷我 HQ' : '网易云'));
+            const srcLabel = s.source === 'kugou' ? '酷狗 VIP' : (s.source === 'kuwo' ? '酷我 HQ' : '网易云');
             const jsId = String(s.id).replace(/'/g, "\\'");
             const jsName = safeName.replace(/'/g, "\\'");
             const jsArtist = safeArtist.replace(/'/g, "\\'");
