@@ -7577,12 +7577,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #1e293b !important;
     }
 
-    /* Web Terminal Rounded Corners, Day/Night Theming & Strict Scroll Isolation (No Page Jitter) */
+    /* Web Terminal Rounded Corners, Day/Night Theming & Smart Scroll Chaining */
     .terminal-card {
       border-radius: 16px !important;
       overflow: hidden !important;
-      overscroll-behavior: contain !important;
-      overscroll-behavior-y: contain !important;
+      overscroll-behavior: auto !important;
+      overscroll-behavior-y: auto !important;
       touch-action: pan-y !important;
       transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
     }
@@ -7592,8 +7592,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-radius: 14px !important;
       overflow: hidden !important;
       background: transparent;
-      overscroll-behavior: contain !important;
-      overscroll-behavior-y: contain !important;
+      overscroll-behavior: auto !important;
+      overscroll-behavior-y: auto !important;
       touch-action: pan-y !important;
       transition: background-color 0.4s ease !important;
     }
@@ -7601,18 +7601,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       padding: 10px 14px;
       border-radius: 14px !important;
       height: 100%;
-      overscroll-behavior: contain !important;
-      overscroll-behavior-y: contain !important;
+      overscroll-behavior: auto !important;
+      overscroll-behavior-y: auto !important;
     }
     #terminal-container .xterm-viewport {
       border-radius: 14px !important;
-      overscroll-behavior: contain !important;
-      overscroll-behavior-y: contain !important;
+      overscroll-behavior: auto !important;
+      overscroll-behavior-y: auto !important;
     }
     #terminal-container .xterm-screen {
       border-radius: 14px !important;
-      overscroll-behavior: contain !important;
-      overscroll-behavior-y: contain !important;
+      overscroll-behavior: auto !important;
+      overscroll-behavior-y: auto !important;
     }
     html.theme-light .terminal-card {
       background: #f8fafc !important;
@@ -20551,32 +20551,86 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     window.refreshPulseOSContainers = refreshPulseOSContainers;
 
-    // Terminal Scroll Trap: completely prevents wheel scrolling from dragging the outer page
+    // 🖥️ Web Terminal Scroll Management: Smoothly scroll terminal buffer internally,
+    // and seamlessly chain to scroll the external container when reaching boundaries (滑到底或到顶滚动外部容器)
     function setupTerminalScrollIsolation(container) {
       if (!container || container._scrollTrapInstalled) return;
       container._scrollTrapInstalled = true;
 
+      const getOuterScrollContainer = () => {
+        return container.closest('.view-section.scrollable') ||
+               document.getElementById('view-overview') ||
+               document.querySelector('.content-viewport') ||
+               window;
+      };
+
       container.addEventListener('wheel', (e) => {
-        // Strict stop propagation: never bubble to parent window
-        e.stopPropagation();
-
         const viewport = container.querySelector('.xterm-viewport');
-        if (viewport) {
-          const atTop = viewport.scrollTop <= 0;
-          const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+        const outer = getOuterScrollContainer();
 
-          // When hitting boundary, preventDefault to eliminate page chain scroll
-          if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-            e.preventDefault();
+        // If terminal has no scrollable viewport or content fits completely within view
+        if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) {
+          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
+            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          } else {
+            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
           }
-        } else {
-          e.preventDefault();
+          return;
         }
+
+        const atTop = viewport.scrollTop <= 1;
+        const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+
+        // When scrolled to bottom and continuing downward: scroll outer container
+        if (e.deltaY > 0 && atBottom) {
+          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
+            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          } else {
+            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          }
+          return;
+        }
+
+        // When scrolled to top and continuing upward: scroll outer container
+        if (e.deltaY < 0 && atTop) {
+          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
+            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          } else {
+            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          }
+          return;
+        }
+
+        // When scrolling strictly inside the terminal buffer (not at boundaries),
+        // prevent page chaining so terminal internal text scrolls cleanly without outer page jitter
+        e.stopPropagation();
       }, { passive: false });
+
+      // Touch events: allow natural swipe chaining when at boundaries
+      let touchStartY = 0;
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
 
       container.addEventListener('touchmove', (e) => {
+        const viewport = container.querySelector('.xterm-viewport');
+        if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) {
+          return;
+        }
+        if (!e.touches || !e.touches[0]) return;
+
+        const currentY = e.touches[0].clientY;
+        const deltaY = touchStartY - currentY; // > 0 means swiping up (scrolling down)
+        const atTop = viewport.scrollTop <= 1;
+        const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+
+        if ((deltaY > 0 && atBottom) || (deltaY < 0 && atTop)) {
+          return; // Let touch naturally bubble to outer container
+        }
         e.stopPropagation();
-      }, { passive: false });
+      }, { passive: true });
     }
     window.setupTerminalScrollIsolation = setupTerminalScrollIsolation;
 
