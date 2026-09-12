@@ -11225,6 +11225,58 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: var(--mail-text-main);
       border-color: #0284c7;
     }
+    .mail-reader-scenes {
+      display: inline-flex;
+      align-items: center;
+      background: var(--mail-card-bg);
+      border: 1px solid var(--mail-border);
+      border-radius: 7px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .mail-scene-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--mail-text-sub);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+    .mail-scene-btn:hover {
+      color: var(--mail-text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .mail-scene-btn[data-scene="light"].active {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: rgba(0, 0, 0, 0.15);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    html.theme-dark .mail-scene-btn[data-scene="light"].active {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .mail-scene-btn[data-scene="eyecare"].active {
+      background: rgba(217, 119, 6, 0.14);
+      color: #d97706;
+      border-color: rgba(217, 119, 6, 0.4);
+      box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1);
+    }
+    .mail-scene-btn[data-scene="dark"].active {
+      background: rgba(56, 189, 248, 0.14);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 1px 3px rgba(56, 189, 248, 0.1);
+    }
     .mail-meta-grid {
       display: flex;
       flex-direction: column;
@@ -11344,11 +11396,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .mail-body-frame-wrap {
       background: #ffffff !important;
     }
-    .mail-reader-pane.mail-eyecare-active,
-    .mail-reader-pane.mail-eyecare-active .mail-reader-header,
     .mail-reader-pane.mail-eyecare-active .mail-body-frame-wrap {
       background: #faf6ee !important;
-      border-color: rgba(217, 119, 6, 0.2) !important;
+      border-color: rgba(217, 119, 6, 0.25) !important;
+    }
+    .mail-reader-pane.mail-dark-active .mail-body-frame-wrap {
+      background: #0b0f19 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    .mail-reader-pane.mail-light-active .mail-body-frame-wrap {
+      background: #ffffff !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
     }
 
     /* ======================================================== */
@@ -13911,10 +13969,22 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                           <i data-lucide="sparkles" id="readerAiIcon" style="width:13px;height:13px;color:#0091ff;"></i>
                           <span>AI 智能速读</span>
                         </button>
-                        <button class="btn btn-ghost" onclick="toggleMailReaderAppearance()" id="btnReaderAppearance" title="切换信件浅色原貌 / 柔和护眼 / 深色护眼">
-                          <i data-lucide="eye" id="readerThemeIcon" style="width:13px;height:13px;"></i>
-                          <span id="lblReaderAppearance">浅色原貌</span>
-                        </button>
+                        <div class="mail-reader-scenes" id="mailReaderScenes" role="group" aria-label="信件阅读场景" title="切换阅读场景：浅色原貌 / 柔和护眼 / 深色护眼">
+                          <button type="button" class="mail-scene-btn" data-scene="light" onclick="setMailReaderScene('light')" title="浅色原貌 (还原标准白纸信件版式)">
+                            <i data-lucide="sun" style="width:12px;height:12px;"></i>
+                            <span>浅色</span>
+                          </button>
+                          <button type="button" class="mail-scene-btn" data-scene="eyecare" onclick="setMailReaderScene('eyecare')" title="柔和护眼 (暖阳纸张低蓝光舒缓)">
+                            <i data-lucide="coffee" style="width:12px;height:12px;"></i>
+                            <span>护眼</span>
+                          </button>
+                          <button type="button" class="mail-scene-btn" data-scene="dark" onclick="setMailReaderScene('dark')" title="深色护眼 (深夜曜石夜览模式防刺眼眩光)">
+                            <i data-lucide="moon" style="width:12px;height:12px;"></i>
+                            <span>深色</span>
+                          </button>
+                        </div>
+                        <span id="lblReaderAppearance" style="display:none;">浅色原貌</span>
+                        <button id="btnReaderAppearance" onclick="toggleMailReaderAppearance()" style="display:none;"></button>
                         <button class="btn btn-ghost" onclick="copyCurrentEmailBody()" title="复制纯文本正文">
                           <i data-lucide="copy" style="width:13px;height:13px;"></i>
                           <span>复制正文</span>
@@ -29873,6 +29943,71 @@ window.renderContainers = renderContainers;
       return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';
     }
 
+    function normalizeEmailDocumentInParent(doc, theme) {
+      if (!doc || !doc.body) return;
+      if (theme === 'light') {
+        const modified = doc.querySelectorAll('[data-mail-theme-overridden]');
+        modified.forEach(el => {
+          el.style.backgroundColor = el.getAttribute('data-prev-bg') || '';
+          el.style.color = el.getAttribute('data-prev-color') || '';
+          el.removeAttribute('data-mail-theme-overridden');
+        });
+        return;
+      }
+
+      const targetBg = (theme === 'dark') ? '#151d2f' : '#f3ece0';
+      const targetColor = (theme === 'dark') ? '#cbd5e1' : '#2d261e';
+
+      const elements = doc.querySelectorAll('div, table, td, tr, section, article, main, p, span, h1, h2, h3, h4, font, b, strong, li');
+      elements.forEach(el => {
+        const cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
+        if (!cs) return;
+
+        const bg = cs.backgroundColor;
+        if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+          const rgb = bg.match(/\d+/g);
+          if (rgb && rgb.length >= 3) {
+            const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+            const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+            if (lum > 175) {
+              if (!el.hasAttribute('data-mail-theme-overridden')) {
+                el.setAttribute('data-prev-bg', el.style.backgroundColor || '');
+                el.setAttribute('data-mail-theme-overridden', '1');
+              }
+              el.style.setProperty('background-color', targetBg, 'important');
+            }
+          }
+        }
+
+        const color = cs.color;
+        if (color) {
+          const rgb = color.match(/\d+/g);
+          if (rgb && rgb.length >= 3) {
+            const r = parseInt(rgb[0]), g = parseInt(rgb[1]), b = parseInt(rgb[2]);
+            const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+            if (theme === 'dark' && lum < 100) {
+              if (!el.hasAttribute('data-mail-theme-overridden')) {
+                el.setAttribute('data-prev-color', el.style.color || '');
+                el.setAttribute('data-mail-theme-overridden', '1');
+              }
+              el.style.setProperty('color', targetColor, 'important');
+            } else if (theme === 'eyecare' && lum > 200) {
+              if (!el.hasAttribute('data-mail-theme-overridden')) {
+                el.setAttribute('data-prev-color', el.style.color || '');
+                el.setAttribute('data-mail-theme-overridden', '1');
+              }
+              el.style.setProperty('color', targetColor, 'important');
+            }
+          }
+        }
+      });
+    }
+
+    function setMailReaderScene(scene) {
+      userManualEmailTheme = scene;
+      syncMailReaderThemeWithWorkspace();
+    }
+
     function syncMailReaderThemeWithWorkspace() {
       const activeTheme = userManualEmailTheme || getWorkspaceTheme();
       const iframe = document.getElementById('readerHtmlIframe');
@@ -29883,24 +30018,43 @@ window.renderContainers = renderContainers;
       if (wrap) {
         if (activeTheme === 'eyecare') {
           wrap.style.background = '#faf6ee';
-          if (readerPane) readerPane.classList.add('mail-eyecare-active');
+          if (readerPane) {
+            readerPane.classList.add('mail-eyecare-active');
+            readerPane.classList.remove('mail-dark-active');
+          }
         } else if (activeTheme === 'light') {
           wrap.style.background = '#ffffff';
-          if (readerPane) readerPane.classList.remove('mail-eyecare-active');
+          if (readerPane) {
+            readerPane.classList.remove('mail-eyecare-active');
+            readerPane.classList.remove('mail-dark-active');
+          }
         } else {
-          wrap.style.background = '#0f172a';
-          if (readerPane) readerPane.classList.remove('mail-eyecare-active');
+          wrap.style.background = '#0b0f19';
+          if (readerPane) {
+            readerPane.classList.add('mail-dark-active');
+            readerPane.classList.remove('mail-eyecare-active');
+          }
         }
       }
 
-      // 2. Direct DOM & Window synchronization into iframe
+      // 2. Synchronize segmented 3-scene buttons
+      document.querySelectorAll('.mail-scene-btn').forEach(btn => {
+        if (btn.getAttribute('data-scene') === activeTheme) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // 3. Direct DOM & Window synchronization into iframe
       if (iframe) {
         try {
           if (iframe.contentWindow) {
-            if (typeof iframe.contentWindow.setPulseosTheme === 'function') {
+            if (typeof iframe.contentWindow.applyPulseosTheme === 'function') {
+              iframe.contentWindow.applyPulseosTheme(activeTheme);
+            } else if (typeof iframe.contentWindow.setPulseosTheme === 'function') {
               iframe.contentWindow.setPulseosTheme(activeTheme);
-            }
-            if (typeof iframe.contentWindow.applyTheme === 'function') {
+            } else if (typeof iframe.contentWindow.applyTheme === 'function') {
               iframe.contentWindow.applyTheme(activeTheme);
             }
             iframe.contentWindow.postMessage({ action: 'setTheme', theme: activeTheme }, '*');
@@ -29908,14 +30062,56 @@ window.renderContainers = renderContainers;
           if (iframe.contentDocument && iframe.contentDocument.documentElement) {
             const cls = (activeTheme === 'eyecare') ? 'theme-eyecare' : ((activeTheme === 'light') ? 'theme-light' : 'theme-dark');
             iframe.contentDocument.documentElement.className = cls;
-            iframe.contentDocument.documentElement.setAttribute('data-pulseos-theme', activeTheme);
-            if (iframe.contentDocument.body) {
-              iframe.contentDocument.body.style.backgroundColor = (activeTheme === 'eyecare') ? '#faf6ee' : ((activeTheme === 'light') ? '#ffffff' : '#0f172a');
-              iframe.contentDocument.body.style.color = (activeTheme === 'eyecare') ? '#2d261e' : ((activeTheme === 'light') ? '#0f172a' : '#e2e8f0');
+            iframe.contentDocument.documentElement.setAttribute('data-pulseos-theme', cls);
+
+            // Inject or update comprehensive CSS rules directly inside iframe head
+            let styleEl = iframe.contentDocument.getElementById('pulseos-direct-theme-override');
+            if (!styleEl) {
+              styleEl = iframe.contentDocument.createElement('style');
+              styleEl.id = 'pulseos-direct-theme-override';
+              if (iframe.contentDocument.head) {
+                iframe.contentDocument.head.appendChild(styleEl);
+              } else if (iframe.contentDocument.body) {
+                iframe.contentDocument.body.insertBefore(styleEl, iframe.contentDocument.body.firstChild);
+              }
+            }
+
+            if (styleEl) {
+              if (activeTheme === 'dark') {
+                styleEl.textContent = `
+                  html, html body { background-color: #0b0f19 !important; color: #e2e8f0 !important; color-scheme: dark !important; }
+                  [bgcolor^="#f" i], [bgcolor^="#e" i], [bgcolor="#ffffff" i], [bgcolor="#fff" i], [bgcolor="white" i] { background-color: #151d2f !important; }
+                  [style*="background" i][style*="#fff" i], [style*="background" i][style*="#f" i], [style*="background" i][style*="#e" i], [style*="background" i][style*="white" i], [style*="background" i][style*="rgb(255" i], [style*="background" i][style*="rgb(250" i], [style*="background" i][style*="rgb(24" i] { background-color: #151d2f !important; }
+                  div, p, span, td, th, li, font, b, strong { color: #cbd5e1 !important; }
+                  h1, h2, h3, h4, h5, h6 { color: #f8fafc !important; }
+                  a, a * { color: #38bdf8 !important; }
+                  hr { border-color: rgba(255, 255, 255, 0.12) !important; }
+                  img { filter: brightness(0.94) contrast(1.04) !important; }
+                `;
+              } else if (activeTheme === 'eyecare') {
+                styleEl.textContent = `
+                  html, html body { background-color: #faf6ee !important; color: #2d261e !important; color-scheme: light !important; }
+                  [bgcolor^="#f" i], [bgcolor^="#e" i], [bgcolor="#ffffff" i], [bgcolor="#fff" i], [bgcolor="white" i] { background-color: #f3ece0 !important; }
+                  [style*="background" i][style*="#fff" i], [style*="background" i][style*="#f" i], [style*="background" i][style*="#e" i], [style*="background" i][style*="white" i], [style*="background" i][style*="rgb(255" i], [style*="background" i][style*="rgb(250" i], [style*="background" i][style*="rgb(24" i] { background-color: #f3ece0 !important; }
+                  div, p, span, td, th, li, font, b, strong { color: #2d261e !important; }
+                  a, a * { color: #b45309 !important; }
+                  hr { border-color: rgba(180, 83, 9, 0.15) !important; }
+                `;
+              } else {
+                styleEl.textContent = `
+                  html, html body { background-color: #ffffff !important; color: #0f172a !important; color-scheme: light !important; }
+                  a { color: #0284c7 !important; }
+                `;
+              }
+            }
+
+            if (typeof iframe.contentWindow.normalizeMailLuminance === 'function') {
+              iframe.contentWindow.normalizeMailLuminance(iframe.contentDocument, activeTheme);
+            } else {
+              normalizeEmailDocumentInParent(iframe.contentDocument, activeTheme);
             }
           }
         } catch (e) {
-          // Cross-origin fallback: reload with theme parameter
           if (currentSelectedMailId) {
             iframe.src = `/api/mail/raw_html/${currentSelectedMailId}?theme=${activeTheme}`;
           }
