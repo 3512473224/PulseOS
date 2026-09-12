@@ -5596,6 +5596,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: rgba(239, 68, 68, 0.95);
       color: #fff;
     }
+    .lightbox-nav-btn {
+      opacity: 0.78;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .lightbox-nav-btn:hover {
+      opacity: 1 !important;
+      background: rgba(14, 165, 233, 0.28) !important;
+      border-color: rgba(56, 189, 248, 0.65) !important;
+      color: #38bdf8 !important;
+      transform: translateY(-50%) scale(1.1) !important;
+      box-shadow: 0 12px 36px rgba(0, 145, 255, 0.45) !important;
+    }
+    .lightbox-nav-btn:active {
+      transform: translateY(-50%) scale(0.94) !important;
+    }
+    @media (max-width: 768px) {
+      .lightbox-nav-btn {
+        width: 42px !important;
+        height: 42px !important;
+      }
+      .lightbox-nav-btn.prev-btn { left: 12px !important; }
+      .lightbox-nav-btn.next-btn { right: 12px !important; }
+    }
     .lightbox-dock-btn {
       background: transparent;
       border: none;
@@ -15456,7 +15479,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           <i data-lucide="image" style="width:16px; height:16px;"></i>
         </div>
         <div style="display:flex; flex-direction:column;">
-          <span id="lightboxTitleElement" style="font-size:0.9rem; font-weight:600; color:#f8fafc; font-family:var(--font-sans); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 2px 8px rgba(0,0,0,0.8);">图片预览</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span id="lightboxTitleElement" style="font-size:0.9rem; font-weight:600; color:#f8fafc; font-family:var(--font-sans); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 2px 8px rgba(0,0,0,0.8);">图片预览</span>
+            <span id="lightboxCounterBadge" style="display:none; align-items:center; font-size:0.72rem; padding:1px 8px; border-radius:6px; background:rgba(56, 189, 248, 0.14); border:1px solid rgba(56, 189, 248, 0.35); color:#38bdf8; font-weight:700; font-family:var(--font-mono, monospace);">1 / 1</span>
+          </div>
           <span id="lightboxMetaElement" style="font-size:0.72rem; color:#94a3b8; font-family:var(--font-mono, monospace);">正在解析图像尺寸...</span>
         </div>
       </div>
@@ -15473,6 +15499,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       </div>
     </div>
 
+    <!-- Left / Previous Image Floating Button (浮动上一张按钮) -->
+    <button type="button" id="lightboxPrevBtn" class="lightbox-nav-btn prev-btn" onclick="navigateLightboxImage(-1)" title="上一张图片 (← Left Arrow / [)" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); z-index:30; width:52px; height:52px; border-radius:50%; background:rgba(15, 23, 42, 0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255, 255, 255, 0.16); color:#f8fafc; display:none; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 8px 32px rgba(0,0,0,0.65); pointer-events:auto;">
+      <i data-lucide="chevron-left" style="width:26px; height:26px;"></i>
+    </button>
+
+    <!-- Right / Next Image Floating Button (浮动下一张按钮) -->
+    <button type="button" id="lightboxNextBtn" class="lightbox-nav-btn next-btn" onclick="navigateLightboxImage(1)" title="下一张图片 (→ Right Arrow / ])" style="position:absolute; right:28px; top:50%; transform:translateY(-50%); z-index:30; width:52px; height:52px; border-radius:50%; background:rgba(15, 23, 42, 0.75); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255, 255, 255, 0.16); color:#f8fafc; display:none; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 8px 32px rgba(0,0,0,0.65); pointer-events:auto;">
+      <i data-lucide="chevron-right" style="width:26px; height:26px;"></i>
+    </button>
+
     <!-- Main Viewport Stage -->
     <div id="lightboxViewport" style="position:absolute; inset:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab;">
       <div id="lightboxTransformLayer" style="position:relative; transform-origin:center center; will-change:transform; display:flex; align-items:center; justify-content:center; transition:none;">
@@ -15487,6 +15523,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     <!-- Bottom Floating Controls Capsule -->
     <div class="lightbox-bottom-dock" style="position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none;">
       <div class="lightbox-controls-pill" style="pointer-events:auto; display:flex; align-items:center; gap:4px; padding:6px 14px; background:rgba(15, 23, 42, 0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255, 255, 255, 0.12); border-radius:9999px; box-shadow:0 16px 40px rgba(0,0,0,0.7);">
+        <!-- Dock Nav Prev/Next Buttons -->
+        <button type="button" class="lightbox-dock-btn" id="lightboxDockPrevBtn" onclick="navigateLightboxImage(-1)" title="上一张 (← / [)" style="display:none;">
+          <i data-lucide="chevron-left" style="width:14px; height:14px;"></i>
+        </button>
+        <span id="lightboxDockCounter" style="display:none; font-size:0.72rem; font-weight:700; color:#38bdf8; font-family:var(--font-mono, monospace); padding:0 6px;">1 / 1</span>
+        <button type="button" class="lightbox-dock-btn" id="lightboxDockNextBtn" onclick="navigateLightboxImage(1)" title="下一张 (→ / ])" style="display:none;">
+          <i data-lucide="chevron-right" style="width:14px; height:14px;"></i>
+        </button>
+        <div id="lightboxDockDivider" style="display:none; width:1px; height:16px; background:rgba(255,255,255,0.12); margin:0 4px;"></div>
+
         <button type="button" class="lightbox-dock-btn" onclick="zoomLightboxStep(-1)" title="缩小 (滚轮向下 / -)">
           <i data-lucide="minus" style="width:14px; height:14px;"></i>
         </button>
@@ -15509,6 +15555,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         </button>
       </div>
       <div style="font-size:0.7rem; color:rgba(255,255,255,0.48); text-shadow:0 1px 3px rgba(0,0,0,0.9); font-family:var(--font-sans); display:flex; align-items:center; gap:8px;">
+        <span id="lightboxNavTip" style="display:none;"><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">← / →</kbd> 切换图片</span>
+        <span id="lightboxNavTipDot" style="display:none;">•</span>
         <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">滚轮</kbd> 自由缩放</span>
         <span>•</span>
         <span><kbd style="background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; font-size:0.65rem;">拖拽</kbd> 漫游平移</span>
@@ -17597,8 +17645,248 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       initX: 0,
       initY: 0,
       naturalWidth: 0,
-      naturalHeight: 0
+      naturalHeight: 0,
+      gallery: [],
+      currentIndex: -1
     };
+    window.lightboxState = lightboxState;
+
+    function collectNoteGalleryImages(currentSrc) {
+      const pane = document.getElementById('notePreviewPane');
+      let galleryList = [];
+
+      function extractRawPath(srcStr) {
+        if (!srcStr) return '';
+        try {
+          const u = new URL(srcStr, window.location.origin);
+          if (u.pathname.includes('/api/notes/raw_image')) {
+            const p = u.searchParams.get('path');
+            if (p) return decodeURIComponent(p);
+          }
+        } catch (e) {}
+        const clean = srcStr.split('?')[0].replace(/^https?:\/\/[^/]+/, '');
+        return decodeURIComponent(clean);
+      }
+
+      // Tier 1: Query all rendered images in the active note preview pane
+      if (pane) {
+        const imgEls = Array.from(pane.querySelectorAll('img.obsidian-rendered-img, img[src*="/api/notes/raw_image"], img[src*="assets/"], .obsidian-img-wrapper img'))
+          .filter(img => img.src && !img.src.startsWith('data:image/gif'));
+        
+        imgEls.forEach(el => {
+          const s = el.getAttribute('src') || el.src;
+          const t = el.getAttribute('alt') || el.getAttribute('title') || (extractRawPath(s).split('/').pop() || '图片');
+          const cleanPath = extractRawPath(s);
+          if (!galleryList.some(item => extractRawPath(item.src) === cleanPath)) {
+            galleryList.push({ src: s, title: t, rawPath: cleanPath });
+          }
+        });
+      }
+
+      // Tier 2: If preview pane only found <= 1, parse activeNote.content (Markdown & Wikilinks)
+      if (galleryList.length <= 1 && typeof activeNote !== 'undefined' && activeNote && activeNote.content) {
+        const text = activeNote.content;
+        const parsedPaths = [];
+        
+        // Match ![[assets/path.png|500]] or ![[path.png]]
+        const wikiRegex = /!\[\[(.*?)\]\]/g;
+        let wm;
+        while ((wm = wikiRegex.exec(text)) !== null) {
+          const raw = wm[1].split('|')[0].trim();
+          if (/\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(raw)) {
+            parsedPaths.push(raw);
+          }
+        }
+
+        // Match ![alt](assets/path.png)
+        const mdRegex = /!\[.*?\]\((.*?)\)/g;
+        let mm;
+        while ((mm = mdRegex.exec(text)) !== null) {
+          const raw = mm[1].trim();
+          if (/\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(raw)) {
+            parsedPaths.push(raw);
+          }
+        }
+
+        if (parsedPaths.length > 1) {
+          galleryList = parsedPaths.map(p => {
+            const resolved = typeof resolveNoteImageUrl === 'function' ? resolveNoteImageUrl(p) : `/api/notes/raw_image?path=${encodeURIComponent(p)}`;
+            return {
+              src: resolved,
+              title: p.split('/').pop() || '图片',
+              rawPath: p
+            };
+          });
+        }
+      }
+
+      // Tier 3: If still only 1 or 0, check if current image belongs to a folder in vaultNotes
+      if (galleryList.length <= 1 && typeof vaultNotes !== 'undefined' && Array.isArray(vaultNotes)) {
+        const currentClean = extractRawPath(currentSrc);
+        const folder = currentClean.includes('/') ? currentClean.substring(0, currentClean.lastIndexOf('/')) : '';
+        if (folder) {
+          const folderImages = vaultNotes.filter(n => {
+            const np = n.path || n.name;
+            return np.startsWith(folder + '/') && /\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(np);
+          });
+          if (folderImages.length > 1) {
+            galleryList = folderImages.map(n => {
+              const p = n.path || n.name;
+              const resolved = `/api/notes/raw_image?path=${encodeURIComponent(p)}`;
+              return {
+                src: resolved,
+                title: n.name || p.split('/').pop() || '图片',
+                rawPath: p
+              };
+            });
+          }
+        }
+      }
+
+      // Tier 4: Find parent note in vaultNotes that references this image filename
+      if (galleryList.length <= 1 && typeof vaultNotes !== 'undefined' && Array.isArray(vaultNotes)) {
+        const cleanFile = extractRawPath(currentSrc).split('/').pop();
+        const parentNote = vaultNotes.find(n => n.content && n.content.includes(cleanFile));
+        if (parentNote && parentNote.content) {
+          const text = parentNote.content;
+          const parsedPaths = [];
+          const wikiRegex = /!\[\[(.*?)\]\]/g;
+          let wm;
+          while ((wm = wikiRegex.exec(text)) !== null) {
+            const raw = wm[1].split('|')[0].trim();
+            if (/\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(raw)) parsedPaths.push(raw);
+          }
+          const mdRegex = /!\[.*?\]\((.*?)\)/g;
+          let mm;
+          while ((mm = mdRegex.exec(text)) !== null) {
+            const raw = mm[1].trim();
+            if (/\.(png|jpe?g|gif|webp|svg|bmp)$/i.test(raw)) parsedPaths.push(raw);
+          }
+          if (parsedPaths.length > 1) {
+            galleryList = parsedPaths.map(p => {
+              const resolved = typeof resolveNoteImageUrl === 'function' ? resolveNoteImageUrl(p) : `/api/notes/raw_image?path=${encodeURIComponent(p)}`;
+              return {
+                src: resolved,
+                title: p.split('/').pop() || '图片',
+                rawPath: p
+              };
+            });
+          }
+        }
+      }
+
+      return galleryList;
+    }
+
+    function updateLightboxGalleryUI() {
+      const prevBtn = document.getElementById('lightboxPrevBtn');
+      const nextBtn = document.getElementById('lightboxNextBtn');
+      const badge = document.getElementById('lightboxCounterBadge');
+      const dockPrev = document.getElementById('lightboxDockPrevBtn');
+      const dockNext = document.getElementById('lightboxDockNextBtn');
+      const dockCounter = document.getElementById('lightboxDockCounter');
+      const dockDivider = document.getElementById('lightboxDockDivider');
+      const navTip = document.getElementById('lightboxNavTip');
+      const navTipDot = document.getElementById('lightboxNavTipDot');
+
+      const total = lightboxState.gallery.length;
+      const current = lightboxState.currentIndex >= 0 ? lightboxState.currentIndex + 1 : 1;
+
+      if (total > 1) {
+        if (prevBtn) prevBtn.style.display = 'flex';
+        if (nextBtn) nextBtn.style.display = 'flex';
+        if (badge) {
+          badge.textContent = `${current} / ${total}`;
+          badge.style.display = 'inline-flex';
+        }
+        if (dockPrev) dockPrev.style.display = 'inline-flex';
+        if (dockNext) dockNext.style.display = 'inline-flex';
+        if (dockCounter) {
+          dockCounter.textContent = `${current} / ${total}`;
+          dockCounter.style.display = 'inline-flex';
+        }
+        if (dockDivider) dockDivider.style.display = 'block';
+        if (navTip) navTip.style.display = 'inline';
+        if (navTipDot) navTipDot.style.display = 'inline';
+      } else {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (dockPrev) dockPrev.style.display = 'none';
+        if (dockNext) dockNext.style.display = 'none';
+        if (dockCounter) dockCounter.style.display = 'none';
+        if (dockDivider) dockDivider.style.display = 'none';
+        if (navTip) navTip.style.display = 'none';
+        if (navTipDot) navTipDot.style.display = 'none';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function navigateLightboxImage(direction) {
+      if (!lightboxState.gallery || lightboxState.gallery.length <= 1) return;
+      
+      const total = lightboxState.gallery.length;
+      let nextIndex = lightboxState.currentIndex + direction;
+      if (nextIndex < 0) nextIndex = total - 1;
+      else if (nextIndex >= total) nextIndex = 0;
+
+      lightboxState.currentIndex = nextIndex;
+      const targetItem = lightboxState.gallery[nextIndex];
+
+      const img = document.getElementById('lightboxImgElement');
+      const spinner = document.getElementById('lightboxLoadingSpinner');
+      const titleEl = document.getElementById('lightboxTitleElement');
+      const metaEl = document.getElementById('lightboxMetaElement');
+
+      // Reset transforms
+      lightboxState.scale = 1.0;
+      lightboxState.translateX = 0;
+      lightboxState.translateY = 0;
+      lightboxState.rotation = 0;
+      applyLightboxTransform(false);
+
+      updateLightboxGalleryUI();
+
+      if (titleEl) titleEl.textContent = targetItem.title || (targetItem.src.split('/').pop() || '图片');
+      if (metaEl) metaEl.textContent = '正在切换高清图像...';
+
+      if (typeof gsap !== 'undefined' && img) {
+        gsap.killTweensOf(img);
+        gsap.to(img, {
+          opacity: 0,
+          scale: 0.96,
+          x: direction > 0 ? -32 : 32,
+          duration: 0.12,
+          ease: 'power2.in',
+          onComplete: () => {
+            if (spinner) spinner.style.display = 'flex';
+            img.src = targetItem.src;
+            img.onload = () => {
+              if (spinner) spinner.style.display = 'none';
+              lightboxState.naturalWidth = img.naturalWidth;
+              lightboxState.naturalHeight = img.naturalHeight;
+              if (metaEl) {
+                metaEl.textContent = `${img.naturalWidth} × ${img.naturalHeight} 像素 · 原始尺寸`;
+              }
+              gsap.fromTo(img, 
+                { opacity: 0, scale: 0.96, x: direction > 0 ? 32 : -32 },
+                { opacity: 1, scale: 1, x: 0, duration: 0.22, ease: 'power2.out', clearProps: 'transform' }
+              );
+            };
+            img.onerror = () => {
+              if (spinner) spinner.style.display = 'none';
+              img.style.opacity = '1';
+              handleLightboxImageError();
+            };
+          }
+        });
+      } else {
+        if (spinner) spinner.style.display = 'flex';
+        img.style.opacity = '0.3';
+        img.src = targetItem.src;
+      }
+    }
+    window.navigateLightboxImage = navigateLightboxImage;
 
     function applyLightboxTransform(animate = false) {
       const layer = document.getElementById('lightboxTransformLayer');
@@ -17703,6 +17991,36 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         const apiPath = clean.startsWith('assets/') ? clean : `assets/${clean}`;
         finalSrc = `/api/notes/raw_image?path=${encodeURIComponent(apiPath)}`;
       }
+
+      // Collect note gallery images
+      const gallery = collectNoteGalleryImages(finalSrc);
+      lightboxState.gallery = gallery;
+
+      function cleanForCompare(s) {
+        if (!s) return '';
+        try {
+          const u = new URL(s, window.location.origin);
+          if (u.pathname.includes('/api/notes/raw_image')) {
+            const p = u.searchParams.get('path');
+            if (p) return decodeURIComponent(p);
+          }
+        } catch(e) {}
+        return decodeURIComponent(s.split('?')[0].replace(/^https?:\/\/[^/]+/, ''));
+      }
+      const targetClean = cleanForCompare(finalSrc);
+      let matchedIdx = gallery.findIndex(item => cleanForCompare(item.src) === targetClean);
+      if (matchedIdx === -1) {
+        if (gallery.length > 0) {
+          gallery.unshift({ src: finalSrc, title: title || (finalSrc.split('/').pop() || '图片') });
+          matchedIdx = 0;
+        } else {
+          matchedIdx = 0;
+          lightboxState.gallery = [{ src: finalSrc, title: title || (finalSrc.split('/').pop() || '图片') }];
+        }
+      }
+      lightboxState.currentIndex = matchedIdx;
+
+      updateLightboxGalleryUI();
 
       if (spinner) spinner.style.display = 'flex';
       img.style.opacity = '0.3';
@@ -17869,12 +18187,30 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         } else if (e.key === 'r' || e.key === 'R') {
           rotateLightboxImage();
           e.preventDefault();
-        } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-          const step = 50;
-          if (e.key === 'ArrowUp') lightboxState.translateY += step;
-          if (e.key === 'ArrowDown') lightboxState.translateY -= step;
-          if (e.key === 'ArrowLeft') lightboxState.translateX += step;
-          if (e.key === 'ArrowRight') lightboxState.translateX -= step;
+        } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A' || e.key === '[') {
+          if (lightboxState.scale <= 1.05) {
+            navigateLightboxImage(-1);
+            e.preventDefault();
+          } else {
+            lightboxState.translateX += 50;
+            applyLightboxTransform(true);
+            e.preventDefault();
+          }
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D' || e.key === ']') {
+          if (lightboxState.scale <= 1.05) {
+            navigateLightboxImage(1);
+            e.preventDefault();
+          } else {
+            lightboxState.translateX -= 50;
+            applyLightboxTransform(true);
+            e.preventDefault();
+          }
+        } else if (e.key === 'ArrowUp') {
+          lightboxState.translateY += 50;
+          applyLightboxTransform(true);
+          e.preventDefault();
+        } else if (e.key === 'ArrowDown') {
+          lightboxState.translateY -= 50;
           applyLightboxTransform(true);
           e.preventDefault();
         }
