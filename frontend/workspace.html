@@ -21,7 +21,6 @@
     var pulseOSTerminalFitAddon = null;
     window.initHomeDashboard = function() {
       try { if (typeof initLiveWeather === 'function') initLiveWeather(true); } catch(e){}
-      try { if (typeof fetchDailyNews === 'function') fetchDailyNews(); } catch(e){}
       try { if (typeof fetchRealHealthData === 'function') fetchRealHealthData(); } catch(e){}
     };
     window.initKuGouQuality = function() {
@@ -16226,9 +16225,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           { opacity: 0, y: -24, filter: 'blur(10px)' }, 
           { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.52, ease: 'back.out(1.4)', delay: 0.12, clearProps: 'transform,filter,opacity' }
         );
-        // 3. Populate cards immediately so they cascade strictly in sequence
-        if (typeof renderDailyNewsList === 'function') {
-          renderDailyNewsList('', false); // render without immediate animation
+        // 3. Populate cards immediately if container is empty so they cascade strictly in sequence
+        const newsContainer = document.getElementById('dailyNewsList');
+        if (newsContainer && newsContainer.children.length === 0 && typeof renderDailyNewsList === 'function') {
+          renderDailyNewsList('', false);
         }
         // 4. Sequential: News Cards cascading strictly after filter bar (Tier 3 - delay 240ms, stagger 0.07s)
         const newsCards = document.querySelectorAll('#view-news .news-feed-list > .news-card');
@@ -16322,12 +16322,20 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     window.animateIslandOnViewSwitch = animateIslandOnViewSwitch;
 
-    function switchView(viewKey) {
+    let currentActiveViewKey = 'home';
+    function switchView(viewKey, force = false) {
       const target = document.getElementById('view-' + viewKey);
       if (!target) {
         console.warn('switchView: target view not found: ' + viewKey);
         return;
       }
+
+      // If user clicks the currently active view tab again, simply smooth-scroll to top with 0 flash/re-trigger
+      if (!force && currentActiveViewKey === viewKey && target.classList.contains('active')) {
+        target.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      currentActiveViewKey = viewKey;
 
       // 🌟 STEP 0: ANIMATE DYNAMIC ISLAND IN SYNC WITH VIEW SWITCHING!
       animateIslandOnViewSwitch(viewKey);
@@ -16389,9 +16397,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (viewKey === 'home') {
           initHomeDashboard();
           initLiveWeather(false);
-          fetchDailyNews();
         } else if (viewKey === 'news') {
-          fetchDailyNews(false);
+          // 0ms transition: If cache exists, view is already rendered with zero network jitter; only fetch if empty
+          if (!cachedNewsData || !cachedNewsData.categories) {
+            fetchDailyNews(false);
+          }
         } else if (viewKey === 'health') {
           if (typeof fetchRealHealthData === 'function') fetchRealHealthData();
         } else if (viewKey === 'obsidian') {
@@ -27690,9 +27700,10 @@ window.renderContainers = renderContainers;
         const timeStr = cachedNewsData.updatedAt || '刚刚';
         const totalCountEl = document.getElementById('newsTotalCount');
         if (totalCountEl) totalCountEl.textContent = `25 条权威热点 (${timeStr})`;
+      } else {
+        // High-speed background server fetch if cache is absent
+        fetchDailyNews(false);
       }
-      // 2. High-speed background server cache verification
-      fetchDailyNews(false);
     }
 
     async function fetchDailyNews(forceRefresh = false, isDeepAi = false) {
@@ -27758,19 +27769,40 @@ window.renderContainers = renderContainers;
         if (res.ok) {
           const data = await res.json();
           if (data && data.categories) {
+            let hasChanged = false;
+            if (!cachedNewsData || !cachedNewsData.categories) {
+              hasChanged = true;
+            } else {
+              try {
+                hasChanged = JSON.stringify(data.categories) !== JSON.stringify(cachedNewsData.categories);
+              } catch (e) { hasChanged = true; }
+            }
+
             cachedNewsData = data;
             try { localStorage.setItem('pulseos_news_cache', JSON.stringify(data)); } catch (e) {}
-            renderDailyNewsList('', true);
+
             const timeStr = data.updatedAt || new Date().toLocaleTimeString();
             const totalCountEl = document.getElementById('newsTotalCount');
             if (totalCountEl) totalCountEl.textContent = `25 条权威热点 (${timeStr})`;
-            if (forceRefresh && typeof showToast === 'function') {
-              if (isDeepAi) {
-                showToast(`✨ DeepSeek AI 深度重研完成：多源权威资讯已重新研炼 (${timeStr})`);
-              } else {
-                showToast(`⚡ 资讯已实时轮换更新：已载入最新权威快报批次 (${timeStr})`);
+
+            const container = document.getElementById('dailyNewsList');
+            const isCurrentlyEmpty = !container || container.children.length === 0;
+
+            if (forceRefresh) {
+              renderDailyNewsList('', true);
+              if (typeof showToast === 'function') {
+                if (isDeepAi) {
+                  showToast(`✨ DeepSeek AI 深度重研完成：多源权威资讯已重新研炼 (${timeStr})`);
+                } else {
+                  showToast(`⚡ 资讯已实时轮换更新：已载入最新权威快报批次 (${timeStr})`);
+                }
               }
+            } else if (isCurrentlyEmpty) {
+              renderDailyNewsList('', false);
+            } else if (hasChanged) {
+              renderDailyNewsList('', false);
             }
+            // If identical and container already populated, do NOT re-render or flash!
           }
         }
       } catch (e) {
@@ -27826,7 +27858,7 @@ window.renderContainers = renderContainers;
 
     function filterNewsBySearch(text) {
       const keyword = (text || '').trim().toLowerCase();
-      renderDailyNewsList(keyword);
+      renderDailyNewsList(keyword, false);
     }
 
     function renderDailyNewsList(searchFilter = '', animate = true) {
@@ -28654,7 +28686,7 @@ window.renderContainers = renderContainers;
     try { initScrollReveal(); } catch (e) { console.warn('initScrollReveal error', e); }
     try { initHomeDashboard(); } catch (e) { console.warn('initHomeDashboard error', e); }
     try { initLiveWeather(); } catch (e) { console.warn('initLiveWeather error', e); }
-    try { fetchDailyNews(); } catch (e) { console.warn('fetchDailyNews error', e); }
+    try { initDailyNews(); } catch (e) { console.warn('initDailyNews error', e); }
     try { initPomodoroTimer(); } catch (e) { console.warn('initPomodoroTimer error', e); }
     try { initKuGouMusicPlayer(); } catch (e) { console.warn('initKuGouMusicPlayer error', e); }
     try { updateQualityUI(); } catch (e) { console.warn('updateQualityUI error', e); }
