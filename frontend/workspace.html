@@ -20061,11 +20061,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
         let portsDisplay = '';
         const rawPorts = (c.Ports || '').trim();
+        let portsVal = '';
         if (rawPorts) {
-          const isHost = rawPorts.toLowerCase().includes('host');
-          portsDisplay = `<br/><b>Ports:</b> <span class="dk-port-tag" style="display:inline-flex; align-items:center; gap:3px; font-family:var(--font-mono, monospace); font-size:0.68rem; color:${isHost ? '#38bdf8' : 'var(--pulseos-c, #00d4ff)'}; background:rgba(0,145,255,0.08); padding:1px 6px; border-radius:4px; border:1px solid rgba(0,145,255,0.22); margin-top:2px; word-break:break-all;"><i data-lucide="${isHost ? 'radio' : 'network'}" style="width:10px;height:10px;flex-shrink:0;"></i><span>${escapeHtml(rawPorts)}</span></span>`;
+          portsVal = escapeHtml(rawPorts);
         } else if (c.Networks === 'host' || (c.NetworkMode || '').toLowerCase() === 'host') {
-          portsDisplay = `<br/><b>Ports:</b> <span class="dk-port-tag host" style="display:inline-flex; align-items:center; gap:3px; font-family:var(--font-mono, monospace); font-size:0.68rem; color:#38bdf8; background:rgba(56,189,248,0.08); padding:1px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.22); margin-top:2px;"><i data-lucide="radio" style="width:10px;height:10px;flex-shrink:0;"></i><span>Host Network (共享宿主机网络)</span></span>`;
+          portsVal = 'Host (共享宿主机网络)';
+        }
+        if (portsVal) {
+          portsDisplay = `<br/><b>Ports:</b> ${portsVal}`;
         }
 
         const newHtml = `<div class="dk-dot ${on ? 'on' : 'off'}"></div><div style="flex:1"><div class="dk-name" style="display:flex;align-items:center;justify-content:space-between;"><span>${name}</span>${statusPill}</div><div class="dk-meta">${c.Status || c.State || '—'}<br/><b>Image:</b> ${(c.Image || '—').substring(0, 40)}${portsDisplay}${c.RunningFor ? `<br/><b>Since:</b> ${c.RunningFor}` : ''}</div>
