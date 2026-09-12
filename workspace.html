@@ -7745,13 +7745,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     /* 🎯 POMODORO TARGET MODAL & ANTI-STRETCH BUTTONS */
     .pomo-preset-btn {
       font-size: 0.72rem;
-      padding: 5px 12px;
+      padding: 6px 13px;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text-dim);
       cursor: pointer;
       transition: all 0.15s ease;
+      font-weight: 500;
     }
     .pomo-preset-btn:hover {
       background: rgba(0, 145, 255, 0.16);
@@ -7763,6 +7764,201 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: rgba(0, 145, 255, 0.16) !important;
       border-color: #0091ff !important;
       box-shadow: 0 0 10px rgba(0, 145, 255, 0.25) !important;
+    }
+
+    /* ⏱️ REFINED POMODORO HEADER & ACTION BUTTONS */
+    .pomo-duration-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      border-radius: 20px;
+      background: rgba(0, 145, 255, 0.08);
+      border: 1px solid rgba(0, 145, 255, 0.25);
+      color: #0091ff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pomo-duration-btn:hover {
+      background: rgba(0, 145, 255, 0.16);
+      border-color: #0091ff;
+      transform: translateY(-1px);
+    }
+    html.theme-light .pomo-duration-btn {
+      background: #eff6ff !important;
+      border-color: #bfdbfe !important;
+      color: #0284c7 !important;
+    }
+    html.theme-light .pomo-duration-btn:hover {
+      background: #dbeafe !important;
+      border-color: #0284c7 !important;
+    }
+
+    .pomo-break-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+    .pomo-break-header-badge.short {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      color: #10b981;
+    }
+    .pomo-break-header-badge.long {
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.28);
+      color: #a855f7;
+    }
+    html.theme-light .pomo-break-header-badge.short {
+      background: #ecfdf5 !important;
+      border-color: #a7f3d0 !important;
+      color: #059669 !important;
+    }
+    html.theme-light .pomo-break-header-badge.long {
+      background: #faf5ff !important;
+      border-color: #e9d5ff !important;
+      color: #7e22ce !important;
+    }
+
+    /* Primary & Reset Action Buttons */
+    .pomo-btn-main {
+      flex: 1;
+      height: 38px;
+      padding: 0 18px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      color: #ffffff;
+      user-select: none;
+    }
+    .pomo-btn-main.mode-focus {
+      background: linear-gradient(135deg, #0091ff 0%, #0066cc 100%);
+      box-shadow: 0 4px 16px rgba(0, 145, 255, 0.35);
+    }
+    .pomo-btn-main.mode-focus:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 145, 255, 0.48);
+      background: linear-gradient(135deg, #009bf5 0%, #0077e6 100%);
+    }
+    .pomo-btn-main.mode-short,
+    .pomo-btn-main.mode-long {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+    .pomo-btn-main.mode-short:hover,
+    .pomo-btn-main.mode-long:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.48);
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    }
+    .pomo-btn-main:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .pomo-btn-reset {
+      height: 38px;
+      padding: 0 16px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      user-select: none;
+    }
+    .pomo-btn-reset:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .pomo-btn-reset:active {
+      transform: translateY(0) scale(0.98);
+    }
+    html.theme-light .pomo-btn-reset {
+      background: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    html.theme-light .pomo-btn-reset:hover {
+      background: #e2e8f0 !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+
+    /* Modal dialog and input */
+    .pomo-goal-modal-input {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 145, 255, 0.3);
+      color: #ffffff;
+      outline: none;
+      box-shadow: 0 0 12px rgba(0, 145, 255, 0.15);
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+    .pomo-goal-modal-input:focus {
+      border-color: #0091ff;
+      box-shadow: 0 0 0 2px rgba(0, 145, 255, 0.25);
+    }
+    html.theme-light .pomo-goal-dialog {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 145, 255, 0.1) !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .pomo-goal-modal-input {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: none !important;
+    }
+    html.theme-light .pomo-goal-modal-input:focus {
+      border-color: #0091ff !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 0 2px rgba(0, 145, 255, 0.2) !important;
+    }
+    html.theme-light .pomo-preset-btn {
+      background: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #334155 !important;
+    }
+    html.theme-light .pomo-preset-btn:hover {
+      background: #e0e7ff !important;
+      border-color: #a5b4fc !important;
+      color: #4f46e5 !important;
+    }
+    html.theme-light .pomo-goal-trigger {
+      background: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #pomoTaskTitleText {
+      color: #0f172a !important;
     }
 
     /* =====================================================================
@@ -12825,11 +13021,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <i data-lucide="timer" style="color:#0091ff; width:17px; height:17px;"></i>
                     <span style="font-weight:700;">专注时钟</span>
                   </div>
-                  <div style="display:flex; align-items:center; gap:6px;">
-                    <button class="btn btn-ghost" onclick="cyclePomoFocusDuration()" id="btnPomoDuration" style="padding:2px 8px; font-size:0.68rem; border-color:rgba(0,145,255,0.25); color:#0091ff; cursor:pointer;" title="切换单次专注时长">
-                      <span id="pomoDurationLabel">25m</span> ▾
+                  <!-- Right Control: Context-Aware (Shows duration picker in Focus mode, or Break status badge in Break mode) -->
+                  <div id="pomoHeaderRightWrap" style="display:flex; align-items:center; gap:6px;">
+                    <button class="pomo-duration-btn" onclick="cyclePomoFocusDuration()" id="btnPomoDuration" title="点击切换专注时长 (15m/25m/35m/45m/60m)">
+                      <i data-lucide="clock-4" style="width:12px;height:12px;opacity:0.85;"></i>
+                      <span>专注</span>
+                      <b id="pomoDurationLabel">25m</b>
+                      <span style="font-size:0.6rem;opacity:0.75;">▾</span>
                     </button>
-                    <span class="home-badge" id="pomoModeBadge" style="font-size:0.68rem;">25 min 专注</span>
+                    <span class="pomo-break-header-badge short" id="pomoBreakBadge" style="display:none;">
+                      <i data-lucide="coffee" id="pomoBreakBadgeIcon" style="width:12px;height:12px;"></i>
+                      <span id="pomoBreakBadgeText">短休 5 min</span>
+                    </span>
                   </div>
                 </div>
 
@@ -12860,21 +13063,21 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                   <!-- Dynamic Focus Goal (Zero Layout Shift Trigger Button) -->
                   <div class="pomo-goal-row" style="display:flex; align-items:center; justify-content:center; gap:6px; font-size:0.75rem; color:var(--text-dim); margin:2px 0 4px; height:28px; line-height:28px; overflow:hidden; contain:layout style;">
-                    <i data-lucide="crosshair" style="width:13px;height:13px;color:#0091ff;flex-shrink:0;"></i>
-                    <span style="flex-shrink:0;">专注目标：</span>
-                    <button class="pomo-goal-trigger" onclick="openPomoGoalModal()" id="pomoGoalTriggerBtn" style="background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.25); color:var(--text); padding:2px 10px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; max-width:170px; height:24px; box-sizing:border-box; transition:all 0.15s ease;" title="点击设置专注目标">
-                      <span id="pomoTaskTitleText" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block; max-width:130px;">系统架构与深度编码</span>
-                      <i data-lucide="pencil" style="width:10px;height:10px;color:#0091ff;opacity:0.7;flex-shrink:0;"></i>
+                    <i data-lucide="crosshair" id="pomoGoalLeadIcon" style="width:13px;height:13px;color:#0091ff;flex-shrink:0;"></i>
+                    <span id="pomoGoalLeadLabel" style="flex-shrink:0;">专注目标：</span>
+                    <button class="pomo-goal-trigger" onclick="openPomoGoalModal()" id="pomoGoalTriggerBtn" style="background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.25); color:var(--text); padding:2px 10px; border-radius:8px; font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; max-width:230px; height:24px; box-sizing:border-box; transition:all 0.15s ease;" title="点击设置专注目标">
+                      <span id="pomoTaskTitleText" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block; max-width:190px;">系统架构与深度编码</span>
+                      <i data-lucide="pencil" id="pomoGoalPencilIcon" style="width:10px;height:10px;color:#0091ff;opacity:0.7;flex-shrink:0;"></i>
                     </button>
                   </div>
 
                   <!-- Action Buttons -->
                   <div class="pomo-actions-row" style="display:flex; gap:10px; width:100%; max-width:260px; justify-content:center;">
-                    <button class="btn" id="btnPomoStart" onclick="togglePomodoro()" style="flex:1; justify-content:center; padding:8px 16px; font-size:0.78rem; font-weight:600; background:linear-gradient(135deg, #0091ff, #0077e6); color:#fff; border:none; border-radius:10px; box-shadow:0 4px 16px rgba(0,145,255,0.3); display:inline-flex; align-items:center; gap:6px; cursor:pointer; transition:all 0.2s;">
+                    <button class="pomo-btn-main mode-focus" id="btnPomoStart" onclick="togglePomodoro()">
                       <i data-lucide="play" id="pomoPlayIcon" style="width:14px;height:14px;"></i>
                       <span id="pomoStartText">开始专注</span>
                     </button>
-                    <button class="btn btn-ghost" onclick="resetPomodoro()" style="padding:8px 14px; font-size:0.78rem; border-radius:10px; display:inline-flex; align-items:center; gap:4px; cursor:pointer; border-color:var(--border);">
+                    <button class="pomo-btn-reset" id="btnPomoReset" onclick="resetPomodoro()" title="重置计时器">
                       <i data-lucide="rotate-ccw" style="width:13px;height:13px;"></i>
                       <span>重置</span>
                     </button>
@@ -15125,27 +15328,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   </div>
 
   <!-- ======================================================== -->
-  <!-- 🎯 POMODORO FOCUS GOAL MODAL (Linear Style) -->
+  <!-- 🎯 POMODORO FOCUS GOAL MODAL (Linear Luxury Style) -->
   <!-- ======================================================== -->
   <div class="modal-backdrop" id="pomoGoalModal" onclick="if(event.target===this) closePomoGoalModal()">
-    <div class="dialog-box" style="max-width:380px; padding:20px; background:rgba(13, 17, 28, 0.95); border:1px solid rgba(255, 255, 255, 0.08); border-radius:18px; backdrop-filter:blur(24px); box-shadow:0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(0, 145, 255, 0.2);" onclick="event.stopPropagation()">
-      <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid rgba(255, 255, 255, 0.06);">
+    <div class="dialog-box pomo-goal-dialog" onclick="event.stopPropagation()">
+      <div class="dialog-header" style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid rgba(255, 255, 255, 0.08);">
         <div class="dialog-title" style="display:flex; align-items:center; gap:8px;">
           <div style="width:24px; height:24px; font-size:0.75rem; background:linear-gradient(135deg, #0091ff, #00d4ff); color:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:bold;">
             <i data-lucide="crosshair" style="width:14px; height:14px;"></i>
           </div>
-          <span style="font-weight:700; font-size:0.9rem; color:var(--text);">设置专注目标</span>
+          <span id="pomoModalTitleText" style="font-weight:700; font-size:0.9rem;">设置专注目标</span>
         </div>
         <button class="btn-icon" onclick="closePomoGoalModal()" style="font-size:0.85rem; width:26px; height:26px; border-radius:8px; cursor:pointer; color:var(--text-dim); background:transparent; border:none;">✕</button>
       </div>
 
       <div style="margin:16px 0 12px;">
-        <label style="font-size:0.72rem; color:var(--text-dim); display:block; margin-bottom:6px;">目标名称</label>
-        <input type="text" id="inputPomoGoalModal" style="width:100%; padding:9px 12px; font-size:0.82rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(0,145,255,0.3); color:#fff; outline:none; box-shadow:0 0 12px rgba(0,145,255,0.15); box-sizing:border-box;" placeholder="输入专注目标..." onkeydown="if(event.key==='Enter') savePomoGoalFromModal()">
+        <label id="pomoModalInputLabel" style="font-size:0.72rem; color:var(--text-dim); display:block; margin-bottom:6px;">目标名称</label>
+        <input type="text" class="pomo-goal-modal-input" id="inputPomoGoalModal" placeholder="输入专注目标..." onkeydown="if(event.key==='Enter') savePomoGoalFromModal()">
 
         <!-- Quick Preset Tags (Linear Clickable Badges) -->
         <div style="margin-top:12px;">
-          <div style="font-size:0.68rem; color:var(--text-dim); margin-bottom:6px;">常用预设</div>
+          <div style="font-size:0.68rem; color:var(--text-dim); margin-bottom:6px;">常用灵感预设</div>
           <div style="display:flex; flex-wrap:wrap; gap:6px;">
             <button class="pomo-preset-btn" onclick="selectPomoPresetTag('系统架构与深度编码')">架构编码</button>
             <button class="pomo-preset-btn" onclick="selectPomoPresetTag('核心算法与性能调优')">算法调优</button>
@@ -23467,9 +23670,34 @@ window.renderContainers = renderContainers;
 
     function updatePomoDurationLabel() {
       const labelEl = document.getElementById('pomoDurationLabel');
-      const badgeEl = document.getElementById('pomoModeBadge');
+      const btnEl = document.getElementById('btnPomoDuration');
+      const breakBadge = document.getElementById('pomoBreakBadge');
+      const breakBadgeText = document.getElementById('pomoBreakBadgeText');
+      const breakBadgeIcon = document.getElementById('pomoBreakBadgeIcon');
+
       if (labelEl) labelEl.textContent = `${pomoCustomFocusMinutes}m`;
-      if (badgeEl && pomoMode === 'focus') badgeEl.textContent = `${pomoCustomFocusMinutes} min 专注`;
+
+      if (pomoMode === 'focus') {
+        if (btnEl) btnEl.style.display = 'inline-flex';
+        if (breakBadge) breakBadge.style.display = 'none';
+      } else if (pomoMode === 'short') {
+        if (btnEl) btnEl.style.display = 'none';
+        if (breakBadge) {
+          breakBadge.style.display = 'inline-flex';
+          breakBadge.className = 'pomo-break-header-badge short';
+          if (breakBadgeText) breakBadgeText.textContent = '短休 5 min';
+          if (breakBadgeIcon) breakBadgeIcon.setAttribute('data-lucide', 'coffee');
+        }
+      } else if (pomoMode === 'long') {
+        if (btnEl) btnEl.style.display = 'none';
+        if (breakBadge) {
+          breakBadge.style.display = 'inline-flex';
+          breakBadge.className = 'pomo-break-header-badge long';
+          if (breakBadgeText) breakBadgeText.textContent = '长休 15 min';
+          if (breakBadgeIcon) breakBadgeIcon.setAttribute('data-lucide', 'sparkles');
+        }
+      }
+      if (window.lucide) lucide.createIcons();
     }
 
     function cyclePomoFocusDuration() {
@@ -23559,6 +23787,7 @@ window.renderContainers = renderContainers;
         pomoTimeLeft = 15 * 60;
       }
 
+      // Update segmented pill tabs
       ['pomoBtnFocus', 'pomoBtnShort', 'pomoBtnLong'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -23574,37 +23803,94 @@ window.renderContainers = renderContainers;
       const activeBtn = document.getElementById(mode === 'focus' ? 'pomoBtnFocus' : (mode === 'short' ? 'pomoBtnShort' : 'pomoBtnLong'));
       if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.style.background = 'linear-gradient(135deg, rgba(0, 145, 255, 0.2), rgba(56, 189, 248, 0.15))';
-        activeBtn.style.color = '#0091ff';
-        activeBtn.style.fontWeight = '600';
-        activeBtn.style.boxShadow = '0 2px 8px rgba(0, 145, 255, 0.15)';
-      }
-
-      const badge = document.getElementById('pomoModeBadge');
-      if (badge) {
-        if (mode === 'focus') badge.textContent = `${pomoCustomFocusMinutes} min 专注`;
-        else if (mode === 'short') badge.textContent = '5 min 短休';
-        else if (mode === 'long') badge.textContent = '15 min 长休';
-      }
-
-      const goalEl = document.getElementById('pomoTaskTitleText');
-      const goalBtn = document.getElementById('pomoGoalTriggerBtn');
-      if (goalEl) {
         if (mode === 'focus') {
-          goalEl.textContent = pomoCustomFocusGoal || '系统架构与深度编码';
-          if (goalBtn) goalBtn.style.maxWidth = '170px';
+          activeBtn.style.background = 'linear-gradient(135deg, rgba(0, 145, 255, 0.2), rgba(56, 189, 248, 0.15))';
+          activeBtn.style.color = '#0091ff';
+          activeBtn.style.boxShadow = '0 2px 8px rgba(0, 145, 255, 0.15)';
         } else {
-          goalEl.textContent = '补水休息中 · 喝口温水远眺放松';
-          if (goalBtn) goalBtn.style.maxWidth = '240px';
+          activeBtn.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.15))';
+          activeBtn.style.color = '#10b981';
+          activeBtn.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.15)';
+        }
+        activeBtn.style.fontWeight = '600';
+      }
+
+      // Sync top right header (eliminates duration vs break inconsistency!)
+      updatePomoDurationLabel();
+
+      // Sync focus goal label and default text
+      const goalEl = document.getElementById('pomoTaskTitleText');
+      const goalLeadLabel = document.getElementById('pomoGoalLeadLabel');
+      const goalLeadIcon = document.getElementById('pomoGoalLeadIcon');
+      const goalBtn = document.getElementById('pomoGoalTriggerBtn');
+
+      if (mode === 'focus') {
+        if (goalLeadLabel) goalLeadLabel.textContent = '专注目标：';
+        if (goalLeadIcon) {
+          goalLeadIcon.setAttribute('data-lucide', 'crosshair');
+          goalLeadIcon.style.color = '#0091ff';
+        }
+        if (goalEl) goalEl.textContent = pomoCurrentTask || pomoCustomFocusGoal || '系统架构与深度编码';
+        if (goalBtn) {
+          goalBtn.style.maxWidth = '230px';
+          goalBtn.style.borderColor = 'rgba(0,145,255,0.25)';
+          goalBtn.style.background = 'rgba(0,145,255,0.08)';
+        }
+      } else if (mode === 'short') {
+        if (goalLeadLabel) goalLeadLabel.textContent = '短休状态：';
+        if (goalLeadIcon) {
+          goalLeadIcon.setAttribute('data-lucide', 'coffee');
+          goalLeadIcon.style.color = '#10b981';
+        }
+        if (goalEl) goalEl.textContent = '舒缓身心 · 喝口温水远眺放松';
+        if (goalBtn) {
+          goalBtn.style.maxWidth = '250px';
+          goalBtn.style.borderColor = 'rgba(16,185,129,0.25)';
+          goalBtn.style.background = 'rgba(16,185,129,0.08)';
+        }
+      } else if (mode === 'long') {
+        if (goalLeadLabel) goalLeadLabel.textContent = '长休状态：';
+        if (goalLeadIcon) {
+          goalLeadIcon.setAttribute('data-lucide', 'sparkles');
+          goalLeadIcon.style.color = '#a855f7';
+        }
+        if (goalEl) goalEl.textContent = '充能漫步 · 远离屏幕深度休整';
+        if (goalBtn) {
+          goalBtn.style.maxWidth = '250px';
+          goalBtn.style.borderColor = 'rgba(168,85,247,0.25)';
+          goalBtn.style.background = 'rgba(168,85,247,0.08)';
         }
       }
 
+      // Sync start button appearance & text
+      const startBtn = document.getElementById('btnPomoStart');
       const startBtnText = document.getElementById('pomoStartText');
-      if (startBtnText) startBtnText.textContent = '开始专注';
       const playIcon = document.getElementById('pomoPlayIcon');
-      if (playIcon) playIcon.setAttribute('data-lucide', 'play');
-      if (window.lucide) lucide.createIcons();
 
+      if (startBtn) {
+        startBtn.classList.remove('mode-focus', 'mode-short', 'mode-long');
+        startBtn.classList.add(mode === 'focus' ? 'mode-focus' : 'mode-short');
+      }
+
+      if (startBtnText) {
+        startBtnText.textContent = mode === 'focus' ? '开始专注' : (mode === 'short' ? '开始短休' : '开始长休');
+      }
+
+      if (playIcon) playIcon.setAttribute('data-lucide', mode === 'focus' ? 'play' : (mode === 'short' ? 'coffee' : 'sparkles'));
+
+      // Sync progress bar color
+      const barEl = document.getElementById('pomoProgressBar');
+      if (barEl) {
+        if (mode === 'focus') {
+          barEl.style.background = 'linear-gradient(90deg, #0091ff, #00d4ff)';
+        } else if (mode === 'short') {
+          barEl.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+        } else {
+          barEl.style.background = 'linear-gradient(90deg, #a855f7, #c084fc)';
+        }
+      }
+
+      if (window.lucide) lucide.createIcons();
       updatePomoDisplay();
     }
 
@@ -23703,25 +23989,32 @@ window.renderContainers = renderContainers;
     });
 
     function togglePomodoro() {
+      const startBtn = document.getElementById('btnPomoStart');
+      const startBtnText = document.getElementById('pomoStartText');
+      const playIcon = document.getElementById('pomoPlayIcon');
+
       if (pomoIsRunning) {
         stopPomoEngine();
         pomoIsRunning = false;
-        const startBtnText = document.getElementById('pomoStartText');
-        if (startBtnText) startBtnText.textContent = pomoMode === 'focus' ? '继续专注' : '继续休息';
-        const playIcon = document.getElementById('pomoPlayIcon');
-        if (playIcon) playIcon.setAttribute('data-lucide', 'play');
         document.title = 'PulseOS · 全域工作台';
+
+        if (startBtnText) {
+          startBtnText.textContent = pomoMode === 'focus' ? '继续专注' : (pomoMode === 'short' ? '继续短休' : '继续长休');
+        }
+        if (playIcon) playIcon.setAttribute('data-lucide', 'play');
       } else {
         pomoIsRunning = true;
-        const startBtnText = document.getElementById('pomoStartText');
-        if (startBtnText) startBtnText.textContent = pomoMode === 'focus' ? '暂停专注' : '暂停休息';
-        const playIcon = document.getElementById('pomoPlayIcon');
+
+        if (startBtnText) {
+          startBtnText.textContent = pomoMode === 'focus' ? '暂停专注' : '暂停休息';
+        }
         if (playIcon) playIcon.setAttribute('data-lucide', 'pause');
 
         startPomoEngine();
         syncPomoCountdownTick();
       }
       if (window.lucide) lucide.createIcons();
+      if (typeof syncCyberCatState === 'function') syncCyberCatState();
     }
 
     function onPomoSessionComplete() {
@@ -23904,9 +24197,13 @@ window.renderContainers = renderContainers;
       else if (pomoMode === 'long') pomoTimeLeft = 15 * 60;
 
       const startBtnText = document.getElementById('pomoStartText');
-      if (startBtnText) startBtnText.textContent = '开始专注';
       const playIcon = document.getElementById('pomoPlayIcon');
-      if (playIcon) playIcon.setAttribute('data-lucide', 'play');
+      if (startBtnText) {
+        startBtnText.textContent = pomoMode === 'focus' ? '开始专注' : (pomoMode === 'short' ? '开始短休' : '开始长休');
+      }
+      if (playIcon) {
+        playIcon.setAttribute('data-lucide', pomoMode === 'focus' ? 'play' : (pomoMode === 'short' ? 'coffee' : 'sparkles'));
+      }
       if (window.lucide) lucide.createIcons();
 
       updatePomoDisplay();
