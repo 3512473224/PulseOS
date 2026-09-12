@@ -7577,10 +7577,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #1e293b !important;
     }
 
-    /* Web Terminal Rounded Corners & Day/Night Theming */
+    /* Web Terminal Rounded Corners, Day/Night Theming & Strict Scroll Isolation (No Page Jitter) */
     .terminal-card {
       border-radius: 16px !important;
       overflow: hidden !important;
+      overscroll-behavior: contain !important;
+      overscroll-behavior-y: contain !important;
+      touch-action: pan-y !important;
       transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
     }
     #terminal-container {
@@ -7589,18 +7592,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-radius: 14px !important;
       overflow: hidden !important;
       background: transparent;
+      overscroll-behavior: contain !important;
+      overscroll-behavior-y: contain !important;
+      touch-action: pan-y !important;
       transition: background-color 0.4s ease !important;
     }
     #terminal-container .xterm {
       padding: 10px 14px;
       border-radius: 14px !important;
       height: 100%;
+      overscroll-behavior: contain !important;
+      overscroll-behavior-y: contain !important;
     }
     #terminal-container .xterm-viewport {
       border-radius: 14px !important;
+      overscroll-behavior: contain !important;
+      overscroll-behavior-y: contain !important;
     }
     #terminal-container .xterm-screen {
       border-radius: 14px !important;
+      overscroll-behavior: contain !important;
+      overscroll-behavior-y: contain !important;
     }
     html.theme-light .terminal-card {
       background: #f8fafc !important;
@@ -14085,7 +14097,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             </div>
 
             <!-- Section 4: Containers -->
-            <div class="sl"><span><i data-lucide="box"></i><span data-i18n="sl_ct">CONTAINERS · <em id="ct-n" style="color:var(--pulseos-c)">0</em></span></span><hr/></div>
+            <div class="sl" style="display:flex; align-items:center; justify-content:space-between;">
+              <span><i data-lucide="box"></i><span data-i18n="sl_ct">CONTAINERS · <em id="ct-n" style="color:var(--pulseos-c)">0</em></span></span>
+              <button class="port-scan-btn" onclick="refreshPulseOSContainers(this)" id="btnRefreshContainers" title="刷新容器状态与端口" style="margin-left:auto; display:inline-flex; align-items:center; gap:5px; padding:3px 10px; font-size:0.68rem; border-radius:6px; cursor:pointer; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.2); color:#38bdf8; transition:all 0.2s;" onmouseover="this.style.background='rgba(0,145,255,0.18)'" onmouseout="this.style.background='rgba(0,145,255,0.08)'">
+                <i data-lucide="refresh-cw" id="containersRefreshIcon" style="width:11px;height:11px;"></i>
+                <span>刷新容器</span>
+              </button>
+              <hr style="flex:1; margin-left:14px;"/>
+            </div>
             <div class="dkg" id="docker-grid"></div>
 
             <!-- Section 5: Web Terminal -->
@@ -20040,7 +20059,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           delete exist[name];
         }
 
-        const newHtml = `<div class="dk-dot ${on ? 'on' : 'off'}"></div><div style="flex:1"><div class="dk-name" style="display:flex;align-items:center;justify-content:space-between;"><span>${name}</span>${statusPill}</div><div class="dk-meta">${c.Status || c.State || '—'}<br/><b>Image:</b> ${(c.Image || '—').substring(0, 40)}<br/>${c.Ports ? `<b>Ports:</b> ${c.Ports.substring(0, 55)}` : ''}${c.RunningFor ? `<br/><b>Since:</b> ${c.RunningFor}` : ''}</div>
+        let portsDisplay = '';
+        const rawPorts = (c.Ports || '').trim();
+        if (rawPorts) {
+          const isHost = rawPorts.toLowerCase().includes('host');
+          portsDisplay = `<br/><b>Ports:</b> <span class="dk-port-tag" style="display:inline-flex; align-items:center; gap:3px; font-family:var(--font-mono, monospace); font-size:0.68rem; color:${isHost ? '#38bdf8' : 'var(--pulseos-c, #00d4ff)'}; background:rgba(0,145,255,0.08); padding:1px 6px; border-radius:4px; border:1px solid rgba(0,145,255,0.22); margin-top:2px; word-break:break-all;"><i data-lucide="${isHost ? 'radio' : 'network'}" style="width:10px;height:10px;flex-shrink:0;"></i><span>${escapeHtml(rawPorts)}</span></span>`;
+        } else if (c.Networks === 'host' || (c.NetworkMode || '').toLowerCase() === 'host') {
+          portsDisplay = `<br/><b>Ports:</b> <span class="dk-port-tag host" style="display:inline-flex; align-items:center; gap:3px; font-family:var(--font-mono, monospace); font-size:0.68rem; color:#38bdf8; background:rgba(56,189,248,0.08); padding:1px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.22); margin-top:2px;"><i data-lucide="radio" style="width:10px;height:10px;flex-shrink:0;"></i><span>Host Network (共享宿主机网络)</span></span>`;
+        }
+
+        const newHtml = `<div class="dk-dot ${on ? 'on' : 'off'}"></div><div style="flex:1"><div class="dk-name" style="display:flex;align-items:center;justify-content:space-between;"><span>${name}</span>${statusPill}</div><div class="dk-meta">${c.Status || c.State || '—'}<br/><b>Image:</b> ${(c.Image || '—').substring(0, 40)}${portsDisplay}${c.RunningFor ? `<br/><b>Since:</b> ${c.RunningFor}` : ''}</div>
           <div class="dk-ctrl">
             <button class="dk-btn" onclick="dkAction('${name}', 'start', this)" title="Start 启动" ${on ? 'disabled style="opacity:0.35;cursor:not-allowed;"' : ''}>▶</button>
             <button class="dk-btn" onclick="dkAction('${name}', 'stop', this)" title="Stop 停止" ${!on ? 'disabled style="opacity:0.35;cursor:not-allowed;"' : ''}>■</button>
@@ -20059,8 +20087,69 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       });
 
       Object.values(exist).forEach(el => el.remove());
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
     }
-    window.renderContainers = renderContainers;
+        async function refreshPulseOSContainers(btn) {
+      const icon = document.getElementById('containersRefreshIcon');
+      if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+      if (btn) btn.disabled = true;
+      log('info', '正在刷新 Docker 容器与端口状态...');
+
+      try {
+        const res = await fetch('/api/system/metrics?_t=' + Date.now(), {
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+        });
+        if (res.ok) {
+          const d = await res.json();
+          if (d && (d.docker_containers || d.cpu)) {
+            update(d);
+            log('info', `容器已更新：共 ${d.docker_count || 0} 个容器实例在线`);
+            if (typeof showToast === 'function') showToast(`容器哨兵: 已刷新 ${d.docker_count || 0} 个容器运行状态`, 'success');
+          }
+        }
+        // Also probe ports in parallel
+        manualProbePorts(false);
+      } catch (e) {
+        console.warn('refreshPulseOSContainers error', e);
+        log('err', '刷新容器失败: ' + e.message);
+      } finally {
+        if (icon) icon.style.animation = '';
+        if (btn) btn.disabled = false;
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+    window.refreshPulseOSContainers = refreshPulseOSContainers;
+
+    // Terminal Scroll Trap: completely prevents wheel scrolling from dragging the outer page
+    function setupTerminalScrollIsolation(container) {
+      if (!container || container._scrollTrapInstalled) return;
+      container._scrollTrapInstalled = true;
+
+      container.addEventListener('wheel', (e) => {
+        // Strict stop propagation: never bubble to parent window
+        e.stopPropagation();
+
+        const viewport = container.querySelector('.xterm-viewport');
+        if (viewport) {
+          const atTop = viewport.scrollTop <= 0;
+          const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+
+          // When hitting boundary, preventDefault to eliminate page chain scroll
+          if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+            e.preventDefault();
+          }
+        } else {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      container.addEventListener('touchmove', (e) => {
+        e.stopPropagation();
+      }, { passive: false });
+    }
+    window.setupTerminalScrollIsolation = setupTerminalScrollIsolation;
+
+window.renderContainers = renderContainers;
     window.renderPulseOSContainers = renderContainers;
 
     async function dkAction(name, act, btn) {
@@ -20432,6 +20521,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       9000: { name: '酷狗音频解析', category: '媒体服务', protocol: 'Go / HTTP', role: '高保真音频解密与跨域音频流分发', scope: '媒体串流' },
       11111: { name: 'Xray 内部路由', category: '网络内核', protocol: 'TCP', role: '内核路由交换与跨网络协议转发', scope: '内核路由' },
       16217: { name: 'X-UI 管理面板', category: '控制台', protocol: 'Web', role: 'X-UI 节点运维配置与流量审计控制台', scope: '运维面板' },
+      21115: { name: 'RustDesk NAT 测试', category: '远程桌面', protocol: 'TCP', role: 'RustDesk 客户端 NAT 穿透测试服务 (hbbs)', scope: 'NAT 测试' },
+      21116: { name: 'RustDesk ID 服务', category: '远程桌面', protocol: 'TCP/UDP', role: 'RustDesk ID 注册与心跳通讯服务 (hbbs)', scope: 'ID 注册' },
+      21117: { name: 'RustDesk 中继服务', category: '远程桌面', protocol: 'TCP', role: 'RustDesk 远程控制加密数据中继通道 (hbbr)', scope: '数据中继' },
+      21118: { name: 'RustDesk Web 控制台', category: '远程桌面', protocol: 'TCP', role: 'RustDesk 网页端控制台服务 (hbbs)', scope: 'Web 控制台' },
+      21119: { name: 'RustDesk Web 中继', category: '远程桌面', protocol: 'TCP', role: 'RustDesk Web 客户端远程数据中继 (hbbr)', scope: 'Web 中继' },
       22222: { name: 'VPS 外部主端口', category: '系统安全', protocol: 'SSH', role: 'Debian 宿主机外部远程维护主入口', scope: '主运维口' },
       33281: { name: '动态传输通道', category: '网络活动', protocol: 'TCP', role: 'Linux 内核动态套接字数据传输通道', scope: '内核链路' },
       62789: { name: '系统通信通道', category: '网络活动', protocol: 'TCP', role: '系统内部服务双向数据通信通道', scope: '内部信道' }
@@ -20522,13 +20616,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       };
     });
 
-    async function manualProbePorts() {
+    async function manualProbePorts(showToastNotice = true) {
       const spin = document.getElementById('portProbeSpinIcon');
       if (spin) spin.style.animation = 'spin 0.8s linear infinite';
-      log('info', '正在扫描监听端口...');
+      if (showToastNotice) log('info', '正在扫描监听端口...');
 
       try {
-        const res = await fetch('/api/system/ports');
+        const res = await fetch('/api/system/ports?_t=' + Date.now(), {
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+        });
         if (res.ok) {
           const data = await res.json();
           if (data && Array.isArray(data.ports) && data.ports.length > 0) {
@@ -20932,6 +21028,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       term.open(container);
       window.term = term;
       window.pulseOSTerminal = term;
+      setupTerminalScrollIsolation(container);
+      const termCard = container.closest('.terminal-card');
+      if (termCard) setupTerminalScrollIsolation(termCard);
 
       setTimeout(() => {
         syncTermSize();
@@ -21595,7 +21694,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
       try { connectWS(); } catch (e) { console.warn('connectWS', e); }
       try { fetchRealPulseOSMetrics(); } catch (e) { console.warn('fetchRealPulseOSMetrics', e); }
-      try { renderPortMonitors(); } catch (e) { console.warn('fetchAndRenderRealPorts', e); }
+      try { manualProbePorts(false); } catch (e) { renderPortMonitors(); }
       try { loadTasks(); } catch (e) { console.warn('loadTasks', e); }
       try { setTimeout(initTerm, 300); } catch (e) { console.warn('initTerm', e); }
 
