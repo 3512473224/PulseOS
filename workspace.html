@@ -3628,9 +3628,77 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       font-family: inherit;
       outline: none;
+    }
+    .port-scan-btn.port-auto-scan-active {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.06);
+    }
+    .port-scan-btn.port-auto-scan-active:hover {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      color: #ffffff;
+    }
+    .port-radar-beacon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+    }
+    .port-radar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .port-radar-ping {
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.45);
+      animation: portRadarPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+      pointer-events: none;
+    }
+    @keyframes portRadarPulse {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      75%, 100% { transform: scale(2.4); opacity: 0; }
+    }
+    .port-scan-timer-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px 6px;
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+      font-weight: 700;
+      min-width: 26px;
+      letter-spacing: 0.02em;
+    }
+    html.theme-light .port-scan-btn.port-auto-scan-active {
+      background: #f0fdf4 !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+      color: #065f46 !important;
+    }
+    html.theme-light .port-radar-dot {
+      background: #059669;
+      box-shadow: 0 0 6px rgba(5, 150, 105, 0.6);
+    }
+    html.theme-light .port-radar-ping {
+      background: rgba(5, 150, 105, 0.35);
+    }
+    html.theme-light .port-scan-timer-badge {
+      background: rgba(5, 150, 105, 0.1);
+      border-color: rgba(5, 150, 105, 0.25);
+      color: #059669;
     }
     .port-scan-btn:hover {
       background: rgba(255, 255, 255, 0.12);
@@ -6620,7 +6688,61 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .log-bar { padding: 10px 16px; border-bottom: 1px solid var(--pulseos-b); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); border-radius: 14px 14px 0 0; }
     .log-title { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pulseos-d); display: flex; align-items: center; gap: 6px; font-weight: 600; }
     .log-title i { width: 12px; height: 12px; }
-    .log-body { padding: 10px 16px; height: 160px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.7rem; line-height: 1.9; scrollbar-width: thin; background: var(--pulseos-surface); border: none; border-radius: 0 0 14px 14px; }
+    .log-body {
+      padding: 10px 16px;
+      height: 160px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      line-height: 1.9;
+      scrollbar-width: thin;
+      background: var(--pulseos-surface);
+      border: none;
+      border-radius: 0 0 14px 14px;
+      contain: content;
+      overscroll-behavior-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    /* Floating 1-click Return to Bottom Pill */
+    .log-auto-scroll-pill {
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: #38bdf8;
+      border-radius: 9999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+    }
+    .log-auto-scroll-pill:hover {
+      background: rgba(0, 145, 255, 0.25);
+      border-color: #00d4ff;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    html.theme-light .log-auto-scroll-pill {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(2, 132, 199, 0.35);
+      color: #0284c7;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+    html.theme-light .log-auto-scroll-pill:hover {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
     .log-l { display: block; }
     .ts { color: var(--pulseos-d); margin-right: 10px; user-select: none; }
     .l-i { color: var(--pulseos-c); }
@@ -9309,25 +9431,52 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transform: scale(0.92);
     }
 
-    /* Collapsed Sidebar Mode */
+    /* Collapsed Sidebar Mode: Ultra-Clean Centered Mini Music Player (No Clipping/Protrusion) */
     .sidebar.collapsed .sidebar-player-card.sidebar-lyrics-dock {
-      margin: auto 8px 12px 8px !important;
-      padding: 8px 4px !important;
+      margin: auto 6px 12px 6px !important;
+      padding: 10px 4px !important;
       align-items: center !important;
       justify-content: center !important;
       box-sizing: border-box !important;
+      overflow: hidden !important;
+      width: calc(100% - 12px) !important;
+      max-width: 56px !important;
+    }
+    .sidebar.collapsed .sidebar-dock-header-row {
+      justify-content: center !important;
+      margin-bottom: 6px !important;
+      width: 100% !important;
+    }
+    .sidebar.collapsed .sidebar-mini-cover-wrap {
+      width: 36px !important;
+      height: 36px !important;
+      margin: 0 auto !important;
     }
     .sidebar.collapsed .sidebar-lyrics-stage,
     .sidebar.collapsed .s-prev-btn,
     .sidebar.collapsed .s-next-btn,
-    .sidebar.collapsed .s-list-btn {
+    .sidebar.collapsed .s-list-btn,
+    .sidebar.collapsed .s-lang-btn,
+    .sidebar.collapsed .s-canvas-btn,
+    .sidebar.collapsed .sidebar-dock-seek-hitbox {
       display: none !important;
       opacity: 0 !important;
       pointer-events: none !important;
     }
     .sidebar.collapsed .sidebar-lyrics-controls {
+      display: flex !important;
       justify-content: center !important;
+      align-items: center !important;
       width: 100% !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      gap: 0 !important;
+    }
+    .sidebar.collapsed .s-ctrl-btn.s-play-btn {
+      width: 32px !important;
+      height: 32px !important;
+      margin: 0 auto !important;
+      flex-shrink: 0 !important;
     }
 
     /* =====================================================================
@@ -14665,9 +14814,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
             <!-- Section 6: Logs -->
             <div class="sl"><span><i data-lucide="terminal"></i><span data-i18n="sl_log">EVENT LOG</span></span><hr/></div>
-            <div class="card log-card" style="padding: 0; background:transparent; border:none;">
+            <div class="card log-card" style="padding: 0; background:transparent; border:none; position:relative;">
               <div class="log-bar"><div class="log-title"><i data-lucide="terminal"></i><span data-i18n="log_t">Live Stream</span></div><div class="pulseos-live-dot"></div></div>
               <div class="log-body" id="log-body"></div>
+              <button class="log-auto-scroll-pill" id="logAutoScrollPill" onclick="scrollLogToBottom()" style="display:none;" title="最新日志已暂停自动滚底，点击立即跳至最新">
+                <i data-lucide="arrow-down" style="width:11px;height:11px;"></i>
+                <span>新日志流 ↓</span>
+              </button>
             </div>
 
             <!-- Section 7: Network Probe -->
@@ -14779,9 +14932,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
               </div>
               <div class="port-sentinel-actions">
-                <button class="port-scan-btn" onclick="manualProbePorts()" id="btnProbeAllPorts" title="手动扫描所有活跃端口">
-                  <i data-lucide="scan" id="portProbeSpinIcon" style="width:13px;height:13px;"></i>
-                  <span>手动扫描端口</span>
+                <button class="port-scan-btn port-auto-scan-active" onclick="manualProbePorts(true)" id="btnProbeAllPorts" title="端口自动巡检中（每 20 秒自适应刷新），点击可立即手动重扫">
+                  <span class="port-radar-beacon"><span class="port-radar-ping"></span><span class="port-radar-dot"></span></span>
+                  <i data-lucide="radar" id="portProbeSpinIcon" style="width:13px;height:13px;"></i>
+                  <span id="lblPortScanMode">自动扫描中</span>
+                  <span class="port-scan-timer-badge" id="portScanTimerBadge">20s</span>
                 </button>
               </div>
             </div>
@@ -16529,6 +16684,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           setTimeout(() => initGraphView(), 50);
         } else if (viewKey === 'overview') {
           initPulseOS();
+          if (typeof startPortAutoScanEngine === 'function') startPortAutoScanEngine();
           setTimeout(() => {
             if (pulseOSChart) {
               try {
@@ -20855,7 +21011,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     window.fmtB = fmtB;
     window.fmtPulseOSBytes = fmtB;
 
-    // 🌟 实时日志系统 (1:1 完美复刻)
+    // 🌟 实时日志系统 (1:1 完美复刻 · 智能防抖防抢焦点与丝滑滚底)
     function log(lvl, msg) {
       const b = document.getElementById('log-body');
       if (!b) return;
@@ -20865,9 +21021,80 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       el.className = 'log-l';
       el.innerHTML = `<span class="ts">${ts}</span><span class="${cls}">[${lvl.toUpperCase()}]</span> <span class="log-msg">${msg}</span>`;
       b.appendChild(el);
-      b.scrollTop = b.scrollHeight;
+      
+      // 检测用户是否向上翻阅历史日志：如果用户正向上查看，则绝不强抢滚动焦点，避免滑动卡顿跳动
+      const isUserScrolledUp = (b.scrollHeight - b.scrollTop - b.clientHeight) > 40;
+      if (!isUserScrolledUp) {
+        b.scrollTop = b.scrollHeight;
+      } else {
+        showLogScrollBadge(true);
+      }
+      
       while (b.children.length > 100) b.removeChild(b.firstChild);
     }
+    
+    function scrollLogToBottom() {
+      const b = document.getElementById('log-body');
+      if (b) {
+        b.scrollTo({ top: b.scrollHeight, behavior: 'smooth' });
+      }
+      showLogScrollBadge(false);
+    }
+    window.scrollLogToBottom = scrollLogToBottom;
+
+    function showLogScrollBadge(show) {
+      const pill = document.getElementById('logAutoScrollPill');
+      if (pill) {
+        pill.style.display = show ? 'inline-flex' : 'none';
+      }
+    }
+    window.showLogScrollBadge = showLogScrollBadge;
+
+    function setupLogScrollIsolation() {
+      const b = document.getElementById('log-body');
+      if (!b || b._scrollTrapInstalled) return;
+      b._scrollTrapInstalled = true;
+
+      let cachedOuter = null;
+      const getOuter = () => {
+        if (!cachedOuter || !cachedOuter.isConnected) {
+          cachedOuter = b.closest('.view-section.scrollable') ||
+                        document.getElementById('view-overview') ||
+                        window;
+        }
+        return cachedOuter;
+      };
+
+      b.addEventListener('wheel', (e) => {
+        if (b.scrollHeight <= b.clientHeight + 1) {
+          const outer = getOuter();
+          if (outer && outer !== window) {
+            e.preventDefault();
+            outer.scrollTop += e.deltaY;
+          }
+          return;
+        }
+
+        const atTop = b.scrollTop <= 1;
+        const atBottom = b.scrollTop + b.clientHeight >= b.scrollHeight - 1;
+
+        if ((e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop)) {
+          const outer = getOuter();
+          if (outer && outer !== window) {
+            e.preventDefault();
+            outer.scrollTop += e.deltaY;
+          }
+        }
+      }, { passive: false });
+
+      b.addEventListener('scroll', () => {
+        const isUserScrolledUp = (b.scrollHeight - b.scrollTop - b.clientHeight) > 40;
+        if (!isUserScrolledUp) {
+          showLogScrollBadge(false);
+        }
+      }, { passive: true });
+    }
+    window.setupLogScrollIsolation = setupLogScrollIsolation;
     window.log = log;
     window.pulseOSLog = log;
 
@@ -20967,29 +21194,40 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     window.refreshPulseOSContainers = refreshPulseOSContainers;
 
-    // 🖥️ Web Terminal Scroll Management: Smoothly scroll terminal buffer internally,
-    // and seamlessly chain to scroll the external container when reaching boundaries (滑到底或到顶滚动外部容器)
+    // 🖥️ Web Terminal Scroll Management: High-Performance 120Hz Boundary Chaining (滑到底或到顶无缝滚动外部容器)
     function setupTerminalScrollIsolation(container) {
       if (!container || container._scrollTrapInstalled) return;
       container._scrollTrapInstalled = true;
 
-      const getOuterScrollContainer = () => {
-        return container.closest('.view-section.scrollable') ||
-               document.getElementById('view-overview') ||
-               document.querySelector('.content-viewport') ||
-               window;
+      let cachedViewport = null;
+      let cachedOuter = null;
+
+      const getViewport = () => {
+        if (!cachedViewport || !cachedViewport.isConnected) {
+          cachedViewport = container.querySelector('.xterm-viewport');
+        }
+        return cachedViewport;
+      };
+
+      const getOuter = () => {
+        if (!cachedOuter || !cachedOuter.isConnected) {
+          cachedOuter = container.closest('.view-section.scrollable') ||
+                        document.getElementById('view-overview') ||
+                        document.querySelector('.content-viewport') ||
+                        window;
+        }
+        return cachedOuter;
       };
 
       container.addEventListener('wheel', (e) => {
-        const viewport = container.querySelector('.xterm-viewport');
-        const outer = getOuterScrollContainer();
+        const viewport = getViewport();
+        const outer = getOuter();
 
-        // If terminal has no scrollable viewport or content fits completely within view
+        // 终端无滚动内容或内容不足一屏：直接平滑透传给外部容器
         if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) {
-          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
-            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
-          } else {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          if (outer && outer !== window) {
+            e.preventDefault();
+            outer.scrollTop += e.deltaY;
           }
           return;
         }
@@ -20997,32 +21235,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         const atTop = viewport.scrollTop <= 1;
         const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
 
-        // When scrolled to bottom and continuing downward: scroll outer container
-        if (e.deltaY > 0 && atBottom) {
-          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
-            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
-          } else {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+        // 到达底端向下滚 或 到达顶端向上滚：立即阻止浏览器内部对抗并平滑滑动外层容器
+        if ((e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop)) {
+          if (outer && outer !== window) {
+            e.preventDefault();
+            outer.scrollTop += e.deltaY;
           }
           return;
         }
 
-        // When scrolled to top and continuing upward: scroll outer container
-        if (e.deltaY < 0 && atTop) {
-          if (outer && outer !== window && typeof outer.scrollBy === 'function') {
-            outer.scrollBy({ top: e.deltaY, behavior: 'auto' });
-          } else {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
-          }
-          return;
-        }
-
-        // When scrolling strictly inside the terminal buffer (not at boundaries),
-        // prevent page chaining so terminal internal text scrolls cleanly without outer page jitter
-        e.stopPropagation();
+        // 处于终端缓冲区正中：不阻止默认事件，不 stopPropagation，让 xterm 原生极速合成器顺滑滚动
       }, { passive: false });
 
-      // Touch events: allow natural swipe chaining when at boundaries
+      // 移动端 Touch 平滑边界链式透传
       let touchStartY = 0;
       container.addEventListener('touchstart', (e) => {
         if (e.touches && e.touches[0]) {
@@ -21031,19 +21256,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }, { passive: true });
 
       container.addEventListener('touchmove', (e) => {
-        const viewport = container.querySelector('.xterm-viewport');
-        if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) {
-          return;
-        }
+        const viewport = getViewport();
+        if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) return;
         if (!e.touches || !e.touches[0]) return;
 
         const currentY = e.touches[0].clientY;
-        const deltaY = touchStartY - currentY; // > 0 means swiping up (scrolling down)
+        const deltaY = touchStartY - currentY;
         const atTop = viewport.scrollTop <= 1;
         const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
 
         if ((deltaY > 0 && atBottom) || (deltaY < 0 && atTop)) {
-          return; // Let touch naturally bubble to outer container
+          return; // 边界自然冒泡至外层
         }
         e.stopPropagation();
       }, { passive: true });
@@ -21517,10 +21740,26 @@ window.renderContainers = renderContainers;
       };
     });
 
-    async function manualProbePorts(showToastNotice = true) {
+    // 🛡️ 端口哨兵自动与手动巡检引擎 (PulseOS 2.0 Auto Sentinel Engine)
+    let portScanCountdown = 20;
+    let portScanIntervalTimer = null;
+    let isPortScanProbing = false;
+
+    async function manualProbePorts(isManualClick = false) {
+      if (isPortScanProbing) return;
+      isPortScanProbing = true;
+
       const spin = document.getElementById('portProbeSpinIcon');
+      const lbl = document.getElementById('lblPortScanMode');
+      const badge = document.getElementById('portScanTimerBadge');
+
       if (spin) spin.style.animation = 'spin 0.8s linear infinite';
-      if (showToastNotice) log('info', '正在扫描监听端口...');
+      if (lbl) lbl.textContent = isManualClick ? '重扫中...' : '自动巡检中';
+      if (isManualClick) {
+        portScanCountdown = 20;
+        if (badge) badge.textContent = '20s';
+        log('info', '正在极速重新探测所有监听端口...');
+      }
 
       try {
         const res = await fetch('/api/system/ports?_t=' + Date.now(), {
@@ -21531,23 +21770,67 @@ window.renderContainers = renderContainers;
           if (data && Array.isArray(data.ports) && data.ports.length > 0) {
             DEFAULT_PORT_MONITORS = data.ports;
             renderPortMonitors(data);
-            log('info', `端口扫描完成：检测到 ${data.total || data.ports.length} 个活跃端口`);
-            if (typeof showToast === 'function') showToast(`端口哨兵: 扫描到 ${data.total || data.ports.length} 个活跃端口`, 'success');
+            if (isManualClick) {
+              log('info', `端口扫描完成：检测到 ${data.total || data.ports.length} 个活跃端口`);
+              if (typeof showToast === 'function') showToast(`端口哨兵: 扫描到 ${data.total || data.ports.length} 个活跃端口`, 'success');
+            }
             return;
           }
         }
       } catch (e) {
         console.warn('manualProbePorts fallback', e);
-        log('err', '【端口哨兵】手动扫描失败: ' + e.message);
+        if (isManualClick) {
+          log('err', '【端口哨兵】扫描失败: ' + e.message);
+        }
       } finally {
+        isPortScanProbing = false;
         if (spin) spin.style.animation = '';
+        if (lbl) lbl.textContent = '自动扫描中';
+        renderPortMonitors();
       }
-      renderPortMonitors();
     }
     window.manualProbePorts = manualProbePorts;
     window.probeAllPorts = manualProbePorts;
     window.probeAllPortMonitors = manualProbePorts;
     window.fetchAndRenderRealPorts = manualProbePorts;
+
+    function startPortAutoScanEngine() {
+      if (portScanIntervalTimer) return;
+      portScanCountdown = 20;
+      const updateBadge = () => {
+        const badge = document.getElementById('portScanTimerBadge');
+        if (badge) badge.textContent = `${portScanCountdown}s`;
+      };
+      updateBadge();
+
+      // 首次切入概览视口时立即触发一次自适应静默探测
+      manualProbePorts(false);
+
+      portScanIntervalTimer = setInterval(() => {
+        // 只有当前处于 PulseOS 概览视口且页面处于激活状态时才巡检
+        if (currentActiveViewKey !== 'overview' || document.hidden) {
+          return;
+        }
+
+        portScanCountdown--;
+        if (portScanCountdown <= 0) {
+          portScanCountdown = 20;
+          updateBadge();
+          manualProbePorts(false);
+        } else {
+          updateBadge();
+        }
+      }, 1000);
+    }
+    window.startPortAutoScanEngine = startPortAutoScanEngine;
+
+    function stopPortAutoScanEngine() {
+      if (portScanIntervalTimer) {
+        clearInterval(portScanIntervalTimer);
+        portScanIntervalTimer = null;
+      }
+    }
+    window.stopPortAutoScanEngine = stopPortAutoScanEngine;
 
     function copyPortHost(port) {
       const text = `104.129.1.216:${port}`;
@@ -21930,8 +22213,6 @@ window.renderContainers = renderContainers;
       window.term = term;
       window.pulseOSTerminal = term;
       setupTerminalScrollIsolation(container);
-      const termCard = container.closest('.terminal-card');
-      if (termCard) setupTerminalScrollIsolation(termCard);
 
       setTimeout(() => {
         syncTermSize();
@@ -22595,7 +22876,8 @@ window.renderContainers = renderContainers;
       }
       try { connectWS(); } catch (e) { console.warn('connectWS', e); }
       try { fetchRealPulseOSMetrics(); } catch (e) { console.warn('fetchRealPulseOSMetrics', e); }
-      try { manualProbePorts(false); } catch (e) { renderPortMonitors(); }
+      try { startPortAutoScanEngine(); } catch (e) { console.warn('startPortAutoScanEngine', e); }
+      try { setupLogScrollIsolation(); } catch (e) { console.warn('setupLogScrollIsolation', e); }
       try { loadTasks(); } catch (e) { console.warn('loadTasks', e); }
       try { setTimeout(initTerm, 300); } catch (e) { console.warn('initTerm', e); }
 
@@ -22608,7 +22890,7 @@ window.renderContainers = renderContainers;
     }
     window.initPulseOS = initPulseOS;
 
-    // 端口哨兵仅在用户手动点击【手动扫描端口】时触发扫描，禁止自动轮询刷屏
+    // 端口哨兵支持 20 秒高频自适应静默自动轮询，并支持随时点击强制重扫
 
     function saveConverterPreference(key, val) {
       localStorage.setItem('fm_pref_' + key, val);
