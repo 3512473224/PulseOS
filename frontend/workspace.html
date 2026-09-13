@@ -8109,6 +8109,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
        🎵 ULTRA-PREMIUM MINIMALIST SIDEBAR LYRICS & CONTROLS DOCK (左侧极简高级歌词控制坞)
        ===================================================================== */
     .sidebar-player-card.sidebar-lyrics-dock {
+      container-type: inline-size;
       margin: auto 10px 14px 10px;
       padding: 10px 11px 11px;
       background: rgba(255, 255, 255, 0.035);
@@ -9394,18 +9395,96 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 4px;
       padding-top: 2px;
     }
-    .s-ctrl-btn {
-      width: 28px;
-      height: 28px;
+    /* Sidebar Music Dock Anti-Squish & Circular Proportions */
+    .sidebar-dock-header-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+    }
+    .sidebar-mini-cover-wrap {
+      position: relative;
+      width: 36px;
+      height: 36px;
       border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sidebar-track-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .sidebar-track-title {
+      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--text, #ffffff);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+    }
+    html.theme-light .sidebar-track-title {
+      color: #0f172a !important;
+    }
+    .sidebar-track-artist {
+      font-size: 0.68rem;
+      color: var(--text-dim, #94a3b8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.35;
+      margin-top: 1px;
+    }
+    html.theme-light .sidebar-track-artist {
+      color: #64748b !important;
+    }
+
+    .sidebar-lyrics-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-top: 2px;
+      box-sizing: border-box;
+    }
+    .sidebar-playback-center-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .sidebar-aux-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .s-ctrl-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
       background: transparent;
       border: none;
       color: var(--text-dim, #94a3b8);
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0 !important;
+      aspect-ratio: 1 / 1 !important;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
     }
     .s-ctrl-btn:hover {
       background: rgba(255, 255, 255, 0.09);
@@ -9415,20 +9494,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .s-ctrl-btn:active {
       transform: scale(0.93);
     }
+    /* 始终保持完美的纯正圆形，严禁任何扁长椭圆形挤压 */
     .s-ctrl-btn.s-play-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00d4ff 0%, #0070f3 100%);
-      color: #ffffff;
-      box-shadow: 0 3px 14px rgba(0, 212, 255, 0.4);
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      min-height: 32px !important;
+      max-width: 32px !important;
+      max-height: 32px !important;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #00d4ff 0%, #0070f3 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 3px 12px rgba(0, 212, 255, 0.4) !important;
+      flex-shrink: 0 !important;
+      aspect-ratio: 1 / 1 !important;
     }
     .s-ctrl-btn.s-play-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 5px 18px rgba(0, 212, 255, 0.6);
+      transform: scale(1.12) !important;
+      box-shadow: 0 5px 18px rgba(0, 212, 255, 0.6) !important;
     }
     .s-ctrl-btn.s-play-btn:active {
-      transform: scale(0.92);
+      transform: scale(0.92) !important;
+    }
+    @container (max-width: 215px) {
+      .sidebar-lyrics-controls .s-canvas-btn {
+        display: none !important;
+      }
     }
 
     /* Collapsed Sidebar Mode: Ultra-Luxurious Vinyl Record Mini Player (零裁剪 · 居中黑胶微胶囊) */
@@ -9492,6 +9583,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       100% { transform: rotate(360deg); }
     }
 
+    .sidebar.collapsed .sidebar-track-info,
+    .sidebar.collapsed .sidebar-dock-header-row .s-fav-btn,
+    .sidebar.collapsed .sidebar-aux-group,
     .sidebar.collapsed .sidebar-lyrics-stage,
     .sidebar.collapsed .s-prev-btn,
     .sidebar.collapsed .s-next-btn,
@@ -9513,29 +9607,30 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       padding: 0 !important;
       gap: 6px !important;
     }
+    .sidebar.collapsed .sidebar-playback-center-group {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      order: 1 !important;
+    }
     .sidebar.collapsed .s-ctrl-btn.s-play-btn {
       width: 32px !important;
       height: 32px !important;
       margin: 0 auto !important;
       flex-shrink: 0 !important;
     }
-    .sidebar.collapsed .sidebar-collapsed-micro-row {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 6px !important;
-      width: 100% !important;
-    }
-    .sidebar.collapsed .s-ctrl-btn.s-fav-btn,
     .sidebar.collapsed .s-ctrl-btn.s-mode-btn {
       display: inline-flex !important;
       width: 22px !important;
       height: 22px !important;
       padding: 0 !important;
       border-radius: 50% !important;
+      margin: 0 auto !important;
       opacity: 0.8 !important;
       pointer-events: auto !important;
       background: rgba(255, 255, 255, 0.06) !important;
+      order: 2 !important;
     }
     .sidebar.collapsed .s-ctrl-btn.s-fav-btn:hover,
     .sidebar.collapsed .s-ctrl-btn.s-mode-btn:hover {
@@ -13336,75 +13431,71 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         </div>
       </nav>
 
-      <!-- 🎵 ULTRA-PREMIUM LYRICS & CONTROLLER DOCK IN SIDEBAR BOTTOM (左侧极简高级歌词控制坞) -->
+      <!-- 🎵 ULTRA-PREMIUM LYRICS & CONTROLLER DOCK IN SIDEBAR BOTTOM (左侧极简高级音乐控制坞) -->
       <div class="sidebar-player-card sidebar-lyrics-dock" id="sidebarMusicPlayer">
-        <!-- Real-Time Rolling Lyrics Stage (高级质感实时歌词展示区) -->
-        <!-- Left Mini Record Artwork & Lyrics Stage: One-click to Immersive Canvas -->
-        <div class="sidebar-dock-header-row" style="display:flex; align-items:center; gap:8px; width:100%; margin-bottom:8px;">
-          <div class="sidebar-mini-cover-wrap" id="sidebarMiniCoverWrap" onclick="openImmersiveCanvas(event)" title="点击唱片封面开启 Apple Music 沉浸画报 (快捷键 F)" style="position:relative; width:34px; height:34px; border-radius:8px; overflow:hidden; flex-shrink:0; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.12); transition:transform 0.2s cubic-bezier(0.16,1,0.3,1);">
+        <!-- Row 1: Artwork + Track Meta + Favorite Heart (清晰展示歌名与歌手，彻底告别空白与字词错位) -->
+        <div class="sidebar-dock-header-row">
+          <div class="sidebar-mini-cover-wrap" id="sidebarMiniCoverWrap" onclick="openImmersiveCanvas(event)" title="点击唱片封面开启 Apple Music 沉浸画报 (快捷键 F)">
             <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300&q=80" id="sidebarMiniCoverImg" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Cover" onerror="if(this.src!==DEFAULT_KUGOU_COVER)this.src=DEFAULT_KUGOU_COVER">
             <div style="position:absolute; inset:0; background:radial-gradient(circle, transparent 40%, rgba(0,0,0,0.4) 100%); pointer-events:none;"></div>
           </div>
-          <div class="sidebar-lyrics-stage" id="sidebarLyricsStage" onclick="openImmersiveCanvas(event)" title="实时歌词 · 点击开启 Apple Music 沉浸画报模式 (快捷键 F)" style="flex:1; min-width:0; margin-bottom:0;">
-            <div class="sidebar-lyrics-main-row" id="sidebarLyricsMainRow">
-              <span class="sidebar-lyrics-line" id="sidebarLyricsLine">🎵 纯净音质 · 随心而听</span>
-            </div>
-            <div class="sidebar-lyrics-sub-row" id="sidebarLyricsSubRow" style="display:none;">
-              <span class="sidebar-lyrics-trans" id="sidebarLyricsTrans"></span>
-            </div>
+          <div class="sidebar-track-info" onclick="openImmersiveCanvas(event)" title="点击开启 Apple Music 沉浸画报 (快捷键 F)">
+            <div class="sidebar-track-title" id="sidebarTrackTitle">天亮以前说再见</div>
+            <div class="sidebar-track-artist" id="sidebarTrackArtist">何野 · 随身听</div>
           </div>
+          <button class="s-ctrl-btn s-fav-btn" id="sidebarFavBtn" onclick="toggleTrackFavorite(null, event)" title="喜欢当前歌曲 (❤️)">
+            <svg id="sidebarFavSvg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          <!-- Hidden legacy span for script compatibility -->
+          <span id="sidebarLyricsLine" style="display:none;"></span>
         </div>
 
-        <!-- Controls Row: Playback, Like, Mode, Playlist, Lang & Canvas -->
+        <!-- Row 2: Ergonomic Playback Controls (正圆播放键，左右通透，杜绝扁长椭圆变形与截断) -->
         <div class="sidebar-lyrics-controls">
-          <button class="s-ctrl-btn s-prev-btn" onclick="prevKuGouTrack(event)" title="上一首">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-              <polygon points="19 20 9 12 19 4 19 20"></polygon>
-              <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
-            </svg>
+          <button class="s-ctrl-btn s-mode-btn" id="sidebarPlayModeBtn" onclick="cycleKuGouPlayMode(event)" title="播放模式：顺序 / 单曲 / 随机 (点击切换)">
+            <i data-lucide="repeat" id="sidebarPlayModeIcon" style="width:13px;height:13px;"></i>
           </button>
-          <button class="s-ctrl-btn s-play-btn" id="sidebarPlayBtn" onclick="toggleKuGouPlay()" title="播放 / 暂停 开关">
-            <svg id="sidebarPlayBtnSvg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-            </svg>
-          </button>
-          <button class="s-ctrl-btn s-next-btn" onclick="nextKuGouTrack(event)" title="下一首">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-              <polygon points="5 4 15 12 5 20 5 4"></polygon>
-              <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
-            </svg>
-          </button>
-          <div class="sidebar-collapsed-micro-row">
-            <button class="s-ctrl-btn s-fav-btn" id="sidebarFavBtn" onclick="toggleTrackFavorite(null, event)" title="喜欢当前歌曲 (❤️)">
-              <svg id="sidebarFavSvg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          <div class="sidebar-playback-center-group">
+            <button class="s-ctrl-btn s-prev-btn" onclick="prevKuGouTrack(event)" title="上一首">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
               </svg>
             </button>
-            <button class="s-ctrl-btn s-mode-btn" id="sidebarPlayModeBtn" onclick="cycleKuGouPlayMode(event)" title="播放模式：顺序 / 单曲 / 随机 (点击切换)">
-              <i data-lucide="repeat" id="sidebarPlayModeIcon" style="width:13px;height:13px;"></i>
+            <button class="s-ctrl-btn s-play-btn" id="sidebarPlayBtn" onclick="toggleKuGouPlay()" title="播放 / 暂停 开关">
+              <svg id="sidebarPlayBtnSvg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+            <button class="s-ctrl-btn s-next-btn" onclick="nextKuGouTrack(event)" title="下一首">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+              </svg>
             </button>
           </div>
-          <button class="s-ctrl-btn s-list-btn" onclick="openKuGouPlaylistModal(event)" title="歌单曲库">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="8" y1="6" x2="21" y2="6"></line>
-              <line x1="8" y1="12" x2="21" y2="12"></line>
-              <line x1="8" y1="18" x2="21" y2="18"></line>
-              <circle cx="3.5" cy="6" r="1.2" fill="currentColor"></circle>
-              <circle cx="3.5" cy="12" r="1.2" fill="currentColor"></circle>
-              <circle cx="3.5" cy="18" r="1.2" fill="currentColor"></circle>
-            </svg>
-          </button>
-          <button class="s-ctrl-btn s-lang-btn" id="sidebarLyricsLangBtn" onclick="toggleLyricsLangMode(event)" title="歌词语言：双语 / 纯原文 / 纯中文 (点击切换)">
-            <span id="sidebarLyricsLangText">双语</span>
-          </button>
-          <button class="s-ctrl-btn s-canvas-btn" onclick="openImmersiveCanvas(event)" title="画报模式 · Apple Music 沉浸大屏 (快捷键 F)">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <polyline points="9 21 3 21 3 15"></polyline>
-              <line x1="21" y1="3" x2="14" y2="10"></line>
-              <line x1="3" y1="21" x2="10" y2="14"></line>
-            </svg>
-          </button>
+          <div class="sidebar-aux-group">
+            <button class="s-ctrl-btn s-list-btn" onclick="openKuGouPlaylistModal(event)" title="歌单曲库">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <circle cx="3.5" cy="6" r="1.2" fill="currentColor"></circle>
+                <circle cx="3.5" cy="12" r="1.2" fill="currentColor"></circle>
+                <circle cx="3.5" cy="18" r="1.2" fill="currentColor"></circle>
+              </svg>
+            </button>
+            <button class="s-ctrl-btn s-canvas-btn" onclick="openImmersiveCanvas(event)" title="画报模式 · Apple Music 沉浸大屏 (快捷键 F)">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </button>
+          </div>
         </div>
         <!-- 🌟 Subtle Border Micro-Progress Line with Interactive Seek & Scrub (底边框低调微型进度条 · 支持点击与拖拽滑动) -->
         <div class="sidebar-dock-seek-hitbox" id="sidebarDockSeekHitbox" onpointerdown="handleBorderScrubStart(event)" title="滑动或点击底边栏调整播放进度">
@@ -21241,27 +21332,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return cachedOuter;
       };
 
-      b.addEventListener('wheel', (e) => {
-        if (b.scrollHeight <= b.clientHeight + 1) {
-          const outer = getOuter();
-          if (outer && outer !== window) {
-            e.preventDefault();
-            outer.scrollTop += e.deltaY;
-          }
-          return;
-        }
-
-        const atTop = b.scrollTop <= 1;
-        const atBottom = b.scrollTop + b.clientHeight >= b.scrollHeight - 1;
-
-        if ((e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop)) {
-          const outer = getOuter();
-          if (outer && outer !== window) {
-            e.preventDefault();
-            outer.scrollTop += e.deltaY;
-          }
-        }
-      }, { passive: false });
+      // 实时日志滚轮事件由全局统一的 120Hz 冰面动量引擎接管，杜绝任何分立跳帧与监听冲突
 
       b.addEventListener('scroll', () => {
         const isUserScrolledUp = (b.scrollHeight - b.scrollTop - b.clientHeight) > 40;
@@ -21395,33 +21466,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return cachedOuter;
       };
 
-      container.addEventListener('wheel', (e) => {
-        const viewport = getViewport();
-        const outer = getOuter();
-
-        // 终端无滚动内容或内容不足一屏：直接平滑透传给外部容器
-        if (!viewport || viewport.scrollHeight <= viewport.clientHeight + 1) {
-          if (outer && outer !== window) {
-            e.preventDefault();
-            outer.scrollTop += e.deltaY;
-          }
-          return;
-        }
-
-        const atTop = viewport.scrollTop <= 1;
-        const atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
-
-        // 到达底端向下滚 或 到达顶端向上滚：立即阻止浏览器内部对抗并平滑滑动外层容器
-        if ((e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop)) {
-          if (outer && outer !== window) {
-            e.preventDefault();
-            outer.scrollTop += e.deltaY;
-          }
-          return;
-        }
-
-        // 处于终端缓冲区正中：不阻止默认事件，不 stopPropagation，让 xterm 原生极速合成器顺滑滚动
-      }, { passive: false });
+      // 终端滚轮事件由全局统一的 120Hz 冰面动量引擎接管，杜绝任何分立跳帧与监听冲突
 
       // 移动端 Touch 平滑边界链式透传
       let touchStartY = 0;
@@ -27101,6 +27146,10 @@ window.renderContainers = renderContainers;
           titleEl.textContent = `${track.title}${artistPart}`;
           titleEl.title = `${track.title} - ${track.artist || '酷狗音乐'}`;
         }
+        const sbTrackTitle = document.getElementById('sidebarTrackTitle');
+        const sbTrackArtist = document.getElementById('sidebarTrackArtist');
+        if (sbTrackTitle && track.title) sbTrackTitle.textContent = track.title;
+        if (sbTrackArtist) sbTrackArtist.textContent = `${track.artist || '酷狗音乐'}${track.album ? ` · ${track.album}` : ''}`;
         if (sbLyrics && !kugouIsPlaying && (!sbLyrics.textContent || sbLyrics.textContent.includes('随心而听') || sbLyrics.textContent.includes('纯净音质'))) {
           sbLyrics.textContent = `《${track.title}》${track.artist ? ` · ${track.artist}` : ''}`;
         }
@@ -29606,8 +29655,28 @@ window.renderContainers = renderContainers;
         let el = target;
         while (el && el !== document.documentElement && el !== document.body) {
           const tag = el.tagName;
-          if (tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'SELECT' || el.classList.contains('xterm-viewport')) {
+          if (tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'SELECT') {
             return null;
+          }
+
+          // 🖥️ Web 终端视口透传：如果处于终端内部且终端有可滚历史，让终端内部滑动；一旦到顶或到底，顺畅透传给外部视口
+          if (el.classList && el.classList.contains('xterm-viewport')) {
+            const atTop = el.scrollTop <= 1;
+            const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+            if ((deltaY > 0 && !atBottom) || (deltaY < 0 && !atTop)) {
+              return el;
+            }
+            break; // 到达边界，跳出并由外部激活视口丝滑滑动
+          }
+
+          // 📜 实时日志视口透传：如果日志内部有可滚动区域且未到边界，在日志内滑动；到达顶部或底部时，顺畅透传给外部视口
+          if (el.id === 'log-body' || (el.classList && el.classList.contains('log-body'))) {
+            const atTop = el.scrollTop <= 1;
+            const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+            if ((deltaY > 0 && !atBottom) || (deltaY < 0 && !atTop)) {
+              return el;
+            }
+            break; // 到达边界，跳出并由外部激活视口丝滑滑动
           }
 
           const maxScroll = el.scrollHeight - el.clientHeight;
@@ -29686,7 +29755,7 @@ window.renderContainers = renderContainers;
       }, { capture: true, passive: true });
 
       window.addEventListener('wheel', (e) => {
-        if (e.target.closest('textarea, input, select, pre code, .xterm-viewport')) return;
+        if (e.target.closest('textarea, input, select, pre code')) return;
 
         // Precision trackpad pass-through
         const isTrackpad = (Math.abs(e.deltaY) < 32 && (e.deltaY % 1 !== 0 || Math.abs(e.deltaX) > 0));
