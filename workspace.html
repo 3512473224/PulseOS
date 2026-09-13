@@ -14288,7 +14288,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="mail-hero-actions">
                 <div class="mail-auto-sync-badge" id="mailAutoSyncBadge" title="全渠道邮箱极速自动轮询同步已就绪，无需手动拉取">
                   <span class="mail-auto-sync-dot"></span>
-                  <span>自动同步中</span>
+                  <span>正在自动同步</span>
                 </div>
                 <button class="mail-btn-action mail-btn-ai" onclick="generateMailAiDigest()" id="btnMailAiDigest" title="由 DeepSeek 提炼全量信件关键信息">
                   <svg id="mailAiDigestIcon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -15828,7 +15828,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       <div style="display:flex; gap:8px; align-items:center;">
         <div style="position:relative; flex:1; display:flex; align-items:center;">
           <i data-lucide="search" id="searchPrefixIcon" style="position:absolute; left:12px; width:15px; height:15px; color:var(--text-dim, #64748b); pointer-events:none;"></i>
-          <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="搜索歌曲、歌手或歌词 (晴天、周杰伦、海阔天空)..." onkeydown="if(event.key==='Enter') searchKuGouMusic()" style="width:100%; padding:9px 12px 9px 36px; font-size:0.84rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text, #fff); outline:none; transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,145,255,0.4)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.12)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
+          <input type="text" class="input-box" id="kugouSearchKeyword" placeholder="搜索歌曲、歌手或歌词..." onkeydown="if(event.key==='Enter') searchKuGouMusic()" style="width:100%; padding:9px 12px 9px 36px; font-size:0.84rem; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:var(--text, #fff); outline:none; transition:all 0.2s;" onfocus="this.style.borderColor='rgba(0,145,255,0.4)';this.style.boxShadow='0 0 0 3px rgba(0,145,255,0.12)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.boxShadow='none'">
         </div>
         <button class="kugou-search-submit-btn" id="searchSubmitBtn" onclick="searchKuGouMusic()" title="开始全域检索">
           <i data-lucide="search"></i>
@@ -28290,7 +28290,7 @@ window.renderContainers = renderContainers;
     function switchMusicSearchMode(mode) {
       currentMusicSearchMode = 'all';
       const inp = document.getElementById('kugouSearchKeyword');
-      if (inp) inp.placeholder = '搜索歌曲、歌手或歌词 (晴天、周杰伦、海阔天空)...';
+      if (inp) inp.placeholder = '搜索歌曲、歌手或歌词...';
       renderSearchChips();
       if (inp) inp.focus();
       if (window.lucide) lucide.createIcons();
@@ -31094,7 +31094,7 @@ window.renderContainers = renderContainers;
       } catch (e) {
         console.warn('Failed to load mail list', e);
         if (container) {
-          container.innerHTML = '<div style="padding:40px 20px; text-align:center; color:#ef4444; font-size:0.85rem;">拉取邮件失败，请点击右上角重试</div>';
+          container.innerHTML = '<div style="padding:40px 20px; text-align:center; color:#ef4444; font-size:0.85rem;">正在自动同步...</div>';
         }
       }
     }
@@ -31146,7 +31146,7 @@ window.renderContainers = renderContainers;
         container.innerHTML = `
           <div style="padding:45px 20px; text-align:center; color:var(--mail-text-dim); font-size:0.85rem;">
             <i data-lucide="inbox" style="width:36px; height:36px; margin:0 auto 12px; opacity:0.3; display:block;"></i>
-            此分类暂无邮件，点击右上角「实时同步拉取」抓取最新信件
+            ${currentMailSearch ? "未找到相关邮件" : "正在自动同步..."}
           </div>
         `;
         if (window.lucide) lucide.createIcons();
