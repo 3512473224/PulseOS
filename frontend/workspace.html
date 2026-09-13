@@ -11374,10 +11374,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: rgba(125,125,125,0.15);
     }
 
-    /* 🌟 RIGID ZERO-JITTER SPLIT CONTAINER (CSS GRID FIXED 380px / 1fr) */
+    /* 🌟 RIGID ZERO-JITTER SPLIT CONTAINER (FLEX 360px LOCKED LIST + AUTO-FILLING READER) */
     .mail-split-container {
-      display: grid;
-      grid-template-columns: 380px minmax(0, 1fr);
+      display: flex;
       gap: 14px;
       width: 100%;
       height: calc(100vh - 270px);
@@ -11386,12 +11385,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       overflow: hidden;
     }
 
-    /* Left Column: Email Stream */
+    /* Left Column: Email Stream (Strict 360px Lock, 100% Immune to Any Reader Content Overflows) */
     .mail-list-pane {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      box-sizing: border-box;
+      width: 360px !important;
+      min-width: 360px !important;
+      max-width: 360px !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
       background: var(--mail-panel-bg) !important;
       border: 1px solid var(--mail-border) !important;
       border-radius: 14px;
@@ -11525,12 +11525,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transform: scale(1.02);
     }
 
-    /* 🌟 Right Column: Detail Reader Pane */
+    /* 🌟 Right Column: Detail Reader Pane (Fills All Remaining Space, Zero Force on List Pane) */
     .mail-reader-pane {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      box-sizing: border-box;
+      flex: 1 1 0% !important;
+      min-width: 0 !important;
+      width: 0 !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
       background: var(--mail-panel-bg) !important;
       border: 1px solid var(--mail-border) !important;
       border-radius: 14px;
@@ -11626,7 +11627,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-weight: 600;
     }
 
-    /* Reader Content */
+    /* Reader Content (With Elegant 60fps Motion Glide & Fade Transitions) */
     .mail-reader-content {
       display: flex;
       flex-direction: column;
@@ -11635,6 +11636,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       min-width: 0;
       min-height: 0;
       overflow: hidden;
+      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease;
+      will-change: opacity, transform;
+    }
+    .mail-reader-content.mail-reader-switching {
+      opacity: 0.35;
+      transform: translateY(6px) scale(0.995);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .mail-reader-content.mail-reader-entering {
+      opacity: 1 !important;
+      transform: translateY(0) scale(1) !important;
+      filter: blur(0px) !important;
+      animation: mailContentGlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes mailContentGlideIn {
+      0% {
+        opacity: 0.35;
+        transform: translateY(6px) scale(0.995);
+        filter: blur(2px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+      }
     }
     .mail-reader-header {
       padding: 14px 18px;
@@ -11755,6 +11782,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: center;
       gap: 8px;
       min-width: 0;
+      flex-wrap: wrap;
     }
     .mail-meta-k {
       color: var(--mail-text-dim) !important;
@@ -31171,7 +31199,11 @@ window.renderContainers = renderContainers;
       const empty = document.getElementById('mailReaderEmpty');
       const content = document.getElementById('mailReaderContent');
       if (empty) empty.style.display = 'none';
-      if (content) content.style.display = 'flex';
+      if (content) {
+        content.style.display = 'flex';
+        content.classList.remove('mail-reader-entering');
+        content.classList.add('mail-reader-switching');
+      }
 
       try {
         const res = await fetch(`/api/mail/detail/${mailId}`);
@@ -31210,7 +31242,13 @@ window.renderContainers = renderContainers;
           const targetTheme = userManualEmailTheme || getWorkspaceTheme();
           const iframe = document.getElementById('readerHtmlIframe');
           if (iframe) {
-            iframe.onload = () => { syncMailReaderThemeWithWorkspace(); };
+            iframe.onload = () => {
+              syncMailReaderThemeWithWorkspace();
+              if (content) {
+                content.classList.remove('mail-reader-switching');
+                content.classList.add('mail-reader-entering');
+              }
+            };
             iframe.src = `/api/mail/raw_html/${mailId}?theme=${targetTheme}`;
           }
         }
