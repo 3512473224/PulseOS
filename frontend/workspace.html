@@ -6971,6 +6971,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       z-index: 999999;
       pointer-events: none !important;
       display: none;
+      will-change: transform, opacity;
     }
 
     /* ======================================================== */
@@ -16402,11 +16403,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (moonIcon) moonIcon.style.color = isLight ? '#94a3b8' : '#a78bfa';
       if (sunIcon) sunIcon.style.color = isLight ? '#eab308' : '#64748b';
 
-      // Update PulseOS Web Terminal Theme dynamically
-      const termInstance = window.pulseOSTerminal;
-      if (termInstance && termInstance.options) {
-        try {
-          termInstance.options.theme = isLight ? {
+      // Update PulseOS Web Terminal Theme dynamically (deferred to prevent blocking snapshot)
+      setTimeout(() => {
+        const termInstance = window.pulseOSTerminal;
+        if (termInstance && termInstance.options) {
+          try {
+            termInstance.options.theme = isLight ? {
             background: '#f8fafc',
             foreground: '#0f172a',
             cursor: '#6366f1',
@@ -16453,6 +16455,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           };
         } catch (e) {}
       }
+      }, 100);
     }
 
     function initThemeSystem() {
@@ -16485,68 +16488,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         Math.max(originY, window.innerHeight - originY)
       ) * 1.25;
 
-      const duration = 2000; // ms (2.0s slow, luxurious, hypnotic organic fluid expansion)
-
-      // 1. Mathematically exact Organic Multi-Harmonic Meandering Polygon Spatial View Transition
-      // Strict Rule: Unreached regions remain 100% on the old theme until engulfed by the ink!
-      if (document.startViewTransition) {
-        const transition = document.startViewTransition(() => {
-          applyTheme(isLight);
-        });
-
-        transition.ready.then(() => {
-          const keyframes = [];
-          const steps = 48;
-          const numPts = 64; // 64 vertices for smooth GPU hardware rasterization
-
-          for (let s = 0; s <= steps; s++) {
-            const p = s / steps;
-            // Luxurious cubic deceleration curve
-            const ease = 1 - Math.pow(1 - p, 2.6);
-            const r = Math.max(0.2, maxRadius * ease);
-
-            const points = [];
-            for (let i = 0; i < numPts; i++) {
-              const angle = (i / numPts) * Math.PI * 2;
-              const wave = 1 + 0.12 * Math.sin(angle * 4 + ease * 3.6)
-                            + 0.08 * Math.cos(angle * 3 - ease * 2.8)
-                            + 0.05 * Math.sin(angle * 7 + ease * 5.0);
-              const ptRadius = r * wave;
-              const px = originX + Math.cos(angle) * ptRadius;
-              const py = originY + Math.sin(angle) * ptRadius;
-              points.push(`${px.toFixed(1)}px ${py.toFixed(1)}px`);
-            }
-            keyframes.push({ clipPath: `polygon(${points.join(', ')})` });
-          }
-
-          document.documentElement.animate(keyframes, {
-            duration: duration,
-            easing: 'linear',
-            fill: 'both',
-            pseudoElement: '::view-transition-new(root)'
-          });
-        }).catch(err => {
-          console.warn('ViewTransition error:', err);
-        });
-      } else {
-        // Fallback for browsers without View Transitions
-        applyTheme(isLight);
-      }
-
-      // 2. Concurrently render the single, unified, rich meandering organic fluid wavefront on canvas
-      if (!canvas) return;
-
-      const ctx = canvas.getContext('2d');
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
-
-      canvas.style.display = 'block';
-      canvas.style.opacity = '1';
-
-      const startTime = performance.now();
+      const duration = 1600; // ms (fluid, luxurious Apple-grade expansion)
 
       // Fluid palette:
       // White foam / pearl droplet when switching to Day; Deep Obsidian Black ink when switching to Night
@@ -16559,80 +16501,163 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       for (let i = 0; i < numParticles; i++) {
         particles.push({
           angle: (i / numParticles) * Math.PI * 2 + (Math.random() - 0.5) * 0.25,
-          radialOffset: (Math.random() - 0.5) * 20,
-          size: 2.5 + Math.random() * 4.5
+          radialOffset: (Math.random() - 0.5) * 18,
+          size: 2.5 + Math.random() * 4.0
         });
       }
 
-      function drawFrame(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(1, elapsed / duration);
-        const ease = 1 - Math.pow(1 - progress, 2.6);
-        const radius = maxRadius * ease;
+      function startCanvasWave() {
+        if (!canvas) return;
 
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const targetW = Math.round(window.innerWidth * dpr);
+        const targetH = Math.round(window.innerHeight * dpr);
+        if (canvas.width !== targetW || canvas.height !== targetH) {
+          canvas.width = targetW;
+          canvas.height = targetH;
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+        }
 
-        if (radius > 1) {
-          ctx.save();
+        canvas.style.display = 'block';
+        canvas.style.opacity = '1';
 
-          // Draw single unified, rich meandering organic fluid wave
-          ctx.beginPath();
-          const numPoints = 120;
-          for (let i = 0; i <= numPoints; i++) {
-            const angle = (i / numPoints) * Math.PI * 2;
+        const startTime = performance.now();
+
+        function drawFrame(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          const ease = 1 - Math.pow(1 - progress, 2.6);
+          const radius = maxRadius * ease;
+          const scaleFactor = Math.min(1, ease * 3.2);
+
+          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+          if (radius > 1) {
+            ctx.save();
+
+            // 1. Draw single unified, rich meandering organic fluid wave
+            ctx.beginPath();
+            const numPoints = 96;
+            for (let i = 0; i <= numPoints; i++) {
+              const angle = (i / numPoints) * Math.PI * 2;
+              const wave = 1 + 0.12 * Math.sin(angle * 4 + ease * 3.6)
+                            + 0.08 * Math.cos(angle * 3 - ease * 2.8)
+                            + 0.05 * Math.sin(angle * 7 + ease * 5.0);
+              const r = radius * wave;
+              const px = originX + Math.cos(angle) * r;
+              const py = originY + Math.sin(angle) * r;
+
+              if (i === 0) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+
+            // Single thick, glowing, meandering liquid watercolor brush
+            ctx.strokeStyle = primaryColor;
+            ctx.lineWidth = 13 * (1 - ease * 0.35);
+            ctx.shadowColor = coronaColor;
+            ctx.shadowBlur = 28;
+            ctx.stroke();
+
+            // 2. High-performance batched micro watercolor droplets (Single draw call)
+            ctx.beginPath();
+            ctx.fillStyle = primaryColor;
+            ctx.shadowColor = coronaColor;
+            ctx.shadowBlur = 16;
+            particles.forEach(p => {
+              const wave = 1 + 0.12 * Math.sin(p.angle * 4 + ease * 3.6)
+                            + 0.08 * Math.cos(p.angle * 3 - ease * 2.8)
+                            + 0.05 * Math.sin(p.angle * 7 + ease * 5.0);
+              const pRadius = Math.max(0, radius * wave + p.radialOffset * scaleFactor);
+              const px = originX + Math.cos(p.angle) * pRadius;
+              const py = originY + Math.sin(p.angle) * pRadius;
+              const curSize = p.size * (0.35 + 0.65 * scaleFactor) * (1 - ease * 0.35);
+
+              ctx.moveTo(px + curSize, py);
+              ctx.arc(px, py, curSize, 0, Math.PI * 2);
+            });
+            ctx.fill();
+
+            ctx.restore();
+          }
+
+          if (progress < 1) {
+            requestAnimationFrame(drawFrame);
+          } else {
+            canvas.style.transition = 'opacity 0.36s cubic-bezier(0.16, 1, 0.3, 1)';
+            canvas.style.opacity = '0';
+            setTimeout(() => {
+              canvas.style.display = 'none';
+              canvas.style.transition = '';
+              ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            }, 380);
+          }
+        }
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      function startPolygonTransition() {
+        const keyframes = [];
+        const steps = 36;
+        const numPts = 64; // 64 vertices for smooth GPU hardware rasterization
+
+        for (let s = 0; s <= steps; s++) {
+          const p = s / steps;
+          // Luxurious cubic deceleration curve
+          const ease = 1 - Math.pow(1 - p, 2.6);
+          const r = Math.max(0.2, maxRadius * ease);
+
+          const points = [];
+          for (let i = 0; i < numPts; i++) {
+            const angle = (i / numPts) * Math.PI * 2;
             const wave = 1 + 0.12 * Math.sin(angle * 4 + ease * 3.6)
                           + 0.08 * Math.cos(angle * 3 - ease * 2.8)
                           + 0.05 * Math.sin(angle * 7 + ease * 5.0);
-            const r = radius * wave;
-            const px = originX + Math.cos(angle) * r;
-            const py = originY + Math.sin(angle) * r;
-
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
+            const ptRadius = r * wave;
+            const px = originX + Math.cos(angle) * ptRadius;
+            const py = originY + Math.sin(angle) * ptRadius;
+            points.push(`${px.toFixed(1)}px ${py.toFixed(1)}px`);
           }
-          ctx.closePath();
-
-          // Single thick, glowing, meandering liquid watercolor brush
-          ctx.strokeStyle = primaryColor;
-          ctx.lineWidth = 14 * (1 - ease * 0.35);
-          ctx.shadowColor = coronaColor;
-          ctx.shadowBlur = 32;
-          ctx.stroke();
-
-          // Floating micro watercolor droplets along the exact undulating contour
-          particles.forEach(p => {
-            const wave = 1 + 0.12 * Math.sin(p.angle * 4 + ease * 3.6)
-                          + 0.08 * Math.cos(p.angle * 3 - ease * 2.8)
-                          + 0.05 * Math.sin(p.angle * 7 + ease * 5.0);
-            const pRadius = Math.max(0, radius * wave + p.radialOffset);
-            const px = originX + Math.cos(p.angle) * pRadius;
-            const py = originY + Math.sin(p.angle) * pRadius;
-            
-            ctx.beginPath();
-            ctx.arc(px, py, p.size * (1 - ease * 0.35), 0, Math.PI * 2);
-            ctx.fillStyle = primaryColor;
-            ctx.shadowColor = coronaColor;
-            ctx.shadowBlur = 18;
-            ctx.fill();
-          });
-
-          ctx.restore();
+          keyframes.push({ clipPath: `polygon(${points.join(', ')})` });
         }
 
-        if (progress < 1) {
-          requestAnimationFrame(drawFrame);
-        } else {
-          canvas.style.transition = 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-          canvas.style.opacity = '0';
-          setTimeout(() => {
-            canvas.style.display = 'none';
-            canvas.style.transition = '';
-            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-          }, 420);
-        }
+        document.documentElement.animate(keyframes, {
+          duration: duration,
+          easing: 'linear',
+          fill: 'both',
+          pseudoElement: '::view-transition-new(root)'
+        });
       }
 
-      requestAnimationFrame(drawFrame);
+      // 1. Mathematically exact Organic Multi-Harmonic Meandering Polygon Spatial View Transition
+      // Strict Rule: Both ViewTransition and Canvas start in lockstep when the browser has finished snapshotting!
+      if (document.startViewTransition) {
+        let hasTriggered = false;
+        const transition = document.startViewTransition(() => {
+          applyTheme(isLight);
+        });
+
+        transition.ready.then(() => {
+          if (!hasTriggered) {
+            hasTriggered = true;
+            startPolygonTransition();
+            startCanvasWave();
+          }
+        }).catch(err => {
+          console.warn('ViewTransition error:', err);
+          if (!hasTriggered) {
+            hasTriggered = true;
+            startCanvasWave();
+          }
+        });
+      } else {
+        // Fallback for browsers without View Transitions
+        applyTheme(isLight);
+        startCanvasWave();
+      }
     }
 
     // 2. LIVE CLOCK
@@ -21122,7 +21147,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         openGitConfigModal();
       } else if (action === 'action:toggle-theme') {
         const isLightNow = document.documentElement.classList.contains('theme-light');
-        applyTheme(!isLightNow);
+        playInkWaterSpread(window.innerWidth / 2, window.innerHeight / 2, !isLightNow);
       } else if (action === 'action:kugou-play') {
         switchView('home');
         toggleKuGouPlay();
