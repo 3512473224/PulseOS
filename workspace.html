@@ -11628,7 +11628,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-weight: 600;
     }
 
-    /* Reader Content (With Elegant 60fps Motion Glide & Fade Transitions) */
+    /* Reader Content (Ultra-Fast 0ms Instant Feedback & Lightweight Opacity Crossfade) */
     .mail-reader-content {
       display: flex;
       flex-direction: column;
@@ -11637,32 +11637,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       min-width: 0;
       min-height: 0;
       overflow: hidden;
-      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease;
-      will-change: opacity, transform;
     }
-    .mail-reader-content.mail-reader-switching {
-      opacity: 0.35;
-      transform: translateY(6px) scale(0.995);
-      filter: blur(2px);
-      pointer-events: none;
+    .mail-body-frame-wrap {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background: #ffffff;
+      transition: opacity 0.12s ease;
+      will-change: opacity;
     }
-    .mail-reader-content.mail-reader-entering {
-      opacity: 1 !important;
-      transform: translateY(0) scale(1) !important;
-      filter: blur(0px) !important;
-      animation: mailContentGlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes mailContentGlideIn {
-      0% {
-        opacity: 0.35;
-        transform: translateY(6px) scale(0.995);
-        filter: blur(2px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0px);
-      }
+    .mail-body-frame-wrap.mail-frame-loading {
+      opacity: 0.45;
     }
     .mail-reader-header {
       padding: 14px 18px;
@@ -31215,71 +31200,141 @@ window.renderContainers = renderContainers;
       if (window.lucide) lucide.createIcons();
     }
 
-    async function selectMailItem(mailId) {
+    // 🚀 ULTRA-HIGH-SPEED IN-MEMORY MAIL CACHE & ASYNC CONTROLLER
+    const mailHtmlCache = new Map();
+    let currentMailFetchAbortCtrl = null;
+    let activeRequestedMailId = null;
+
+    function renderMailHeaderData(m) {
+      if (!m) return;
+      const subjEl = document.getElementById('readerSubject');
+      const senderEl = document.getElementById('readerSender');
+      const badgeEl = document.getElementById('readerAccountBadge');
+      const dateEl = document.getElementById('readerDate');
+
+      if (subjEl) subjEl.textContent = m.subject || '(无主题)';
+      if (senderEl) senderEl.textContent = `${m.sender || ''} <${m.sender_email || ''}>`;
+      if (badgeEl) badgeEl.textContent = `${m.account_email || ''} (${m.folder || 'INBOX'})`;
+      if (dateEl) dateEl.textContent = m.date_str || formatMailDate(m.timestamp);
+
+      // Check OTP
+      const otpHero = document.getElementById('readerOtpHeroCard');
+      const otpCodeEl = document.getElementById('readerOtpCode');
+      if (m.is_otp && m.otp_code) {
+        if (otpCodeEl) otpCodeEl.textContent = m.otp_code;
+        if (otpHero) otpHero.style.display = 'flex';
+      } else {
+        if (otpHero) otpHero.style.display = 'none';
+      }
+
+      // Check cached AI summary
+      const aiBox = document.getElementById('readerAiSummaryBox');
+      const aiText = document.getElementById('readerAiSummaryText');
+      if (m.ai_summary) {
+        if (window.marked) {
+          aiText.innerHTML = marked.parse(m.ai_summary);
+        } else {
+          aiText.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(m.ai_summary)}</pre>`;
+        }
+        if (aiBox) aiBox.style.display = 'block';
+      } else {
+        if (aiBox) aiBox.style.display = 'none';
+      }
+    }
+
+    function prefetchAdjacentEmails(currentId) {
+      if (!mailListCache || mailListCache.length === 0) return;
+      const curIdx = mailListCache.findIndex(m => m.id == currentId);
+      const candidates = [];
+      if (curIdx !== -1) {
+        if (mailListCache[curIdx + 1]) candidates.push(mailListCache[curIdx + 1].id);
+        if (mailListCache[curIdx - 1]) candidates.push(mailListCache[curIdx - 1].id);
+        if (mailListCache[curIdx + 2]) candidates.push(mailListCache[curIdx + 2].id);
+      }
+      const targetTheme = userManualEmailTheme || getWorkspaceTheme();
+      candidates.forEach(id => {
+        if (!mailHtmlCache.has(id)) {
+          fetch(`/api/mail/raw_html/${id}?theme=${targetTheme}`)
+            .then(r => r.ok ? r.text() : null)
+            .then(html => { if (html) mailHtmlCache.set(id, html); })
+            .catch(() => {});
+        }
+      });
+    }
+
+    function selectMailItem(mailId) {
       currentSelectedMailId = mailId;
-      document.querySelectorAll('.mail-item-row').forEach(el => el.classList.remove('active'));
+      activeRequestedMailId = mailId;
+
+      // 1. Immediately highlight the selected list item
+      document.querySelectorAll('.mail-item-row.active').forEach(el => el.classList.remove('active'));
       const activeRow = document.getElementById(`mailItemRow_${mailId}`);
       if (activeRow) activeRow.classList.add('active');
 
       const empty = document.getElementById('mailReaderEmpty');
       const content = document.getElementById('mailReaderContent');
+      const wrap = document.querySelector('.mail-body-frame-wrap');
+      const iframe = document.getElementById('readerHtmlIframe');
+
       if (empty) empty.style.display = 'none';
-      if (content) {
-        content.style.display = 'flex';
-        content.classList.remove('mail-reader-entering');
-        content.classList.add('mail-reader-switching');
+      if (content) content.style.display = 'flex';
+
+      // 2. ⚡ 0ms INSTANT METADATA RENDER FROM LOCAL CACHE (Zero Network Stall!)
+      const cachedMeta = mailListCache.find(m => m.id == mailId);
+      if (cachedMeta) {
+        renderMailHeaderData(cachedMeta);
       }
 
-      try {
-        const res = await fetch(`/api/mail/detail/${mailId}`);
-        const json = await res.json();
-        if (json && json.data) {
-          const m = json.data;
-          document.getElementById('readerSubject').textContent = m.subject || '(无主题)';
-          document.getElementById('readerSender').textContent = `${m.sender} <${m.sender_email || ''}>`;
-          document.getElementById('readerAccountBadge').textContent = `${m.account_email} (${m.folder})`;
-          document.getElementById('readerDate').textContent = m.date_str || formatMailDate(m.timestamp);
+      // 3. Load iframe body with instant in-memory cache fallback
+      const targetTheme = userManualEmailTheme || getWorkspaceTheme();
 
-          // Check if OTP
-          const otpHero = document.getElementById('readerOtpHeroCard');
-          if (m.otp_code) {
-            document.getElementById('readerOtpCode').textContent = m.otp_code;
-            if (otpHero) otpHero.style.display = 'flex';
-          } else {
-            if (otpHero) otpHero.style.display = 'none';
+      function mountIframeHtml(htmlContent) {
+        if (!iframe) return;
+        iframe.onload = () => {
+          if (activeRequestedMailId === mailId) {
+            if (wrap) wrap.classList.remove('mail-frame-loading');
+            syncMailReaderThemeWithWorkspace();
           }
-
-          // Check cached AI summary
-          const aiBox = document.getElementById('readerAiSummaryBox');
-          const aiText = document.getElementById('readerAiSummaryText');
-          if (m.ai_summary) {
-            if (window.marked) {
-              aiText.innerHTML = marked.parse(m.ai_summary);
-            } else {
-              aiText.innerHTML = `<pre style="white-space:pre-wrap;">${escapeMailSafe(m.ai_summary)}</pre>`;
-            }
-            if (aiBox) aiBox.style.display = 'block';
-          } else {
-            if (aiBox) aiBox.style.display = 'none';
-          }
-
-          // Load HTML into iframe with current theme
-          const targetTheme = userManualEmailTheme || getWorkspaceTheme();
-          const iframe = document.getElementById('readerHtmlIframe');
-          if (iframe) {
-            iframe.onload = () => {
-              syncMailReaderThemeWithWorkspace();
-              if (content) {
-                content.classList.remove('mail-reader-switching');
-                content.classList.add('mail-reader-entering');
-              }
-            };
-            iframe.src = `/api/mail/raw_html/${mailId}?theme=${targetTheme}`;
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to load mail detail', e);
+        };
+        iframe.srcdoc = htmlContent;
+        if (wrap) wrap.classList.remove('mail-frame-loading');
       }
+
+      // Check if raw HTML is already cached in memory
+      if (mailHtmlCache.has(mailId)) {
+        mountIframeHtml(mailHtmlCache.get(mailId));
+        prefetchAdjacentEmails(mailId);
+        return;
+      }
+
+      // 4. Subtle GPU opacity crossfade while loading from local network
+      if (wrap) wrap.classList.add('mail-frame-loading');
+
+      // Abort any pending obsolete request from prior clicks
+      if (currentMailFetchAbortCtrl) {
+        currentMailFetchAbortCtrl.abort();
+      }
+      currentMailFetchAbortCtrl = new AbortController();
+      const signal = currentMailFetchAbortCtrl.signal;
+
+      fetch(`/api/mail/raw_html/${mailId}?theme=${targetTheme}`, { signal })
+        .then(res => {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.text();
+        })
+        .then(html => {
+          if (activeRequestedMailId !== mailId) return; // Stale request, ignore!
+          mailHtmlCache.set(mailId, html);
+          mountIframeHtml(html);
+          prefetchAdjacentEmails(mailId);
+        })
+        .catch(err => {
+          if (err.name === 'AbortError') return;
+          console.warn('Failed to load raw mail html', err);
+          if (activeRequestedMailId === mailId && wrap) {
+            wrap.classList.remove('mail-frame-loading');
+          }
+        });
     }
 
     function switchMailFolder(folder, chip) {
