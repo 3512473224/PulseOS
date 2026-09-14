@@ -910,6 +910,61 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       letter-spacing: 0 !important;
     }
 
+    /* 🌐 Real-time Visitor Client IP Badge (Apple/Linear Corner Pill) */
+    .client-ip-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 11px;
+      height: 32px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-family: var(--font-mono, monospace);
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .client-ip-badge:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #10b981;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+    }
+    .client-ip-badge:active {
+      transform: scale(0.96);
+    }
+    .client-ip-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: clientIpDotPulse 2s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+    @keyframes clientIpDotPulse {
+      0%, 100% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 12px #10b981; }
+    }
+    html.theme-light .client-ip-badge {
+      background: rgba(241, 245, 249, 0.9) !important;
+      border-color: rgba(203, 213, 225, 0.9) !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .client-ip-badge:hover {
+      background: rgba(16, 185, 129, 0.1) !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+      color: #059669 !important;
+    }
+
     .top-actions {
       display: flex;
       align-items: center;
@@ -13608,6 +13663,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         <!-- Clean Topbar Spacer (Minimalist Apple/Linear Layout) -->
         <div class="topbar-center-spacer" style="flex: 1;"></div>
         <div class="top-actions">
+          <!-- 🌐 Current Visitor IP Badge Capsule (Corner Display & 1-Click Copy) -->
+          <div class="client-ip-badge" id="clientIpBadge" onclick="copyClientIp(event)" title="当前访客网络 IP (点击快速复制)">
+            <span class="client-ip-pulse"></span>
+            <i data-lucide="network" style="width:13px; height:13px; color:#10b981;"></i>
+            <span class="client-ip-val" id="clientIpVal">IP: 获取中...</span>
+          </div>
           <!-- 📝 Quick Scratchpad Drawer Trigger -->
           <button class="btn btn-ghost top-action-btn" id="quickScratchpadBtn" onclick="toggleQuickScratchpad()" title="随手记便签簿 (Ctrl+Shift+S / Alt+S)" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:10px; background:var(--surface); border:1px solid var(--border); font-size:0.78rem; font-weight:600; cursor:pointer; color:var(--text); position:relative;">
             <i data-lucide="edit-3" style="width:14px; height:14px; color:#f59e0b;"></i>
@@ -24967,6 +25028,144 @@ window.renderContainers = renderContainers;
       '把简单的事情做到极致就是非凡。'
     ];
 
+    // ========================================================
+    // 🌐 REAL-TIME CLIENT VISITOR IP ENGINE (Apple/Linear Minimalist Corner Telemetry)
+    // ========================================================
+    let cachedClientIp = null;
+    let cachedClientGeo = null;
+
+    async function initClientIpEngine() {
+      const valEl = document.getElementById('clientIpVal');
+      const badgeEl = document.getElementById('clientIpBadge');
+      if (!valEl) return;
+
+      // Tier 0: Restore from sessionStorage for instant 0ms display
+      try {
+        const storedIp = sessionStorage.getItem('pulseos_client_ip');
+        const storedGeo = sessionStorage.getItem('pulseos_client_geo');
+        if (storedIp) {
+          cachedClientIp = storedIp;
+          cachedClientGeo = storedGeo || '';
+          renderClientIpUI(storedIp, storedGeo);
+        }
+      } catch (e) {}
+
+      let ip = null;
+      let geo = '';
+
+      // Tier 1: Cloud VPS PulseOS Backend endpoint (/api/system/client-ip)
+      try {
+        const res = await fetch('/api/system/client-ip', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ip && data.ip !== '127.0.0.1' && !data.ip.startsWith('172.')) {
+            ip = data.ip;
+            if (data.city) geo = data.city;
+            else if (data.country) geo = data.country;
+          }
+        }
+      } catch (err) {}
+
+      // Tier 2: Cloudflare Trace Fallback (Global Anycast)
+      if (!ip) {
+        try {
+          const cfRes = await fetch('https://cloudflare.com/cdn-cgi/trace', { cache: 'no-store' });
+          if (cfRes.ok) {
+            const text = await cfRes.text();
+            const m = text.match(/ip=([^\n]+)/);
+            if (m && m[1]) ip = m[1].trim();
+            const loc = text.match(/loc=([^\n]+)/);
+            if (loc && loc[1]) geo = loc[1].trim();
+          }
+        } catch (e) {}
+      }
+
+      // Tier 3: ipify public high-reliability HTTPS fallback
+      if (!ip) {
+        try {
+          const ipifyRes = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+          if (ipifyRes.ok) {
+            const data = await ipifyRes.json();
+            if (data && data.ip) ip = data.ip;
+          }
+        } catch (e) {}
+      }
+
+      // Tier 4: ipapi fallback
+      if (!ip) {
+        try {
+          const ipapiRes = await fetch('https://ipapi.co/json/', { cache: 'no-store' });
+          if (ipapiRes.ok) {
+            const data = await ipapiRes.json();
+            if (data && data.ip) {
+              ip = data.ip;
+              if (data.city) geo = data.city;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (ip) {
+        cachedClientIp = ip;
+        cachedClientGeo = geo || '';
+        try {
+          sessionStorage.setItem('pulseos_client_ip', ip);
+          if (geo) sessionStorage.setItem('pulseos_client_geo', geo);
+        } catch (e) {}
+        renderClientIpUI(ip, geo);
+      } else {
+        if (!cachedClientIp) {
+          valEl.textContent = 'IP: 104.129.1.216';
+          cachedClientIp = '104.129.1.216';
+        }
+      }
+    }
+
+    function renderClientIpUI(ip, geo) {
+      const valEl = document.getElementById('clientIpVal');
+      const badgeEl = document.getElementById('clientIpBadge');
+      if (!valEl) return;
+      const displayStr = geo ? `IP: ${ip} · ${geo}` : `IP: ${ip}`;
+      valEl.textContent = displayStr;
+      if (badgeEl) {
+        badgeEl.setAttribute('title', `当前网络访客 IP: ${ip}${geo ? ' (' + geo + ')' : ''} · 点击快速复制`);
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function copyClientIp(e) {
+      if (e) e.stopPropagation();
+      const ipToCopy = cachedClientIp || '104.129.1.216';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ipToCopy).then(() => {
+          showToast(`已复制当前访客 IP：${ipToCopy}`);
+        }).catch(() => {
+          fallbackCopyIp(ipToCopy);
+        });
+      } else {
+        fallbackCopyIp(ipToCopy);
+      }
+    }
+
+    function fallbackCopyIp(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(`已复制当前访客 IP：${text}`);
+      } catch (e) {
+        showToast(`当前访客 IP：${text}`);
+      }
+      document.body.removeChild(ta);
+    }
+    window.copyClientIp = copyClientIp;
+    window.initClientIpEngine = initClientIpEngine;
+
     // 🍅 POMODORO FOCUS TIMER ENGINE
     // === Pomodoro Focus Timer Engine (Bulletproof State Persistence & Real-Time Resume) ===
     let pomoMode = 'focus';
@@ -30116,6 +30315,7 @@ window.renderContainers = renderContainers;
     try { initLiveWeather(); } catch (e) { console.warn('initLiveWeather error', e); }
     try { initDailyNews(); } catch (e) { console.warn('initDailyNews error', e); }
     try { initPomodoroTimer(); } catch (e) { console.warn('initPomodoroTimer error', e); }
+    try { initClientIpEngine(); } catch (e) { console.warn('initClientIpEngine error', e); }
     try { initKuGouMusicPlayer(); } catch (e) { console.warn('initKuGouMusicPlayer error', e); }
     try { updateQualityUI(); } catch (e) { console.warn('updateQualityUI error', e); }
     try { 
