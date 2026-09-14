@@ -211,9 +211,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       z-index: 1;
       will-change: transform;
       transform: translate3d(-1000px, -1000px, 0);
+      contain: strict;
     }
 
-    /* Connected Starfield Canvas from vps.ppday.site */
+    /* Connected Starfield Canvas from vps.ppday.site - Hardware Composited */
     #particleCanvas {
       position: fixed;
       top: 0;
@@ -222,6 +223,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 100%;
       z-index: 0;
       pointer-events: none;
+      contain: strict;
+      transform: translateZ(0);
     }
 
     .app-layout {
@@ -4560,15 +4563,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       letter-spacing: 0.3px;
     }
 
-    /* Cards from vps.ppday.site */
+    /* Cards from vps.ppday.site - Hardware Accelerated & Contained */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 24px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                  background-color 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.26s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
+      contain: layout style;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -16214,13 +16221,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- 📜 JAVASCRIPT CORE ENGINE (vps.ppday.site EXACT CODE) -->
   <!-- ======================================================== -->
   <script>
-    // 1. HIGH-FPS 144Hz/240Hz HARDWARE ACCELERATED STARFIELD
+    // 1. HIGH-FPS SILKY-SMOOTH HARDWARE ACCELERATED STARFIELD (Zero-Jank Edition)
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d', { alpha: true });
     let particles = [];
     let mouse = { x: -1000, y: -1000 };
     let curGlow = { x: -1000, y: -1000 };
-    const PARTICLE_COUNT = Math.min(90, Math.max(45, Math.floor((window.innerWidth * window.innerHeight) / 18000)));
+    // Balanced adaptive density: flawless aesthetics with 55% fewer pairwise distance checks
+    const PARTICLE_COUNT = Math.min(58, Math.max(30, Math.floor((window.innerWidth * window.innerHeight) / 26000)));
 
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -16254,7 +16262,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         this.twinklePhase += this.twinkleSpeed * frameScale;
         this.alpha = this.baseAlpha + Math.sin(this.twinklePhase) * 0.12;
 
-        // Subtle interactive mouse repulsion
+        // Interactive mouse repulsion
         const mdx = mouse.x - this.x;
         const mdy = mouse.y - this.y;
         const mDistSq = mdx * mdx + mdy * mdy;
@@ -16281,32 +16289,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
 
-    // Interactive constellation connections from PulseOS
+    // Ultra-Fast Constellation Line Batching (Single draw call, zero Math.sqrt on non-connections)
     function connectParticles() {
       const isLight = document.documentElement.classList.contains('theme-light');
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            ctx.beginPath();
-            const alpha = 0.12 * (1 - dist / 130);
-            ctx.strokeStyle = isLight ? `rgba(99, 102, 241, ${alpha * 0.7})` : `rgba(124, 58, 237, ${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
+      const maxDist = 120;
+      const maxDistSq = maxDist * maxDist;
+
+      ctx.beginPath();
+      ctx.strokeStyle = isLight ? 'rgba(99, 102, 241, 0.07)' : 'rgba(124, 58, 237, 0.11)';
+      ctx.lineWidth = 0.6;
+
+      const pLen = particles.length;
+      for (let i = 0; i < pLen; i++) {
+        const p1 = particles[i];
+        for (let j = i + 1; j < pLen; j++) {
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < maxDistSq) {
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
           }
         }
-        const mDx = particles[i].x - mouse.x;
-        const mDy = particles[i].y - mouse.y;
-        const mDist = Math.sqrt(mDx * mDx + mDy * mDy);
-        if (mDist < 160 && mDist > 0) {
-          particles[i].x += (mDx / mDist) * (1 - mDist / 160) * 1.5;
-          particles[i].y += (mDy / mDist) * (1 - mDist / 160) * 1.5;
-        }
       }
+      ctx.stroke();
     }
 
     const glow = document.getElementById('cursorGlow');
@@ -16315,8 +16322,30 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       mouse.y = e.clientY;
     }, { passive: true });
 
+    // Intelligent scroll detection: pause background canvas redraw during scroll to unlock 60fps locked buttery-smooth card gliding
+    let isUserScrolling = false;
+    let scrollDebounceTimer = null;
+    window.addEventListener('wheel', () => {
+      isUserScrolling = true;
+      if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer);
+      scrollDebounceTimer = setTimeout(() => { isUserScrolling = false; }, 120);
+    }, { passive: true });
+
+    let isParticlePaused = false;
     let lastTime = performance.now();
+
     function animateParticles(now) {
+      if (document.hidden) {
+        isParticlePaused = true;
+        return;
+      }
+
+      // During rapid wheel scrolling, skip canvas redraw so GPU compositor delivers 100% fillrate to UI
+      if (isUserScrolling) {
+        requestAnimationFrame(animateParticles);
+        return;
+      }
+
       const dt = Math.min((now - lastTime) / 1000, 0.1) || 0.016;
       lastTime = now;
 
@@ -16328,15 +16357,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }
       connectParticles();
 
-      // GPU translate3d cursor glow lerp
-      if (mouse.x > -500) {
-        curGlow.x += (mouse.x - curGlow.x) * 0.16;
-        curGlow.y += (mouse.y - curGlow.y) * 0.16;
-        if (glow) glow.style.transform = `translate3d(${curGlow.x - 240}px, ${curGlow.y - 240}px, 0)`;
+      // GPU translate3d cursor glow lerp with dead-zone check (avoids redundant DOM style mutations)
+      if (mouse.x > -500 && glow) {
+        const dx = mouse.x - curGlow.x;
+        const dy = mouse.y - curGlow.y;
+        if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+          curGlow.x += dx * 0.16;
+          curGlow.y += dy * 0.16;
+          glow.style.transform = `translate3d(${curGlow.x - 240}px, ${curGlow.y - 240}px, 0)`;
+        }
       }
 
       requestAnimationFrame(animateParticles);
     }
+
+    // Tab visibility auto-wake/sleep
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && isParticlePaused) {
+        isParticlePaused = false;
+        lastTime = performance.now();
+        requestAnimationFrame(animateParticles);
+      }
+    });
+
     requestAnimationFrame(animateParticles);
 
     // ========================================================
@@ -16984,6 +17027,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return;
       }
       currentActiveViewKey = viewKey;
+
+      // 🛑 PERFORMANCE SLEEP: Stop Obsidian Graph Physics Loop when leaving graph view
+      if (viewKey !== 'graph' && typeof gAnimId !== 'undefined' && gAnimId) {
+        cancelAnimationFrame(gAnimId);
+        gAnimId = null;
+      }
 
       // 🌟 STEP 0: ANIMATE DYNAMIC ISLAND IN SYNC WITH VIEW SWITCHING!
       animateIslandOnViewSwitch(viewKey);
@@ -20605,8 +20654,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         });
 
         gCtx.restore();
-        gAnimId = requestAnimationFrame(loop);
+
+        // 💤 EQUILIBRIUM SLEEP ENGINE: Stop redraws once physics nodes and camera come to rest
+        let totalKineticEnergy = 0;
+        for (let i = 0; i < graphNodes.length; i++) {
+          totalKineticEnergy += Math.abs(graphNodes[i].vx) + Math.abs(graphNodes[i].vy);
+        }
+        const isCameraLerping = Math.abs(gTargetPanX - gPanX) > 0.05 || Math.abs(gTargetPanY - gPanY) > 0.05 || Math.abs(gTargetZoom - gZoom) > 0.001;
+
+        if (currentActiveViewKey === 'graph' && (totalKineticEnergy > 0.035 || isCameraLerping || draggedNode || isPanning)) {
+          gAnimId = requestAnimationFrame(loop);
+        } else {
+          gAnimId = null;
+        }
       }
+
+      window.wakeGraphPhysics = function() {
+        if (currentActiveViewKey === 'graph' && !gAnimId) {
+          gAnimId = requestAnimationFrame(loop);
+        }
+      };
+
       loop();
     }
 
@@ -20648,6 +20716,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       };
 
       window.addEventListener('mousemove', (e) => {
+        if (currentActiveViewKey !== 'graph') return;
         const w = screenToWorld(e.clientX, e.clientY);
         hoveredNode = graphNodes.find(n => Math.hypot(n.x - w.x, n.y - w.y) <= Math.max(n.radius * 3.0, 18)) || null;
 
@@ -20656,9 +20725,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           draggedNode.y = w.y;
           draggedNode.vx = 0;
           draggedNode.vy = 0;
+          wakeGraphPhysics();
         } else if (isPanning) {
           gTargetPanX = e.clientX - panStartX;
           gTargetPanY = e.clientY - panStartY;
+          wakeGraphPhysics();
         }
       });
 
@@ -20682,6 +20753,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         e.preventDefault();
         const factor = e.deltaY < 0 ? 1.12 : 0.88;
         gTargetZoom = Math.min(Math.max(0.3, gTargetZoom * factor), 2.5);
+        if (typeof wakeGraphPhysics === 'function') wakeGraphPhysics();
       };
     }
 
@@ -29791,13 +29863,20 @@ window.renderContainers = renderContainers;
 
           const maxScroll = el.scrollHeight - el.clientHeight;
           if (maxScroll > 2) {
-            const style = window.getComputedStyle(el);
-            const oy = style.overflowY;
-            if (oy === 'auto' || oy === 'scroll' || el.classList.contains('scrollable')) {
+            const hasScrollClass = el.classList && (el.classList.contains('scrollable') || el.classList.contains('view-section') || el.classList.contains('content-viewport'));
+            if (hasScrollClass) {
               const canScrollDown = deltaY > 0 && el.scrollTop < maxScroll - 1;
               const canScrollUp = deltaY < 0 && el.scrollTop > 1;
-              if (canScrollDown || canScrollUp) {
-                return el;
+              if (canScrollDown || canScrollUp) return el;
+            } else {
+              const style = window.getComputedStyle(el);
+              const oy = style.overflowY;
+              if (oy === 'auto' || oy === 'scroll') {
+                const canScrollDown = deltaY > 0 && el.scrollTop < maxScroll - 1;
+                const canScrollUp = deltaY < 0 && el.scrollTop > 1;
+                if (canScrollDown || canScrollUp) {
+                  return el;
+                }
               }
             }
           }
@@ -31695,13 +31774,24 @@ window.renderContainers = renderContainers;
         ctx.clearRect(0, 0, w, h);
 
         const isPlaying = typeof kugouIsPlaying !== 'undefined' && kugouIsPlaying;
-        const speed = isPlaying ? 0.08 : 0.02;
-        wavePhase += speed;
+        if (!isPlaying) {
+          // 💤 SLEEP STATE: Render resting calm horizon line once and cancel rAF loop!
+          const midY = h * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(0, midY);
+          ctx.lineTo(w, midY);
+          ctx.strokeStyle = 'rgba(0, 145, 255, 0.22)';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          waveAnimFrameId = null;
+          return;
+        }
 
-        const amplitude = isPlaying ? (h * 0.35) : (h * 0.12);
+        wavePhase += 0.08;
+        const amplitude = h * 0.35;
         const midY = h * 0.5;
 
-        // Draw Ambient Wave 1 (Gradient Cyan to Purple)
+        // Draw Ambient Wave 1 (Gradient Cyan to Blue, hardware-friendly zero shadow blur)
         const grad1 = ctx.createLinearGradient(0, 0, w, 0);
         grad1.addColorStop(0, '#0091ff');
         grad1.addColorStop(0.5, '#06b6d4');
@@ -31709,7 +31799,7 @@ window.renderContainers = renderContainers;
 
         ctx.beginPath();
         ctx.moveTo(0, midY);
-        const steps = 40;
+        const steps = 36;
         for (let i = 0; i <= steps; i++) {
           const x = (i / steps) * w;
           const freq = (i / steps) * Math.PI * 4;
@@ -31718,36 +31808,31 @@ window.renderContainers = renderContainers;
         }
         ctx.strokeStyle = grad1;
         ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
-        ctx.shadowColor = 'rgba(0, 145, 255, 0.6)';
-        ctx.shadowBlur = 8;
         ctx.stroke();
-        ctx.shadowBlur = 0;
 
         // Draw Ambient Wave 2 (Subtle Violet Counter-Wave)
-        if (isPlaying) {
-          const grad2 = ctx.createLinearGradient(0, 0, w, 0);
-          grad2.addColorStop(0, '#0070f3');
-          grad2.addColorStop(0.5, '#38bdf8');
-          grad2.addColorStop(1, '#ec4899');
+        const grad2 = ctx.createLinearGradient(0, 0, w, 0);
+        grad2.addColorStop(0, '#0070f3');
+        grad2.addColorStop(0.5, '#38bdf8');
+        grad2.addColorStop(1, '#ec4899');
 
-          ctx.beginPath();
-          ctx.moveTo(0, midY);
-          for (let i = 0; i <= steps; i++) {
-            const x = (i / steps) * w;
-            const freq = (i / steps) * Math.PI * 3.5;
-            const y = midY + Math.cos(freq - wavePhase * 1.2) * (amplitude * 0.65);
-            ctx.lineTo(x, y);
-          }
-          ctx.strokeStyle = grad2;
-          ctx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
-          ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, midY);
+        for (let i = 0; i <= steps; i++) {
+          const x = (i / steps) * w;
+          const freq = (i / steps) * Math.PI * 3.5;
+          const y = midY + Math.cos(freq - wavePhase * 1.2) * (amplitude * 0.65);
+          ctx.lineTo(x, y);
         }
+        ctx.strokeStyle = grad2;
+        ctx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
+        ctx.stroke();
 
         waveAnimFrameId = requestAnimationFrame(drawWave);
       }
 
-      if (waveAnimFrameId) cancelAnimationFrame(waveAnimFrameId);
-      waveAnimFrameId = requestAnimationFrame(drawWave);
+      // Initial resting state: draw calm line once without scheduling continuous rAF
+      drawWave();
     }
 
     function updateTopDynamicIslandMusicUI(track, isPlaying) {
@@ -31759,6 +31844,24 @@ window.renderContainers = renderContainers;
       const playSvg = document.getElementById('islandPillPlaySvg');
 
       if (!pill) return;
+
+      // Automatically wake/sleep audio wave visualizer based on playback state
+      if (typeof isPlaying !== 'undefined') {
+        const visualizerCanvas = document.getElementById('kugouWaveVisualizerCanvas');
+        if (isPlaying) {
+          if (!waveAnimFrameId && visualizerCanvas && typeof drawWave === 'function') {
+            waveAnimFrameId = requestAnimationFrame(drawWave);
+          }
+        } else {
+          if (waveAnimFrameId) {
+            cancelAnimationFrame(waveAnimFrameId);
+            waveAnimFrameId = null;
+          }
+          if (visualizerCanvas && typeof drawWave === 'function') {
+            drawWave();
+          }
+        }
+      }
 
       if (track) {
         if (titleEl) titleEl.textContent = track.title || '酷狗随身听';
