@@ -15195,6 +15195,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     </span>
                   </div>
                   <div style="display:flex; align-items:center; gap:6px;">
+                    <button onclick="fitPulseOSTerminal()" class="term-action-btn" title="自适应当前窗口宽度并排版 (Fit Screen)">
+                      <i data-lucide="maximize-2" style="width:12px; height:12px;"></i>
+                      <span>自适应</span>
+                    </button>
                     <button onclick="copyPulseOSTerminal()" class="term-action-btn" title="复制选中文本或终端内容">
                       <i data-lucide="copy" style="width:12px; height:12px;"></i>
                       <span>复制</span>
@@ -15209,7 +15213,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     </button>
                   </div>
                 </div>
-                <div id="terminal-container" style="width: 100%; height: 380px; overflow: hidden; border-radius: 8px;"></div>
+                <div id="terminal-container" style="width: 100%; min-height: 380px; height: 420px; overflow: hidden; border-radius: 8px;"></div>
               </div>
 
             <!-- Section 6: Logs -->
@@ -17161,20 +17165,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               } catch (e) {}
             }
             initPulseOSTerminal();
-            if (window.pulseOSTerminalFitAddon) {
-              try {
-                window.pulseOSTerminalFitAddon.fit();
-                if (pulseOSTerminalWs && pulseOSTerminalWs.readyState === WebSocket.OPEN && pulseOSTerminal) {
-                  pulseOSTerminalWs.send(JSON.stringify({ type: 'resize', cols: pulseOSTerminal.cols, rows: pulseOSTerminal.rows }));
-                }
-              } catch (e) {}
-            }
+            if (typeof syncTermSize === 'function') syncTermSize(true);
           }, 80);
           setTimeout(() => {
-            if (window.pulseOSTerminalFitAddon) {
-              try { window.pulseOSTerminalFitAddon.fit(); } catch(e) {}
-            }
+            if (typeof syncTermSize === 'function') syncTermSize(true);
           }, 260);
+          setTimeout(() => {
+            if (typeof syncTermSize === 'function') syncTermSize(true);
+          }, 600);
         } else if (viewKey === 'cluster') {
           renderPortMonitors();
         } else if (viewKey === 'obsidian') {
@@ -22607,50 +22605,135 @@ window.renderContainers = renderContainers;
     let lastSentTermCols = 0;
     let lastSentTermRows = 0;
 
-    function syncTermSize() {
-      if (!term || isSyncingTerm) return;
+    function calculateTermDimensions() {
+      const container = document.getElementById('terminal-container');
+      if (!container || container.clientWidth < 60) return null;
+
+      // Attempt fitAddon proposeDimensions first if available
+      if (fitAddon && typeof fitAddon.proposeDimensions === 'function') {
+        try {
+          const dims = fitAddon.proposeDimensions();
+          if (dims && dims.cols >= 40 && dims.rows >= 10) {
+            return dims;
+          }
+        } catch(e){}
+      }
+
+      // High-precision monospace font measurement fallback
+      const span = document.createElement('span');
+      span.style.fontFamily = "'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace";
+      span.style.fontSize = '11px';
+      span.style.lineHeight = '1.25';
+      span.style.visibility = 'hidden';
+      span.style.position = 'absolute';
+      span.textContent = 'M'.repeat(100);
+      document.body.appendChild(span);
+      const rect = span.getBoundingClientRect();
+      const charWidth = (rect.width / 100) || 6.28;
+      const charHeight = rect.height || 14;
+      document.body.removeChild(span);
+
+      const padding = 28;
+      const availWidth = Math.max(container.clientWidth - padding, 200);
+      const availHeight = Math.max(container.clientHeight - 20, 100);
+
+      const cols = Math.max(Math.floor(availWidth / charWidth), 80);
+      const rows = Math.max(Math.floor(availHeight / charHeight), 24);
+      return { cols, rows };
+    }
+    window.calculateTermDimensions = calculateTermDimensions;
+
+    function syncTermSize(force = false) {
+      if (!term) return;
       if (termResizeTimer) clearTimeout(termResizeTimer);
       termResizeTimer = setTimeout(() => {
         if (!term) return;
-        isSyncingTerm = true;
         try {
-          if (fitAddon) {
-            try { fitAddon.fit(); } catch(e){}
+          const dims = calculateTermDimensions();
+          if (!dims) return;
+
+          if (term.cols !== dims.cols || term.rows !== dims.rows) {
+            term.resize(dims.cols, dims.rows);
           }
-          const cols = term.cols || 80;
-          const rows = term.rows || 24;
+
           const ws = window.termWs || window.pulseOSTerminalWs;
           if (ws && ws.readyState === WebSocket.OPEN) {
-            if (cols !== lastSentTermCols || rows !== lastSentTermRows) {
-              lastSentTermCols = cols;
-              lastSentTermRows = rows;
-              ws.send(JSON.stringify({ type: 'resize', cols: cols, rows: rows }));
+            if (force || dims.cols !== lastSentTermCols || dims.rows !== lastSentTermRows) {
+              lastSentTermCols = dims.cols;
+              lastSentTermRows = dims.rows;
+              ws.send(JSON.stringify({ type: 'resize', cols: dims.cols, rows: dims.rows }));
             }
           }
         } catch(e) {}
-        finally {
-          isSyncingTerm = false;
-        }
-      }, 60);
+      }, 30);
     }
     window.syncTermSize = syncTermSize;
+    window.syncPulseOSTerminalSize = syncTermSize;
 
     function initTerm() {
       if (typeof Terminal === 'undefined') return;
       const container = document.getElementById('terminal-container');
       if (!container || term) return;
 
+      const isLight = document.documentElement.classList.contains('theme-light');
       term = new Terminal({
-        theme: { background: 'transparent', foreground: '#a1a1aa', cursor: '#7c5cfc', cursorAccent: '#000' },
+        theme: isLight ? {
+          background: '#f8fafc',
+          foreground: '#0f172a',
+          cursor: '#7c5cfc',
+          cursorAccent: '#ffffff',
+          selectionBackground: 'rgba(124, 92, 252, 0.25)',
+          black: '#1e293b',
+          red: '#e11d48',
+          green: '#16a34a',
+          yellow: '#ca8a04',
+          blue: '#2563eb',
+          magenta: '#9333ea',
+          cyan: '#0891b2',
+          white: '#f1f5f9',
+          brightBlack: '#64748b',
+          brightRed: '#f43f5e',
+          brightGreen: '#22c55e',
+          brightYellow: '#eab308',
+          brightBlue: '#3b82f6',
+          brightMagenta: '#a855f7',
+          brightCyan: '#06b6d4',
+          brightWhite: '#0f172a'
+        } : {
+          background: '#050510',
+          foreground: '#e2e8f0',
+          cursor: '#7c5cfc',
+          cursorAccent: '#000000',
+          selectionBackground: 'rgba(124, 92, 252, 0.3)',
+          black: '#000000',
+          red: '#ef4444',
+          green: '#10b981',
+          yellow: '#f59e0b',
+          blue: '#3b82f6',
+          magenta: '#8b5cf6',
+          cyan: '#06b6d4',
+          white: '#ffffff',
+          brightBlack: '#4b5563',
+          brightRed: '#f87171',
+          brightGreen: '#34d399',
+          brightYellow: '#fbbf24',
+          brightBlue: '#60a5fa',
+          brightMagenta: '#a78bfa',
+          brightCyan: '#22d3ee',
+          brightWhite: '#f3f4f6'
+        },
         fontFamily: "'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace",
-        fontSize: 12,
+        fontSize: 11,
+        lineHeight: 1.25,
         cursorBlink: true,
-        scrollback: 1000
+        scrollback: 3000
       });
 
       if (typeof FitAddon !== 'undefined' && FitAddon.FitAddon) {
         fitAddon = new FitAddon.FitAddon();
         term.loadAddon(fitAddon);
+        window.fitAddon = fitAddon;
+        window.pulseOSTerminalFitAddon = fitAddon;
       }
 
       term.open(container);
@@ -22677,8 +22760,12 @@ window.renderContainers = renderContainers;
       window.addEventListener('resize', syncTermSize);
 
       if (window.ResizeObserver && !termResizeObserver) {
-        termResizeObserver = new ResizeObserver(() => {
-          syncTermSize();
+        termResizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.contentRect && entry.contentRect.width > 50) {
+              syncTermSize();
+            }
+          }
         });
         termResizeObserver.observe(container);
       }
@@ -22694,6 +22781,25 @@ window.renderContainers = renderContainers;
     window.initTerm = initTerm;
     window.initPulseOSTerminal = initTerm;
 
+    function fitPulseOSTerminal() {
+      const dims = calculateTermDimensions();
+      if (dims && term) {
+        term.resize(dims.cols, dims.rows);
+        const ws = window.termWs || window.pulseOSTerminalWs;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          lastSentTermCols = dims.cols;
+          lastSentTermRows = dims.rows;
+          ws.send(JSON.stringify({ type: 'resize', cols: dims.cols, rows: dims.rows }));
+        }
+      } else if (fitAddon) {
+        try { fitAddon.fit(); } catch(e){}
+      }
+      syncTermSize();
+      if (term) term.scrollToBottom();
+      if (typeof showToast === 'function') showToast('终端排版已完成自适应 (' + (term ? term.cols : 160) + '列)', 'info');
+    }
+    window.fitPulseOSTerminal = fitPulseOSTerminal;
+
     function connectTerm() {
       if (termWs && (termWs.readyState === WebSocket.OPEN || termWs.readyState === WebSocket.CONNECTING)) return;
       const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -22708,7 +22814,9 @@ window.renderContainers = renderContainers;
           clearTimeout(termReconnectTimer);
           updateTermStatus(true, '已连接');
           if (term) term.write('\r\n\x1b[38;2;124;92;252mPulseOS Terminal\x1b[0m Connected.\r\n');
-          syncTermSize();
+          lastSentTermCols = 0;
+          lastSentTermRows = 0;
+          syncTermSize(true);
         };
         termWs.onmessage = e => {
           if (term) term.write(e.data);
