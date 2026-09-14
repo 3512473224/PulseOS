@@ -26135,11 +26135,32 @@ window.renderContainers = renderContainers;
           saveKuGouPlaybackState();
         });
         audio.addEventListener('seeked', saveKuGouPlaybackState);
+        audio.addEventListener('waiting', () => {
+          if (kugouIsPlaying) {
+            const lrcEl = document.getElementById('kugouLyricsLine');
+            if (lrcEl && !lrcEl.textContent.includes('缓冲')) {
+              renderDynamicNotice('正在极速缓冲音频流...');
+            }
+          }
+        });
+        audio.addEventListener('playing', () => {
+          setKuGouPlayingState(true);
+        });
         audio.addEventListener('error', async (e) => {
           console.warn('Audio stream error', e);
-          // If user is actively seeking or stream is just connecting, DO NOT skip track!
           if (typeof isCanvasSeeking !== 'undefined' && isCanvasSeeking) return;
           if (audio && audio.currentTime > 0) return;
+
+          // Self-healing: if stream token expired or 403, immediately re-request fresh token!
+          const curTrack = kugouCurrentPlaylist[kugouCurrentTrackIdx];
+          if (curTrack && !curTrack._hasRetriedFreshToken) {
+            curTrack._hasRetriedFreshToken = true;
+            console.log('Auto-recovering fresh audio token for:', curTrack.title);
+            showToast(`🔄 正在刷新《${curTrack.title}》高速音源...`);
+            loadKuGouTrack(kugouCurrentTrackIdx, kugouIsPlaying, 0, true);
+            return;
+          }
+
           if (kugouIsPlaying && kugouCurrentPlaylist.length > 1) {
             setTimeout(() => {
               if (audio && audio.error && (!audio.currentTime || audio.currentTime === 0)) {
@@ -26378,6 +26399,10 @@ window.renderContainers = renderContainers;
     const FAKE_COVER_BUZZWORDS = ['翻唱', 'cover', '原唱', 'dj', 'remix', '电音', '串烧', '伴奏', '喊麦', '慢摇', '消音', '减速', '加速', '8d', '纯音乐', '铃声'];
 
     async function resolvePlayableUrl(track, forceRefresh = false) {
+      if (forceRefresh) {
+        audioUrlCache.delete(track.id);
+        track.url = null;
+      }
       if (!forceRefresh && track.url && (track.url.startsWith('http://') || track.url.startsWith('https://')) && !track.url.includes('/api/v1/')) {
         return track.url;
       }
@@ -26394,7 +26419,8 @@ window.renderContainers = renderContainers;
       // ========================================================
       if (track.id) {
         try {
-          const uRes = await fetchWithTimeout(`/api/music/api/v1/music/url?id=${encodeURIComponent(track.id)}&source=${encodeURIComponent(track.source || 'kugou')}`, 2500);
+          const urlEndpoint = `/api/music/api/v1/music/url?id=${encodeURIComponent(track.id)}&source=${encodeURIComponent(track.source || 'kugou')}&quality=${kugouPreferredQuality || 'flac'}&_t=${Date.now()}`;
+          const uRes = await fetchWithTimeout(urlEndpoint, 3500);
           if (uRes.ok) {
             const ud = await uRes.json();
             const raw = ud.data?.url || ud.url;
@@ -26546,7 +26572,7 @@ window.renderContainers = renderContainers;
     }
 
     // --- Load & Play Track with 0ms UI Feedback & Abort Outdated Requests ---
-    async function loadKuGouTrack(idx, autoPlay = true, initialProgress = 0) {
+    async function loadKuGouTrack(idx, autoPlay = true, initialProgress = 0, forceRefresh = false) {
       if (!kugouCurrentPlaylist || kugouCurrentPlaylist.length === 0) {
         renderEmptyPlayerState();
         return;
@@ -26556,6 +26582,11 @@ window.renderContainers = renderContainers;
       kugouCurrentTrackIdx = idx;
       const track = kugouCurrentPlaylist[idx];
       if (!track) return;
+
+      if (forceRefresh) {
+        audioUrlCache.delete(track.id);
+        track.url = null;
+      }
 
       const resumeSec = Math.max(0, parseFloat(initialProgress) || 0);
       kugouRestoredProgress = resumeSec;
@@ -26628,7 +26659,7 @@ window.renderContainers = renderContainers;
       }
 
       // 2. Fetch Audio Stream
-      const playableUrl = await resolvePlayableUrl(track);
+      const playableUrl = await resolvePlayableUrl(track, forceRefresh);
       // If user clicked another song while waiting, discard this outdated result!
       if (thisReqId !== currentAudioRequestId) return;
 
@@ -27325,6 +27356,12 @@ window.renderContainers = renderContainers;
       }
 
       if (audio.paused) {
+        if (!audio.src || audio.error) {
+          showToast('⚡ 正在载入最新音源...');
+          loadKuGouTrack(kugouCurrentTrackIdx >= 0 ? kugouCurrentTrackIdx : 0, true, 0, true);
+          return;
+        }
+
         if (audio.currentTime === 0 && kugouRestoredProgress > 0) {
           try { audio.currentTime = kugouRestoredProgress; } catch(e){}
         }
@@ -27333,9 +27370,10 @@ window.renderContainers = renderContainers;
           if (kugouRestoredProgress > 0 && Math.abs(audio.currentTime - kugouRestoredProgress) > 0.4) {
             try { audio.currentTime = kugouRestoredProgress; } catch(e){}
           }
-        }).catch(() => {
+        }).catch((err) => {
+          console.warn('Playback resume failed, fetching fresh token...', err);
           const savedProgress = audio.currentTime || kugouRestoredProgress || parseFloat(localStorage.getItem('pulseos_kugou_last_progress') || '0');
-          loadKuGouTrack(kugouCurrentTrackIdx, true, savedProgress);
+          loadKuGouTrack(kugouCurrentTrackIdx, true, savedProgress, true);
         });
       } else {
         audio.pause();
