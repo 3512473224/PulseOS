@@ -17094,6 +17094,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (viewKey === 'home') {
           initHomeDashboard();
           initLiveWeather(false);
+          if (typeof syncPomoCountdownTick === 'function') {
+            syncPomoCountdownTick();
+          } else if (typeof updatePomoDisplay === 'function') {
+            updatePomoDisplay();
+          }
         } else if (viewKey === 'news') {
           // 0ms transition: If cache exists, view is already rendered with zero network jitter; only fetch if empty
           if (!cachedNewsData || !cachedNewsData.categories) {
@@ -24963,13 +24968,33 @@ window.renderContainers = renderContainers;
     ];
 
     // 🍅 POMODORO FOCUS TIMER ENGINE
-    // === Pomodoro Focus Timer Engine (100% Dynamic & Minimalist) ===
+    // === Pomodoro Focus Timer Engine (Bulletproof State Persistence & Real-Time Resume) ===
     let pomoMode = 'focus';
     let pomoCustomFocusMinutes = 25;
     let pomoTimeLeft = 25 * 60;
     let pomoTimerId = null;
     let pomoIsRunning = false;
     let pomoCurrentTask = '核心架构与高效编码';
+    let pomoTargetEndTime = 0;
+    let pomoWorker = null;
+    let pomoModeRemainings = {
+      focus: null,
+      short: null,
+      long: null
+    };
+    let lastPomoStorageSave = 0;
+
+    function savePomoStateToStorage() {
+      try {
+        localStorage.setItem('pulseos_pomo_mode', pomoMode);
+        localStorage.setItem('pulseos_pomo_running', pomoIsRunning ? 'true' : 'false');
+        localStorage.setItem('pulseos_pomo_target_end', String(pomoTargetEndTime || 0));
+        localStorage.setItem('pulseos_pomo_left', String(pomoTimeLeft));
+        localStorage.setItem('pulseos_pomo_mins', String(pomoCustomFocusMinutes));
+        localStorage.setItem('pulseos_pomo_task', pomoCurrentTask);
+        localStorage.setItem('pulseos_pomo_remainings', JSON.stringify(pomoModeRemainings));
+      } catch (e) {}
+    }
 
     function getTodayKey() {
       const d = new Date();
@@ -25002,13 +25027,48 @@ window.renderContainers = renderContainers;
         if (savedTask) pomoCurrentTask = savedTask;
         const savedMins = localStorage.getItem('pulseos_pomo_mins');
         if (savedMins) pomoCustomFocusMinutes = parseInt(savedMins, 10) || 25;
+        const savedMode = localStorage.getItem('pulseos_pomo_mode');
+        if (savedMode && ['focus', 'short', 'long'].includes(savedMode)) pomoMode = savedMode;
+        const savedRemainings = localStorage.getItem('pulseos_pomo_remainings');
+        if (savedRemainings) {
+          try { pomoModeRemainings = JSON.parse(savedRemainings); } catch(e) {}
+        }
       } catch (e) {}
 
-      pomoTimeLeft = pomoCustomFocusMinutes * 60;
+      const wasRunning = localStorage.getItem('pulseos_pomo_running') === 'true';
+      const savedEnd = parseInt(localStorage.getItem('pulseos_pomo_target_end'), 10) || 0;
+      const savedLeft = parseInt(localStorage.getItem('pulseos_pomo_left'), 10);
+
+      // 🛡️ ZERO-UNINTENDED-RESET ENGINE: As long as user didn't click "Reset", NEVER revert back to 35:00!
+      if (wasRunning && savedEnd > Date.now()) {
+        // Seamlessly continue active countdown across page reloads & navigation!
+        pomoTargetEndTime = savedEnd;
+        pomoTimeLeft = Math.max(0, Math.round((savedEnd - Date.now()) / 1000));
+        pomoIsRunning = true;
+        startPomoEngine();
+      } else if (wasRunning && savedEnd > 0 && savedEnd <= Date.now()) {
+        // Completed while away
+        pomoTimeLeft = 0;
+        pomoIsRunning = false;
+        savePomoStateToStorage();
+        onPomoSessionComplete();
+      } else if (!isNaN(savedLeft) && savedLeft > 0 && (!savedEnd || savedEnd === 0 || !wasRunning)) {
+        // Was paused midway with remaining seconds - PRESERVE EXACT PAUSED TIME!
+        pomoTimeLeft = savedLeft;
+        pomoIsRunning = false;
+      } else if (pomoModeRemainings[pomoMode] && pomoModeRemainings[pomoMode] > 0) {
+        pomoTimeLeft = pomoModeRemainings[pomoMode];
+        pomoIsRunning = false;
+      } else {
+        pomoTimeLeft = (pomoMode === 'focus') ? pomoCustomFocusMinutes * 60 : (pomoMode === 'short' ? 5 * 60 : 15 * 60);
+        pomoIsRunning = false;
+      }
 
       updatePomoTaskUI();
       updatePomoDurationLabel();
       updatePomoStatsUI();
+      updatePomoModeUI();
+      updatePomoActionBtnUI();
       updatePomoDisplay();
     }
 
@@ -25055,8 +25115,12 @@ window.renderContainers = renderContainers;
       pomoCustomFocusMinutes = durations[(idx + 1) % durations.length];
       localStorage.setItem('pulseos_pomo_mins', pomoCustomFocusMinutes);
 
+      // If in focus mode and NOT running, update remaining to the new duration
       if (!pomoIsRunning && pomoMode === 'focus') {
         pomoTimeLeft = pomoCustomFocusMinutes * 60;
+        pomoModeRemainings.focus = null;
+        savePomoStateToStorage();
+        updatePomoActionBtnUI();
         updatePomoDisplay();
       }
       updatePomoDurationLabel();
@@ -25121,21 +25185,7 @@ window.renderContainers = renderContainers;
       if (minsEl) minsEl.textContent = `${mins} min`;
     }
 
-    function setPomoMode(mode) {
-      if (pomoIsRunning) {
-        stopPomoEngine();
-        pomoIsRunning = false;
-        document.title = 'PulseOS · 全域工作台';
-      }
-      pomoMode = mode;
-      if (mode === 'focus') {
-        pomoTimeLeft = pomoCustomFocusMinutes * 60;
-      } else if (mode === 'short') {
-        pomoTimeLeft = 5 * 60;
-      } else if (mode === 'long') {
-        pomoTimeLeft = 15 * 60;
-      }
-
+    function updatePomoModeUI() {
       // Update segmented pill tabs
       ['pomoBtnFocus', 'pomoBtnShort', 'pomoBtnLong'].forEach(id => {
         const btn = document.getElementById(id);
@@ -25149,10 +25199,10 @@ window.renderContainers = renderContainers;
         }
       });
 
-      const activeBtn = document.getElementById(mode === 'focus' ? 'pomoBtnFocus' : (mode === 'short' ? 'pomoBtnShort' : 'pomoBtnLong'));
+      const activeBtn = document.getElementById(pomoMode === 'focus' ? 'pomoBtnFocus' : (pomoMode === 'short' ? 'pomoBtnShort' : 'pomoBtnLong'));
       if (activeBtn) {
         activeBtn.classList.add('active');
-        if (mode === 'focus') {
+        if (pomoMode === 'focus') {
           activeBtn.style.background = 'linear-gradient(135deg, rgba(0, 145, 255, 0.2), rgba(56, 189, 248, 0.15))';
           activeBtn.style.color = '#0091ff';
           activeBtn.style.boxShadow = '0 2px 8px rgba(0, 145, 255, 0.15)';
@@ -25164,7 +25214,7 @@ window.renderContainers = renderContainers;
         activeBtn.style.fontWeight = '600';
       }
 
-      // Sync top right header (eliminates duration vs break inconsistency!)
+      // Sync top right header badge
       updatePomoDurationLabel();
 
       // Sync focus goal label and default text
@@ -25173,19 +25223,19 @@ window.renderContainers = renderContainers;
       const goalLeadIcon = document.getElementById('pomoGoalLeadIcon');
       const goalBtn = document.getElementById('pomoGoalTriggerBtn');
 
-      if (mode === 'focus') {
+      if (pomoMode === 'focus') {
         if (goalLeadLabel) goalLeadLabel.textContent = '专注目标：';
         if (goalLeadIcon) {
           goalLeadIcon.setAttribute('data-lucide', 'crosshair');
           goalLeadIcon.style.color = '#0091ff';
         }
-        if (goalEl) goalEl.textContent = pomoCurrentTask || pomoCustomFocusGoal || '系统架构与深度编码';
+        if (goalEl) goalEl.textContent = pomoCurrentTask || '系统架构与深度编码';
         if (goalBtn) {
           goalBtn.style.maxWidth = '230px';
           goalBtn.style.borderColor = 'rgba(0,145,255,0.25)';
           goalBtn.style.background = 'rgba(0,145,255,0.08)';
         }
-      } else if (mode === 'short') {
+      } else if (pomoMode === 'short') {
         if (goalLeadLabel) goalLeadLabel.textContent = '短休状态：';
         if (goalLeadIcon) {
           goalLeadIcon.setAttribute('data-lucide', 'coffee');
@@ -25197,7 +25247,7 @@ window.renderContainers = renderContainers;
           goalBtn.style.borderColor = 'rgba(16,185,129,0.25)';
           goalBtn.style.background = 'rgba(16,185,129,0.08)';
         }
-      } else if (mode === 'long') {
+      } else if (pomoMode === 'long') {
         if (goalLeadLabel) goalLeadLabel.textContent = '长休状态：';
         if (goalLeadIcon) {
           goalLeadIcon.setAttribute('data-lucide', 'sparkles');
@@ -25211,42 +25261,83 @@ window.renderContainers = renderContainers;
         }
       }
 
-      // Sync start button appearance & text
+      // Sync progress bar color
+      const barEl = document.getElementById('pomoProgressBar');
+      if (barEl) {
+        if (pomoMode === 'focus') {
+          barEl.style.background = 'linear-gradient(90deg, #0091ff, #00d4ff)';
+        } else if (pomoMode === 'short') {
+          barEl.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+        } else {
+          barEl.style.background = 'linear-gradient(90deg, #a855f7, #c084fc)';
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updatePomoActionBtnUI() {
       const startBtn = document.getElementById('btnPomoStart');
       const startBtnText = document.getElementById('pomoStartText');
       const playIcon = document.getElementById('pomoPlayIcon');
 
       if (startBtn) {
         startBtn.classList.remove('mode-focus', 'mode-short', 'mode-long');
-        startBtn.classList.add(mode === 'focus' ? 'mode-focus' : 'mode-short');
+        startBtn.classList.add(pomoMode === 'focus' ? 'mode-focus' : 'mode-short');
       }
 
-      if (startBtnText) {
-        startBtnText.textContent = mode === 'focus' ? '开始专注' : (mode === 'short' ? '开始短休' : '开始长休');
+      const total = (pomoMode === 'focus') ? pomoCustomFocusMinutes * 60 : (pomoMode === 'short' ? 5 * 60 : 15 * 60);
+      const isPausedMidway = pomoTimeLeft > 0 && pomoTimeLeft < total;
+
+      if (pomoIsRunning) {
+        if (startBtnText) startBtnText.textContent = pomoMode === 'focus' ? '暂停专注' : '暂停休息';
+        if (playIcon) playIcon.setAttribute('data-lucide', 'pause');
+      } else {
+        if (startBtnText) {
+          startBtnText.textContent = isPausedMidway
+            ? (pomoMode === 'focus' ? '继续专注' : '继续休息')
+            : (pomoMode === 'focus' ? '开始专注' : (pomoMode === 'short' ? '开始短休' : '开始长休'));
+        }
+        if (playIcon) playIcon.setAttribute('data-lucide', pomoMode === 'focus' ? 'play' : (pomoMode === 'short' ? 'coffee' : 'sparkles'));
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function setPomoMode(mode) {
+      if (pomoMode === mode) return;
+
+      // 🛡️ Save the current mode's remaining time before switching!
+      if (pomoTimeLeft > 0) {
+        pomoModeRemainings[pomoMode] = pomoTimeLeft;
       }
 
-      if (playIcon) playIcon.setAttribute('data-lucide', mode === 'focus' ? 'play' : (mode === 'short' ? 'coffee' : 'sparkles'));
+      if (pomoIsRunning) {
+        stopPomoEngine();
+        pomoIsRunning = false;
+        document.title = 'PulseOS · 全域工作台';
+      }
 
-      // Sync progress bar color
-      const barEl = document.getElementById('pomoProgressBar');
-      if (barEl) {
+      pomoMode = mode;
+
+      // 🛡️ Restore saved remaining time if exists, avoiding unintended reset back to 35:00!
+      if (pomoModeRemainings[mode] && pomoModeRemainings[mode] > 0) {
+        pomoTimeLeft = pomoModeRemainings[mode];
+      } else {
         if (mode === 'focus') {
-          barEl.style.background = 'linear-gradient(90deg, #0091ff, #00d4ff)';
+          pomoTimeLeft = pomoCustomFocusMinutes * 60;
         } else if (mode === 'short') {
-          barEl.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-        } else {
-          barEl.style.background = 'linear-gradient(90deg, #a855f7, #c084fc)';
+          pomoTimeLeft = 5 * 60;
+        } else if (mode === 'long') {
+          pomoTimeLeft = 15 * 60;
         }
       }
 
-      if (window.lucide) lucide.createIcons();
+      savePomoStateToStorage();
+      updatePomoModeUI();
+      updatePomoActionBtnUI();
       updatePomoDisplay();
     }
 
     // === 🍅 BULLETPROOF BACKGROUND POMODORO ENGINE ===
-    let pomoTargetEndTime = 0;
-    let pomoWorker = null;
-
     function getPomoWorker() {
       if (pomoWorker) return pomoWorker;
       try {
@@ -25283,6 +25374,7 @@ window.renderContainers = renderContainers;
     function startPomoEngine() {
       stopPomoEngine();
       pomoTargetEndTime = Date.now() + pomoTimeLeft * 1000;
+      savePomoStateToStorage();
 
       // Tier 1: Web Worker Heartbeat (Not throttled by browser background tab sleep)
       const worker = getPomoWorker();
@@ -25312,23 +25404,35 @@ window.renderContainers = renderContainers;
     }
 
     function syncPomoCountdownTick() {
-      if (!pomoIsRunning) return;
+      if (!pomoIsRunning) {
+        updatePomoDisplay();
+        return;
+      }
       const now = Date.now();
       const remaining = Math.max(0, Math.round((pomoTargetEndTime - now) / 1000));
       pomoTimeLeft = remaining;
+      pomoModeRemainings[pomoMode] = remaining;
       updatePomoDisplay();
+
+      // Throttled persistence to localStorage every 3 seconds
+      if (now - lastPomoStorageSave > 3000) {
+        lastPomoStorageSave = now;
+        savePomoStateToStorage();
+      }
 
       if (remaining <= 0) {
         stopPomoEngine();
         pomoIsRunning = false;
+        savePomoStateToStorage();
         onPomoSessionComplete();
       }
     }
 
     // Tier 3: Instant Catch-up on Tab Focus & Visibility Change
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && pomoIsRunning) {
+      if (pomoIsRunning) {
         syncPomoCountdownTick();
+        savePomoStateToStorage();
       }
     });
     window.addEventListener('focus', () => {
@@ -25336,50 +25440,50 @@ window.renderContainers = renderContainers;
         syncPomoCountdownTick();
       }
     });
+    window.addEventListener('beforeunload', () => {
+      savePomoStateToStorage();
+    });
 
     function togglePomodoro() {
-      const startBtn = document.getElementById('btnPomoStart');
-      const startBtnText = document.getElementById('pomoStartText');
-      const playIcon = document.getElementById('pomoPlayIcon');
-
       if (pomoIsRunning) {
         stopPomoEngine();
         pomoIsRunning = false;
         document.title = 'PulseOS · 全域工作台';
-
-        if (startBtnText) {
-          startBtnText.textContent = pomoMode === 'focus' ? '继续专注' : (pomoMode === 'short' ? '继续短休' : '继续长休');
-        }
-        if (playIcon) playIcon.setAttribute('data-lucide', 'play');
+        pomoModeRemainings[pomoMode] = pomoTimeLeft;
+        pomoTargetEndTime = 0;
+        savePomoStateToStorage();
       } else {
         pomoIsRunning = true;
-
-        if (startBtnText) {
-          startBtnText.textContent = pomoMode === 'focus' ? '暂停专注' : '暂停休息';
+        if (pomoTimeLeft <= 0) {
+          pomoTimeLeft = (pomoMode === 'focus') ? pomoCustomFocusMinutes * 60 : (pomoMode === 'short' ? 5 * 60 : 15 * 60);
         }
-        if (playIcon) playIcon.setAttribute('data-lucide', 'pause');
-
         startPomoEngine();
         syncPomoCountdownTick();
+        savePomoStateToStorage();
       }
-      if (window.lucide) lucide.createIcons();
+      updatePomoActionBtnUI();
       if (typeof syncCyberCatState === 'function') syncCyberCatState();
     }
 
     function onPomoSessionComplete() {
       if (typeof syncCyberCatState === 'function') syncCyberCatState();
+      pomoIsRunning = false;
+      stopPomoEngine();
       if (pomoMode === 'focus') {
         const newCount = incrementTodayPomoCount();
         updatePomoStatsUI();
         showPomoIsland({ count: newCount, isBreak: false });
+        pomoModeRemainings.focus = null;
         setPomoMode('short');
       } else {
         showPomoIsland({ isBreak: true });
+        pomoModeRemainings[pomoMode] = null;
         setPomoMode('focus');
       }
+      savePomoStateToStorage();
     }
 
-        // ========================================================
+    // ========================================================
     // 🍅 POMODORO DYNAMIC ISLAND & HYDRATION CHIME ENGINE
     // ========================================================
     let pomoIslandDismissTimeout = null;
@@ -25408,7 +25512,7 @@ window.renderContainers = renderContainers;
 
           gain.gain.setValueAtTime(0, ctx.currentTime + note.time);
           gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + note.time + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + note.time + note.dur);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.time + note.dur);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
@@ -25416,47 +25520,37 @@ window.renderContainers = renderContainers;
           osc.start(ctx.currentTime + note.time);
           osc.stop(ctx.currentTime + note.time + note.dur);
         });
-
-        // Browser Native Desktop Notification
-        if ('Notification' in window && Notification.permission === 'granted') {
-          try {
-            new Notification('专注完成 · 记得喝水润喉', {
-              body: '恭喜主人完成心流冲刺，离开屏幕走动一下，补充温水充能吧',
-              tag: 'pulseos-pomo-hydration'
-            });
-          } catch (err) {}
-        }
       } catch (e) {}
     }
 
-    function showPomoIsland(options = {}) {
+    function showPomoIsland(opts = {}) {
       const island = document.getElementById('topPomoDynamicIsland');
       if (!island) return;
 
-      const badgeEl = document.getElementById('pomoIslandBadge');
-      const subEl = document.getElementById('pomoIslandSub');
-      const titleEl = document.getElementById('pomoIslandTitle');
-      const iconEl = document.getElementById('pomoIslandIcon');
-      const actText = document.getElementById('pomoActText');
-      const actIcon = document.getElementById('pomoActIcon');
+      const isBreak = opts.isBreak || false;
+      const count = opts.count || getTodayPomoCount();
 
-      const count = options.count || (typeof getTodayPomoCount === 'function' ? getTodayPomoCount() : 1);
-      const isBreak = options.isBreak || false;
+      const titleEl = document.getElementById('pomoIslandTitle');
+      const subEl = document.getElementById('pomoIslandSub');
+      const actionBtn = document.getElementById('pomoIslandActionBtn');
+      const iconWrap = document.getElementById('pomoIslandIconWrap');
 
       if (isBreak) {
-        if (badgeEl) badgeEl.textContent = '休息结束 · 重启心流';
-        if (subEl) subEl.textContent = '充能完毕';
-        if (titleEl) titleEl.textContent = '精力饱满，开始新一轮专注冲刺吧！';
-        if (iconEl) iconEl.setAttribute('data-lucide', 'zap');
-        if (actText) actText.textContent = '开始专注';
-        if (actIcon) actIcon.setAttribute('data-lucide', 'play');
+        if (titleEl) titleEl.textContent = '休息时间结束！';
+        if (subEl) subEl.textContent = '充能完毕，开启新一轮心流专注';
+        if (actionBtn) actionBtn.textContent = '进入专注';
+        if (iconWrap) {
+          iconWrap.innerHTML = '<i data-lucide="zap" style="width:16px;height:16px;color:#0091ff;"></i>';
+          iconWrap.style.background = 'rgba(0,145,255,0.12)';
+        }
       } else {
-        if (badgeEl) badgeEl.textContent = `心流达成 · 第 ${count} 组`;
-        if (subEl) subEl.textContent = `已专注 ${pomoCustomFocusMinutes || 25} 分钟`;
-        if (titleEl) titleEl.textContent = '起身喝杯温水，眺望远方放松一下吧';
-        if (iconEl) iconEl.setAttribute('data-lucide', 'cup-soda');
-        if (actText) actText.textContent = '开启短休 5m';
-        if (actIcon) actIcon.setAttribute('data-lucide', 'coffee');
+        if (titleEl) titleEl.textContent = `第 ${count} 组专注已圆满完成！`;
+        if (subEl) subEl.textContent = '伴侣提醒您起身活动，喝口温水润润嗓子';
+        if (actionBtn) actionBtn.textContent = '开始短休';
+        if (iconWrap) {
+          iconWrap.innerHTML = '<i data-lucide="cup-soda" style="width:16px;height:16px;color:#10b981;"></i>';
+          iconWrap.style.background = 'rgba(16,185,129,0.12)';
+        }
       }
 
       if (window.lucide) lucide.createIcons();
@@ -25517,10 +25611,11 @@ window.renderContainers = renderContainers;
       if (island) island.classList.remove('island-active');
     }
 
-        window.showPomoIsland = showPomoIsland;
+    window.showPomoIsland = showPomoIsland;
     window.dismissPomoIsland = dismissPomoIsland;
     window.onPomoIslandAction = onPomoIslandAction;
     window.playPomoChime = playPomoChime;
+
     function onPomoIslandAction(e) {
       if (e) e.stopPropagation();
       dismissPomoIsland();
@@ -25535,28 +25630,25 @@ window.renderContainers = renderContainers;
       }
     }
 
+    // 🛑 ONLY EXPLICIT RESET CLICKS TRIGGER REVERSION BACK TO 35:00
     function resetPomodoro() {
       if (pomoIsRunning) {
         stopPomoEngine();
         pomoIsRunning = false;
       }
       document.title = 'PulseOS · 全域工作台';
+      pomoTargetEndTime = 0;
+      pomoModeRemainings[pomoMode] = null;
+
       if (pomoMode === 'focus') pomoTimeLeft = pomoCustomFocusMinutes * 60;
       else if (pomoMode === 'short') pomoTimeLeft = 5 * 60;
       else if (pomoMode === 'long') pomoTimeLeft = 15 * 60;
 
-      const startBtnText = document.getElementById('pomoStartText');
-      const playIcon = document.getElementById('pomoPlayIcon');
-      if (startBtnText) {
-        startBtnText.textContent = pomoMode === 'focus' ? '开始专注' : (pomoMode === 'short' ? '开始短休' : '开始长休');
-      }
-      if (playIcon) {
-        playIcon.setAttribute('data-lucide', pomoMode === 'focus' ? 'play' : (pomoMode === 'short' ? 'coffee' : 'sparkles'));
-      }
-      if (window.lucide) lucide.createIcons();
-
+      savePomoStateToStorage();
+      updatePomoActionBtnUI();
       updatePomoDisplay();
       if (typeof syncCyberCatState === 'function') syncCyberCatState();
+      showToast('计时器已重置');
     }
 
     function updatePomoDisplay() {
