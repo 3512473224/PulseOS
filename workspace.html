@@ -13837,6 +13837,43 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transform: translateX(3px);
     }
 
+        .cinema-action-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 3px 6px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .cinema-action-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      transform: translateY(-1px);
+    }
+    .cinema-action-btn.btn-danger:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #f87171;
+    }
+    html.theme-light .cinema-action-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #475569;
+    }
+    html.theme-light .cinema-action-btn:hover {
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.3);
+      color: #0284c7;
+    }
+
     .cinema-ep-item.active {
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.15));
       border-color: var(--accent);
@@ -13985,7 +14022,44 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: #e2e8f0 !important;
     }
 
-    html.theme-light .cinema-ep-item.active {
+    html.theme-light     .cinema-action-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 3px 6px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .cinema-action-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      transform: translateY(-1px);
+    }
+    .cinema-action-btn.btn-danger:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #f87171;
+    }
+    html.theme-light .cinema-action-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #475569;
+    }
+    html.theme-light .cinema-action-btn:hover {
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.3);
+      color: #0284c7;
+    }
+
+    .cinema-ep-item.active {
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.08)) !important;
       border-color: #7c3aed !important;
     }
@@ -16432,11 +16506,38 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <!-- Rendered dynamically by renderCinemaEpisodeList() -->
                 </div>
 
-                <!-- Tab 2: AList Real-time Directory Tree -->
+                <!-- Tab 2: AList Real-time Directory Tree & Cloud Drive Controller -->
                 <div class="cinema-episode-list" id="cinemaAlistListContainer" style="display:none;">
-                  <div id="cinemaAlistBreadcrumbs" style="font-size:0.72rem; color:var(--text-dim); padding:4px 2px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                  <!-- Cloud Drive Actions Toolbar -->
+                  <div class="cinema-drive-toolbar" style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin:2px 0 8px 0; padding:6px 8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <button class="btn btn-cinema-sky" style="font-size:0.7rem; padding:4px 9px; height:26px; border-radius:6px; display:flex; align-items:center; gap:4px;" onclick="triggerAlistUpload()" title="上传文件到当前云盘目录">
+                        <i data-lucide="upload-cloud" style="width:12px; height:12px;"></i>
+                        <span>上传文件</span>
+                      </button>
+                      <button class="btn btn-ghost" style="font-size:0.7rem; padding:4px 9px; height:26px; border-radius:6px; display:flex; align-items:center; gap:4px;" onclick="promptAlistMkdir()" title="在当前云盘目录新建文件夹">
+                        <i data-lucide="folder-plus" style="width:12px; height:12px;"></i>
+                        <span>新建文件夹</span>
+                      </button>
+                      <input type="file" id="cinemaAlistFileInput" multiple style="display:none;" onchange="handleAlistUpload(this)">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <span style="font-size:0.68rem; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.2);">5TB 云盘就绪</span>
+                      <button class="btn btn-ghost" style="font-size:0.7rem; padding:4px; height:26px; width:26px; border-radius:6px; display:flex; align-items:center; justify-content:center;" onclick="loadAlistDirectory(currentAlistPath)" title="刷新目录">
+                        <i data-lucide="rotate-cw" style="width:12px; height:12px;"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Upload Status Bar -->
+                  <div id="cinemaAlistUploadStatus" style="display:none; margin-bottom:8px; padding:6px 10px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); border-radius:6px; font-size:0.72rem; color:#38bdf8;"></div>
+
+                  <!-- Breadcrumbs -->
+                  <div id="cinemaAlistBreadcrumbs" style="font-size:0.72rem; color:var(--text-dim); padding:2px 2px 8px 2px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
                     <!-- Rendered dynamically by loadAlistDirectory() -->
                   </div>
+
+                  <!-- Files & Folders List -->
                   <div id="cinemaAlistFileList" style="display:flex; flex-direction:column; gap:6px;">
                     <!-- Rendered dynamically by renderAlistDirectoryItems() -->
                   </div>
@@ -16459,7 +16560,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
               <div class="cinema-cards-grid">
                 
-                <!-- Card 1: Aliyun Drive Open -->
+                <!-- Card 1: Google Drive (已成功挂载) -->
+                <div class="cinema-guide-card" style="border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.04);">
+                  <div class="cinema-gc-header">
+                    <div class="cinema-gc-icon" style="background:rgba(56,189,248,0.18); color:#38bdf8;">
+                      <i data-lucide="hard-drive"></i>
+                    </div>
+                    <div>
+                      <div class="cinema-gc-name">Google 云端硬盘</div>
+                    </div>
+                    <span class="cinema-gc-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.3);">5 TB 已挂载</span>
+                  </div>
+                  <div class="cinema-gc-desc">
+                    已连通海外 VPS 极速代理，支持文件增删改查、直接上传与 4K 秒播。
+                  </div>
+                  <button class="btn btn-cinema-sky" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="enterAlistFolder('/谷歌云盘')">
+                    <i data-lucide="folder-open" style="width:13px; height:13px;"></i>
+                    <span>进入管理与点播</span>
+                  </button>
+                </div>
+
+                <!-- Card 2: Aliyun Drive Open -->
                 <div class="cinema-guide-card">
                   <div class="cinema-gc-header">
                     <div class="cinema-gc-icon" style="background:rgba(239,68,68,0.15); color:#f87171;">
@@ -34933,21 +35054,49 @@ window.renderContainers = renderContainers;
       }
     }
 
+    var alistAdminToken = localStorage.getItem('pulseos_alist_token') || '';
+
+    async function getAlistHeaders(forceRefresh) {
+      if (forceRefresh || !alistAdminToken) {
+        try {
+          var r = await fetch('/alist/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'admin', password: 'ppday666' })
+          });
+          var d = await r.json();
+          if (d.code === 200 && d.data && d.data.token) {
+            alistAdminToken = d.data.token;
+            localStorage.setItem('pulseos_alist_token', alistAdminToken);
+          }
+        } catch (err) {
+          console.warn('AList auto-login warning:', err);
+        }
+      }
+      var h = { 'Content-Type': 'application/json' };
+      if (alistAdminToken) {
+        h['Authorization'] = alistAdminToken;
+      }
+      return h;
+    }
+
     async function loadAlistDirectory(path) {
       currentAlistPath = path || '/';
       var listEl = document.getElementById('cinemaAlistFileList');
       var bcEl = document.getElementById('cinemaAlistBreadcrumbs');
       if (!listEl) return;
 
-      listEl.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;">正在从 AList 加载云端目录...</div>';
+      listEl.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;"><i data-lucide="loader-2" class="spin" style="width:14px; height:14px; display:inline-block; vertical-align:-2px; margin-right:6px;"></i>正在从云盘加载目录...</div>';
+      if (window.lucide) lucide.createIcons();
 
       // Update breadcrumbs cleanly via DOM methods
       if (bcEl) {
         bcEl.innerHTML = '';
         var rootSpan = document.createElement('span');
         rootSpan.style.cursor = 'pointer';
-        rootSpan.style.color = 'var(--accent2)';
-        rootSpan.textContent = '/ 根目录';
+        rootSpan.style.color = '#38bdf8';
+        rootSpan.style.fontWeight = '600';
+        rootSpan.textContent = '☁️ 根目录';
         rootSpan.onclick = function () { loadAlistDirectory('/'); };
         bcEl.appendChild(rootSpan);
 
@@ -34958,11 +35107,12 @@ window.renderContainers = renderContainers;
           var curAcc = accumulated;
           var slash = document.createElement('span');
           slash.textContent = ' / ';
+          slash.style.color = 'var(--text-dim)';
           bcEl.appendChild(slash);
 
           var partSpan = document.createElement('span');
           partSpan.style.cursor = 'pointer';
-          partSpan.style.color = 'var(--accent2)';
+          partSpan.style.color = '#38bdf8';
           partSpan.textContent = p;
           partSpan.onclick = function () { loadAlistDirectory(curAcc); };
           bcEl.appendChild(partSpan);
@@ -34970,10 +35120,11 @@ window.renderContainers = renderContainers;
       }
 
       try {
+        var headers = await getAlistHeaders(false);
         var res = await fetch('/alist/api/fs/list', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: currentAlistPath, page: 1, per_page: 50 })
+          headers: headers,
+          body: JSON.stringify({ path: currentAlistPath, page: 1, per_page: 100, refresh: true })
         });
         var data = await res.json();
         if (data.code === 200 && data.data && data.data.content) {
@@ -34995,7 +35146,7 @@ window.renderContainers = renderContainers;
       var q = (filterQuery || '').toLowerCase().trim();
 
       if (!items || items.length === 0) {
-        listEl.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;">当前目录为空</div>';
+        listEl.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-dim); font-size:0.8rem;">当前目录为空，可点击上方「上传文件」或「新建文件夹」</div>';
         return;
       }
 
@@ -35009,18 +35160,27 @@ window.renderContainers = renderContainers;
 
         var itemDiv = document.createElement('div');
         itemDiv.className = 'cinema-ep-item';
+        itemDiv.style.display = 'flex';
+        itemDiv.style.alignItems = 'center';
+        itemDiv.style.justifyContent = 'space-between';
+        itemDiv.style.gap = '8px';
 
         if (isDir) {
-          itemDiv.onclick = function () { loadAlistDirectory(fullItemPath); };
-          itemDiv.innerHTML = '<i data-lucide="folder" style="width:16px; height:16px; color:#eab308;"></i>' +
-            '<div class="cinema-ep-meta">' +
-            '  <div class="cinema-ep-name">' + escapeCinemaHtml(item.name) + '</div>' +
+          itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer;" onclick="loadAlistDirectory(\'' + escapeCinemaHtml(fullItemPath) + '\')">' +
+            '<i data-lucide="folder" style="width:16px; height:16px; color:#eab308; flex-shrink:0;"></i>' +
+            '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
+            '  <div class="cinema-ep-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeCinemaHtml(item.name) + '</div>' +
             '  <div class="cinema-ep-sub">目录文件夹</div>' +
             '</div>' +
-            '<i data-lucide="chevron-right" style="width:14px; height:14px; color:var(--text-dim);"></i>';
+            '</div>' +
+            '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
+            '  <button class="cinema-action-btn" title="重命名文件夹" onclick="event.stopPropagation(); promptAlistRename(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\')"><i data-lucide="edit-3" style="width:12px; height:12px;"></i></button>' +
+            '  <button class="cinema-action-btn btn-danger" title="删除文件夹" onclick="event.stopPropagation(); promptAlistDelete(\'' + escapeCinemaHtml(path) + '\', \'' + escapeCinemaHtml(item.name) + '\', true)"><i data-lucide="trash-2" style="width:12px; height:12px;"></i></button>' +
+            '  <i data-lucide="chevron-right" style="width:14px; height:14px; color:var(--text-dim); cursor:pointer; margin-left:2px;" onclick="loadAlistDirectory(\'' + escapeCinemaHtml(fullItemPath) + '\')"></i>' +
+            '</div>';
         } else {
           var ext = (item.name.split('.').pop() || '').toLowerCase();
-          var isMedia = ['mp4', 'mkv', 'mov', 'webm', 'm3u8', 'avi', 'flv'].includes(ext);
+          var isMedia = ['mp4', 'mkv', 'mov', 'webm', 'm3u8', 'avi', 'flv', 'mp3', 'flac', 'wav'].includes(ext);
           var sizeStr = item.size ? (item.size > 1048576 ? (item.size / 1048576).toFixed(1) + ' MB' : (item.size / 1024).toFixed(0) + ' KB') : '文件';
 
           // Check if companion subtitle exists in cachedAlistItems
@@ -35031,20 +35191,33 @@ window.renderContainers = renderContainers;
           var companionSubPath = companionSub ? ('/alist/d' + encodeURI(cleanPath + companionSub.name)) : '';
 
           if (isMedia) {
-            itemDiv.onclick = function () { playAlistMediaItem(fullItemPath, item.name, sizeStr, companionSubPath); };
-            itemDiv.innerHTML = '<i data-lucide="film" style="width:16px; height:16px; color:var(--accent2);"></i>' +
-              '<div class="cinema-ep-meta">' +
-              '  <div class="cinema-ep-name">' + escapeCinemaHtml(item.name) + '</div>' +
-              '  <div class="cinema-ep-sub">' + sizeStr + ' · AList 直链' + (companionSub ? ' · 💬自动字幕' : '') + '</div>' +
+            itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer;" onclick="playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')">' +
+              '<i data-lucide="film" style="width:16px; height:16px; color:#38bdf8; flex-shrink:0;"></i>' +
+              '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
+              '  <div class="cinema-ep-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeCinemaHtml(item.name) + '</div>' +
+              '  <div class="cinema-ep-sub">' + sizeStr + ' · 原画直链' + (companionSub ? ' · 💬自动字幕' : '') + '</div>' +
               '</div>' +
-              '<span style="font-size:0.7rem; color:var(--accent); font-weight:600;">播放 ▶</span>';
+              '</div>' +
+              '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
+              '  <button class="cinema-action-btn" style="color:#38bdf8;" title="立即点播" onclick="event.stopPropagation(); playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')"><i data-lucide="play" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="重命名" onclick="event.stopPropagation(); promptAlistRename(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\')"><i data-lucide="edit-3" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn btn-danger" title="删除文件" onclick="event.stopPropagation(); promptAlistDelete(\'' + escapeCinemaHtml(path) + '\', \'' + escapeCinemaHtml(item.name) + '\', false)"><i data-lucide="trash-2" style="width:12px; height:12px;"></i></button>' +
+              '</div>';
           } else {
-            itemDiv.style.opacity = '0.6';
-            itemDiv.style.cursor = 'default';
-            itemDiv.innerHTML = '<i data-lucide="file" style="width:16px; height:16px; color:var(--text-dim);"></i>' +
-              '<div class="cinema-ep-meta">' +
-              '  <div class="cinema-ep-name">' + escapeCinemaHtml(item.name) + '</div>' +
-              '  <div class="cinema-ep-sub">' + sizeStr + '</div>' +
+            itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">' +
+              '<i data-lucide="file-text" style="width:16px; height:16px; color:var(--text-dim); flex-shrink:0;"></i>' +
+              '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
+              '  <div class="cinema-ep-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeCinemaHtml(item.name) + '</div>' +
+              '  <div class="cinema-ep-sub">' + sizeStr + ' · 云端文件</div>' +
+              '</div>' +
+              '</div>' +
+              '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
+              '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="重命名" onclick="event.stopPropagation(); promptAlistRename(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\')"><i data-lucide="edit-3" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn btn-danger" title="删除文件" onclick="event.stopPropagation(); promptAlistDelete(\'' + escapeCinemaHtml(path) + '\', \'' + escapeCinemaHtml(item.name) + '\', false)"><i data-lucide="trash-2" style="width:12px; height:12px;"></i></button>' +
               '</div>';
           }
         }
@@ -35056,6 +35229,179 @@ window.renderContainers = renderContainers;
       }
 
       if (window.lucide) lucide.createIcons();
+    }
+
+    // --- Cloud Storage Controller Interactive Methods ---
+    function triggerAlistUpload() {
+      var input = document.getElementById('cinemaAlistFileInput');
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+
+    async function handleAlistUpload(input) {
+      var files = input.files;
+      if (!files || files.length === 0) return;
+      var statusEl = document.getElementById('cinemaAlistUploadStatus');
+      var targetDir = currentAlistPath || '/';
+      if (!targetDir.endsWith('/')) targetDir += '/';
+
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.innerHTML = '<div style="display:flex; align-items:center; gap:6px;"><i data-lucide="loader-2" class="spin" style="width:14px; height:14px;"></i><span>正在上传 ' + files.length + ' 个文件至 ' + escapeCinemaHtml(targetDir) + '...</span></div>';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      var successCount = 0;
+      var failCount = 0;
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var filePath = targetDir + file.name;
+        try {
+          var headers = await getAlistHeaders(false);
+          headers['File-Path'] = encodeURIComponent(filePath);
+          headers['Content-Type'] = file.type || 'application/octet-stream';
+          var res = await fetch('/alist/api/fs/put', {
+            method: 'PUT',
+            headers: headers,
+            body: file
+          });
+          var resData = await res.json();
+          if (resData.code === 200) {
+            successCount++;
+          } else {
+            failCount++;
+            console.error('Upload error:', resData);
+          }
+        } catch (e) {
+          failCount++;
+          console.error('Upload exception:', e);
+        }
+      }
+
+      if (statusEl) {
+        statusEl.style.display = 'none';
+      }
+
+      if (successCount > 0) {
+        showToast('成功上传 ' + successCount + ' 个文件至云端网盘！');
+      }
+      if (failCount > 0) {
+        showToast('上传失败 ' + failCount + ' 个，请检查存储权限');
+      }
+
+      loadAlistDirectory(currentAlistPath);
+    }
+
+    async function promptAlistMkdir() {
+      var folderName = prompt('请输入新建文件夹名称：', '新建文件夹');
+      if (!folderName || !folderName.trim()) return;
+      folderName = folderName.trim();
+      var targetDir = currentAlistPath || '/';
+      if (!targetDir.endsWith('/')) targetDir += '/';
+      var fullPath = targetDir + folderName;
+
+      try {
+        var headers = await getAlistHeaders(false);
+        var res = await fetch('/alist/api/fs/mkdir', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ path: fullPath })
+        });
+        var data = await res.json();
+        if (data.code === 200) {
+          showToast('文件夹创建成功：' + folderName);
+          loadAlistDirectory(currentAlistPath);
+        } else {
+          showToast('创建文件夹失败：' + (data.message || '未知错误'));
+        }
+      } catch (err) {
+        showToast('网络请求错误: ' + err.message);
+      }
+    }
+
+    async function promptAlistRename(fullItemPath, oldName) {
+      var newName = prompt('重命名（原名：' + oldName + '）：', oldName);
+      if (!newName || !newName.trim() || newName.trim() === oldName) return;
+      newName = newName.trim();
+
+      try {
+        var headers = await getAlistHeaders(false);
+        var res = await fetch('/alist/api/fs/rename', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ path: fullItemPath, name: newName })
+        });
+        var data = await res.json();
+        if (data.code === 200) {
+          showToast('已成功重命名为：' + newName);
+          loadAlistDirectory(currentAlistPath);
+        } else {
+          showToast('重命名失败：' + (data.message || '未知错误'));
+        }
+      } catch (err) {
+        showToast('网络请求错误: ' + err.message);
+      }
+    }
+
+    async function promptAlistDelete(dirPath, itemName, isDir) {
+      var typeStr = isDir ? '文件夹' : '文件';
+      if (!confirm('确定要从云端网盘中删除该' + typeStr + '吗？\n名称: ' + itemName)) {
+        return;
+      }
+
+      try {
+        var headers = await getAlistHeaders(false);
+        var res = await fetch('/alist/api/fs/remove', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ dir: dirPath, names: [itemName] })
+        });
+        var data = await res.json();
+        if (data.code === 200) {
+          showToast('已从云端网盘删除' + typeStr + '：' + itemName);
+          loadAlistDirectory(currentAlistPath);
+        } else {
+          showToast('删除失败：' + (data.message || '未知错误'));
+        }
+      } catch (err) {
+        showToast('网络请求错误: ' + err.message);
+      }
+    }
+
+    function copyAlistDirectLink(fullItemPath) {
+      var directUrl = window.location.origin + '/alist/d' + encodeURI(fullItemPath);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(directUrl).then(function () {
+          showToast('已复制云盘原画直链至剪贴板');
+        }).catch(function () {
+          prompt('直链地址：', directUrl);
+        });
+      } else {
+        prompt('直链地址：', directUrl);
+      }
+    }
+
+    function downloadAlistFile(fullItemPath) {
+      var directUrl = '/alist/d' + encodeURI(fullItemPath);
+      var a = document.createElement('a');
+      a.href = directUrl;
+      a.download = fullItemPath.split('/').pop() || 'download';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('已开始下载文件');
+    }
+
+    function enterAlistFolder(folderPath) {
+      switchCinemaTab('alist');
+      loadAlistDirectory(folderPath);
+      var listCard = document.querySelector('.cinema-pane-card');
+      if (listCard) {
+        listCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     function playAlistMediaItem(filePath, fileName, sizeStr, subUrl) {
