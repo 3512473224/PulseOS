@@ -13542,6 +13542,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       position: relative;
     }
 
+    .cinema-placeholder-hint {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: radial-gradient(circle at center, rgba(124, 58, 237, 0.16), rgba(10, 10, 24, 0.88));
+      border: 1.5px dashed rgba(124, 58, 237, 0.5);
+      border-radius: 12px;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    .cinema-placeholder-hint:hover {
+      background: radial-gradient(circle at center, rgba(124, 58, 237, 0.26), rgba(10, 10, 24, 0.96));
+      border-color: var(--accent);
+      transform: scale(0.995);
+    }
+
+    #cinemaStagePlaceholder.pip-active .cinema-placeholder-hint {
+      display: flex;
+    }
+
     #cinemaPlayerStage {
       width: 100%;
       height: 100%;
@@ -13555,19 +13583,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transition: box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
+    #cinemaPlayerStage.is-drag-over {
+      border: 2px dashed #4ade80 !important;
+      box-shadow: 0 0 32px rgba(74, 222, 128, 0.6) !important;
+    }
+
     #cinemaArtplayer {
       width: 100%;
       height: 100%;
     }
 
-    /* Fixed Floating Mini-PiP state */
+    /* Fixed Floating Mini-PiP state (CSS without !important on bottom/right allows drag) */
     #cinemaPlayerStage.is-pip-floating {
       position: fixed !important;
-      bottom: 24px !important;
-      right: 24px !important;
-      width: 420px !important;
-      height: 236px !important;
-      aspect-ratio: auto !important;
+      bottom: 24px;
+      right: 24px;
+      width: 420px;
+      height: 236px;
+      aspect-ratio: auto;
       z-index: 999999 !important;
       border-radius: 14px !important;
       border: 1.5px solid rgba(124, 58, 237, 0.6) !important;
@@ -13576,6 +13609,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       visibility: visible !important;
       opacity: 1 !important;
       animation: cinemaPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (max-width: 480px) {
+      #cinemaPlayerStage.is-pip-floating {
+        width: calc(100vw - 24px) !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important;
+        right: 12px;
+        bottom: 12px;
+      }
     }
 
     @keyframes cinemaPopIn {
@@ -13924,6 +13967,37 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #ffffff !important;
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2), 0 0 16px rgba(124, 58, 237, 0.25) !important;
       border-color: #7c3aed !important;
+    }
+
+    html.theme-light .cinema-tab-btn.active {
+      color: #7c3aed !important;
+      background: rgba(124, 58, 237, 0.14) !important;
+      border-color: rgba(124, 58, 237, 0.5) !important;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.2) !important;
+    }
+
+    html.theme-light .cinema-tab-btn {
+      color: #64748b !important;
+    }
+
+    html.theme-light .cinema-tab-btn:hover {
+      color: #0f172a !important;
+    }
+
+    html.theme-light .cinema-ep-item.active .cinema-ep-num {
+      color: #7c3aed !important;
+    }
+
+    html.theme-light .cinema-filter-input {
+      background: rgba(241, 245, 249, 0.9) !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    html.theme-light .cinema-placeholder-hint {
+      background: radial-gradient(circle at center, rgba(124, 58, 237, 0.08), rgba(248, 250, 252, 0.95)) !important;
+      border-color: rgba(124, 58, 237, 0.35) !important;
+      color: #0f172a !important;
     }
 
   </style>
@@ -16226,6 +16300,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 
                 <!-- 16:9 ArtPlayer Stage (with Native Mini-PiP capability) -->
                 <div id="cinemaStagePlaceholder">
+                  <div class="cinema-placeholder-hint" id="cinemaPlaceholderHint" onclick="restoreFromPipToCinema()">
+                    <i data-lucide="tv" style="width:30px; height:30px; color:var(--accent);"></i>
+                    <div style="font-weight:700; font-size:0.95rem;">🎬 悬浮画中画正在播放中</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">点击此处或悬浮窗右上角按钮即可恢复全屏巨幕</div>
+                    <button class="btn btn-glow" style="margin-top:4px; font-size:0.75rem; padding:4px 14px;">恢复至影院视听舱</button>
+                  </div>
                   <div id="cinemaPlayerStage">
                     <!-- Floating PiP Top Header (Visible only when in Mini-PiP floating mode) -->
                     <div class="cinema-pip-topbar" id="cinemaPipTopbar">
@@ -16261,6 +16341,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   </div>
 
                   <div class="cinema-np-tools">
+                    <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="openCinemaSubtitlePicker()" title="加载外挂字幕 (.vtt / .srt)">
+                      <i data-lucide="message-square" style="width:13px; height:13px;"></i>
+                      <span>字幕</span>
+                    </button>
+                    <input type="file" id="cinemaSubtitleFileInput" accept=".vtt,.srt,.ass" style="display:none;" onchange="handleCinemaSubtitleFileSelect(event)">
                     <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="copyCurrentStreamUrl()" title="复制直链至剪贴板">
                       <i data-lucide="copy" style="width:13px; height:13px;"></i>
                       <span>复制直链</span>
@@ -34280,22 +34365,29 @@ window.renderContainers = renderContainers;
     var artCinemaInstance = null;
     var cinemaCurrentEpisodeIndex = 0;
     var isCinemaMiniPipActive = false;
+    var activeCinemaTabKey = 'preset';
+    var cachedAlistItems = [];
+    var currentAlistPath = '/';
+
     var cinemaEpisodes = [
       {
         title: 'Ep01 · CyberPulse 赛博脉冲 (1080P 超清)',
         url: '/alist/d/Demo-Cinema/Ep01_CyberPulse_HD.mp4',
+        subtitle: '/alist/d/Demo-Cinema/Ep01_CyberPulse_HD.vtt',
         size: '1.9 MB',
         tag: 'Demo 4K/HDR'
       },
       {
         title: 'Ep02 · DeepSpace 深空水母 (1080P 超清)',
         url: '/alist/d/Demo-Cinema/Ep02_DeepSpace_HD.mp4',
+        subtitle: '',
         size: '2.0 MB',
         tag: 'Demo 4K/HDR'
       },
       {
         title: 'Ep03 · NeonBlossom 霓虹绽放 (1080P 超清)',
         url: '/alist/d/Demo-Cinema/Ep03_NeonBlossom_HD.mp4',
+        subtitle: '',
         size: '1.1 MB',
         tag: 'Demo 4K/HDR'
       }
@@ -34366,12 +34458,30 @@ window.renderContainers = renderContainers;
           playsInline: true,
           theme: '#7c3aed',
           lang: 'zh-cn',
+          subtitle: {
+            url: firstEp.subtitle || '',
+            type: 'vtt',
+            style: {
+              color: '#ffffff',
+              fontSize: '20px',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.85)',
+              fontWeight: '600'
+            },
+            encoding: 'utf-8'
+          },
           moreVideoAttr: {
             crossOrigin: 'anonymous'
           },
           playbackRates: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0],
           aspectRatios: ['default', '16:9', '4:3', 'fill'],
           controls: [
+            {
+              position: 'right',
+              html: '<span title="加载外挂字幕 (.vtt / .srt)" style="font-size:12px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.14); cursor:pointer;">💬 字幕</span>',
+              click: function () {
+                openCinemaSubtitlePicker();
+              }
+            },
             {
               position: 'right',
               html: '<span title="网页级悬浮画中画 (跨视图保持播放)" style="font-size:12px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.14); cursor:pointer;">浮窗 PiP</span>',
@@ -34436,15 +34546,98 @@ window.renderContainers = renderContainers;
 
         updateCinemaNowPlaying(firstEp);
         initCinemaDraggablePip();
+        initCinemaDragAndDrop();
       } catch (err) {
         console.error('ArtPlayer init error:', err);
       }
     }
 
+    // --- Subtitle Upload & Drag-and-Drop Handlers ---
+    function openCinemaSubtitlePicker() {
+      var input = document.getElementById('cinemaSubtitleFileInput');
+      if (input) input.click();
+    }
+
+    function handleCinemaSubtitleFileSelect(event) {
+      var file = event.target.files && event.target.files[0];
+      if (file) {
+        loadCinemaSubtitleFile(file);
+      }
+      event.target.value = '';
+    }
+
+    function loadCinemaSubtitleFile(file) {
+      if (!file) return;
+      var ext = (file.name.split('.').pop() || '').toLowerCase();
+      var blobUrl = URL.createObjectURL(file);
+      if (artCinemaInstance && artCinemaInstance.subtitle) {
+        artCinemaInstance.subtitle.switch(blobUrl, {
+          name: file.name,
+          type: ext === 'srt' ? 'srt' : 'vtt'
+        });
+        artCinemaInstance.subtitle.show = true;
+        showCinemaNotice('已加载字幕: ' + file.name + ' 💬');
+      } else {
+        showCinemaNotice('字幕已解析，就绪后将显示');
+      }
+    }
+
+    function initCinemaDragAndDrop() {
+      var stage = document.getElementById('cinemaPlayerStage');
+      if (!stage || stage._hasDragDrop) return;
+      stage._hasDragDrop = true;
+
+      ['dragenter', 'dragover'].forEach(function (eventName) {
+        stage.addEventListener(eventName, function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          stage.classList.add('is-drag-over');
+          if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(function (eventName) {
+        stage.addEventListener(eventName, function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          stage.classList.remove('is-drag-over');
+        }, false);
+      });
+
+      stage.addEventListener('drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        stage.classList.remove('is-drag-over');
+        var dt = e.dataTransfer;
+        if (!dt || !dt.files || dt.files.length === 0) return;
+        var file = dt.files[0];
+        var ext = (file.name.split('.').pop() || '').toLowerCase();
+
+        if (['vtt', 'srt', 'ass'].includes(ext)) {
+          loadCinemaSubtitleFile(file);
+        } else if (['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogg'].includes(ext)) {
+          var mediaUrl = URL.createObjectURL(file);
+          var localEp = {
+            title: '本地拖拽 · ' + file.name,
+            url: mediaUrl,
+            subtitle: '',
+            size: (file.size / 1048576).toFixed(1) + ' MB',
+            tag: '本地视频'
+          };
+          cinemaEpisodes.unshift(localEp);
+          playCinemaEpisode(0);
+          switchCinemaTab('preset');
+          showCinemaNotice('已播放本地拖入视频: ' + file.name + ' 🎬');
+        } else {
+          showCinemaNotice('不支持的文件格式: ' + ext);
+        }
+      }, false);
+    }
+
     function renderCinemaEpisodeList(filterQuery) {
       var container = document.getElementById('cinemaPresetListContainer');
       if (!container) return;
-      var q = (filterQuery || '').toLowerCase().trim();
+      var q = (filterQuery !== undefined ? filterQuery : (document.getElementById('cinemaSearchInput')?.value || '')).toLowerCase().trim();
 
       container.innerHTML = '';
       var matchedCount = 0;
@@ -34461,7 +34654,7 @@ window.renderContainers = renderContainers;
         itemDiv.innerHTML = '<div class="cinema-ep-num">' + (idx < 9 ? '0' : '') + (idx + 1) + '</div>' +
           '<div class="cinema-ep-meta">' +
           '  <div class="cinema-ep-name">' + escapeCinemaHtml(ep.title) + '</div>' +
-          '  <div class="cinema-ep-sub">' + escapeCinemaHtml(ep.size) + ' · ' + escapeCinemaHtml(ep.tag) + '</div>' +
+          '  <div class="cinema-ep-sub">' + escapeCinemaHtml(ep.size) + ' · ' + escapeCinemaHtml(ep.tag) + (ep.subtitle ? ' · 💬带字幕' : '') + '</div>' +
           '</div>' +
           '<span class="cinema-ep-status-badge">▶ 播放中</span>';
 
@@ -34473,12 +34666,16 @@ window.renderContainers = renderContainers;
       }
     }
 
-    function renderCinemaLiveStreams() {
+    function renderCinemaLiveStreams(filterQuery) {
       var container = document.getElementById('cinemaLiveListContainer');
       if (!container) return;
+      var q = (filterQuery !== undefined ? filterQuery : (document.getElementById('cinemaSearchInput')?.value || '')).toLowerCase().trim();
 
       container.innerHTML = '';
+      var matchedCount = 0;
       cinemaLiveStreams.forEach(function (st, idx) {
+        if (q && !st.title.toLowerCase().includes(q)) return;
+        matchedCount++;
         var itemDiv = document.createElement('div');
         itemDiv.className = 'cinema-ep-item';
         itemDiv.onclick = function () { playLiveStreamItem(idx); };
@@ -34493,6 +34690,10 @@ window.renderContainers = renderContainers;
         container.appendChild(itemDiv);
       });
 
+      if (matchedCount === 0) {
+        container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;">无匹配直播源</div>';
+      }
+
       if (window.lucide) lucide.createIcons();
     }
 
@@ -34502,6 +34703,7 @@ window.renderContainers = renderContainers;
       var newEp = {
         title: st.title,
         url: st.url,
+        subtitle: '',
         size: st.size,
         tag: st.tag
       };
@@ -34517,6 +34719,19 @@ window.renderContainers = renderContainers;
 
       if (artCinemaInstance) {
         artCinemaInstance.switchUrl(ep.url, ep.title);
+
+        // Subtitle handling
+        if (artCinemaInstance.subtitle) {
+          if (ep.subtitle) {
+            artCinemaInstance.subtitle.switch(ep.subtitle, {
+              type: ep.subtitle.endsWith('.srt') ? 'srt' : 'vtt'
+            });
+            artCinemaInstance.subtitle.show = true;
+          } else {
+            artCinemaInstance.subtitle.show = false;
+          }
+        }
+
         var saved = getCinemaHistory(ep.url);
         if (saved && saved.time > 3) {
           setTimeout(function () {
@@ -34560,6 +34775,7 @@ window.renderContainers = renderContainers;
       var customEp = {
         title: '自定义媒体 · ' + filename,
         url: customUrl,
+        subtitle: '',
         size: '网络直链',
         tag: customUrl.includes('.m3u8') ? 'HLS Live' : 'Direct Stream'
       };
@@ -34597,6 +34813,7 @@ window.renderContainers = renderContainers;
     }
 
     function switchCinemaTab(tabKey) {
+      activeCinemaTabKey = tabKey;
       var btnPreset = document.getElementById('cinemaTabBtnPreset');
       var btnAlist = document.getElementById('cinemaTabBtnAlist');
       var btnLive = document.getElementById('cinemaTabBtnLive');
@@ -34615,10 +34832,11 @@ window.renderContainers = renderContainers;
 
       if (tabKey === 'alist') {
         loadAlistDirectory(currentAlistPath || '/');
+      } else {
+        filterCinemaEpisodes();
       }
     }
 
-    var currentAlistPath = '/';
     async function loadAlistDirectory(path) {
       currentAlistPath = path || '/';
       var listEl = document.getElementById('cinemaAlistFileList');
@@ -34663,7 +34881,9 @@ window.renderContainers = renderContainers;
         });
         var data = await res.json();
         if (data.code === 200 && data.data && data.data.content) {
-          renderAlistDirectoryItems(data.data.content, currentAlistPath);
+          cachedAlistItems = data.data.content;
+          var q = (document.getElementById('cinemaSearchInput')?.value || '').toLowerCase().trim();
+          renderAlistDirectoryItems(cachedAlistItems, currentAlistPath, q);
         } else {
           listEl.innerHTML = '<div style="padding:14px; text-align:center; color:#f87171; font-size:0.8rem;">目录获取失败: ' + (data.message || '请检查 AList 状态') + '</div>';
         }
@@ -34672,17 +34892,21 @@ window.renderContainers = renderContainers;
       }
     }
 
-    function renderAlistDirectoryItems(items, path) {
+    function renderAlistDirectoryItems(items, path, filterQuery) {
       var listEl = document.getElementById('cinemaAlistFileList');
       if (!listEl) return;
       listEl.innerHTML = '';
+      var q = (filterQuery || '').toLowerCase().trim();
 
       if (!items || items.length === 0) {
         listEl.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;">当前目录为空</div>';
         return;
       }
 
+      var matched = 0;
       items.forEach(function (item) {
+        if (q && !item.name.toLowerCase().includes(q)) return;
+        matched++;
         var isDir = item.is_dir;
         var cleanPath = path.endsWith('/') ? path : (path + '/');
         var fullItemPath = cleanPath + item.name;
@@ -34703,12 +34927,19 @@ window.renderContainers = renderContainers;
           var isMedia = ['mp4', 'mkv', 'mov', 'webm', 'm3u8', 'avi', 'flv'].includes(ext);
           var sizeStr = item.size ? (item.size > 1048576 ? (item.size / 1048576).toFixed(1) + ' MB' : (item.size / 1024).toFixed(0) + ' KB') : '文件';
 
+          // Check if companion subtitle exists in cachedAlistItems
+          var baseName = item.name.substring(0, item.name.lastIndexOf('.'));
+          var companionSub = items.find(function (sub) {
+            return !sub.is_dir && (sub.name === baseName + '.vtt' || sub.name === baseName + '.srt');
+          });
+          var companionSubPath = companionSub ? ('/alist/d' + encodeURI(cleanPath + companionSub.name)) : '';
+
           if (isMedia) {
-            itemDiv.onclick = function () { playAlistMediaItem(fullItemPath, item.name, sizeStr); };
+            itemDiv.onclick = function () { playAlistMediaItem(fullItemPath, item.name, sizeStr, companionSubPath); };
             itemDiv.innerHTML = '<i data-lucide="film" style="width:16px; height:16px; color:var(--accent2);"></i>' +
               '<div class="cinema-ep-meta">' +
               '  <div class="cinema-ep-name">' + escapeCinemaHtml(item.name) + '</div>' +
-              '  <div class="cinema-ep-sub">' + sizeStr + ' · AList 直链</div>' +
+              '  <div class="cinema-ep-sub">' + sizeStr + ' · AList 直链' + (companionSub ? ' · 💬自动字幕' : '') + '</div>' +
               '</div>' +
               '<span style="font-size:0.7rem; color:var(--accent); font-weight:600;">播放 ▶</span>';
           } else {
@@ -34724,14 +34955,19 @@ window.renderContainers = renderContainers;
         listEl.appendChild(itemDiv);
       });
 
+      if (matched === 0) {
+        listEl.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-dim); font-size:0.8rem;">无匹配文件</div>';
+      }
+
       if (window.lucide) lucide.createIcons();
     }
 
-    function playAlistMediaItem(filePath, fileName, sizeStr) {
+    function playAlistMediaItem(filePath, fileName, sizeStr, subUrl) {
       var directUrl = '/alist/d' + encodeURI(filePath);
       var newEp = {
         title: fileName,
         url: directUrl,
+        subtitle: subUrl || '',
         size: sizeStr,
         tag: 'AList 网盘'
       };
@@ -34741,8 +34977,14 @@ window.renderContainers = renderContainers;
     }
 
     function filterCinemaEpisodes() {
-      var q = document.getElementById('cinemaSearchInput');
-      renderCinemaEpisodeList(q ? q.value : '');
+      var q = (document.getElementById('cinemaSearchInput')?.value || '').toLowerCase().trim();
+      if (activeCinemaTabKey === 'preset') {
+        renderCinemaEpisodeList(q);
+      } else if (activeCinemaTabKey === 'alist') {
+        renderAlistDirectoryItems(cachedAlistItems, currentAlistPath, q);
+      } else if (activeCinemaTabKey === 'live') {
+        renderCinemaLiveStreams(q);
+      }
     }
 
     // ========================================================
@@ -34755,6 +34997,10 @@ window.renderContainers = renderContainers;
       var newState = forceState !== undefined ? forceState : !isCinemaMiniPipActive;
       isCinemaMiniPipActive = newState;
       window.isCinemaMiniPipActive = newState;
+
+      if (placeholder) {
+        placeholder.classList.toggle('pip-active', newState);
+      }
 
       if (newState) {
         document.body.appendChild(stage);
@@ -34809,11 +35055,10 @@ window.renderContainers = renderContainers;
       var startX = 0, startY = 0;
       var initStageX = 0, initStageY = 0;
 
-      topbar.addEventListener('mousedown', function (e) {
-        if (e.target.closest('.cinema-pip-btn')) return;
+      function startDrag(clientX, clientY) {
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = clientX;
+        startY = clientY;
         var rect = stage.getBoundingClientRect();
         initStageX = rect.left;
         initStageY = rect.top;
@@ -34821,22 +35066,47 @@ window.renderContainers = renderContainers;
         stage.style.bottom = 'auto';
         stage.style.left = initStageX + 'px';
         stage.style.top = initStageY + 'px';
+      }
+
+      function moveDrag(clientX, clientY) {
+        if (!isDragging) return;
+        var dx = clientX - startX;
+        var dy = clientY - startY;
+        var maxW = Math.max(10, window.innerWidth - stage.offsetWidth - 10);
+        var maxH = Math.max(10, window.innerHeight - stage.offsetHeight - 10);
+        var newX = Math.max(10, Math.min(maxW, initStageX + dx));
+        var newY = Math.max(10, Math.min(maxH, initStageY + dy));
+        stage.style.left = newX + 'px';
+        stage.style.top = newY + 'px';
+      }
+
+      function endDrag() {
+        isDragging = false;
+      }
+
+      topbar.addEventListener('mousedown', function (e) {
+        if (e.target.closest('.cinema-pip-btn')) return;
+        startDrag(e.clientX, e.clientY);
         e.preventDefault();
       });
 
       window.addEventListener('mousemove', function (e) {
-        if (!isDragging) return;
-        var dx = e.clientX - startX;
-        var dy = e.clientY - startY;
-        var newX = Math.max(10, Math.min(window.innerWidth - stage.offsetWidth - 10, initStageX + dx));
-        var newY = Math.max(10, Math.min(window.innerHeight - stage.offsetHeight - 10, initStageY + dy));
-        stage.style.left = newX + 'px';
-        stage.style.top = newY + 'px';
+        moveDrag(e.clientX, e.clientY);
       });
 
-      window.addEventListener('mouseup', function () {
-        isDragging = false;
-      });
+      window.addEventListener('mouseup', endDrag);
+
+      topbar.addEventListener('touchstart', function (e) {
+        if (e.target.closest('.cinema-pip-btn') || !e.touches[0]) return;
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function (e) {
+        if (!isDragging || !e.touches[0]) return;
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      window.addEventListener('touchend', endDrag);
     }
 
     // Local Storage Progress Helpers
@@ -34861,6 +35131,8 @@ window.renderContainers = renderContainers;
     function showCinemaNotice(text) {
       if (artCinemaInstance && artCinemaInstance.notice) {
         artCinemaInstance.notice.show = text;
+      } else if (typeof showToast === 'function') {
+        showToast(text);
       }
     }
 
@@ -34885,6 +35157,11 @@ window.renderContainers = renderContainers;
     window.loadAlistDirectory = loadAlistDirectory;
     window.saveCinemaHistory = saveCinemaHistory;
     window.getCinemaHistory = getCinemaHistory;
+    window.openCinemaSubtitlePicker = openCinemaSubtitlePicker;
+    window.handleCinemaSubtitleFileSelect = handleCinemaSubtitleFileSelect;
+    window.loadCinemaSubtitleFile = loadCinemaSubtitleFile;
+    window.initCinemaDragAndDrop = initCinemaDragAndDrop;
+    window.filterCinemaEpisodes = filterCinemaEpisodes;
 
   </script>
   <!-- 🖼️ APPLE MUSIC STYLE IMMERSIVE CANVAS VIEW (全屏沉浸画报模式) -->
