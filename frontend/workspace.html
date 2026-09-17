@@ -4414,13 +4414,40 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       font-family: inherit;
     }
     .btn-glow {
-      background: linear-gradient(135deg, #0091ff, #0070f3);
-      color: white;
-      box-shadow: 0 4px 18px rgba(0, 145, 255, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(14, 165, 233, 0.28));
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 2px 14px rgba(56, 189, 248, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      font-weight: 600;
     }
     .btn-glow:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 30px rgba(124, 58, 237, 0.45);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(14, 165, 233, 0.42));
+      color: #e0f2fe;
+      border-color: rgba(56, 189, 248, 0.65);
+      box-shadow: 0 4px 22px rgba(56, 189, 248, 0.32);
+    }
+    .btn-cinema-sky {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-cinema-sky:hover {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #e0f2fe;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.28);
+      transform: translateY(-1px);
     }
     .btn-ghost {
       background: var(--surface);
@@ -16285,7 +16312,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <i data-lucide="refresh-cw" style="width:13px; height:13px;"></i>
                   <span>刷新</span>
                 </button>
-                <button class="btn btn-glow" style="padding:4px 12px; font-size:0.75rem;" onclick="openAlistDashboard()" title="打开 AList 管理面板">
+                <button class="btn btn-cinema-sky" style="padding:4px 12px; font-size:0.75rem;" onclick="openAlistDashboard()" title="打开 AList 管理面板">
                   <i data-lucide="external-link" style="width:13px; height:13px;"></i>
                   <span>AList 面板</span>
                 </button>
@@ -16304,7 +16331,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <i data-lucide="tv" style="width:30px; height:30px; color:var(--accent);"></i>
                     <div style="font-weight:700; font-size:0.95rem;">🎬 悬浮画中画正在播放中</div>
                     <div style="font-size:0.75rem; color:var(--text-dim);">点击此处或悬浮窗右上角按钮即可恢复全屏巨幕</div>
-                    <button class="btn btn-glow" style="margin-top:4px; font-size:0.75rem; padding:4px 14px;">恢复至影院视听舱</button>
+                    <button class="btn btn-cinema-sky" style="margin-top:4px; font-size:0.75rem; padding:4px 14px;">恢复至影院视听舱</button>
                   </div>
                   <div id="cinemaPlayerStage">
                     <!-- Floating PiP Top Header (Visible only when in Mini-PiP floating mode) -->
@@ -16333,10 +16360,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   <div class="cinema-np-info">
                     <div class="cinema-np-title" id="cinemaCurrentTitle">Ep01 · CyberPulse 赛博脉冲</div>
                     <div class="cinema-np-desc">
-                      <span id="cinemaCurrentTag" style="padding:1px 6px; border-radius:4px; background:rgba(124,58,237,0.2); color:#a78bfa; font-weight:600;">1080P UltraHD</span>
+                      <span id="cinemaCurrentTag" style="padding:1px 6px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; font-weight:600;">1080P UltraHD</span>
                       <span id="cinemaCurrentSize">1.9 MB</span>
                       <span>·</span>
-                      <span id="cinemaResumeHint" style="color:#4ade80;">智能断点记忆已就绪</span>
+                      <span id="cinemaResumeHint" style="color:#38bdf8;">智能断点记忆就绪</span>
                     </div>
                   </div>
 
@@ -16354,7 +16381,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <i data-lucide="picture-in-picture-2" style="width:13px; height:13px;"></i>
                       <span>悬浮画中画</span>
                     </button>
-                    <button class="btn btn-glow" style="padding:5px 12px; font-size:0.75rem;" onclick="playNextCinemaEpisode()" title="播放下一集">
+                    <button class="btn btn-cinema-sky" style="padding:5px 12px; font-size:0.75rem;" onclick="playNextCinemaEpisode()" title="播放下一集">
                       <i data-lucide="skip-forward" style="width:13px; height:13px;"></i>
                       <span>下一集</span>
                     </button>
@@ -16373,7 +16400,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
               <div class="cinema-pane-card">
                 
                 <!-- Catalog Tabs -->
-                <div class="cinema-tabs-header">
+                <div class="cinema-tabs-header" style="margin-bottom:8px;">
                   <button class="cinema-tab-btn active" id="cinemaTabBtnPreset" onclick="switchCinemaTab('preset')">
                     <i data-lucide="film" style="width:13px; height:13px; display:inline-block; vertical-align:-2px;"></i>
                     <span>推荐片源</span>
@@ -16389,13 +16416,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
 
                 <!-- Search & Options Bar -->
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                  <div class="search-input-wrap" style="flex:1; margin:0;">
-                    <input type="text" class="input-box" id="cinemaSearchInput" placeholder="过滤剧集 / 文件..." style="padding:4px 8px 4px 28px; font-size:0.75rem; height:28px;" oninput="filterCinemaEpisodes()">
-                    <i data-lucide="search" style="position:absolute; left:8px; top:7px; width:13px; height:13px; color:var(--text-dim);"></i>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
+                  <div style="position:relative; flex:1; margin:0;">
+                    <i data-lucide="search" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); width:13px; height:13px; color:var(--text-dim); pointer-events:none; z-index:2;"></i>
+                    <input type="text" class="input-box" id="cinemaSearchInput" placeholder="过滤剧集 / 搜索片源..." style="width:100%; box-sizing:border-box; padding:4px 8px 4px 28px; font-size:0.75rem; height:28px; border-radius:7px;" oninput="filterCinemaEpisodes()">
                   </div>
-                  <label style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-dim); cursor:pointer; user-select:none;">
-                    <input type="checkbox" id="cinemaAutoNextCheckbox" checked style="accent-color:var(--accent);">
+                  <label style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-dim); cursor:pointer; user-select:none;" title="播放结束时自动播放下一集">
+                    <input type="checkbox" id="cinemaAutoNextCheckbox" style="accent-color:#38bdf8;">
                     <span>自动连播</span>
                   </label>
                 </div>
@@ -16426,8 +16453,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
             <!-- Netdisk 1-Click Onboarding Cards (网盘授权挂载指南) -->
             <div class="cinema-onboarding-section">
               <div class="cinema-onboarding-title">
-                <i data-lucide="cloud-lightning" style="color:var(--accent2); width:18px; height:18px;"></i>
-                <span>网盘一键挂载至 AList · 极速扩容私有影视库</span>
+                <i data-lucide="cloud-lightning" style="color:#38bdf8; width:16px; height:16px;"></i>
+                <span>云端网盘直连 · 私有 4K 影音库</span>
               </div>
 
               <div class="cinema-cards-grid">
@@ -16441,14 +16468,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">阿里云盘 Open</div>
                     </div>
-                    <span class="cinema-gc-tag">官方极速直链</span>
+                    <span class="cinema-gc-tag">原画 4K 秒开</span>
                   </div>
                   <div class="cinema-gc-desc">
-                    支持原画免转码流畅播放，单文件不限速秒开。获取官方 OAuth Refresh Token 后直接填入 AList 存储驱动即可。
+                    官方 OAuth 免转码直链，单文件不限速秒开。
                   </div>
                   <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=AliyundriveOpen', '_blank')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>添加阿里云盘驱动</span>
+                    <span>挂载阿里云盘</span>
                   </button>
                 </div>
 
@@ -16461,14 +16488,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">夸克网盘</div>
                     </div>
-                    <span class="cinema-gc-tag">影视资源宝库</span>
+                    <span class="cinema-gc-tag">海量影视秒存</span>
                   </div>
                   <div class="cinema-gc-desc">
-                    海量网络影视资源聚合，利用 Cookie 即可无感挂载，多线程下载与视频直链转发秒速响应。
+                    4K 资源一键转存，Cookie 无感挂载高速串流。
                   </div>
                   <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=Quark', '_blank')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>添加夸克驱动</span>
+                    <span>挂载夸克网盘</span>
                   </button>
                 </div>
 
@@ -16481,14 +16508,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">115 网盘</div>
                     </div>
-                    <span class="cinema-gc-tag">蓝光原盘神器</span>
+                    <span class="cinema-gc-tag">蓝光无损原盘</span>
                   </div>
                   <div class="cinema-gc-desc">
-                    离线下载王者，海量无损蓝光与 4K 片源秒存，扫码获取 Cookie 挂载，打造专属私人顶级家庭影院。
+                    无损蓝光与 4K 大片秒存，扫码挂载私人巨幕。
                   </div>
                   <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=115', '_blank')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>添加 115 驱动</span>
+                    <span>挂载 115 网盘</span>
                   </button>
                 </div>
 
@@ -16499,14 +16526,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <i data-lucide="layers"></i>
                     </div>
                     <div>
-                      <div class="cinema-gc-name">百度 / WebDAV</div>
+                      <div class="cinema-gc-name">百度 / WebDAV / NAS</div>
                     </div>
                     <span class="cinema-gc-tag">全通用协议</span>
                   </div>
                   <div class="cinema-gc-desc">
-                    支持百度网盘官方 Open API、各大 NAS (群晖/威联通) 及通用 WebDAV 协议，一次挂载全平台直达。
+                    支持百度网盘、群晖/威联通 NAS 及通用 WebDAV。
                   </div>
-                  <button class="btn btn-glow" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages', '_blank')">
+                  <button class="btn btn-cinema-sky" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages', '_blank')">
                     <i data-lucide="settings" style="width:13px; height:13px;"></i>
                     <span>进入存储管理中心</span>
                   </button>
@@ -34368,6 +34395,7 @@ window.renderContainers = renderContainers;
     var activeCinemaTabKey = 'preset';
     var cachedAlistItems = [];
     var currentAlistPath = '/';
+    var cinemaAutoNextTimer = null;
 
     var cinemaEpisodes = [
       {
@@ -34577,14 +34605,22 @@ window.renderContainers = renderContainers;
           }
         });
 
-        // Auto Next Episode
+        // Auto Next Episode (with strict verification & debounce to prevent jumping loop)
         artCinemaInstance.on('video:ended', function () {
           var autoNextCb = document.getElementById('cinemaAutoNextCheckbox');
-          if (autoNextCb && autoNextCb.checked) {
-            showCinemaNotice('本集播放完毕，正在连播下一集...');
-            setTimeout(function () {
+          if (!autoNextCb || !autoNextCb.checked) return;
+
+          var vid = artCinemaInstance.video;
+          // Only trigger if video actually reached the natural end (not error/aborted)
+          if (vid && vid.duration > 2 && (vid.currentTime >= vid.duration - 1.5)) {
+            if (cinemaAutoNextTimer) {
+              clearTimeout(cinemaAutoNextTimer);
+            }
+            showCinemaNotice('本集播放完毕，即将连播下一集...');
+            cinemaAutoNextTimer = setTimeout(function () {
+              cinemaAutoNextTimer = null;
               playNextCinemaEpisode();
-            }, 1200);
+            }, 1500);
           }
         });
 
@@ -34758,6 +34794,10 @@ window.renderContainers = renderContainers;
 
     function playCinemaEpisode(index) {
       if (index < 0 || index >= cinemaEpisodes.length) return;
+      if (cinemaAutoNextTimer) {
+        clearTimeout(cinemaAutoNextTimer);
+        cinemaAutoNextTimer = null;
+      }
       cinemaCurrentEpisodeIndex = index;
       var ep = cinemaEpisodes[index];
 
@@ -34783,7 +34823,7 @@ window.renderContainers = renderContainers;
         }
 
         var saved = getCinemaHistory(ep.url);
-        if (saved && saved.time > 3) {
+        if (saved && saved.time > 3 && (!saved.duration || saved.time < saved.duration - 2.5)) {
           setTimeout(function () {
             if (artCinemaInstance) {
               artCinemaInstance.seek = saved.time;
@@ -35179,7 +35219,8 @@ window.renderContainers = renderContainers;
       try {
         var raw = localStorage.getItem('pulseos_cinema_history') || '{}';
         var map = JSON.parse(raw);
-        map[url] = { title: title, time: time, duration: duration, updatedAt: Date.now() };
+        var resumeTime = (duration > 4 && time >= duration - 2.5) ? 0 : time;
+        map[url] = { title: title, time: resumeTime, duration: duration, updatedAt: Date.now() };
         localStorage.setItem('pulseos_cinema_history', JSON.stringify(map));
       } catch (e) {}
     }
