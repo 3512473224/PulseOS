@@ -34395,22 +34395,22 @@ window.renderContainers = renderContainers;
 
     var cinemaLiveStreams = [
       {
-        title: 'Big Buck Bunny (HLS 流媒体测试)',
-        url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        title: 'Akamai 1080P 超清测试流 (HLS Live)',
+        url: 'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
+        size: '1080P HLS',
+        tag: 'Live HLS'
+      },
+      {
+        title: 'Big Buck Bunny (LivePush 高速流)',
+        url: 'https://live-par-2-abr.livepush.io/vod/bigbuckbunny/index.m3u8',
         size: 'Adaptive HLS',
         tag: 'Live HLS'
       },
       {
-        title: 'Sintel 4K 开源电影 (HLS 流)',
-        url: 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
-        size: '1080P/4K HLS',
+        title: 'BipBop 自适应码率流 (CloudFront 官方)',
+        url: 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
+        size: 'Adaptive HLS',
         tag: 'Live HLS'
-      },
-      {
-        title: 'Tears of Steel 钢铁之泪 (MP4 直链)',
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-        size: '1080P MP4',
-        tag: 'HD Direct'
       }
     ];
 
@@ -34500,22 +34500,66 @@ window.renderContainers = renderContainers;
           customType: {
             m3u8: function (video, url, art) {
               if (window.Hls && Hls.isSupported()) {
-                if (art.hls) art.hls.destroy();
-                var hls = new Hls();
+                if (art.hls) {
+                  try { art.hls.destroy(); } catch (e) {}
+                }
+                var hls = new Hls({
+                  enableWorker: true,
+                  lowLatencyMode: true
+                });
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 art.hls = hls;
-                art.on('destroy', function () { hls.destroy(); });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                  console.warn('[ArtPlayer HLS Error]', data);
+                  if (data && data.fatal) {
+                    if (art.loading) art.loading.show = false;
+                    switch (data.type) {
+                      case Hls.ErrorTypes.NETWORK_ERROR:
+                        if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+                          showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+                        } else {
+                          showCinemaNotice('❌ 流媒体加载失败：该直链已失效、已离线或跨域(CORS)被拦截');
+                        }
+                        break;
+                      case Hls.ErrorTypes.MEDIA_ERROR:
+                        showCinemaNotice('⚠️ 音视频解码异常，尝试恢复中...');
+                        hls.recoverMediaError();
+                        break;
+                      default:
+                        showCinemaNotice('❌ 播放失败：无法解析该流媒体数据');
+                        try { hls.destroy(); } catch (e) {}
+                        break;
+                    }
+                  }
+                });
+
+                art.on('destroy', function () {
+                  try { hls.destroy(); } catch (e) {}
+                });
               } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
               } else {
-                art.notice.show = '当前浏览器不支持播放 HLS 格式视频';
+                showCinemaNotice('当前浏览器不支持播放 HLS 格式视频');
               }
             }
           }
         });
 
         window.artCinemaInstance = artCinemaInstance;
+
+        // Video Error Listener
+        artCinemaInstance.on('error', function (err) {
+          console.warn('[ArtPlayer Video Error]', err);
+          if (artCinemaInstance.loading) artCinemaInstance.loading.show = false;
+          var cur = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+          if (cur && window.location.protocol === 'https:' && cur.url.startsWith('http://')) {
+            showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+          } else {
+            showCinemaNotice('❌ 视频加载失败：该网络直链已失效、已离线或不可达');
+          }
+        });
 
         // Smart Resume (智能断点续播)
         if (savedHistory && savedHistory.time > 3) {
@@ -34718,6 +34762,12 @@ window.renderContainers = renderContainers;
       var ep = cinemaEpisodes[index];
 
       if (artCinemaInstance) {
+        if (artCinemaInstance.hls && !ep.url.includes('.m3u8')) {
+          try {
+            artCinemaInstance.hls.destroy();
+            artCinemaInstance.hls = null;
+          } catch (e) {}
+        }
         artCinemaInstance.switchUrl(ep.url, ep.title);
 
         // Subtitle handling
@@ -34771,6 +34821,12 @@ window.renderContainers = renderContainers;
       var input = document.getElementById('cinemaStreamUrlInput');
       if (!input || !input.value.trim()) return;
       var customUrl = input.value.trim();
+
+      // Check Mixed Content: HTTPS page loading HTTP link
+      if (window.location.protocol === 'https:' && customUrl.startsWith('http://')) {
+        showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+      }
+
       var filename = customUrl.split('/').pop().split('?')[0] || '外部流媒体源';
       var customEp = {
         title: '自定义媒体 · ' + filename,
@@ -35129,10 +35185,11 @@ window.renderContainers = renderContainers;
     }
 
     function showCinemaNotice(text) {
+      if (typeof showToast === 'function') {
+        showToast(text);
+      }
       if (artCinemaInstance && artCinemaInstance.notice) {
         artCinemaInstance.notice.show = text;
-      } else if (typeof showToast === 'function') {
-        showToast(text);
       }
     }
 
