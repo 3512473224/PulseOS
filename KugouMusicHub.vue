@@ -13,7 +13,7 @@
         </div>
         <div>
           <h1 class="text-sm font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-cyan-300">
-            酷狗极客云音乐
+            酷狗随身云音乐
           </h1>
           <p class="text-[11px] text-slate-400 font-mono">PulseOS Music Engine · 扫码直连中台</p>
         </div>

@@ -1,5 +1,5 @@
 /**
- * PulseOS 极客工作台 - 酷狗音乐核心 API 模块 (kugouApi.ts)
+ * PulseOS 赛博工作台 - 酷狗音乐核心 API 模块 (kugouApi.ts)
  * 支持：扫码登录、轮询检测、个人歌单/我喜欢提取、音源解析、歌词同步
  */
 
@@ -139,7 +139,7 @@ class KugouApiClient {
     if (rawStatus === 'success' || code === 200 && data.cookie) {
       const user: UserProfile = {
         userId: data.userid || data.userId || 'kugou_user',
-        nickname: data.nickname || data.username || '酷狗极客音乐家',
+        nickname: data.nickname || data.username || '酷狗随身音乐家',
         avatar: data.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
         cookie: data.cookie || ''
       };
@@ -166,7 +166,7 @@ class KugouApiClient {
         if (list.length > 0) {
           return list.map((item: any, idx: number) => ({
             id: String(item.id || item.specialid || idx),
-            name: item.name || item.title || (idx === 0 ? '我喜欢的声音' : `极客歌单 #${idx}`),
+            name: item.name || item.title || (idx === 0 ? '我喜欢的声音' : `随身歌单 #${idx}`),
             cover: item.cover || item.pic || 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300',
             count: item.count || item.song_count || 0,
             isFavorite: idx === 0 || !!item.is_favorite
