@@ -13902,14 +13902,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .cinema-telemetry-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 2px 10px;
-      border-radius: 6px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      gap: 7px;
+      padding: 3px 12px;
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
       color: #94a3b8;
       font-size: 0.72rem;
-      font-family: var(--font-mono, monospace);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      font-weight: 500;
       letter-spacing: 0.01em;
       user-select: none;
       transition: border-color 0.2s ease, background 0.2s ease;
@@ -13948,7 +13950,392 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #1e293b !important;
     }
 
-    
+    /* Sleek Apple/Linear Toggle Switch */
+    .cinema-switch-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.73rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    .cinema-switch-label:hover {
+      color: var(--text);
+    }
+    .cinema-switch {
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 17px;
+      flex-shrink: 0;
+    }
+    .cinema-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .cinema-switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cinema-switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 11px;
+      width: 11px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #cbd5e1;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cinema-switch input:checked + .cinema-switch-slider {
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+    .cinema-switch input:checked + .cinema-switch-slider:before {
+      transform: translateX(13px);
+      background-color: #ffffff;
+    }
+    html.theme-light .cinema-switch-slider {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+    html.theme-light .cinema-switch-slider:before {
+      background-color: #ffffff;
+    }
+
+    /* ======================================================== */
+    /* 🎵 CYBER VINYL AUDIO CINEMA OVERLAY (音乐专属黑胶律动舱) */
+    /* ======================================================== */
+    .cinema-audio-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 46px;
+      padding: 30px 48px;
+      background: radial-gradient(circle at 35% 50%, rgba(26, 21, 65, 0.95), rgba(6, 8, 22, 0.98));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow: hidden;
+      user-select: none;
+      animation: fadeInCinema 0.3s ease;
+    }
+
+    /* Ambient Dynamic Aura Glow */
+    .cinema-audio-backdrop {
+      position: absolute;
+      top: -20%;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.28) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      animation: audioAuraPulse 6s infinite alternate ease-in-out;
+    }
+
+    @keyframes audioAuraPulse {
+      0% { transform: scale(0.9) translate(-20px, 10px); opacity: 0.6; }
+      100% { transform: scale(1.15) translate(20px, -15px); opacity: 0.9; }
+    }
+
+    /* Vinyl Turntable Unit */
+    .cinema-vinyl-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Tonearm (唱针臂) */
+    .cinema-vinyl-tonearm {
+      position: absolute;
+      top: -10px;
+      right: 4px;
+      width: 46px;
+      height: 94px;
+      z-index: 5;
+      transform-origin: 36px 10px;
+      transform: rotate(24deg);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .cinema-vinyl-tonearm.is-paused {
+      transform: rotate(-16deg) !important;
+    }
+
+    .tonearm-pivot {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #e2e8f0 30%, #475569 100%);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .tonearm-body {
+      position: absolute;
+      top: 14px;
+      right: 9px;
+      width: 4px;
+      height: 68px;
+      background: linear-gradient(180deg, #94a3b8 0%, #cbd5e1 50%, #64748b 100%);
+      border-radius: 2px;
+      transform: rotate(-6deg);
+      box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    .tonearm-head {
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      width: 12px;
+      height: 18px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+
+    /* Textured Vinyl Record (33⅓ RPM) */
+    .cinema-vinyl-record {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: repeating-radial-gradient(circle, #0e0e14 0px, #1a1a24 2px, #0a0a10 4px, #161622 6px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 35px rgba(124, 58, 237, 0.25), inset 0 0 6px rgba(255, 255, 255, 0.15);
+      border: 2px solid #232332;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: cinemaVinylSpin 16s linear infinite;
+      position: relative;
+    }
+
+    .cinema-vinyl-record.is-paused {
+      animation-play-state: paused !important;
+    }
+
+    @keyframes cinemaVinylSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .cinema-vinyl-grooves {
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+
+    .cinema-vinyl-center {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed 0%, #38bdf8 50%, #ec4899 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(124, 58, 237, 0.6), inset 0 0 8px rgba(0, 0, 0, 0.5);
+      border: 3px solid #111118;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cinema-vinyl-cover {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+    }
+
+    .cinema-vinyl-spindle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #020208;
+      border: 2px solid #94a3b8;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .cinema-audio-info-panel {
+      flex: 1;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .cinema-audio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(124, 58, 237, 0.18);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #c084fc;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .cinema-audio-badge .audio-pulsing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #c084fc;
+      box-shadow: 0 0 8px #c084fc;
+      animation: telemetryBlink 1.2s infinite ease-in-out;
+    }
+
+    .cinema-audio-track-title {
+      font-size: 1.24rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.35;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .cinema-audio-track-sub {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      margin-top: -4px;
+    }
+
+    .cinema-audio-eq-visualizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 36px;
+      padding: 4px 0;
+      margin: 2px 0;
+    }
+
+    @keyframes cinemaEqDance {
+      0% { height: 6px; opacity: 0.6; }
+      50% { height: 32px; opacity: 1; }
+      100% { height: 10px; opacity: 0.8; }
+    }
+
+    .cinema-audio-eq-bar {
+      width: 4px;
+      border-radius: 9999px;
+      background: linear-gradient(to top, #7c3aed, #38bdf8, #f472b6);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+      height: 6px;
+      animation: cinemaEqDance 1s ease-in-out infinite alternate;
+      transition: height 0.15s ease, opacity 0.15s ease;
+    }
+
+    .cinema-audio-eq-visualizer.is-paused .cinema-audio-eq-bar {
+      animation-play-state: paused !important;
+      height: 6px !important;
+      opacity: 0.45 !important;
+    }
+
+    .cinema-audio-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .cinema-audio-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+    }
+
+    .cinema-audio-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .cinema-audio-btn.primary {
+      background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    }
+
+    .cinema-audio-btn.primary:hover {
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
+    }
+
+    /* Light Mode Compatibility for Audio Overlay */
+    html.theme-light .cinema-audio-overlay {
+      background: radial-gradient(circle at 35% 50%, rgba(243, 244, 246, 0.98), rgba(229, 231, 235, 0.96)) !important;
+    }
+
+    html.theme-light .cinema-audio-track-title {
+      color: #0f172a !important;
+      text-shadow: none !important;
+    }
+
+    html.theme-light .cinema-audio-track-sub {
+      color: #475569 !important;
+    }
+
+    html.theme-light .cinema-vinyl-record {
+      background: repeating-radial-gradient(circle, #1e293b 0px, #334155 2px, #0f172a 4px, #1e293b 6px) !important;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), 0 0 24px rgba(124, 58, 237, 0.2) !important;
+    }
+
+    html.theme-light .cinema-audio-btn {
+      background: rgba(0, 0, 0, 0.05) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      color: #1e293b !important;
+    }
+
     .cinema-mkv-overlay {
       position: absolute;
       inset: 0;
@@ -14057,22 +14444,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     .cinema-stream-input-wrap {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
-      padding: 6px 10px;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--border);
+      padding: 6px 12px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
       border-radius: 10px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.2s ease;
+    }
+
+    .cinema-stream-input-wrap:focus-within {
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .cinema-stream-input {
       flex: 1;
       background: transparent;
       border: none;
-      color: var(--text);
-      font-size: 0.8rem;
-      font-family: var(--font-mono);
+      color: #f1f5f9;
+      font-size: 0.78rem;
       outline: none;
+    }
+
+    .cinema-stream-input::placeholder {
+      color: #64748b;
     }
 
     .cinema-pane-card {
@@ -14424,9 +14823,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #ffffff !important;
     }
 
-    .cinema-stream-input-wrap {
-      background: rgba(241, 245, 249, 0.8) !important;
+    html.theme-light .cinema-stream-input-wrap {
+      background: rgba(241, 245, 249, 0.9) !important;
       border-color: #cbd5e1 !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    html.theme-light .cinema-stream-input {
+      color: #0f172a !important;
     }
 
     html.theme-light .cinema-ep-item {
@@ -14674,7 +15078,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div class="nav-item" data-view="cinema" onclick="switchView('cinema')" id="navItemCinema">
           <i data-lucide="tv"></i>
           <span>云端影音</span>
-          <span class="nav-badge" style="background:rgba(239,68,68,0.2); color:#f87171; border:1px solid rgba(239,68,68,0.4); font-size:0.65rem; padding:1px 5px; border-radius:10px; margin-left:auto;">Cinema</span>
+          <span class="nav-badge" style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(56, 189, 248, 0.2)); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); font-size: 0.62rem; font-weight: 600; padding: 1px 6px; border-radius: 9999px; margin-left: auto;">4K 视听</span>
         </div>
 
         <div class="nav-item" data-view="devtools" onclick="switchView('devtools')">
@@ -16845,6 +17249,58 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <span>2.0x 极速快进中</span>
                     </div>
 
+                    <!-- Cyber Vinyl Audio Stage Overlay (音乐专属黑胶律动沉浸舱) -->
+                    <div id="cinemaAudioStageOverlay" class="cinema-audio-overlay" style="display:none;">
+                      <div class="cinema-audio-backdrop"></div>
+                      
+                      <!-- Vinyl Turntable Unit -->
+                      <div class="cinema-vinyl-container">
+                        <!-- Tonearm -->
+                        <div class="cinema-vinyl-tonearm is-paused" id="cinemaVinylTonearm">
+                          <div class="tonearm-pivot"></div>
+                          <div class="tonearm-body"></div>
+                          <div class="tonearm-head"></div>
+                        </div>
+                        <!-- Vinyl Record -->
+                        <div class="cinema-vinyl-record is-paused" id="cinemaVinylRecord">
+                          <div class="cinema-vinyl-grooves"></div>
+                          <div class="cinema-vinyl-center">
+                            <div class="cinema-vinyl-cover" id="cinemaVinylCover">
+                              <svg class="vinyl-music-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                            </div>
+                            <div class="cinema-vinyl-spindle"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Track Details & Soundwave EQ Bars -->
+                      <div class="cinema-audio-info-panel">
+                        <div class="cinema-audio-badge" id="cinemaAudioFormatBadge">
+                          <span class="audio-pulsing-dot"></span>
+                          <span id="cinemaAudioFormatText">FLAC 24-bit 无损原声</span>
+                        </div>
+                        <div class="cinema-audio-track-title" id="cinemaAudioTrackTitle">歌曲名称</div>
+                        <div class="cinema-audio-track-sub" id="cinemaAudioTrackSub">网盘专属音乐专栏 · 高保真数字母带</div>
+
+                        <!-- Real-time Equalizer Frequency Bars -->
+                        <div class="cinema-audio-eq-visualizer" id="cinemaAudioEqVisualizer">
+                          <!-- dynamic EQ bars populated by JS -->
+                        </div>
+
+                        <!-- Audio Mode Quick Action Pills -->
+                        <div class="cinema-audio-actions">
+                          <button class="cinema-audio-btn primary" onclick="handoffToBottomPlayer()" title="同步至底部酷狗音乐播放坞">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                            <span>载入底部音乐坞</span>
+                          </button>
+                          <button class="cinema-audio-btn" onclick="toggleCinemaAudioLoop()" id="cinemaAudioLoopBtn" title="单曲循环 / 列表连播">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                            <span id="cinemaAudioLoopText">列表连播</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
                     <!-- MKV / High-Spec Video Helper Overlay -->
                     <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;">
                       <div class="cinema-mkv-card">
@@ -16922,9 +17378,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
                 <!-- Custom Direct Stream URL Bar -->
                 <div class="cinema-stream-input-wrap">
-                  <i data-lucide="link" style="width:14px; height:14px; color:var(--text-dim);"></i>
-                  <input type="text" class="cinema-stream-input" id="cinemaStreamUrlInput" placeholder="输入任意 MP4 / HLS(m3u8) / WebDAV 视频直链，回车立即播放..." onkeydown="if(event.key==='Enter') playCustomCinemaUrl()">
-                  <button class="btn btn-ghost" style="padding:3px 8px; font-size:0.75rem;" onclick="playCustomCinemaUrl()">播放</button>
+                  <i data-lucide="link-2" style="width:14px; height:14px; color:#38bdf8; flex-shrink:0;"></i>
+                  <input type="text" class="cinema-stream-input" id="cinemaStreamUrlInput" placeholder="输入任意音视频直链 (MP4 / HLS / FLAC / MP3 / WebDAV)，回车立即播放..." onkeydown="if(event.key==='Enter') playCustomCinemaUrl()">
+                  <button class="cinema-tool-btn primary-sky" style="padding:4px 12px; font-size:0.75rem; border-radius:6px; flex-shrink:0;" onclick="playCustomCinemaUrl()">
+                    <i data-lucide="play" style="width:12px; height:12px;"></i>
+                    <span>播放</span>
+                  </button>
                 </div>
               </div>
 
@@ -16953,8 +17412,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <i data-lucide="search" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); width:13px; height:13px; color:var(--text-dim); pointer-events:none; z-index:2;"></i>
                     <input type="text" class="input-box" id="cinemaSearchInput" placeholder="过滤剧集 / 搜索片源..." style="width:100%; box-sizing:border-box; padding:4px 8px 4px 28px; font-size:0.75rem; height:28px; border-radius:7px;" oninput="filterCinemaEpisodes()">
                   </div>
-                  <label style="display:flex; align-items:center; gap:5px; font-size:0.72rem; color:var(--text-dim); cursor:pointer; user-select:none;" title="播放结束时自动播放下一集">
-                    <input type="checkbox" id="cinemaAutoNextCheckbox" style="accent-color:#38bdf8;">
+                  <label class="cinema-switch-label" title="播放结束时自动连播下一集/下一曲">
+                    <span class="cinema-switch">
+                      <input type="checkbox" id="cinemaAutoNextCheckbox" checked>
+                      <span class="cinema-switch-slider"></span>
+                    </span>
                     <span>自动连播</span>
                   </label>
                 </div>
@@ -16980,7 +17442,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <input type="file" id="cinemaAlistFileInput" multiple style="display:none;" onchange="handleAlistUpload(this)">
                     </div>
                     <div style="display:flex; align-items:center; gap:5px;">
-                      <span style="font-size:0.68rem; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 6px; border-radius:4px; border:1px solid rgba(56,189,248,0.2);">5TB 云盘就绪</span>
                       <button class="btn btn-ghost" style="font-size:0.7rem; padding:4px; height:26px; width:26px; border-radius:6px; display:flex; align-items:center; justify-content:center;" onclick="loadAlistDirectory(currentAlistPath)" title="刷新目录">
                         <i data-lucide="rotate-cw" style="width:12px; height:12px;"></i>
                       </button>
@@ -35225,7 +35686,18 @@ window.renderContainers = renderContainers;
           }
         });
 
+        // Vinyl Playback & Turntable State Handlers
+        artCinemaInstance.on('video:play', function () {
+          updateVinylPlaybackState(true);
+        });
+        artCinemaInstance.on('video:pause', function () {
+          updateVinylPlaybackState(false);
+        });
+
         updateCinemaNowPlaying(firstEp);
+        var isFirstEpAudio = isAudioMedia(firstEp.url, firstEp.title);
+        setCinemaAudioMode(isFirstEpAudio, firstEp);
+
         initCinemaDraggablePip();
         initCinemaDragAndDrop();
         initCinemaSpeedHold();
@@ -35299,19 +35771,20 @@ window.renderContainers = renderContainers;
 
         if (['vtt', 'srt', 'ass'].includes(ext)) {
           loadCinemaSubtitleFile(file);
-        } else if (['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogg'].includes(ext)) {
+        } else if (['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogg', 'mp3', 'flac', 'wav', 'm4a', 'aac', 'opus', 'ape'].includes(ext)) {
+          var isAud = ['mp3', 'flac', 'wav', 'm4a', 'aac', 'opus', 'ape'].includes(ext);
           var mediaUrl = URL.createObjectURL(file);
           var localEp = {
             title: file.name.replace(/\.[^/.]+$/, ''),
             url: mediaUrl,
             subtitle: '',
             size: (file.size / 1048576).toFixed(1) + ' MB',
-            tag: '本地视频'
+            tag: isAud ? '本地无损音频' : '本地视频'
           };
           cinemaEpisodes.unshift(localEp);
           playCinemaEpisode(0);
           switchCinemaTab('preset');
-          showCinemaNotice('已载入本地视频: ' + file.name);
+          showCinemaNotice(isAud ? ('已载入本地原声: ' + file.name) : ('已载入本地视频: ' + file.name));
         } else {
           showCinemaNotice('不支持的文件格式: ' + ext);
         }
@@ -35687,6 +36160,155 @@ window.renderContainers = renderContainers;
       if (overlay) overlay.style.display = 'none';
     }
 
+    // --- High-Fidelity Audio Mode & Vinyl Visualization Handlers ---
+    function isAudioMedia(url, title) {
+      var s = ((url || '') + ' ' + (title || '')).toLowerCase();
+      return /\.(mp3|flac|wav|m4a|aac|ogg|opus|ape|alac|wma)(\?|$|\s)/i.test(s);
+    }
+
+    function initCinemaAudioVisualizer() {
+      var container = document.getElementById('cinemaAudioEqVisualizer');
+      if (!container) return;
+      if (container.children.length > 0) return; // Already initialized
+      var barCount = 28;
+      for (var i = 0; i < barCount; i++) {
+        var bar = document.createElement('div');
+        bar.className = 'cinema-audio-eq-bar';
+        var delay = ((i * 0.08) % 1.2).toFixed(2);
+        var dur = (0.65 + (i % 5) * 0.16).toFixed(2);
+        bar.style.animationDelay = delay + 's';
+        bar.style.animationDuration = dur + 's';
+        container.appendChild(bar);
+      }
+    }
+
+    function updateVinylPlaybackState(isPlaying) {
+      var record = document.getElementById('cinemaVinylRecord');
+      var tonearm = document.getElementById('cinemaVinylTonearm');
+      var eqViz = document.getElementById('cinemaAudioEqVisualizer');
+      if (isPlaying) {
+        if (record) record.classList.remove('is-paused');
+        if (tonearm) tonearm.classList.remove('is-paused');
+        if (eqViz) eqViz.classList.remove('is-paused');
+      } else {
+        if (record) record.classList.add('is-paused');
+        if (tonearm) tonearm.classList.add('is-paused');
+        if (eqViz) eqViz.classList.add('is-paused');
+      }
+    }
+
+    function setCinemaAudioMode(isActive, ep) {
+      var overlay = document.getElementById('cinemaAudioStageOverlay');
+      var mkvOverlay = document.getElementById('cinemaMkvHelperOverlay');
+      if (!overlay) return;
+
+      if (isActive) {
+        overlay.style.display = 'flex';
+        if (mkvOverlay) mkvOverlay.style.display = 'none';
+
+        var titleEl = document.getElementById('cinemaAudioTrackTitle');
+        var badgeText = document.getElementById('cinemaAudioFormatText');
+        var subEl = document.getElementById('cinemaAudioTrackSub');
+
+        if (titleEl && ep) titleEl.textContent = ep.title || '未知音频';
+
+        var ext = ep && ep.url ? (ep.url.split('?')[0].split('.').pop() || '').toUpperCase() : 'AUDIO';
+        if (badgeText) {
+          if (ext === 'FLAC') {
+            badgeText.textContent = 'FLAC 24-bit 无损数字母带';
+          } else if (ext === 'WAV') {
+            badgeText.textContent = 'WAV PCM 1411kbps 纯净音轨';
+          } else if (ext === 'MP3') {
+            badgeText.textContent = 'MP3 320Kbps 极清声效';
+          } else if (ext === 'M4A' || ext === 'AAC') {
+            badgeText.textContent = ext + ' 空间音频串流';
+          } else {
+            badgeText.textContent = ext + ' 高保真无损音频';
+          }
+        }
+
+        if (subEl && ep) {
+          subEl.textContent = (ep.size ? ep.size + ' · ' : '') + '网盘专属音乐专栏 · 沉浸黑胶律动';
+        }
+
+        initCinemaAudioVisualizer();
+        var isPlaying = artCinemaInstance && artCinemaInstance.video && !artCinemaInstance.video.paused;
+        updateVinylPlaybackState(isPlaying);
+      } else {
+        overlay.style.display = 'none';
+      }
+    }
+
+    function handoffToBottomPlayer() {
+      var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+      if (!ep) return;
+      if (artCinemaInstance && artCinemaInstance.video && !artCinemaInstance.video.paused) {
+        artCinemaInstance.pause();
+      }
+      var cleanTitle = (ep.title || '网盘音频').replace(/\.[^/.]+$/, "");
+      var track = {
+        title: cleanTitle,
+        artist: '网盘原声音轨',
+        album: 'AList 云盘音乐库',
+        cover: '',
+        url: ep.url,
+        directUrl: ep.url,
+        streamSource: 'alist_cloud'
+      };
+      if (window.kugouCurrentPlaylist) {
+        kugouCurrentPlaylist.unshift(track);
+        window.kugouCurrentTrackIdx = 0;
+        if (typeof playKuGouTrack === 'function') {
+          playKuGouTrack(0, true);
+        } else {
+          var audio = document.getElementById('kugouAudioEngine');
+          if (audio) {
+            audio.src = ep.url;
+            audio.play().catch(function(){});
+          }
+        }
+      }
+      showCinemaNotice('已载入底部全局音乐播放坞: ' + cleanTitle);
+    }
+
+    function quickHandoffAlistAudio(filePath, fileName) {
+      var directUrl = '/alist/d' + encodeURI(filePath);
+      var cleanTitle = (fileName || '网盘音频').replace(/\.[^/.]+$/, "");
+      var track = {
+        title: cleanTitle,
+        artist: '网盘原声音轨',
+        album: 'AList 云盘音乐库',
+        cover: '',
+        url: directUrl,
+        directUrl: directUrl,
+        streamSource: 'alist_cloud'
+      };
+      if (window.kugouCurrentPlaylist) {
+        kugouCurrentPlaylist.unshift(track);
+        window.kugouCurrentTrackIdx = 0;
+        if (typeof playKuGouTrack === 'function') {
+          playKuGouTrack(0, true);
+        }
+      }
+      showCinemaNotice('已载入底部全局音乐播放坞: ' + cleanTitle);
+    }
+
+    function toggleCinemaAudioLoop() {
+      if (!artCinemaInstance) return;
+      artCinemaInstance.loop = !artCinemaInstance.loop;
+      var textEl = document.getElementById('cinemaAudioLoopText');
+      var loopBtn = document.getElementById('cinemaAudioLoopBtn');
+      if (artCinemaInstance.loop) {
+        if (textEl) textEl.textContent = '单曲循环';
+        if (loopBtn) loopBtn.classList.add('primary');
+        showCinemaNotice('已开启音乐单曲循环模式');
+      } else {
+        if (textEl) textEl.textContent = '列表连播';
+        if (loopBtn) loopBtn.classList.remove('primary');
+        showCinemaNotice('已切换为列表连播模式');
+      }
+    }
+
     function playCinemaEpisode(index) {
       if (index < 0 || index >= cinemaEpisodes.length) return;
       if (cinemaAutoNextTimer) {
@@ -35731,8 +36353,11 @@ window.renderContainers = renderContainers;
         initCinemaView();
       }
 
+      var isAudio = isAudioMedia(ep.url, ep.title);
+      setCinemaAudioMode(isAudio, ep);
+
       var ext = (ep.url.split('?')[0].split('.').pop() || '').toLowerCase();
-      var isUnsupportedWeb = ['mkv', 'avi', 'wmv', 'flv', 'rmvb', 'iso'].includes(ext);
+      var isUnsupportedWeb = !isAudio && ['mkv', 'avi', 'wmv', 'flv', 'rmvb', 'iso'].includes(ext);
       var overlay = document.getElementById('cinemaMkvHelperOverlay');
       if (isUnsupportedWeb) {
         if (overlay) {
@@ -35748,17 +36373,19 @@ window.renderContainers = renderContainers;
       }
 
       if (window._cinemaStallTimer) clearTimeout(window._cinemaStallTimer);
-      window._cinemaStallTimer = setTimeout(function () {
-        if (artCinemaInstance && artCinemaInstance.video) {
-          var vid = artCinemaInstance.video;
-          if (vid.readyState < 2 && !vid.currentTime && !vid.paused && overlay && overlay.style.display !== 'flex') {
-            overlay.style.display = 'flex';
-            var titleEl = document.getElementById('cinemaMkvOverlayTitle');
-            if (titleEl) titleEl.textContent = ep.title;
-            if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+      if (!isAudio) {
+        window._cinemaStallTimer = setTimeout(function () {
+          if (artCinemaInstance && artCinemaInstance.video) {
+            var vid = artCinemaInstance.video;
+            if (vid.readyState < 2 && !vid.currentTime && !vid.paused && overlay && overlay.style.display !== 'flex') {
+              overlay.style.display = 'flex';
+              var titleEl = document.getElementById('cinemaMkvOverlayTitle');
+              if (titleEl) titleEl.textContent = ep.title;
+              if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+            }
           }
-        }
-      }, 3500);
+        }, 3500);
+      }
       updateCinemaNowPlaying(ep);
       renderCinemaEpisodeList();
     }
@@ -36037,7 +36664,8 @@ window.renderContainers = renderContainers;
             '</div>';
         } else {
           var ext = (item.name.split('.').pop() || '').toLowerCase();
-          var isMedia = ['mp4', 'mkv', 'mov', 'webm', 'm3u8', 'avi', 'flv', 'mp3', 'flac', 'wav'].includes(ext);
+          var isAudio = ['mp3', 'flac', 'wav', 'm4a', 'aac', 'ogg', 'opus', 'ape', 'alac', 'wma'].includes(ext);
+          var isVideo = ['mp4', 'mkv', 'mov', 'webm', 'm3u8', 'avi', 'flv'].includes(ext);
           var sizeStr = item.size ? (item.size > 1048576 ? (item.size / 1048576).toFixed(1) + ' MB' : (item.size / 1024).toFixed(0) + ' KB') : '文件';
 
           // Check if companion subtitle exists in cachedAlistItems
@@ -36047,7 +36675,23 @@ window.renderContainers = renderContainers;
           });
           var companionSubPath = companionSub ? ('/alist/d' + encodeURI(cleanPath + companionSub.name)) : '';
 
-          if (isMedia) {
+          if (isAudio) {
+            itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer;" onclick="playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'\')">' +
+              '<i data-lucide="music" style="width:16px; height:16px; color:#ec4899; flex-shrink:0;"></i>' +
+              '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
+              '  <div class="cinema-ep-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeCinemaHtml(item.name) + '</div>' +
+              '  <div class="cinema-ep-sub" style="color:#f472b6;">' + sizeStr + ' · 网盘高保真原声</div>' +
+              '</div>' +
+              '</div>' +
+              '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
+              '  <button class="cinema-action-btn" style="color:#ec4899;" title="黑胶沉浸点播" onclick="event.stopPropagation(); playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'\')"><i data-lucide="disc" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" style="color:#a855f7;" title="载入底部音乐坞" onclick="event.stopPropagation(); quickHandoffAlistAudio(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\')"><i data-lucide="headphones" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" title="重命名" onclick="event.stopPropagation(); promptAlistRename(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\')"><i data-lucide="edit-3" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn btn-danger" title="删除文件" onclick="event.stopPropagation(); promptAlistDelete(\'' + escapeCinemaHtml(path) + '\', \'' + escapeCinemaHtml(item.name) + '\', false)"><i data-lucide="trash-2" style="width:12px; height:12px;"></i></button>' +
+              '</div>';
+          } else if (isVideo) {
             itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer;" onclick="playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')">' +
               '<i data-lucide="video" style="width:16px; height:16px; color:#38bdf8; flex-shrink:0;"></i>' +
               '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
@@ -36700,6 +37344,11 @@ window.renderContainers = renderContainers;
     window.loadCinemaSubtitleFile = loadCinemaSubtitleFile;
     window.initCinemaDragAndDrop = initCinemaDragAndDrop;
     window.filterCinemaEpisodes = filterCinemaEpisodes;
+    window.handoffToBottomPlayer = handoffToBottomPlayer;
+    window.toggleCinemaAudioLoop = toggleCinemaAudioLoop;
+    window.quickHandoffAlistAudio = quickHandoffAlistAudio;
+    window.setCinemaAudioMode = setCinemaAudioMode;
+    window.initCinemaAudioVisualizer = initCinemaAudioVisualizer;
 
   </script>
   <!-- 🖼️ APPLE MUSIC STYLE IMMERSIVE CANVAS VIEW (全屏沉浸画报模式) -->
