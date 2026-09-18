@@ -13856,6 +13856,98 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: rgba(124, 58, 237, 0.3) !important;
     }
 
+    /* Floating 2x Speed Hold Indicator Capsule */
+    .cinema-speed-indicator {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px) scale(0.95);
+      background: rgba(10, 15, 29, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(56, 189, 248, 0.25);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #ffffff;
+      padding: 7px 20px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .cinema-speed-indicator.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .cinema-speed-indicator .speed-icon {
+      color: #38bdf8;
+      animation: speedPulse 0.8s infinite ease-in-out;
+    }
+
+    @keyframes speedPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.18); opacity: 1; filter: drop-shadow(0 0 6px #38bdf8); }
+    }
+
+    /* Live Streaming Telemetry Badge */
+    .cinema-telemetry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 10px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.01em;
+      user-select: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .cinema-telemetry-pill .telemetry-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: telemetryBlink 1.5s infinite ease-in-out;
+    }
+
+    @keyframes telemetryBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .cinema-telemetry-pill #cinemaLiveSpeedText {
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .cinema-telemetry-pill #cinemaLiveBufferText {
+      color: #cbd5e1;
+    }
+
+    html.theme-light .cinema-telemetry-pill {
+      background: rgba(241, 245, 249, 0.95) !important;
+      border-color: rgba(56, 189, 248, 0.4) !important;
+      color: #475569 !important;
+    }
+
+    html.theme-light .cinema-telemetry-pill #cinemaLiveBufferText {
+      color: #1e293b !important;
+    }
+
     
     .cinema-mkv-overlay {
       position: absolute;
@@ -16747,6 +16839,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                                         <!-- Actual ArtPlayer Container -->
                     <div id="cinemaArtplayer"></div>
 
+                    <!-- Floating 2x Speed Hold Indicator (长按2倍速提示胶囊) -->
+                    <div class="cinema-speed-indicator" id="cinemaSpeedIndicator">
+                      <svg class="speed-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+                      <span>2.0x 极速快进中</span>
+                    </div>
+
                     <!-- MKV / High-Spec Video Helper Overlay -->
                     <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;">
                       <div class="cinema-mkv-card">
@@ -16791,6 +16889,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <span id="cinemaCurrentSize">1.9 MB</span>
                       <span>·</span>
                       <span id="cinemaResumeHint" style="color:#38bdf8;">智能断点记忆就绪</span>
+                      <span>·</span>
+                      <!-- Live Streaming Telemetry Pill (实时速率与超前缓冲余量) -->
+                      <div class="cinema-telemetry-pill" id="cinemaTelemetryPill" title="实时流媒体下行速率与超前缓冲余量">
+                        <span class="telemetry-dot"></span>
+                        <span id="cinemaLiveSpeedText">⚡ 0.0 MB/s</span>
+                        <span class="telemetry-sep">·</span>
+                        <span id="cinemaLiveBufferText">缓冲池: 0s (0%)</span>
+                      </div>
                     </div>
                   </div>
 
@@ -35030,6 +35136,9 @@ window.renderContainers = renderContainers;
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 art.hls = hls;
+                if (typeof bindCinemaHlsTelemetry === 'function') {
+                  bindCinemaHlsTelemetry(hls);
+                }
 
                 hls.on(Hls.Events.ERROR, function (event, data) {
                   console.warn('[ArtPlayer HLS Error]', data);
@@ -35119,6 +35228,8 @@ window.renderContainers = renderContainers;
         updateCinemaNowPlaying(firstEp);
         initCinemaDraggablePip();
         initCinemaDragAndDrop();
+        initCinemaSpeedHold();
+        initCinemaTelemetryMonitor();
         checkMountedCardsStatus();
       } catch (err) {
         console.error('ArtPlayer init error:', err);
@@ -35205,6 +35316,237 @@ window.renderContainers = renderContainers;
           showCinemaNotice('不支持的文件格式: ' + ext);
         }
       }, false);
+    }
+
+    // ========================================================
+    // ⏩ CINEMA 2X SPEED HOLD CONTROLLER (长按 2 倍速极速快进)
+    // ========================================================
+    var cinemaSpeedHoldTimer = null;
+    var cinemaIsSpeedHolding = false;
+    var cinemaSavedPreSpeed = 1.0;
+    var cinemaWasHoldingSpeed = false;
+
+    function initCinemaSpeedHold() {
+      var stage = document.getElementById('cinemaPlayerStage');
+      if (!stage || stage._speedHoldBound) return;
+      stage._speedHoldBound = true;
+
+      var indicator = document.getElementById('cinemaSpeedIndicator');
+
+      function isExcludedTarget(el) {
+        if (!el) return false;
+        return !!el.closest('.art-controls, .art-bottom, .art-progress, .art-settings, .art-contextmenus, .art-layer-auto-playback, .art-notice, .cinema-ep-item, button, input, a, select, textarea');
+      }
+
+      function startHold(e) {
+        if (!artCinemaInstance || !artCinemaInstance.video) return;
+        if (e.type === 'mousedown' && e.button !== 0) return;
+        if (isExcludedTarget(e.target)) return;
+
+        if (cinemaSpeedHoldTimer) {
+          clearTimeout(cinemaSpeedHoldTimer);
+          cinemaSpeedHoldTimer = null;
+        }
+
+        cinemaSpeedHoldTimer = setTimeout(function () {
+          if (!artCinemaInstance || !artCinemaInstance.video) return;
+          cinemaIsSpeedHolding = true;
+          cinemaWasHoldingSpeed = true;
+          cinemaSavedPreSpeed = artCinemaInstance.playbackRate || artCinemaInstance.video.playbackRate || 1.0;
+
+          if (artCinemaInstance.video.paused) {
+            artCinemaInstance.play();
+          }
+          artCinemaInstance.playbackRate = 2.0;
+          if (artCinemaInstance.video) {
+            artCinemaInstance.video.playbackRate = 2.0;
+          }
+          if (indicator) {
+            indicator.classList.add('active');
+          }
+        }, 220);
+      }
+
+      function endHold(e) {
+        if (cinemaSpeedHoldTimer) {
+          clearTimeout(cinemaSpeedHoldTimer);
+          cinemaSpeedHoldTimer = null;
+        }
+
+        if (cinemaIsSpeedHolding) {
+          cinemaIsSpeedHolding = false;
+          if (artCinemaInstance) {
+            artCinemaInstance.playbackRate = cinemaSavedPreSpeed;
+            if (artCinemaInstance.video) {
+              artCinemaInstance.video.playbackRate = cinemaSavedPreSpeed;
+            }
+          }
+          if (indicator) {
+            indicator.classList.remove('active');
+          }
+          setTimeout(function () {
+            cinemaWasHoldingSpeed = false;
+          }, 120);
+        }
+      }
+
+      // Prevent ArtPlayer's click toggle play/pause when releasing from a long press hold
+      stage.addEventListener('click', function (e) {
+        if (cinemaWasHoldingSpeed) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          cinemaWasHoldingSpeed = false;
+        }
+      }, true);
+
+      // Mouse events on player stage
+      stage.addEventListener('mousedown', startHold, { passive: true });
+      window.addEventListener('mouseup', endHold, { passive: true });
+      stage.addEventListener('mouseleave', endHold, { passive: true });
+
+      // Touch events on player stage (mobile / touchscreen)
+      stage.addEventListener('touchstart', startHold, { passive: true });
+      stage.addEventListener('touchend', endHold, { passive: true });
+      stage.addEventListener('touchcancel', endHold, { passive: true });
+
+      // Keyboard Right Arrow hold fast forward
+      var rightArrowHolding = false;
+      window.addEventListener('keydown', function (e) {
+        var cinemaView = document.getElementById('view-cinema');
+        if (!cinemaView || cinemaView.style.display === 'none') return;
+        var tag = document.activeElement ? document.activeElement.tagName : '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
+
+        if (e.key === 'ArrowRight' && !rightArrowHolding && !e.repeat) {
+          rightArrowHolding = true;
+          if (cinemaSpeedHoldTimer) clearTimeout(cinemaSpeedHoldTimer);
+          cinemaSpeedHoldTimer = setTimeout(function () {
+            if (!artCinemaInstance || !artCinemaInstance.video) return;
+            cinemaIsSpeedHolding = true;
+            cinemaWasHoldingSpeed = true;
+            cinemaSavedPreSpeed = artCinemaInstance.playbackRate || artCinemaInstance.video.playbackRate || 1.0;
+            artCinemaInstance.playbackRate = 2.0;
+            if (artCinemaInstance.video) artCinemaInstance.video.playbackRate = 2.0;
+            if (indicator) indicator.classList.add('active');
+          }, 250);
+        }
+      }, { passive: true });
+
+      window.addEventListener('keyup', function (e) {
+        if (e.key === 'ArrowRight') {
+          rightArrowHolding = false;
+          endHold(e);
+        }
+      }, { passive: true });
+    }
+
+    // ========================================================
+    // ⚡ STREAMING TELEMETRY & BUFFER MONITOR (实时下行速率与缓冲余量)
+    // ========================================================
+    var cinemaLastSpeedBps = 0;
+    var cinemaActiveHls = null;
+    var cinemaTelemetryTimer = null;
+
+    function bindCinemaHlsTelemetry(hls) {
+      if (!hls) return;
+      cinemaActiveHls = hls;
+
+      hls.on(Hls.Events.FRAG_LOADED, function (event, data) {
+        if (data && data.stats) {
+          var loadedBytes = data.stats.loaded || 0;
+          var durationMs = (data.stats.loading ? (data.stats.loading.end - data.stats.loading.start) : 0);
+          if (durationMs > 10 && loadedBytes > 0) {
+            var speedBps = (loadedBytes / (durationMs / 1000));
+            if (cinemaLastSpeedBps === 0) {
+              cinemaLastSpeedBps = speedBps;
+            } else {
+              cinemaLastSpeedBps = cinemaLastSpeedBps * 0.35 + speedBps * 0.65;
+            }
+          }
+        }
+      });
+    }
+
+    function initCinemaTelemetryMonitor() {
+      if (cinemaTelemetryTimer) return;
+      var speedEl = document.getElementById('cinemaLiveSpeedText');
+      var bufEl = document.getElementById('cinemaLiveBufferText');
+      var pillEl = document.getElementById('cinemaTelemetryPill');
+      if (!speedEl || !bufEl) return;
+
+      cinemaTelemetryTimer = setInterval(function () {
+        if (!artCinemaInstance || !artCinemaInstance.video) return;
+        var video = artCinemaInstance.video;
+        var dot = pillEl ? pillEl.querySelector('.telemetry-dot') : null;
+
+        // Calculate buffer ahead from current playback point
+        var curTime = video.currentTime || 0;
+        var bufferAhead = 0;
+        if (video.buffered && video.buffered.length > 0) {
+          for (var i = 0; i < video.buffered.length; i++) {
+            var start = video.buffered.start(i);
+            var end = video.buffered.end(i);
+            if (curTime >= start - 0.5 && curTime <= end + 0.1) {
+              bufferAhead = Math.max(0, end - curTime);
+              break;
+            }
+          }
+        }
+
+        // Format buffer readout
+        var targetBuffer = 180; // Target HLS buffer 180s
+        var bufferPercent = Math.min(100, Math.round((bufferAhead / targetBuffer) * 100));
+        var bufferText = '';
+        if (bufferAhead >= 60) {
+          var mins = (bufferAhead / 60).toFixed(1);
+          bufferText = '缓冲池: ' + Math.round(bufferAhead) + 's (' + mins + '分 · ' + bufferPercent + '%)';
+        } else {
+          bufferText = '缓冲池: ' + Math.round(bufferAhead) + 's (' + bufferPercent + '%)';
+        }
+        bufEl.textContent = bufferText;
+
+        // Status & speed text
+        if (video.seeking || (video.readyState < 3 && !video.paused)) {
+          speedEl.textContent = '⚡ 加载缓冲中...';
+          if (dot) {
+            dot.style.background = '#f59e0b';
+            dot.style.boxShadow = '0 0 8px #f59e0b';
+          }
+        } else {
+          if (cinemaLastSpeedBps > 1048576) {
+            var mbps = (cinemaLastSpeedBps / 1048576).toFixed(1);
+            speedEl.textContent = '⚡ ' + mbps + ' MB/s';
+          } else if (cinemaLastSpeedBps > 1024) {
+            var kbps = Math.round(cinemaLastSpeedBps / 1024);
+            speedEl.textContent = '⚡ ' + kbps + ' KB/s';
+          } else {
+            if (bufferAhead >= 30) {
+              speedEl.textContent = '⚡ 充足 (待命)';
+            } else {
+              speedEl.textContent = '⚡ 0.0 MB/s';
+            }
+          }
+
+          // Dot indicator color based on buffer health
+          if (dot) {
+            if (bufferAhead >= 45) {
+              dot.style.background = '#22c55e';
+              dot.style.boxShadow = '0 0 8px #22c55e';
+            } else if (bufferAhead >= 15) {
+              dot.style.background = '#38bdf8';
+              dot.style.boxShadow = '0 0 8px #38bdf8';
+            } else {
+              dot.style.background = '#f59e0b';
+              dot.style.boxShadow = '0 0 8px #f59e0b';
+            }
+          }
+
+          // Gradual decay of measured speed if idle
+          cinemaLastSpeedBps = cinemaLastSpeedBps * 0.75;
+          if (cinemaLastSpeedBps < 1024) cinemaLastSpeedBps = 0;
+        }
+      }, 800);
     }
 
     function renderCinemaEpisodeList(filterQuery) {
