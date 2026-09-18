@@ -13618,6 +13618,37 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     #cinemaArtplayer {
       width: 100%;
       height: 100%;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #000000 !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cinemaArtplayer .art-video-player {
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #000000 !important;
+    }
+
+    #cinemaArtplayer .art-video-player .art-video {
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    #cinemaArtplayer video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      margin: auto !important;
     }
 
     /* Fixed Floating Mini-PiP state (CSS without !important on bottom/right allows drag) */
@@ -13748,6 +13779,81 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cinema-tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text, #e2e8f0);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      outline: none;
+    }
+
+    .cinema-tool-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .cinema-tool-btn.primary-sky {
+      background: rgba(14, 165, 233, 0.15);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 2px 10px rgba(14, 165, 233, 0.15);
+    }
+
+    .cinema-tool-btn.primary-sky:hover {
+      background: rgba(14, 165, 233, 0.28);
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.35);
+    }
+
+    .cinema-tool-btn.accent-purple {
+      background: rgba(124, 58, 237, 0.15);
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.35);
+    }
+
+    .cinema-tool-btn.accent-purple:hover {
+      background: rgba(124, 58, 237, 0.28);
+      border-color: #a855f7;
+      color: #ffffff;
+    }
+
+    html.theme-light .cinema-tool-btn {
+      color: #334155 !important;
+      background: rgba(0, 0, 0, 0.04) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    html.theme-light .cinema-tool-btn:hover {
+      background: rgba(0, 0, 0, 0.08) !important;
+      color: #0f172a !important;
+    }
+
+    html.theme-light .cinema-tool-btn.primary-sky {
+      background: rgba(14, 165, 233, 0.12) !important;
+      color: #0284c7 !important;
+      border-color: rgba(14, 165, 233, 0.3) !important;
+    }
+
+    html.theme-light .cinema-tool-btn.accent-purple {
+      background: rgba(124, 58, 237, 0.12) !important;
+      color: #7c3aed !important;
+      border-color: rgba(124, 58, 237, 0.3) !important;
     }
 
     
@@ -16617,7 +16723,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div id="cinemaStagePlaceholder">
                   <div class="cinema-placeholder-hint" id="cinemaPlaceholderHint" onclick="restoreFromPipToCinema()">
                     <i data-lucide="tv" style="width:30px; height:30px; color:var(--accent);"></i>
-                    <div style="font-weight:700; font-size:0.95rem;">🎬 悬浮画中画正在播放中</div>
+                    <div style="font-weight:700; font-size:0.95rem;">悬浮画中画正在播放中</div>
                     <div style="font-size:0.75rem; color:var(--text-dim);">点击此处或悬浮窗右上角按钮即可恢复全屏巨幕</div>
                     <button class="btn btn-cinema-sky" style="margin-top:4px; font-size:0.75rem; padding:4px 14px;">恢复至影院视听舱</button>
                   </div>
@@ -16652,8 +16758,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                         </div>
                         <div class="cinema-mkv-actions">
                           <button class="btn btn-potplayer" onclick="openInPotPlayer()">
-                            <i data-lucide="tv" style="width:14px; height:14px;"></i>
-                            <span>🚀 唤起 PotPlayer 播放</span>
+                            <i data-lucide="monitor-play" style="width:14px; height:14px;"></i>
+                            <span>唤起 PotPlayer 硬解</span>
                           </button>
                           <button class="btn btn-ghost" onclick="copyPotPlayerLink()" style="font-size:0.75rem; padding:6px 12px;">
                             <i data-lucide="copy" style="width:13px; height:13px;"></i>
@@ -16689,25 +16795,20 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   </div>
 
                   <div class="cinema-np-tools">
-                    <button class="btn btn-cinema-potplayer" onclick="openInPotPlayer()" title="一键调用本地 PotPlayer 极速硬解 (秒开 4K/HEVC/杜比音效)">
-                      <i data-lucide="tv" style="width:13px; height:13px;"></i>
-                      <span>🚀 PotPlayer 硬解</span>
+                    <button class="cinema-tool-btn primary-sky" onclick="openInPotPlayer()" title="一键调用本地 PotPlayer 极速硬解 (秒开 4K/HEVC/杜比音效)">
+                      <i data-lucide="monitor-play" style="width:14px; height:14px;"></i>
+                      <span>PotPlayer 硬解</span>
                     </button>
-                    <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="openCinemaSubtitlePicker()" title="加载外挂字幕 (.vtt / .srt)">
-                      <i data-lucide="message-square" style="width:13px; height:13px;"></i>
-                      <span>字幕</span>
-                    </button>
-                    <input type="file" id="cinemaSubtitleFileInput" accept=".vtt,.srt,.ass" style="display:none;" onchange="handleCinemaSubtitleFileSelect(event)">
-                    <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="copyCurrentStreamUrl()" title="复制直链至剪贴板">
-                      <i data-lucide="copy" style="width:13px; height:13px;"></i>
+                    <button class="cinema-tool-btn" onclick="copyCurrentStreamUrl()" title="复制直链至剪贴板">
+                      <i data-lucide="link-2" style="width:14px; height:14px;"></i>
                       <span>复制直链</span>
                     </button>
-                    <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="toggleCinemaMiniPip()" title="开启/关闭网页悬浮画中画">
-                      <i data-lucide="picture-in-picture-2" style="width:13px; height:13px;"></i>
+                    <button class="cinema-tool-btn" onclick="toggleCinemaMiniPip()" title="开启/关闭网页悬浮画中画">
+                      <i data-lucide="picture-in-picture-2" style="width:14px; height:14px;"></i>
                       <span>悬浮画中画</span>
                     </button>
-                    <button class="btn btn-cinema-sky" style="padding:5px 12px; font-size:0.75rem;" onclick="playNextCinemaEpisode()" title="播放下一集">
-                      <i data-lucide="skip-forward" style="width:13px; height:13px;"></i>
+                    <button class="cinema-tool-btn accent-purple" onclick="playNextCinemaEpisode()" title="播放下一集">
+                      <i data-lucide="skip-forward" style="width:14px; height:14px;"></i>
                       <span>下一集</span>
                     </button>
                   </div>
@@ -16727,7 +16828,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <!-- Catalog Tabs -->
                 <div class="cinema-tabs-header" style="margin-bottom:8px;">
                   <button class="cinema-tab-btn active" id="cinemaTabBtnPreset" onclick="switchCinemaTab('preset')">
-                    <i data-lucide="film" style="width:13px; height:13px; display:inline-block; vertical-align:-2px;"></i>
+                    <i data-lucide="sparkles" style="width:13px; height:13px; display:inline-block; vertical-align:-2px;"></i>
                     <span>推荐片源</span>
                   </button>
                   <button class="cinema-tab-btn" id="cinemaTabBtnAlist" onclick="switchCinemaTab('alist')">
@@ -34885,7 +34986,7 @@ window.renderContainers = renderContainers;
           muted: false,
           autoplay: false,
           pip: true,
-          autoSize: true,
+          autoSize: false,
           autoMini: false,
           screenshot: true,
           setting: true,
@@ -34895,50 +34996,18 @@ window.renderContainers = renderContainers;
           aspectRatio: true,
           fullscreen: true,
           fullscreenWeb: true,
-          subtitleOffset: true,
+          subtitleOffset: false,
           miniProgressBar: true,
           playsInline: true,
           theme: '#7c3aed',
           lang: 'zh-cn',
-          subtitle: {
-            url: firstEp.subtitle || '',
-            type: 'vtt',
-            style: {
-              color: '#ffffff',
-              fontSize: '20px',
-              textShadow: '0 2px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.85)',
-              fontWeight: '600'
-            },
-            encoding: 'utf-8'
-          },
           moreVideoAttr: {
-            crossOrigin: 'anonymous'
+            crossOrigin: 'anonymous',
+            preload: 'auto'
           },
           playbackRates: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0],
           aspectRatios: ['default', '16:9', '4:3', 'fill'],
-          controls: [
-            {
-              position: 'right',
-              html: '<span title="加载外挂字幕 (.vtt / .srt)" style="font-size:12px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.14); cursor:pointer;">💬 字幕</span>',
-              click: function () {
-                openCinemaSubtitlePicker();
-              }
-            },
-            {
-              position: 'right',
-              html: '<span title="网页级悬浮画中画 (跨视图保持播放)" style="font-size:12px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.14); cursor:pointer;">浮窗 PiP</span>',
-              click: function () {
-                toggleCinemaMiniPip();
-              }
-            },
-            {
-              position: 'right',
-              html: '<span title="下一集" style="font-size:12px; font-weight:600; padding:2px 7px; border-radius:4px; background:rgba(255,255,255,0.14); cursor:pointer;">下一集 ⏭</span>',
-              click: function () {
-                playNextCinemaEpisode();
-              }
-            }
-          ],
+          controls: [],
           customType: {
             m3u8: function (video, url, art) {
               if (window.Hls && Hls.isSupported()) {
@@ -34947,7 +35016,14 @@ window.renderContainers = renderContainers;
                 }
                 var hls = new Hls({
                   enableWorker: true,
-                  lowLatencyMode: true
+                  lowLatencyMode: false,
+                  maxBufferLength: 120,
+                  maxMaxBufferLength: 300,
+                  maxBufferSize: 256 * 1024 * 1024,
+                  maxBufferHole: 0.5,
+                  highBufferWatchdogPeriod: 2,
+                  nudgeOffset: 0.1,
+                  nudgeMaxRetry: 5
                 });
                 hls.loadSource(url);
                 hls.attachMedia(video);
@@ -35071,7 +35147,7 @@ window.renderContainers = renderContainers;
           type: ext === 'srt' ? 'srt' : 'vtt'
         });
         artCinemaInstance.subtitle.show = true;
-        showCinemaNotice('已加载字幕: ' + file.name + ' 💬');
+        showCinemaNotice('已加载字幕: ' + file.name);
       } else {
         showCinemaNotice('字幕已解析，就绪后将显示');
       }
@@ -35113,7 +35189,7 @@ window.renderContainers = renderContainers;
         } else if (['mp4', 'webm', 'mkv', 'mov', 'm4v', 'ogg'].includes(ext)) {
           var mediaUrl = URL.createObjectURL(file);
           var localEp = {
-            title: '本地拖拽 · ' + file.name,
+            title: file.name.replace(/\.[^/.]+$/, ''),
             url: mediaUrl,
             subtitle: '',
             size: (file.size / 1048576).toFixed(1) + ' MB',
@@ -35122,7 +35198,7 @@ window.renderContainers = renderContainers;
           cinemaEpisodes.unshift(localEp);
           playCinemaEpisode(0);
           switchCinemaTab('preset');
-          showCinemaNotice('已播放本地拖入视频: ' + file.name + ' 🎬');
+          showCinemaNotice('已载入本地视频: ' + file.name);
         } else {
           showCinemaNotice('不支持的文件格式: ' + ext);
         }
@@ -35149,7 +35225,7 @@ window.renderContainers = renderContainers;
         itemDiv.innerHTML = '<div class="cinema-ep-num">' + (idx < 9 ? '0' : '') + (idx + 1) + '</div>' +
           '<div class="cinema-ep-meta">' +
           '  <div class="cinema-ep-name">' + escapeCinemaHtml(ep.title) + '</div>' +
-          '  <div class="cinema-ep-sub">' + escapeCinemaHtml(ep.size) + ' · ' + escapeCinemaHtml(ep.tag) + (ep.subtitle ? ' · 💬带字幕' : '') + '</div>' +
+          '  <div class="cinema-ep-sub">' + escapeCinemaHtml(ep.size) + ' · ' + escapeCinemaHtml(ep.tag) + '</div>' +
           '</div>' +
           '<span class="cinema-ep-status-badge">▶ 播放中</span>';
 
@@ -35217,7 +35293,7 @@ window.renderContainers = renderContainers;
       var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
       var potScheme = 'potplayer://' + fullUrl;
       window.location.href = potScheme;
-      showCinemaNotice('🚀 正在唤起本地 PotPlayer 播放原画杜比片源...');
+      showCinemaNotice('正在唤起本地 PotPlayer 播放原画片源...');
     }
 
     function copyPotPlayerLink(mediaUrl) {
@@ -35229,7 +35305,7 @@ window.renderContainers = renderContainers;
       var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(fullUrl).then(function () {
-          showCinemaNotice('📋 直链已复制！打开 PotPlayer 按 Ctrl+U 粘贴即可秒播');
+          showCinemaNotice('直链已复制，打开播放器按 Ctrl+U 粘贴即可播放');
         }).catch(function () {
           prompt('请复制直链 (PotPlayer 按 Ctrl+U 粘贴):', fullUrl);
         });
@@ -35247,7 +35323,7 @@ window.renderContainers = renderContainers;
       var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
       var vlcScheme = 'vlc://' + fullUrl;
       window.location.href = vlcScheme;
-      showCinemaNotice('🚀 正在唤起本地 VLC 播放器...');
+      showCinemaNotice('正在唤起本地 VLC 播放器...');
     }
 
     function downloadCurrentAlistFile() {
@@ -35259,7 +35335,7 @@ window.renderContainers = renderContainers;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      showCinemaNotice('已开始高速下载原画片源 📥');
+      showCinemaNotice('已开始高速下载原画片源');
     }
 
     function dismissMkvOverlay() {
@@ -35311,7 +35387,7 @@ window.renderContainers = renderContainers;
         initCinemaView();
       }
 
-            var ext = (ep.url.split('?')[0].split('.').pop() || '').toLowerCase();
+      var ext = (ep.url.split('?')[0].split('.').pop() || '').toLowerCase();
       var isUnsupportedWeb = ['mkv', 'avi', 'wmv', 'flv', 'rmvb', 'iso'].includes(ext);
       var overlay = document.getElementById('cinemaMkvHelperOverlay');
       if (isUnsupportedWeb) {
@@ -35322,7 +35398,7 @@ window.renderContainers = renderContainers;
           if (window.lucide && window.lucide.createIcons) lucide.createIcons();
           if (artCinemaInstance && artCinemaInstance.loading) artCinemaInstance.loading.show = false;
         }
-        showCinemaNotice('💡 检测到高规格 MKV 片源，推荐点击「🚀 PotPlayer」一键极速硬解！');
+        showCinemaNotice('检测到高规格 MKV 片源，推荐使用「PotPlayer 硬解」播放');
       } else {
         if (overlay) overlay.style.display = 'none';
       }
@@ -35390,7 +35466,7 @@ window.renderContainers = renderContainers;
       var fullUrl = ep.url.startsWith('http') ? ep.url : (window.location.origin + ep.url);
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(fullUrl).then(function () {
-          showCinemaNotice('直链已成功复制至剪贴板 📋');
+          showCinemaNotice('直链已成功复制至剪贴板');
         }).catch(function () {
           prompt('请手动复制媒体直链:', fullUrl);
         });
@@ -35629,14 +35705,14 @@ window.renderContainers = renderContainers;
 
           if (isMedia) {
             itemDiv.innerHTML = '<div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0; cursor:pointer;" onclick="playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')">' +
-              '<i data-lucide="film" style="width:16px; height:16px; color:#38bdf8; flex-shrink:0;"></i>' +
+              '<i data-lucide="video" style="width:16px; height:16px; color:#38bdf8; flex-shrink:0;"></i>' +
               '<div class="cinema-ep-meta" style="flex:1; min-width:0;">' +
               '  <div class="cinema-ep-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + escapeCinemaHtml(item.name) + '</div>' +
-              '  <div class="cinema-ep-sub">' + sizeStr + ' · 原画直链' + (companionSub ? ' · 💬自动字幕' : '') + '</div>' +
+              '  <div class="cinema-ep-sub">' + sizeStr + ' · 原画直链</div>' +
               '</div>' +
               '</div>' +
               '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
-              '  <button class="cinema-action-btn" style="color:#f59e0b;" title="本地 PotPlayer 极速硬解" onclick="event.stopPropagation(); openInPotPlayer(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="tv" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" style="color:#f59e0b;" title="本地 PotPlayer 极速硬解" onclick="event.stopPropagation(); openInPotPlayer(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="monitor-play" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" style="color:#38bdf8;" title="立即点播" onclick="event.stopPropagation(); playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')"><i data-lucide="play" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
