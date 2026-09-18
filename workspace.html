@@ -35017,13 +35017,15 @@ window.renderContainers = renderContainers;
                 var hls = new Hls({
                   enableWorker: true,
                   lowLatencyMode: false,
-                  maxBufferLength: 120,
-                  maxMaxBufferLength: 300,
-                  maxBufferSize: 256 * 1024 * 1024,
-                  maxBufferHole: 0.5,
+                  maxBufferLength: 300,
+                  maxMaxBufferLength: 900,
+                  maxBufferSize: 1024 * 1024 * 1024,
+                  maxBufferHole: 0.1,
+                  backBufferLength: 180,
+                  progressive: true,
                   highBufferWatchdogPeriod: 2,
                   nudgeOffset: 0.1,
-                  nudgeMaxRetry: 5
+                  nudgeMaxRetry: 8
                 });
                 hls.loadSource(url);
                 hls.attachMedia(video);
