@@ -34790,6 +34790,7 @@ window.renderContainers = renderContainers;
         updateCinemaNowPlaying(firstEp);
         initCinemaDraggablePip();
         initCinemaDragAndDrop();
+        checkMountedCardsStatus();
       } catch (err) {
         console.error('ArtPlayer init error:', err);
       }
@@ -35071,7 +35072,7 @@ window.renderContainers = renderContainers;
       }, 500);
     }
 
-    function switchCinemaTab(tabKey) {
+    function switchCinemaTab(tabKey, targetAlistPath) {
       activeCinemaTabKey = tabKey;
       var btnPreset = document.getElementById('cinemaTabBtnPreset');
       var btnAlist = document.getElementById('cinemaTabBtnAlist');
@@ -35090,7 +35091,9 @@ window.renderContainers = renderContainers;
       if (paneLive) paneLive.style.display = tabKey === 'live' ? 'flex' : 'none';
 
       if (tabKey === 'alist') {
-        loadAlistDirectory(currentAlistPath || '/');
+        var pathToGo = targetAlistPath || currentAlistPath || '/';
+        loadAlistDirectory(pathToGo);
+        checkMountedCardsStatus();
       } else {
         filterCinemaEpisodes();
       }
@@ -35120,6 +35123,34 @@ window.renderContainers = renderContainers;
         h['Authorization'] = alistAdminToken;
       }
       return h;
+    }
+
+    async function fetchAlistApi(url, options) {
+      options = options || {};
+      var headers = await getAlistHeaders(false);
+      var reqHeaders = Object.assign({}, headers, options.headers || {});
+      var fetchOpts = Object.assign({}, options, { headers: reqHeaders });
+
+      try {
+        var res = await fetch(url, fetchOpts);
+        var data = await res.json();
+
+        // If token is invalidated, expired, or 401, re-login and retry seamlessly!
+        if (data && (data.code === 401 || (data.message && (data.message.includes('token') || data.message.includes('permission') || data.message.includes('auth'))))) {
+          console.warn('AList session invalidated (' + data.message + '), refreshing token and retrying...');
+          localStorage.removeItem('pulseos_alist_token');
+          alistAdminToken = '';
+          var freshHeaders = await getAlistHeaders(true);
+          var retryHeaders = Object.assign({}, freshHeaders, options.headers || {});
+          var retryOpts = Object.assign({}, options, { headers: retryHeaders });
+          var retryRes = await fetch(url, retryOpts);
+          data = await retryRes.json();
+        }
+        return data;
+      } catch (err) {
+        console.error('fetchAlistApi exception:', err);
+        throw err;
+      }
     }
 
     async function loadAlistDirectory(path) {
@@ -35162,13 +35193,10 @@ window.renderContainers = renderContainers;
       }
 
       try {
-        var headers = await getAlistHeaders(false);
-        var res = await fetch('/alist/api/fs/list', {
+        var data = await fetchAlistApi('/alist/api/fs/list', {
           method: 'POST',
-          headers: headers,
           body: JSON.stringify({ path: currentAlistPath, page: 1, per_page: 100, refresh: true })
         });
-        var data = await res.json();
         if (data.code === 200 && data.data && data.data.content) {
           cachedAlistItems = data.data.content;
           if (currentAlistPath === '/' || currentAlistPath === '') {
@@ -35349,13 +35377,10 @@ window.renderContainers = renderContainers;
       var fullPath = targetDir + folderName;
 
       try {
-        var headers = await getAlistHeaders(false);
-        var res = await fetch('/alist/api/fs/mkdir', {
+        var data = await fetchAlistApi('/alist/api/fs/mkdir', {
           method: 'POST',
-          headers: headers,
           body: JSON.stringify({ path: fullPath })
         });
-        var data = await res.json();
         if (data.code === 200) {
           showToast('文件夹创建成功：' + folderName);
           loadAlistDirectory(currentAlistPath);
@@ -35373,13 +35398,10 @@ window.renderContainers = renderContainers;
       newName = newName.trim();
 
       try {
-        var headers = await getAlistHeaders(false);
-        var res = await fetch('/alist/api/fs/rename', {
+        var data = await fetchAlistApi('/alist/api/fs/rename', {
           method: 'POST',
-          headers: headers,
           body: JSON.stringify({ path: fullItemPath, name: newName })
         });
-        var data = await res.json();
         if (data.code === 200) {
           showToast('已成功重命名为：' + newName);
           loadAlistDirectory(currentAlistPath);
@@ -35398,13 +35420,10 @@ window.renderContainers = renderContainers;
       }
 
       try {
-        var headers = await getAlistHeaders(false);
-        var res = await fetch('/alist/api/fs/remove', {
+        var data = await fetchAlistApi('/alist/api/fs/remove', {
           method: 'POST',
-          headers: headers,
           body: JSON.stringify({ dir: dirPath, names: [itemName] })
         });
-        var data = await res.json();
         if (data.code === 200) {
           showToast('已从云端网盘删除' + typeStr + '：' + itemName);
           loadAlistDirectory(currentAlistPath);
@@ -35441,8 +35460,8 @@ window.renderContainers = renderContainers;
     }
 
     function enterAlistFolder(folderPath) {
-      switchCinemaTab('alist');
-      loadAlistDirectory(folderPath);
+      currentAlistPath = folderPath;
+      switchCinemaTab('alist', folderPath);
       var listCard = document.querySelector('.cinema-pane-card');
       if (listCard) {
         listCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -35683,13 +35702,10 @@ window.renderContainers = renderContainers;
       if (rootItems && Array.isArray(rootItems)) {
         applyStatus(rootItems);
       } else {
-        getAlistHeaders().then(function(headers) {
-          return fetch('/alist/api/fs/list', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({ path: '/', page: 1, per_page: 50, refresh: false })
-          });
-        }).then(function(res){ return res.json(); }).then(function(data){
+        fetchAlistApi('/alist/api/fs/list', {
+          method: 'POST',
+          body: JSON.stringify({ path: '/', page: 1, per_page: 50, refresh: false })
+        }).then(function(data){
           if (data && data.code === 200 && data.data && data.data.content) {
             applyStatus(data.data.content);
           }
