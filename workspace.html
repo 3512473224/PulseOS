@@ -13750,6 +13750,113 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 8px;
     }
 
+    
+    .cinema-mkv-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 45;
+      background: rgba(10, 15, 29, 0.90);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeInCinema 0.25s ease;
+    }
+
+    .cinema-mkv-card {
+      max-width: 540px;
+      width: 100%;
+      background: rgba(26, 34, 52, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
+      text-align: left;
+    }
+
+    .cinema-mkv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .cinema-mkv-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cinema-mkv-desc {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .cinema-mkv-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-potplayer {
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #ffffff !important;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-potplayer:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.55);
+    }
+
+    .btn-cinema-potplayer {
+      background: rgba(14, 165, 233, 0.15);
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cinema-potplayer:hover {
+      background: rgba(14, 165, 233, 0.28);
+      border-color: #38bdf8;
+      color: #ffffff !important;
+    }
+
     .cinema-stream-input-wrap {
       display: flex;
       gap: 8px;
@@ -14012,7 +14119,114 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
     }
 
-    html.theme-light .cinema-stream-input-wrap {
+    html.theme-light 
+    .cinema-mkv-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 45;
+      background: rgba(10, 15, 29, 0.90);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeInCinema 0.25s ease;
+    }
+
+    .cinema-mkv-card {
+      max-width: 540px;
+      width: 100%;
+      background: rgba(26, 34, 52, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
+      text-align: left;
+    }
+
+    .cinema-mkv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .cinema-mkv-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cinema-mkv-desc {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .cinema-mkv-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-potplayer {
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #ffffff !important;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-potplayer:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.55);
+    }
+
+    .btn-cinema-potplayer {
+      background: rgba(14, 165, 233, 0.15);
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-cinema-potplayer:hover {
+      background: rgba(14, 165, 233, 0.28);
+      border-color: #38bdf8;
+      color: #ffffff !important;
+    }
+
+    .cinema-stream-input-wrap {
       background: rgba(241, 245, 249, 0.8) !important;
       border-color: #cbd5e1 !important;
     }
@@ -16424,8 +16638,41 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       </div>
                     </div>
 
-                    <!-- Actual ArtPlayer Container -->
+                                        <!-- Actual ArtPlayer Container -->
                     <div id="cinemaArtplayer"></div>
+
+                    <!-- MKV / High-Spec Video Helper Overlay -->
+                    <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;">
+                      <div class="cinema-mkv-card">
+                        <div class="cinema-mkv-badge"><i data-lucide="sparkles" style="width:12px; height:12px;"></i> 高清片源硬解提示 · 网盘原画完好</div>
+                        <div class="cinema-mkv-title" id="cinemaMkvOverlayTitle">S01E01.mkv</div>
+                        <div class="cinema-mkv-desc">
+                          该片源为 <b>MKV (HEVC/H.265 + 杜比多音轨)</b> 高规格压制，网盘内原画完整无损。<br>
+                          受 Chrome/Edge 浏览器专利解码限制，网页无法直接硬解。已为您无缝适配本地 <b>PotPlayer-64bit</b>，点击下方按钮即可一键极速秒播，享受 4K 硬件加速与杜比立体声！
+                        </div>
+                        <div class="cinema-mkv-actions">
+                          <button class="btn btn-potplayer" onclick="openInPotPlayer()">
+                            <i data-lucide="tv" style="width:14px; height:14px;"></i>
+                            <span>🚀 唤起 PotPlayer 播放</span>
+                          </button>
+                          <button class="btn btn-ghost" onclick="copyPotPlayerLink()" style="font-size:0.75rem; padding:6px 12px;">
+                            <i data-lucide="copy" style="width:13px; height:13px;"></i>
+                            <span>复制直链 (Ctrl+U 粘贴)</span>
+                          </button>
+                          <button class="btn btn-ghost" onclick="openInVlc()" style="font-size:0.75rem; padding:6px 12px;">
+                            <i data-lucide="external-link" style="width:13px; height:13px;"></i>
+                            <span>VLC 播放</span>
+                          </button>
+                          <button class="btn btn-ghost" onclick="downloadCurrentAlistFile()" style="font-size:0.75rem; padding:6px 12px;">
+                            <i data-lucide="download" style="width:13px; height:13px;"></i>
+                            <span>原画下载</span>
+                          </button>
+                          <button class="btn btn-ghost" onclick="dismissMkvOverlay()" style="font-size:0.75rem; padding:6px 10px;" title="关闭提示并继续尝试网页播放">
+                            <i data-lucide="x" style="width:13px; height:13px;"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -16442,6 +16689,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                   </div>
 
                   <div class="cinema-np-tools">
+                    <button class="btn btn-cinema-potplayer" onclick="openInPotPlayer()" title="一键调用本地 PotPlayer 极速硬解 (秒开 4K/HEVC/杜比音效)">
+                      <i data-lucide="tv" style="width:13px; height:13px;"></i>
+                      <span>🚀 PotPlayer 硬解</span>
+                    </button>
                     <button class="btn btn-ghost" style="padding:5px 10px; font-size:0.75rem;" onclick="openCinemaSubtitlePicker()" title="加载外挂字幕 (.vtt / .srt)">
                       <i data-lucide="message-square" style="width:13px; height:13px;"></i>
                       <span>字幕</span>
@@ -34956,6 +35207,66 @@ window.renderContainers = renderContainers;
       switchCinemaTab('preset');
     }
 
+    
+    function openInPotPlayer(mediaUrl) {
+      if (!mediaUrl) {
+        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+        if (ep) mediaUrl = ep.url;
+      }
+      if (!mediaUrl) return;
+      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
+      var potScheme = 'potplayer://' + fullUrl;
+      window.location.href = potScheme;
+      showCinemaNotice('🚀 正在唤起本地 PotPlayer 播放原画杜比片源...');
+    }
+
+    function copyPotPlayerLink(mediaUrl) {
+      if (!mediaUrl) {
+        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+        if (ep) mediaUrl = ep.url;
+      }
+      if (!mediaUrl) return;
+      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullUrl).then(function () {
+          showCinemaNotice('📋 直链已复制！打开 PotPlayer 按 Ctrl+U 粘贴即可秒播');
+        }).catch(function () {
+          prompt('请复制直链 (PotPlayer 按 Ctrl+U 粘贴):', fullUrl);
+        });
+      } else {
+        prompt('请复制直链 (PotPlayer 按 Ctrl+U 粘贴):', fullUrl);
+      }
+    }
+
+    function openInVlc(mediaUrl) {
+      if (!mediaUrl) {
+        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+        if (ep) mediaUrl = ep.url;
+      }
+      if (!mediaUrl) return;
+      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
+      var vlcScheme = 'vlc://' + fullUrl;
+      window.location.href = vlcScheme;
+      showCinemaNotice('🚀 正在唤起本地 VLC 播放器...');
+    }
+
+    function downloadCurrentAlistFile() {
+      var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+      if (!ep) return;
+      var a = document.createElement('a');
+      a.href = ep.url;
+      a.download = ep.title || 'video';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showCinemaNotice('已开始高速下载原画片源 📥');
+    }
+
+    function dismissMkvOverlay() {
+      var overlay = document.getElementById('cinemaMkvHelperOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
     function playCinemaEpisode(index) {
       if (index < 0 || index >= cinemaEpisodes.length) return;
       if (cinemaAutoNextTimer) {
@@ -35000,6 +35311,34 @@ window.renderContainers = renderContainers;
         initCinemaView();
       }
 
+            var ext = (ep.url.split('?')[0].split('.').pop() || '').toLowerCase();
+      var isUnsupportedWeb = ['mkv', 'avi', 'wmv', 'flv', 'rmvb', 'iso'].includes(ext);
+      var overlay = document.getElementById('cinemaMkvHelperOverlay');
+      if (isUnsupportedWeb) {
+        if (overlay) {
+          overlay.style.display = 'flex';
+          var titleEl = document.getElementById('cinemaMkvOverlayTitle');
+          if (titleEl) titleEl.textContent = ep.title;
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+          if (artCinemaInstance && artCinemaInstance.loading) artCinemaInstance.loading.show = false;
+        }
+        showCinemaNotice('💡 检测到高规格 MKV 片源，推荐点击「🚀 PotPlayer」一键极速硬解！');
+      } else {
+        if (overlay) overlay.style.display = 'none';
+      }
+
+      if (window._cinemaStallTimer) clearTimeout(window._cinemaStallTimer);
+      window._cinemaStallTimer = setTimeout(function () {
+        if (artCinemaInstance && artCinemaInstance.video) {
+          var vid = artCinemaInstance.video;
+          if (vid.readyState < 2 && !vid.currentTime && !vid.paused && overlay && overlay.style.display !== 'flex') {
+            overlay.style.display = 'flex';
+            var titleEl = document.getElementById('cinemaMkvOverlayTitle');
+            if (titleEl) titleEl.textContent = ep.title;
+            if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+          }
+        }
+      }, 3500);
       updateCinemaNowPlaying(ep);
       renderCinemaEpisodeList();
     }
@@ -35272,6 +35611,7 @@ window.renderContainers = renderContainers;
               '</div>' +
               '</div>' +
               '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
+              '  <button class="cinema-action-btn" style="color:#f59e0b;" title="本地 PotPlayer 极速硬解" onclick="event.stopPropagation(); openInPotPlayer(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="tv" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" style="color:#38bdf8;" title="立即点播" onclick="event.stopPropagation(); playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')"><i data-lucide="play" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
