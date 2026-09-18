@@ -16581,7 +16581,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 </div>
 
                 <!-- Card 2: Aliyun Drive Open -->
-                <div class="cinema-guide-card">
+                <div class="cinema-guide-card" id="cardAliyunDrive">
                   <div class="cinema-gc-header">
                     <div class="cinema-gc-icon" style="background:rgba(239,68,68,0.15); color:#f87171;">
                       <i data-lucide="cloud"></i>
@@ -16589,19 +16589,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">阿里云盘 Open</div>
                     </div>
-                    <span class="cinema-gc-tag">原画 4K 秒开</span>
+                    <span class="cinema-gc-tag" id="tagAliyunDrive">原画 4K 秒开</span>
                   </div>
                   <div class="cinema-gc-desc">
                     官方 OAuth 免转码直链，单文件不限速秒开。
                   </div>
-                  <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=AliyundriveOpen', '_blank')">
+                  <button class="btn btn-ghost" id="btnAliyunDrive" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="openFastMountModal('aliyun')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>挂载阿里云盘</span>
+                    <span>一键挂载阿里云盘</span>
                   </button>
                 </div>
 
-                <!-- Card 2: Quark Drive -->
-                <div class="cinema-guide-card">
+                <!-- Card 3: Quark Drive -->
+                <div class="cinema-guide-card" id="cardQuarkDrive">
                   <div class="cinema-gc-header">
                     <div class="cinema-gc-icon" style="background:rgba(56,189,248,0.15); color:#38bdf8;">
                       <i data-lucide="zap"></i>
@@ -16609,19 +16609,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">夸克网盘</div>
                     </div>
-                    <span class="cinema-gc-tag">海量影视秒存</span>
+                    <span class="cinema-gc-tag" id="tagQuarkDrive">海量影视秒存</span>
                   </div>
                   <div class="cinema-gc-desc">
                     4K 资源一键转存，Cookie 无感挂载高速串流。
                   </div>
-                  <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=Quark', '_blank')">
+                  <button class="btn btn-ghost" id="btnQuarkDrive" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="openFastMountModal('quark')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>挂载夸克网盘</span>
+                    <span>一键挂载夸克网盘</span>
                   </button>
                 </div>
 
-                <!-- Card 3: 115 Drive -->
-                <div class="cinema-guide-card">
+                <!-- Card 4: 115 Drive -->
+                <div class="cinema-guide-card" id="card115Drive">
                   <div class="cinema-gc-header">
                     <div class="cinema-gc-icon" style="background:rgba(234,179,8,0.15); color:#facc15;">
                       <i data-lucide="disc"></i>
@@ -16629,14 +16629,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     <div>
                       <div class="cinema-gc-name">115 网盘</div>
                     </div>
-                    <span class="cinema-gc-tag">蓝光无损原盘</span>
+                    <span class="cinema-gc-tag" id="tag115Drive">蓝光无损原盘</span>
                   </div>
                   <div class="cinema-gc-desc">
                     无损蓝光与 4K 大片秒存，扫码挂载私人巨幕。
                   </div>
-                  <button class="btn btn-ghost" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="window.open('/alist/#/manage/storages/add?driver=115', '_blank')">
+                  <button class="btn btn-ghost" id="btn115Drive" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="openFastMountModal('115')">
                     <i data-lucide="plus" style="width:13px; height:13px;"></i>
-                    <span>挂载 115 网盘</span>
+                    <span>一键挂载 115 网盘</span>
                   </button>
                 </div>
 
@@ -16673,6 +16673,48 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- ======================================================== -->
   <!-- 🎭 DIALOGS (vps.ppday.site STYLE) -->
   <!-- ======================================================== -->
+
+  <!-- 0. Fast Mount Cloud Drive Modal (阿里云盘/夸克/115 极速挂载向导) -->
+  <div class="modal-backdrop" id="fastMountDriveModal" onclick="if(event.target===this) closeFastMountModal()">
+    <div class="dialog-box" style="max-width:440px;" onclick="event.stopPropagation()">
+      <div class="dialog-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div id="fastMountIcon" style="width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; background:rgba(56,189,248,0.15); color:#38bdf8;">
+            <i data-lucide="cloud" style="width:14px; height:14px;"></i>
+          </div>
+          <div class="dialog-title" id="fastMountTitle">极速挂载网盘</div>
+        </div>
+        <button class="btn-icon" onclick="closeFastMountModal()">✕</button>
+      </div>
+      <div id="fastMountGuide" style="font-size:0.75rem; color:var(--text-secondary); line-height:1.6; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-size:0.72rem; color:var(--text-dim);" id="fastMountInputLabel">认证凭证 (Token / Cookie)</label>
+        <textarea id="fastMountCredentialInput" class="input-box" rows="3" style="resize:vertical; font-family:monospace; font-size:0.72rem; padding:8px; line-height:1.4;" placeholder="请粘贴凭证..."></textarea>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:0.72rem; color:var(--text-dim);">挂载路径</label>
+          <input type="text" id="fastMountPathInput" class="input-box" style="font-size:0.75rem; padding:6px 10px;" value="/阿里云盘">
+        </div>
+        <div style="width:120px; display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:0.72rem; color:var(--text-dim);">回源策略</label>
+          <select id="fastMountPolicyInput" class="input-box" style="font-size:0.75rem; padding:6px 8px; cursor:pointer;">
+            <option value="302_redirect">302 原画直链</option>
+            <option value="native_proxy">VPS 代理回源</option>
+          </select>
+        </div>
+      </div>
+      <div id="fastMountErrorMsg" style="display:none; font-size:0.72rem; color:#f87171; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); border-radius:6px; padding:6px 10px;"></div>
+      <div class="dialog-actions" style="margin-top:4px;">
+        <button class="btn btn-ghost" style="padding:6px 12px; font-size:0.75rem;" onclick="closeFastMountModal()">取消</button>
+        <button class="btn btn-cinema-sky" id="fastMountSubmitBtn" style="padding:6px 16px; font-size:0.75rem;" onclick="submitFastMountDrive()">
+          <i data-lucide="zap" style="width:13px; height:13px;"></i>
+          <span>立即一键挂载</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- 1. Input Modal (新建笔记 / 新建目录) -->
   <div class="modal-backdrop" id="shadcnInputModal">
@@ -35129,6 +35171,9 @@ window.renderContainers = renderContainers;
         var data = await res.json();
         if (data.code === 200 && data.data && data.data.content) {
           cachedAlistItems = data.data.content;
+          if (currentAlistPath === '/' || currentAlistPath === '') {
+            checkMountedCardsStatus(cachedAlistItems);
+          }
           var q = (document.getElementById('cinemaSearchInput')?.value || '').toLowerCase().trim();
           renderAlistDirectoryItems(cachedAlistItems, currentAlistPath, q);
         } else {
@@ -35401,6 +35446,254 @@ window.renderContainers = renderContainers;
       var listCard = document.querySelector('.cinema-pane-card');
       if (listCard) {
         listCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    var currentFastMountType = 'aliyun';
+
+    function openFastMountModal(type) {
+      currentFastMountType = type;
+      var modal = document.getElementById('fastMountDriveModal');
+      var titleEl = document.getElementById('fastMountTitle');
+      var guideEl = document.getElementById('fastMountGuide');
+      var iconBox = document.getElementById('fastMountIcon');
+      var inputLabel = document.getElementById('fastMountInputLabel');
+      var credInput = document.getElementById('fastMountCredentialInput');
+      var pathInput = document.getElementById('fastMountPathInput');
+      var errEl = document.getElementById('fastMountErrorMsg');
+      
+      if (!modal) return;
+      if (errEl) errEl.style.display = 'none';
+      if (credInput) credInput.value = '';
+
+      if (type === 'aliyun') {
+        titleEl.textContent = '极速挂载阿里云盘 Open';
+        iconBox.style.background = 'rgba(239,68,68,0.15)';
+        iconBox.style.color = '#f87171';
+        iconBox.innerHTML = '<i data-lucide="cloud" style="width:14px; height:14px;"></i>';
+        pathInput.value = '/阿里云盘';
+        inputLabel.textContent = '阿里云盘 Refresh Token (32 位字符串)';
+        credInput.placeholder = '粘贴从授权工具生成的 32 位 Refresh Token...';
+        guideEl.innerHTML = '<div style="font-weight:600; margin-bottom:4px; color:#f87171;">💡 阿里云盘极速获取指南（耗时 10 秒）：</div>' +
+          '1. 手机打开官方授权工具：<a href="https://alist.nn.ci/tool/aliyundrive/request" target="_blank" style="color:#38bdf8; text-decoration:underline;">阿里云盘扫码获取工具</a><br>' +
+          '2. 使用「阿里云盘」手机 App 扫码登录并点击确认授权<br>' +
+          '3. 页面将立即生成 32 位 <code>refresh_token</code>，复制粘贴到下方即可。';
+      } else if (type === 'quark') {
+        titleEl.textContent = '极速挂载夸克网盘';
+        iconBox.style.background = 'rgba(56,189,248,0.15)';
+        iconBox.style.color = '#38bdf8';
+        iconBox.innerHTML = '<i data-lucide="zap" style="width:14px; height:14px;"></i>';
+        pathInput.value = '/夸克网盘';
+        inputLabel.textContent = '夸克网盘 Cookie 完整字符串';
+        credInput.placeholder = '粘贴网页端夸克网盘 Request Headers 中的 Cookie...';
+        guideEl.innerHTML = '<div style="font-weight:600; margin-bottom:4px; color:#38bdf8;">💡 夸克网盘 Cookie 获取指南：</div>' +
+          '1. 电脑浏览器访问并登录 <a href="https://pan.quark.cn/" target="_blank" style="color:#38bdf8; text-decoration:underline;">pan.quark.cn</a><br>' +
+          '2. 按 F12 打开开发者工具，切换到「网络 (Network)」并刷新网页<br>' +
+          '3. 点击任意网络请求，在标头中复制 <code>Cookie</code> 的全部值并粘贴到下方。';
+      } else if (type === '115') {
+        titleEl.textContent = '极速挂载 115 网盘';
+        iconBox.style.background = 'rgba(234,179,8,0.15)';
+        iconBox.style.color = '#facc15';
+        iconBox.innerHTML = '<i data-lucide="disc" style="width:14px; height:14px;"></i>';
+        pathInput.value = '/115网盘';
+        inputLabel.textContent = '115 网盘 Cookie 完整字符串';
+        credInput.placeholder = '粘贴网页端 115 网盘的 Cookie (包含 UID, CID, SEID)...';
+        guideEl.innerHTML = '<div style="font-weight:600; margin-bottom:4px; color:#facc15;">💡 115 网盘 Cookie 获取指南：</div>' +
+          '1. 电脑浏览器访问并登录 <a href="https://115.com/" target="_blank" style="color:#38bdf8; text-decoration:underline;">115.com</a><br>' +
+          '2. 按 F12 打开开发者工具，在网络请求中复制 <code>Cookie</code> 字符串<br>' +
+          '3. 粘贴到下方即可（或直接发在聊天框由 AI 自动挂载）。';
+      }
+
+      modal.classList.add('active');
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+
+    function closeFastMountModal() {
+      var modal = document.getElementById('fastMountDriveModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function submitFastMountDrive() {
+      var credInput = document.getElementById('fastMountCredentialInput');
+      var pathInput = document.getElementById('fastMountPathInput');
+      var policyInput = document.getElementById('fastMountPolicyInput');
+      var errEl = document.getElementById('fastMountErrorMsg');
+      var submitBtn = document.getElementById('fastMountSubmitBtn');
+
+      var cred = (credInput ? credInput.value : '').trim();
+      var mountPath = (pathInput ? pathInput.value : '').trim();
+      var policy = policyInput ? policyInput.value : '302_redirect';
+
+      if (!cred) {
+        if (errEl) {
+          errEl.textContent = '请先粘贴凭证 (Token 或 Cookie)';
+          errEl.style.display = 'block';
+        }
+        return;
+      }
+      if (!mountPath) mountPath = '/' + currentFastMountType;
+      if (!mountPath.startsWith('/')) mountPath = '/' + mountPath;
+
+      if (errEl) errEl.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader" class="spin" style="width:13px; height:13px;"></i> 正在验证并挂载...';
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+      }
+
+      try {
+        var headers = await getAlistHeaders();
+        var payload = {
+          mount_path: mountPath,
+          order: currentFastMountType === 'aliyun' ? 2 : (currentFastMountType === 'quark' ? 3 : 4),
+          cache_expiration: 30,
+          webdav_policy: policy
+        };
+
+        if (currentFastMountType === 'aliyun') {
+          payload.driver = 'AliyundriveOpen';
+          payload.addition = JSON.stringify({
+            drive_type: 'resource',
+            root_folder_id: 'root',
+            refresh_token: cred,
+            order_by: 'name',
+            order_direction: 'asc',
+            oauth_token_url: 'https://api.alistgo.com/alist/ali_open/token',
+            client_id: '',
+            client_secret: '',
+            remove_way: 'trash'
+          });
+        } else if (currentFastMountType === 'quark') {
+          payload.driver = 'Quark';
+          payload.addition = JSON.stringify({
+            cookie: cred,
+            root_folder_id: '0',
+            order_by: 'none',
+            order_direction: 'asc',
+            use_transcoding_address: false,
+            only_list_video_file: false,
+            down_concurrency: 3,
+            down_part_size: 10
+          });
+        } else if (currentFastMountType === '115') {
+          payload.driver = '115 Cloud';
+          payload.addition = JSON.stringify({
+            cookie: cred,
+            root_folder_id: '0',
+            qrcode_source: 'linux',
+            page_size: 1000,
+            limit_rate: 2
+          });
+        }
+
+        var res = await fetch('/alist/api/admin/storage/create', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+        var data = await res.json();
+        if (data && (data.code === 200 || (data.code === 500 && data.message && data.message.includes('already created')))) {
+          showToast('🎉 网盘挂载成功！正在同步目录...');
+          closeFastMountModal();
+          loadAlistDirectory('/');
+          checkMountedCardsStatus();
+        } else {
+          throw new Error((data && data.message) || '挂载失败，请检查凭证是否有效');
+        }
+      } catch (err) {
+        if (errEl) {
+          errEl.textContent = '挂载失败: ' + err.message;
+          errEl.style.display = 'block';
+        }
+        showToast('挂载失败: ' + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i data-lucide="zap" style="width:13px; height:13px;"></i> 立即一键挂载';
+          if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+        }
+      }
+    }
+
+    function checkMountedCardsStatus(rootItems) {
+      function applyStatus(items) {
+        if (!items || !Array.isArray(items)) return;
+        var dirNames = items.filter(function(i){ return i.is_dir; }).map(function(i){ return i.name; });
+
+        // 阿里云盘
+        var hasAliyun = dirNames.some(function(n){ return n.includes('阿里') || n.toLowerCase().includes('aliyun'); });
+        var cardAli = document.getElementById('cardAliyunDrive');
+        var tagAli = document.getElementById('tagAliyunDrive');
+        var btnAli = document.getElementById('btnAliyunDrive');
+        if (hasAliyun && cardAli && btnAli) {
+          cardAli.style.borderColor = 'rgba(56,189,248,0.3)';
+          cardAli.style.background = 'rgba(56,189,248,0.04)';
+          if (tagAli) {
+            tagAli.style.background = 'rgba(56,189,248,0.15)';
+            tagAli.style.color = '#38bdf8';
+            tagAli.style.borderColor = 'rgba(56,189,248,0.3)';
+            tagAli.textContent = '已挂载 · 4K秒开';
+          }
+          btnAli.className = 'btn btn-cinema-sky';
+          btnAli.onclick = function() { enterAlistFolder('/阿里云盘'); };
+          btnAli.innerHTML = '<i data-lucide="folder-open" style="width:13px; height:13px;"></i><span>进入管理与点播</span>';
+        }
+
+        // 夸克网盘
+        var hasQuark = dirNames.some(function(n){ return n.includes('夸克') || n.toLowerCase().includes('quark'); });
+        var cardQuark = document.getElementById('cardQuarkDrive');
+        var tagQuark = document.getElementById('tagQuarkDrive');
+        var btnQuark = document.getElementById('btnQuarkDrive');
+        if (hasQuark && cardQuark && btnQuark) {
+          cardQuark.style.borderColor = 'rgba(56,189,248,0.3)';
+          cardQuark.style.background = 'rgba(56,189,248,0.04)';
+          if (tagQuark) {
+            tagQuark.style.background = 'rgba(56,189,248,0.15)';
+            tagQuark.style.color = '#38bdf8';
+            tagQuark.style.borderColor = 'rgba(56,189,248,0.3)';
+            tagQuark.textContent = '已挂载 · 4K秒开';
+          }
+          btnQuark.className = 'btn btn-cinema-sky';
+          btnQuark.onclick = function() { enterAlistFolder('/夸克网盘'); };
+          btnQuark.innerHTML = '<i data-lucide="folder-open" style="width:13px; height:13px;"></i><span>进入管理与点播</span>';
+        }
+
+        // 115网盘
+        var has115 = dirNames.some(function(n){ return n.includes('115'); });
+        var card115 = document.getElementById('card115Drive');
+        var tag115 = document.getElementById('tag115Drive');
+        var btn115 = document.getElementById('btn115Drive');
+        if (has115 && card115 && btn115) {
+          card115.style.borderColor = 'rgba(56,189,248,0.3)';
+          card115.style.background = 'rgba(56,189,248,0.04)';
+          if (tag115) {
+            tag115.style.background = 'rgba(56,189,248,0.15)';
+            tag115.style.color = '#38bdf8';
+            tag115.style.borderColor = 'rgba(56,189,248,0.3)';
+            tag115.textContent = '已挂载 · 蓝光无损';
+          }
+          btn115.className = 'btn btn-cinema-sky';
+          btn115.onclick = function() { enterAlistFolder('/115网盘'); };
+          btn115.innerHTML = '<i data-lucide="folder-open" style="width:13px; height:13px;"></i><span>进入管理与点播</span>';
+        }
+
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+      }
+
+      if (rootItems && Array.isArray(rootItems)) {
+        applyStatus(rootItems);
+      } else {
+        getAlistHeaders().then(function(headers) {
+          return fetch('/alist/api/fs/list', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ path: '/', page: 1, per_page: 50, refresh: false })
+          });
+        }).then(function(res){ return res.json(); }).then(function(data){
+          if (data && data.code === 200 && data.data && data.data.content) {
+            applyStatus(data.data.content);
+          }
+        }).catch(function(){});
       }
     }
 
