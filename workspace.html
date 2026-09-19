@@ -13674,13 +13674,33 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       vertical-align: middle !important;
     }
 
-    #cinemaArtplayer .art-control .art-icon,
+    #cinemaArtplayer .art-control .art-icon {
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      vertical-align: middle;
+    }
+
+    #cinemaArtplayer .art-control .art-icon[style*="display: none"],
+    #cinemaArtplayer .art-control .art-icon[style*="display:none"],
+    #cinemaArtplayer .art-control .art-icon.art-hidden {
+      display: none !important;
+    }
+
     #cinemaArtplayer .art-control svg {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      margin: auto !important;
-      vertical-align: middle !important;
+      vertical-align: middle;
+    }
+
+    #cinemaArtplayer .art-control-volume .art-volume-panel {
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) translateY(10px) !important;
+    }
+
+    #cinemaArtplayer .art-control-volume:hover .art-volume-panel {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) !important;
+      pointer-events: auto !important;
     }
 
     #cinemaArtplayer .art-control-pip {
@@ -14688,7 +14708,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     .cinema-tab-btn {
       flex: 1;
-      padding: 6px 8px;
+      min-width: 0;
+      padding: 6px 6px;
       border-radius: 8px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -14696,6 +14717,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: transparent;
       border: 1px solid transparent;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
       text-align: center;
       transition: all 0.2s ease;
     }
