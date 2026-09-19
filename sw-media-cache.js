@@ -31,12 +31,17 @@ self.addEventListener('fetch', (event) => {
   const url = req.url;
   const rangeHeader = req.headers.get('range');
 
-  // Determine if this is a media request
-  const isMediaReq = req.destination === 'video' || req.destination === 'audio' ||
-                     /\.(mp4|mkv|webm|mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url) ||
-                     Boolean(rangeHeader);
+  // Determine if this is an audio/music request or a video file
+  const isAudioReq = req.destination === 'audio' || /\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url);
+  const isVideoReq = req.destination === 'video' || /\.(mp4|mkv|webm|m4v|mov|ts)(\?|$)/i.test(url);
+
+  // For video range streaming: pass through directly to native browser engine for zero-stutter hardware playback
+  if (isVideoReq && rangeHeader) {
+    return;
+  }
 
   // We only cache GET requests for media
+  const isMediaReq = isAudioReq || isVideoReq || Boolean(rangeHeader);
   if (!isMediaReq || req.method !== 'GET') {
     return;
   }
