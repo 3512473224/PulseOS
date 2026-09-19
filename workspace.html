@@ -17412,9 +17412,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div id="cinemaStagePlaceholder">
                   <div class="cinema-placeholder-hint" id="cinemaPlaceholderHint" onclick="restoreFromPipToCinema()">
                     <i data-lucide="tv" style="width:30px; height:30px; color:var(--accent);"></i>
-                    <div style="font-weight:700; font-size:0.95rem;">悬浮画中画正在播放中</div>
-                    <div style="font-size:0.75rem; color:var(--text-dim);">点击此处或悬浮窗右上角按钮即可恢复全屏巨幕</div>
-                    <button class="btn btn-cinema-sky" style="margin-top:4px; font-size:0.75rem; padding:4px 14px;">恢复至影院视听舱</button>
+                    <div style="font-weight:700; font-size:0.95rem;">画中画正在桌面/悬浮播放中</div>
+                    <div style="font-size:0.75rem; color:var(--text-dim);">可在整个操作系统桌面任意移动，或点击此处恢复全屏巨幕</div>
+                    <div style="display:flex; gap:8px; margin-top:6px;">
+                      <button class="btn btn-cinema-sky" style="font-size:0.75rem; padding:4px 14px;" onclick="event.stopPropagation(); restoreFromPipToCinema();">恢复至影院巨幕</button>
+                      <button class="btn btn-cinema-purple" style="font-size:0.75rem; padding:4px 14px;" onclick="event.stopPropagation(); toggleCinemaDesktopPip();">⇗ 弹出至桌面浮窗</button>
+                    </div>
                   </div>
                   <div id="cinemaPlayerStage">
                     <!-- Floating PiP Top Header (Visible only when in Mini-PiP floating mode) -->
@@ -17424,6 +17427,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                         <span id="cinemaPipTitleText">正在播放...</span>
                       </div>
                       <div class="cinema-pip-actions">
+                        <button class="cinema-pip-btn" onclick="toggleCinemaDesktopPip()" title="退出浏览器 · 弹出到桌面全局画中画 (任意移动/全局置顶)">
+                          <i data-lucide="external-link" style="width:12px; height:12px;"></i>
+                          <span style="font-size:10px; margin-left:2px;">桌面置顶</span>
+                        </button>
                         <button class="cinema-pip-btn" onclick="restoreFromPipToCinema()" title="回到影院全屏模式">
                           <i data-lucide="maximize-2" style="width:12px; height:12px;"></i>
                         </button>
@@ -17592,6 +17599,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <span class="telemetry-sep">·</span>
                       <span id="cinemaResumeHint" style="color:#38bdf8;">智能断点记忆就绪</span>
                       <span class="telemetry-sep">·</span>
+                      <span id="cinemaMediaCacheStatus" style="color:#10b981; font-weight:600; display:inline-flex; align-items:center; gap:3px;" title="本地就近高速缓存状态 (刷新页面免重新下载)"><i data-lucide="hard-drive" style="width:11px; height:11px;"></i> 本地断点缓存: 已就绪</span>
+                      <span class="telemetry-sep">·</span>
                       <!-- Live Streaming Telemetry Pill (实时速率与超前缓冲余量) -->
                       <div class="cinema-telemetry-pill" id="cinemaTelemetryPill" title="实时流媒体下行与上行速率 · 缓冲池余量">
                         <span class="telemetry-dot"></span>
@@ -17611,9 +17620,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                       <i data-lucide="link-2" style="width:14px; height:14px;"></i>
                       <span>复制直链</span>
                     </button>
-                    <button class="cinema-tool-btn" onclick="toggleCinemaMiniPip()" title="开启/关闭网页悬浮画中画">
+                    <button class="cinema-tool-btn primary-sky" onclick="toggleCinemaDesktopPip()" title="开启桌面级置顶画中画 (可退出浏览器在桌面上任意拖拽)">
                       <i data-lucide="picture-in-picture-2" style="width:14px; height:14px;"></i>
-                      <span>悬浮画中画</span>
+                      <span>桌面画中画</span>
                     </button>
                     <button class="cinema-tool-btn accent-purple" onclick="playNextCinemaEpisode()" title="播放下一集">
                       <i data-lucide="skip-forward" style="width:14px; height:14px;"></i>
@@ -18502,6 +18511,183 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- 📜 JAVASCRIPT CORE ENGINE (vps.ppday.site EXACT CODE) -->
   <!-- ======================================================== -->
   <script>
+    // ========================================================
+    // ⚡ PULSE MEDIA CACHE ENGINE (断点就近预加载与本地持久化秒开)
+    // ========================================================
+    const PulseMediaCache = (function () {
+      const DB_NAME = 'PulseMediaCacheDB';
+      const DB_VERSION = 1;
+      let dbInstance = null;
+
+      function getDB() {
+        if (dbInstance) return Promise.resolve(dbInstance);
+        return new Promise((resolve) => {
+          if (!window.indexedDB) return resolve(null);
+          try {
+            const req = indexedDB.open(DB_NAME, DB_VERSION);
+            req.onupgradeneeded = function (e) {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('media_blobs')) {
+                db.createObjectStore('media_blobs', { keyPath: 'key' });
+              }
+            };
+            req.onsuccess = function (e) {
+              dbInstance = e.target.result;
+              resolve(dbInstance);
+            };
+            req.onerror = function () {
+              resolve(null);
+            };
+          } catch (err) {
+            resolve(null);
+          }
+        });
+      }
+
+      function getCleanKey(url, id) {
+        if (id) return 'id_' + id;
+        if (!url) return '';
+        const base = url.split('?')[0];
+        return 'url_' + base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(-80);
+      }
+
+      async function getCachedMedia(url, id) {
+        const db = await getDB();
+        if (!db) return null;
+        const key = getCleanKey(url, id);
+        return new Promise((resolve) => {
+          try {
+            const tx = db.transaction('media_blobs', 'readonly');
+            const store = tx.objectStore('media_blobs');
+            const req = store.get(key);
+            req.onsuccess = function () {
+              const item = req.result;
+              if (item && item.blob) {
+                resolve(item);
+              } else {
+                resolve(null);
+              }
+            };
+            req.onerror = function () { resolve(null); };
+          } catch (e) { resolve(null); }
+        });
+      }
+
+      async function saveMediaBlob(url, blob, meta = {}) {
+        const db = await getDB();
+        if (!db || !blob) return false;
+        const key = getCleanKey(url, meta.id);
+        const item = {
+          key: key,
+          url: url,
+          id: meta.id || '',
+          blob: blob,
+          size: blob.size,
+          mimeType: blob.type || (meta.isAudio ? 'audio/mpeg' : 'video/mp4'),
+          title: meta.title || '',
+          artist: meta.artist || '',
+          duration: meta.duration || 0,
+          savedTime: meta.savedTime || 0,
+          cachedAt: Date.now()
+        };
+
+        return new Promise((resolve) => {
+          try {
+            const tx = db.transaction('media_blobs', 'readwrite');
+            const store = tx.objectStore('media_blobs');
+            store.put(item);
+            tx.oncomplete = function () {
+              console.log('[PulseMediaCache] Stored local media cache:', item.title || key, (item.size / 1024 / 1024).toFixed(2) + 'MB');
+              updateCacheStatusIndicator(true, item.title);
+              resolve(true);
+            };
+            tx.onerror = function () { resolve(false); };
+          } catch (e) { resolve(false); }
+        });
+      }
+
+      const pendingFetches = new Set();
+      async function prefetchAndCache(url, meta = {}) {
+        if (!url || pendingFetches.has(url) || url.startsWith('blob:')) return;
+        const existing = await getCachedMedia(url, meta.id);
+        if (existing) {
+          if (meta.savedTime !== undefined) {
+            existing.savedTime = meta.savedTime;
+            existing.cachedAt = Date.now();
+            const db = await getDB();
+            if (db) {
+              try {
+                const tx = db.transaction('media_blobs', 'readwrite');
+                tx.objectStore('media_blobs').put(existing);
+              } catch(e){}
+            }
+          }
+          return;
+        }
+
+        pendingFetches.add(url);
+        try {
+          const res = await fetch(url, { mode: 'cors' }).catch(() => null);
+          if (res && res.ok) {
+            const contentLength = parseInt(res.headers.get('content-length') || '0', 10);
+            if (!contentLength || contentLength <= 90 * 1024 * 1024) {
+              const blob = await res.blob();
+              await saveMediaBlob(url, blob, meta);
+            }
+          }
+        } catch (err) {
+          console.warn('[PulseMediaCache] Prefetch skip:', err);
+        } finally {
+          pendingFetches.delete(url);
+        }
+      }
+
+      async function cacheVideoPosition(url, currentTime, duration, meta = {}) {
+        try {
+          const cacheMeta = JSON.parse(localStorage.getItem('pulseos_media_cache_meta') || '{}');
+          cacheMeta[url] = {
+            url: url,
+            time: currentTime,
+            duration: duration || 0,
+            title: meta.title || '',
+            updatedAt: Date.now()
+          };
+          localStorage.setItem('pulseos_media_cache_meta', JSON.stringify(cacheMeta));
+        } catch (e) {}
+
+        if (url && !url.startsWith('blob:')) {
+          prefetchAndCache(url, { ...meta, savedTime: currentTime, duration: duration });
+        }
+      }
+
+      function updateCacheStatusIndicator(ready, title) {
+        const el = document.getElementById('cinemaMediaCacheStatus');
+        if (el) {
+          el.innerHTML = ready
+            ? '<i data-lucide="hard-drive" style="width:11px;height:11px;"></i> 本地断点缓存: 已就绪'
+            : '<i data-lucide="hard-drive" style="width:11px;height:11px;"></i> 本地断点缓存: 监测中';
+          el.style.color = ready ? '#10b981' : '#94a3b8';
+          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+        }
+      }
+
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('/sw-media-cache.js', { scope: '/' })
+          .then((reg) => console.log('[PulseMediaCache] ServiceWorker registered, scope:', reg.scope))
+          .catch((e) => console.warn('[PulseMediaCache] SW registration info:', e));
+      }
+
+      return {
+        getDB,
+        getCachedMedia,
+        saveMediaBlob,
+        prefetchAndCache,
+        cacheVideoPosition,
+        updateCacheStatusIndicator
+      };
+    })();
+    window.PulseMediaCache = PulseMediaCache;
+
         // 1. HIGH-FPS 144Hz/240Hz HARDWARE ACCELERATED STARFIELD
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d', { alpha: true });
@@ -28577,6 +28763,14 @@ window.renderContainers = renderContainers;
           localStorage.setItem('pulseos_kugou_last_track_duration', track.duration || 0);
           if (cur > 0.5) {
             localStorage.setItem('pulseos_kugou_last_progress', (Math.round(cur * 10) / 10).toString());
+      if (track && (track.url || audio.src)) {
+        PulseMediaCache.cacheVideoPosition(track.url || audio.src, audio.currentTime, audio.duration, {
+          id: track.id || track.hash,
+          title: track.title,
+          artist: track.artist,
+          isAudio: true
+        });
+      }
           }
           if (track && (track.url || track.directUrl) && typeof saveCinemaHistory === 'function') {
             const playUrl = track.directUrl || track.url;
@@ -29060,10 +29254,34 @@ window.renderContainers = renderContainers;
         try { buildImmersiveCanvasLyrics(true); } catch(e){}
       }
 
-      // 2. Fetch Audio Stream
-      const playableUrl = await resolvePlayableUrl(track, forceRefresh);
+      // 2. Fetch Audio Stream (Priority 0ms Instant Local Cache)
+      let playableUrl = null;
+      let isFromLocalCache = false;
+      try {
+        const cachedTrack = await PulseMediaCache.getCachedMedia(track.url, track.id || track.hash);
+        if (cachedTrack && cachedTrack.blob) {
+          playableUrl = URL.createObjectURL(cachedTrack.blob);
+          isFromLocalCache = true;
+          console.log('[KuGou] ⚡ Resumed track instantly from local IndexedDB cache:', track.title);
+        }
+      } catch (e) {}
+
+      if (!playableUrl) {
+        playableUrl = await resolvePlayableUrl(track, forceRefresh);
+      }
       // If user clicked another song while waiting, discard this outdated result!
       if (thisReqId !== currentAudioRequestId) return;
+
+      if (!isFromLocalCache && playableUrl && !playableUrl.startsWith('blob:')) {
+        PulseMediaCache.prefetchAndCache(playableUrl, {
+          id: track.id || track.hash,
+          title: track.title,
+          artist: track.artist,
+          duration: track.duration,
+          savedTime: resumeSec,
+          isAudio: true
+        });
+      }
 
       const audio = document.getElementById('kugouAudioEngine');
       if (!playableUrl) {
@@ -30407,6 +30625,14 @@ window.renderContainers = renderContainers;
         try {
           if (cur > 0.5) {
             localStorage.setItem('pulseos_kugou_last_progress', (Math.round(cur * 10) / 10).toString());
+      if (track && (track.url || audio.src)) {
+        PulseMediaCache.cacheVideoPosition(track.url || audio.src, audio.currentTime, audio.duration, {
+          id: track.id || track.hash,
+          title: track.title,
+          artist: track.artist,
+          isAudio: true
+        });
+      }
             const track = (kugouCurrentPlaylist && kugouCurrentPlaylist[kugouCurrentTrackIdx]);
             if (track && (track.url || track.directUrl) && typeof saveCinemaHistory === 'function') {
               const playUrl = track.url || track.directUrl;
@@ -36149,9 +36375,11 @@ window.renderContainers = renderContainers;
               index: 40,
               position: 'right',
               html: '<i class="art-icon art-icon-pip" style="display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none"></rect><rect x="12" y="11" width="7" height="6" rx="1.2" fill="currentColor" stroke="none"></rect></svg></i>',
-              tooltip: '画中画',
+              tooltip: '桌面画中画 (退出浏览器/桌面置顶)',
               click: function () {
-                if (typeof toggleCinemaMiniPip === 'function') {
+                if (typeof toggleCinemaDesktopPip === 'function') {
+                  toggleCinemaDesktopPip();
+                } else if (typeof toggleCinemaMiniPip === 'function') {
                   toggleCinemaMiniPip();
                 }
               }
@@ -36233,11 +36461,18 @@ window.renderContainers = renderContainers;
           }
         });
 
-        // Smart Resume (智能断点续播)
+        // Smart Resume (智能断点续播 - 本地缓存优先秒开)
         if (savedHistory && savedHistory.time > 3) {
-          artCinemaInstance.on('ready', function () {
+          artCinemaInstance.on('ready', async function () {
+            try {
+              var cachedMedia = await PulseMediaCache.getCachedMedia(firstEp.url);
+              if (cachedMedia && cachedMedia.blob && artCinemaInstance.url !== cachedMedia.url) {
+                var blobUrl = URL.createObjectURL(cachedMedia.blob);
+                artCinemaInstance.switchUrl(blobUrl, firstEp.title);
+              }
+            } catch (e) {}
             artCinemaInstance.seek = savedHistory.time;
-            showCinemaNotice('已为您自动续播至: ' + formatCinemaTime(savedHistory.time));
+            showCinemaNotice('⚡ 已为您自动续播至: ' + formatCinemaTime(savedHistory.time) + ' (本地缓存秒开)');
           });
         }
 
@@ -36253,6 +36488,10 @@ window.renderContainers = renderContainers;
                 : firstEp;
               if (curEp && curEp.url) {
                 saveCinemaHistory(curEp.url, curEp.title, artCinemaInstance.video.currentTime, artCinemaInstance.video.duration);
+                PulseMediaCache.cacheVideoPosition(curEp.url, artCinemaInstance.video.currentTime, artCinemaInstance.video.duration, {
+                  title: curEp.title,
+                  isAudio: isAudioMedia(curEp.url, curEp.title)
+                });
               }
             }
           }
@@ -37312,7 +37551,7 @@ window.renderContainers = renderContainers;
       }
     }
 
-    function playCinemaEpisode(index) {
+    async function playCinemaEpisode(index) {
       if (index < 0 || index >= cinemaEpisodes.length) return;
       if (cinemaAutoNextTimer) {
         clearTimeout(cinemaAutoNextTimer);
@@ -37327,14 +37566,23 @@ window.renderContainers = renderContainers;
       }
 
       if (artCinemaInstance) {
-        if (artCinemaInstance.url !== ep.url) {
+        var cachedMedia = null;
+        try {
+          cachedMedia = await PulseMediaCache.getCachedMedia(ep.url);
+        } catch (e) {}
+        var streamUrl = (cachedMedia && cachedMedia.blob) ? URL.createObjectURL(cachedMedia.blob) : ep.url;
+        if (cachedMedia && cachedMedia.blob) {
+          showCinemaNotice('⚡ 已加载本地断点就近缓存，即刻极速续播');
+        }
+
+        if (artCinemaInstance.url !== streamUrl && artCinemaInstance.url !== ep.url) {
           if (artCinemaInstance.hls && !ep.url.includes('.m3u8')) {
             try {
               artCinemaInstance.hls.destroy();
               artCinemaInstance.hls = null;
             } catch (e) {}
           }
-          artCinemaInstance.switchUrl(ep.url, ep.title);
+          artCinemaInstance.switchUrl(streamUrl, ep.title);
         }
 
         // Subtitle handling
@@ -38190,7 +38438,239 @@ window.renderContainers = renderContainers;
     }
 
     // ========================================================
-    // 🪟 FLOATING DRAGGABLE MINI-PIP ENGINE (CROSS-VIEW PERSISTENT)
+    // 🪟 TRUE DESKTOP PICTURE-IN-PICTURE ENGINE (跨出浏览器/全局置顶/任意移动)
+    // ========================================================
+    async function toggleCinemaDesktopPip(forceState) {
+      if (window.cinemaDesktopPipWindow && !window.cinemaDesktopPipWindow.closed) {
+        if (forceState === true) return;
+        try {
+          window.cinemaDesktopPipWindow.close();
+        } catch (e) {}
+        window.cinemaDesktopPipWindow = null;
+        return;
+      }
+      if (forceState === false && (!window.cinemaDesktopPipWindow || window.cinemaDesktopPipWindow.closed)) {
+        return;
+      }
+
+      var stage = document.getElementById('cinemaPlayerStage');
+      var placeholder = document.getElementById('cinemaStagePlaceholder');
+      if (!stage) return;
+
+      if (document.pictureInPictureElement) {
+        try { await document.exitPictureInPicture(); } catch(e){}
+      }
+
+      if (artCinemaInstance) {
+        if (artCinemaInstance.fullscreen) {
+          try { artCinemaInstance.fullscreen = false; } catch(e){}
+        }
+        if (artCinemaInstance.fullscreenWeb) {
+          try { artCinemaInstance.fullscreenWeb = false; } catch(e){}
+        }
+      }
+      if (document.fullscreenElement) {
+        try { await document.exitFullscreen(); } catch(e){}
+      }
+
+      // Priority 1: W3C Document Picture-in-Picture API (Chrome/Edge desktop)
+      if ('documentPictureInPicture' in window && typeof window.documentPictureInPicture.requestWindow === 'function') {
+        try {
+          var curEp = (cinemaCurrentEpisodeIndex >= 0 && cinemaCurrentEpisodeIndex < cinemaEpisodes.length)
+            ? cinemaEpisodes[cinemaCurrentEpisodeIndex]
+            : (artCinemaInstance ? { title: document.getElementById('cinemaCurrentTitle')?.textContent, url: artCinemaInstance.url } : { title: '影音视听舱' });
+
+          var isAudio = isAudioMedia(curEp ? curEp.url : '', curEp ? curEp.title : '');
+          var pipWin = await window.documentPictureInPicture.requestWindow({
+            width: isAudio ? 450 : 600,
+            height: isAudio ? 295 : 360,
+            disallowReturnToOpener: false
+          });
+
+          window.cinemaDesktopPipWindow = pipWin;
+          window.isCinemaMiniPipActive = true;
+
+          [...document.styleSheets].forEach(function (sheet) {
+            try {
+              var cssRules = [...sheet.cssRules].map(function (r) { return r.cssText; }).join('');
+              var style = pipWin.document.createElement('style');
+              style.textContent = cssRules;
+              pipWin.document.head.appendChild(style);
+            } catch (e) {
+              var link = pipWin.document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = sheet.href;
+              pipWin.document.head.appendChild(link);
+            }
+          });
+
+          var pipCustomStyle = pipWin.document.createElement('style');
+          pipCustomStyle.textContent = `
+            html, body {
+              margin: 0;
+              padding: 0;
+              width: 100vw;
+              height: 100vh;
+              background: #06080e !important;
+              color: #f1f5f9;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              overflow: hidden;
+              display: flex;
+              flex-direction: column;
+            }
+            .pip-desktop-topbar {
+              height: 36px;
+              background: rgba(13, 17, 23, 0.98);
+              border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 0 10px;
+              flex-shrink: 0;
+              user-select: none;
+              z-index: 1000;
+            }
+            .pip-desktop-title {
+              font-size: 12px;
+              font-weight: 600;
+              color: #38bdf8;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              max-width: 68%;
+            }
+            .pip-desktop-actions {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            }
+            .pip-desktop-btn {
+              background: rgba(255, 255, 255, 0.08);
+              border: 1px solid rgba(255, 255, 255, 0.18);
+              color: #e2e8f0;
+              border-radius: 5px;
+              padding: 3px 8px;
+              font-size: 11px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              transition: all 0.15s ease;
+            }
+            .pip-desktop-btn:hover {
+              background: rgba(56, 189, 248, 0.3);
+              border-color: rgba(56, 189, 248, 0.7);
+              color: #38bdf8;
+            }
+            .pip-stage-wrap {
+              flex: 1;
+              position: relative;
+              width: 100%;
+              height: calc(100vh - 36px);
+              overflow: hidden;
+              background: #000;
+            }
+            #cinemaPlayerStage {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              right: 0 !important;
+              bottom: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              border: none !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              z-index: 10 !important;
+            }
+            #cinemaPipTopbar {
+              display: none !important;
+            }
+            #cinemaArtplayer {
+              width: 100% !important;
+              height: 100% !important;
+            }
+          `;
+          pipWin.document.head.appendChild(pipCustomStyle);
+
+          var topbar = pipWin.document.createElement('div');
+          topbar.className = 'pip-desktop-topbar';
+          topbar.innerHTML = `
+            <div class="pip-desktop-title">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M10 4v4"></path><path d="M2 8h20"></path></svg>
+              <span>${(curEp && curEp.title) ? curEp.title : '影音视听舱 · 桌面画中画'}</span>
+            </div>
+            <div class="pip-desktop-actions">
+              <button class="pip-desktop-btn" id="pipBackToWebBtn" title="返回网页全景模式">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
+                <span>返回网页</span>
+              </button>
+            </div>
+          `;
+          pipWin.document.body.appendChild(topbar);
+
+          var stageWrap = pipWin.document.createElement('div');
+          stageWrap.className = 'pip-stage-wrap';
+          stageWrap.appendChild(stage);
+          pipWin.document.body.appendChild(stageWrap);
+
+          topbar.querySelector('#pipBackToWebBtn').onclick = function () {
+            pipWin.close();
+          };
+
+          pipWin.addEventListener('pagehide', function () {
+            window.cinemaDesktopPipWindow = null;
+            window.isCinemaMiniPipActive = false;
+            if (placeholder && stage.parentElement !== placeholder) {
+              placeholder.appendChild(stage);
+            }
+            placeholder.classList.remove('pip-active');
+            if (artCinemaInstance) {
+              try { artCinemaInstance.resize(); } catch (e) {}
+            }
+            showCinemaNotice('桌面画中画已无缝收回至网页');
+          });
+
+          if (placeholder) {
+            placeholder.classList.add('pip-active');
+          }
+          if (artCinemaInstance) {
+            try { artCinemaInstance.resize(); } catch (e) {}
+          }
+
+          showCinemaNotice('🚀 已开启真·桌面画中画 (已退出浏览器，可在全桌面任意拖拽置顶)');
+          return;
+        } catch (err) {
+          console.warn('[Desktop PiP] DocumentPictureInPicture fallback to native video PiP:', err);
+        }
+      }
+
+      // Priority 2: Native HTML5 Video Picture-in-Picture (OS Floating Window)
+      if (artCinemaInstance && artCinemaInstance.video) {
+        try {
+          if (document.pictureInPictureElement) {
+            await document.exitPictureInPicture();
+            showCinemaNotice('已退出画中画');
+          } else {
+            await artCinemaInstance.video.requestPictureInPicture();
+            showCinemaNotice('🚀 已开启原生系统级画中画 (可退出浏览器在桌面上置顶移动)');
+          }
+          return;
+        } catch (e) {
+          console.warn('[Desktop PiP] Native video PiP error:', e);
+        }
+      }
+
+      // Priority 3: Fallback to in-page float if browser blocks OS popups
+      toggleCinemaMiniPip(forceState);
+    }
+    window.toggleCinemaDesktopPip = toggleCinemaDesktopPip;
+
+    // ========================================================
+    // 🪟 IN-PAGE DOCK HELPER (MINI-PIP FALLBACK & CROSS-VIEW PERSISTENCE)
     // ========================================================
     function toggleCinemaMiniPip(forceState) {
       var stage = document.getElementById('cinemaPlayerStage');
