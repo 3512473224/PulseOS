@@ -13664,7 +13664,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 100% !important;
     }
 
-    #cinemaArtplayer .art-control {
+    /* Bottom Controls Buttons (excluding progress bar) */
+    #cinemaArtplayer .art-controls .art-control {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -13672,6 +13673,93 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       min-width: 36px !important;
       padding: 0 4px !important;
       vertical-align: middle !important;
+    }
+
+    /* Full-Width Precision Progress Bar & Smooth Scrubbing */
+    #cinemaArtplayer .art-bottom .art-progress {
+      width: 100% !important;
+      height: 16px !important;
+      display: flex !important;
+      align-items: center !important;
+      cursor: pointer !important;
+      padding: 0 4px !important;
+      box-sizing: border-box !important;
+      position: relative !important;
+      z-index: 50 !important;
+      margin-bottom: 2px !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-control-progress {
+      width: 100% !important;
+      min-width: 100% !important;
+      height: 14px !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      cursor: pointer !important;
+      position: relative !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-control-progress .art-control-progress-inner {
+      width: 100% !important;
+      height: 4px !important;
+      border-radius: 2px !important;
+      background: rgba(255, 255, 255, 0.25) !important;
+      position: relative !important;
+      transition: height 0.15s ease !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress:hover .art-control-progress-inner {
+      height: 6px !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-indicator {
+      width: 14px !important;
+      height: 14px !important;
+      background: #7c3aed !important;
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.9) !important;
+      border: 2px solid #ffffff !important;
+      border-radius: 50% !important;
+      margin-left: -7px !important;
+      transition: transform 0.1s ease !important;
+      cursor: pointer !important;
+      z-index: 40 !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress:hover .art-progress-indicator,
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-indicator:active {
+      transform: scale(1.3) !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-tip {
+      z-index: 60 !important;
+      pointer-events: none !important;
+      background: rgba(15, 23, 42, 0.92) !important;
+      color: #fff !important;
+      border: 1px solid rgba(124, 58, 237, 0.4) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+      border-radius: 6px !important;
+      padding: 3px 7px !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.02em !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-loaded {
+      background-color: rgba(255, 255, 255, 0.4) !important;
+      border-radius: 2px !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-played {
+      background: linear-gradient(90deg, #7c3aed, #a855f7) !important;
+      border-radius: 2px !important;
+      box-shadow: 0 0 8px rgba(124, 58, 237, 0.6) !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-hover {
+      background-color: rgba(255, 255, 255, 0.3) !important;
+      border-radius: 2px !important;
     }
 
     #cinemaArtplayer .art-control .art-icon {
@@ -18681,7 +18769,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           localStorage.setItem('pulseos_media_cache_meta', JSON.stringify(cacheMeta));
         } catch (e) {}
 
-        if (url && !url.startsWith('blob:')) {
+        if (url && !url.startsWith('blob:') && (meta.isAudio || isAudioMedia(url, meta.title))) {
           prefetchAndCache(url, { ...meta, savedTime: currentTime, duration: duration });
         }
       }
@@ -36365,6 +36453,9 @@ window.renderContainers = renderContainers;
       var savedHistory = getCinemaHistory(firstEp.url);
 
       try {
+        if (window.Artplayer) {
+          Artplayer.USE_RAF = true;
+        }
         artCinemaInstance = new Artplayer({
           container: container,
           url: firstEp.url,
@@ -36386,8 +36477,9 @@ window.renderContainers = renderContainers;
           fullscreen: true,
           fullscreenWeb: true,
           subtitleOffset: false,
-          miniProgressBar: true,
+          miniProgressBar: false,
           playsInline: true,
+          fastSeek: true,
           theme: '#7c3aed',
           lang: 'zh-cn',
           moreVideoAttr: {
@@ -36420,15 +36512,15 @@ window.renderContainers = renderContainers;
                 var hls = new Hls({
                   enableWorker: true,
                   lowLatencyMode: false,
-                  maxBufferLength: 300,
-                  maxMaxBufferLength: 900,
-                  maxBufferSize: 1024 * 1024 * 1024,
-                  maxBufferHole: 0.1,
-                  backBufferLength: 180,
+                  maxBufferLength: 60,
+                  maxMaxBufferLength: 120,
+                  maxBufferSize: 128 * 1024 * 1024,
+                  maxBufferHole: 0.5,
+                  backBufferLength: 60,
                   progressive: true,
                   highBufferWatchdogPeriod: 2,
-                  nudgeOffset: 0.1,
-                  nudgeMaxRetry: 8
+                  nudgeOffset: 0.2,
+                  nudgeMaxRetry: 5
                 });
                 hls.loadSource(url);
                 hls.attachMedia(video);
