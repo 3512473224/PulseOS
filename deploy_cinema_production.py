@@ -9,22 +9,26 @@ def main():
     ssh.connect('104.129.1.216', port=22222, username='root', password='zxcvbnm2016', timeout=15)
     print("Connected.")
 
-    # 1. Upload workspace.html to /var/www/html/workspace.html
+    # 1. Upload workspace.html and sw-media-cache.js
     local_html = r'c:\Users\lan\.gemini\antigravity\scratch\vesper-geek-workspace\workspace.html'
     target_html = '/var/www/html/workspace.html'
+    local_sw = r'c:\Users\lan\.gemini\antigravity\scratch\vesper-geek-workspace\sw-media-cache.js'
+    target_sw = '/var/www/html/sw-media-cache.js'
     local_vtt = r'c:\Users\lan\.gemini\antigravity\scratch\vesper-geek-workspace\Ep01_CyberPulse_HD.vtt'
     target_vtt = '/opt/alist/data/videos/Ep01_CyberPulse_HD.vtt'
 
     print(f"Uploading {local_html} to {target_html}...")
     sftp = ssh.open_sftp()
     sftp.put(local_html, target_html)
+    print(f"Uploading {local_sw} to {target_sw}...")
+    sftp.put(local_sw, target_sw)
     print(f"Uploading {local_vtt} to {target_vtt}...")
     sftp.put(local_vtt, target_vtt)
     sftp.close()
     print("Uploads completed.")
 
     # 2. Set permissions
-    stdin, stdout, stderr = ssh.exec_command("chown www-data:www-data /var/www/html/workspace.html && chmod 644 /var/www/html/workspace.html && ls -lh /var/www/html/workspace.html")
+    stdin, stdout, stderr = ssh.exec_command("chown www-data:www-data /var/www/html/workspace.html /var/www/html/sw-media-cache.js && chmod 644 /var/www/html/workspace.html /var/www/html/sw-media-cache.js && ls -lh /var/www/html/workspace.html /var/www/html/sw-media-cache.js")
     print("VPS File Details:\n", stdout.read().decode('utf-8'))
 
     # 3. Reload Nginx

@@ -1,12 +1,11 @@
 /**
  * PulseOS Media Range Cache Service Worker (sw-media-cache.js)
- * Intercepts video/audio streaming and Range requests.
- * Caches media segments near playback position in CacheStorage/IndexedDB
- * to ensure zero-buffering instant resume after page refresh.
+ * High-performance client-side media chunk & intro persistence engine.
+ * Eliminates redundant network traffic for replayed intros and audio tracks.
  */
 
-const CACHE_NAME = 'pulseos-media-cache-v1';
-const MAX_CACHE_ENTRIES = 50;
+const CACHE_NAME = 'pulseos-media-intro-v4';
+const MEMORY_CHUNK_MAP = new Map(); // In-memory hot buffer cache for instant 0ms slicing
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -26,130 +25,248 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+function getCanonicalMediaKey(url) {
+  try {
+    const u = new URL(url, self.location.origin);
+    // Strip dynamic ephemeral tokens/queries for AList & media streams
+    return u.origin + u.pathname;
+  } catch (e) {
+    return url.split('?')[0];
+  }
+}
+
+async function notifyClients(data) {
+  try {
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of clients) {
+      client.postMessage(data);
+    }
+  } catch (e) {}
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+  if (req.method !== 'GET') return;
+
   const url = req.url;
+
+  // CRITICAL ARCHITECTURE RULE:
+  // NEVER intercept video streaming or AList video Range requests in Service Worker!
+  // Chromium's native C++ media pipeline handles Range requests, connection reuse,
+  // multi-threading, cancellation upon pause/seek natively without ServiceWorker thread contention.
+  // Intercepting video requests in SW breaks socket pipelines, causing deadlocks,
+  // infinite spinners on pause->play, and 2-3 minute black screens.
+  const isVideo = req.destination === 'video' ||
+                  /\.(mp4|mkv|webm|avi|mov|flv|ts|m2ts|iso)(\?|$)/i.test(url) ||
+                  (url.includes('/alist/') && !/\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url));
+
+  if (isVideo) {
+    return; // Passthrough directly to native browser C++ media pipeline!
+  }
+
+  // Handle audio streams
+  const isAudio = req.destination === 'audio' ||
+                  /\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url);
+
+  if (!isAudio) {
+    return; // Pass through non-audio requests untouched
+  }
+
   const rangeHeader = req.headers.get('range');
-
-  // Determine if this is an audio/music request or a video file
-  const isAudioReq = req.destination === 'audio' || /\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url);
-  const isVideoReq = req.destination === 'video' || /\.(mp4|mkv|webm|m4v|mov|ts)(\?|$)/i.test(url);
-
-  // For video range streaming: pass through directly to native browser engine for zero-stutter hardware playback
-  if (isVideoReq && rangeHeader) {
+  if (rangeHeader) {
+    event.respondWith(handleRangeRequest(req, rangeHeader));
     return;
   }
 
-  // We only cache GET requests for media
-  const isMediaReq = isAudioReq || isVideoReq || Boolean(rangeHeader);
-  if (!isMediaReq || req.method !== 'GET') {
-    return;
-  }
-
-  event.respondWith(handleMediaRequest(req));
+  // Non-range audio request (e.g. full audio metadata)
+  event.respondWith(handleFullRequest(req));
 });
 
-async function handleMediaRequest(req) {
-  const url = req.url;
-  const rangeHeader = req.headers.get('range');
-  const cache = await caches.open(CACHE_NAME);
+async function handleRangeRequest(req, rangeHeader) {
+  const rangeMatch = rangeHeader.match(/bytes=(\d+)-(\d+)?/);
+  if (!rangeMatch) {
+    return fetch(req);
+  }
 
-  // If this is a Range request
-  if (rangeHeader) {
-    // Try to see if we have the full response or a range slice cached
-    const cleanUrl = url.split('?')[0];
-    const cachedFull = await cache.match(cleanUrl);
+  const reqStart = parseInt(rangeMatch[1], 10);
+  const reqEnd = rangeMatch[2] ? parseInt(rangeMatch[2], 10) : null;
+  const canonicalKey = getCanonicalMediaKey(req.url);
 
-    if (cachedFull) {
-      // Synthesize 206 Partial Content from full cached response
-      return createPartialResponse(cachedFull, rangeHeader);
-    }
+  // 1. Check in-memory hot buffer first
+  let cachedInfo = MEMORY_CHUNK_MAP.get(canonicalKey);
 
-    // Check if we have exact range cached
-    const cachedRange = await cache.match(req);
-    if (cachedRange) {
-      return cachedRange;
-    }
-
-    // Fetch from network with range
+  // 2. If not in memory, check CacheStorage
+  if (!cachedInfo) {
     try {
-      const netRes = await fetch(req);
-      if (netRes.status === 206) {
-        // Clone and store small-to-medium range responses
-        const contentLength = parseInt(netRes.headers.get('content-length') || '0', 10);
-        if (contentLength > 0 && contentLength <= 40 * 1024 * 1024) { // <= 40MB chunk
-          try {
-            cache.put(req, netRes.clone());
-          } catch (e) {}
+      const cache = await caches.open(CACHE_NAME);
+      const cachedRes = await cache.match(canonicalKey);
+      if (cachedRes) {
+        const chunkStart = parseInt(cachedRes.headers.get('X-PulseOS-Chunk-Start') || '0', 10);
+        const chunkEnd = parseInt(cachedRes.headers.get('X-PulseOS-Chunk-End') || '0', 10);
+        const totalLength = parseInt(cachedRes.headers.get('X-PulseOS-Total-Length') || '0', 10);
+        const mimeType = cachedRes.headers.get('Content-Type') || 'video/mp4';
+        const ab = await cachedRes.arrayBuffer();
+
+        cachedInfo = {
+          chunkStart,
+          chunkEnd: Math.max(chunkEnd, ab.byteLength - 1),
+          totalLength: totalLength || ab.byteLength,
+          mimeType,
+          buffer: ab
+        };
+
+        // Cache in memory for subsequent Range slices (evict oldest if > 6 items)
+        if (MEMORY_CHUNK_MAP.size >= 6) {
+          const firstKey = MEMORY_CHUNK_MAP.keys().next().value;
+          MEMORY_CHUNK_MAP.delete(firstKey);
         }
-      } else if (netRes.status === 200) {
-        // Full response received
-        const contentLength = parseInt(netRes.headers.get('content-length') || '0', 10);
-        if (contentLength > 0 && contentLength <= 80 * 1024 * 1024) { // <= 80MB full file
-          try {
-            cache.put(cleanUrl, netRes.clone());
-          } catch (e) {}
-        }
-        return createPartialResponse(netRes, rangeHeader);
+        MEMORY_CHUNK_MAP.set(canonicalKey, cachedInfo);
       }
-      return netRes;
-    } catch (err) {
-      // If network fails, attempt to fallback to any cached version
-      const fallback = await cache.match(cleanUrl);
-      if (fallback) {
-        return createPartialResponse(fallback, rangeHeader);
-      }
-      throw err;
+    } catch (e) {
+      console.warn('[SW Media Cache] Error loading from CacheStorage:', e);
     }
   }
 
-  // Non-range GET media request (e.g. audio full fetch)
-  const cached = await cache.match(req);
-  if (cached) {
-    return cached;
+  // 3. If cache covers reqStart, synthesize 206 Partial Content
+  if (cachedInfo && reqStart >= cachedInfo.chunkStart && reqStart <= cachedInfo.chunkEnd) {
+    const serveStart = reqStart;
+    const serveEnd = (reqEnd !== null && reqEnd <= cachedInfo.chunkEnd)
+      ? reqEnd
+      : cachedInfo.chunkEnd;
+
+    if (serveEnd >= serveStart) {
+      const sliceOffset = serveStart - cachedInfo.chunkStart;
+      const sliceEndOffset = serveEnd - cachedInfo.chunkStart + 1;
+      const slicedBuffer = cachedInfo.buffer.slice(sliceOffset, sliceEndOffset);
+      const sliceLength = slicedBuffer.byteLength;
+
+      const headers = new Headers();
+      headers.set('Content-Type', cachedInfo.mimeType || 'video/mp4');
+      headers.set('Content-Range', `bytes ${serveStart}-${serveEnd}/${cachedInfo.totalLength || '*'}`);
+      headers.set('Content-Length', String(sliceLength));
+      headers.set('Accept-Ranges', 'bytes');
+      headers.set('Cache-Control', 'private, max-age=2592000');
+      headers.set('X-PulseOS-Cache', 'HIT');
+
+      notifyClients({
+        type: 'PULSEOS_MEDIA_CACHE_HIT',
+        url: req.url,
+        canonicalKey,
+        savedBytes: sliceLength,
+        range: `${serveStart}-${serveEnd}`
+      });
+
+      return new Response(slicedBuffer, {
+        status: 206,
+        statusText: 'Partial Content',
+        headers: headers
+      });
+    }
   }
 
-  try {
-    const netRes = await fetch(req);
-    if (netRes.ok && netRes.status === 200) {
-      const len = parseInt(netRes.headers.get('content-length') || '0', 10);
-      if (len <= 80 * 1024 * 1024) {
-        try {
-          cache.put(req, netRes.clone());
-        } catch (e) {}
-      }
-    }
-    return netRes;
-  } catch (err) {
-    throw err;
-  }
+  // 4. Cache Miss or out-of-range: pass through directly to network
+  return fetch(req);
 }
 
-async function createPartialResponse(fullResponse, rangeHeader) {
-  const ab = await fullResponse.arrayBuffer();
-  const total = ab.byteLength;
+async function handleFullRequest(req) {
+  const canonicalKey = getCanonicalMediaKey(req.url);
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    const cachedRes = await cache.match(canonicalKey);
+    if (cachedRes) {
+      const totalLength = parseInt(cachedRes.headers.get('X-PulseOS-Total-Length') || '0', 10);
+      const chunkEnd = parseInt(cachedRes.headers.get('X-PulseOS-Chunk-End') || '0', 10);
+      // If full file is cached
+      if (totalLength > 0 && chunkEnd >= totalLength - 1) {
+        notifyClients({
+          type: 'PULSEOS_MEDIA_CACHE_HIT',
+          url: req.url,
+          canonicalKey,
+          savedBytes: totalLength,
+          range: 'full'
+        });
+        return cachedRes.clone();
+      }
+    }
+  } catch (e) {}
 
-  const matches = rangeHeader.match(/bytes=(\d+)-(\d+)?/);
-  if (!matches) {
-    return new Response(ab, {
-      status: 200,
-      headers: fullResponse.headers
+  return fetch(req);
+}
+
+// Client IPC message handler
+self.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || !data.type) return;
+
+  if (data.type === 'CACHE_INTRO_CHUNK') {
+    const { url, buffer, totalLength, mimeType, chunkStart, chunkEnd, title } = data;
+    const canonicalKey = getCanonicalMediaKey(url);
+
+    caches.open(CACHE_NAME).then((cache) => {
+      const headers = new Headers();
+      headers.set('Content-Type', mimeType || 'video/mp4');
+      headers.set('X-PulseOS-Chunk-Start', String(chunkStart || 0));
+      headers.set('X-PulseOS-Chunk-End', String(chunkEnd || (buffer.byteLength - 1)));
+      headers.set('X-PulseOS-Total-Length', String(totalLength || buffer.byteLength));
+      if (title) headers.set('X-PulseOS-Title', encodeURIComponent(title));
+      headers.set('Cache-Control', 'private, max-age=2592000');
+
+      const response = new Response(buffer, {
+        status: 200,
+        headers: headers
+      });
+
+      return cache.put(canonicalKey, response).then(() => {
+        // Also update memory map
+        MEMORY_CHUNK_MAP.set(canonicalKey, {
+          chunkStart: chunkStart || 0,
+          chunkEnd: chunkEnd || (buffer.byteLength - 1),
+          totalLength: totalLength || buffer.byteLength,
+          mimeType: mimeType || 'video/mp4',
+          buffer: buffer
+        });
+        notifyClients({
+          type: 'PULSEOS_INTRO_CACHED_SUCCESS',
+          canonicalKey,
+          size: buffer.byteLength,
+          totalLength
+        });
+      });
+    }).catch((err) => {
+      console.warn('[SW Media Cache] Error caching intro chunk:', err);
+    });
+  } else if (data.type === 'GET_MEDIA_CACHE_STATS') {
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const requests = await cache.keys();
+      let totalBytes = 0;
+      const items = [];
+      for (const r of requests) {
+        const res = await cache.match(r);
+        if (res) {
+          const ab = await res.arrayBuffer();
+          totalBytes += ab.byteLength;
+          items.push({
+            url: r.url,
+            size: ab.byteLength,
+            title: decodeURIComponent(res.headers.get('X-PulseOS-Title') || '')
+          });
+        }
+      }
+      if (event.source) {
+        event.source.postMessage({
+          type: 'PULSEOS_MEDIA_CACHE_STATS',
+          count: requests.length,
+          totalBytes,
+          items
+        });
+      }
+    });
+  } else if (data.type === 'CLEAR_MEDIA_CACHE') {
+    MEMORY_CHUNK_MAP.clear();
+    caches.delete(CACHE_NAME).then(() => {
+      notifyClients({
+        type: 'PULSEOS_MEDIA_CACHE_CLEARED'
+      });
     });
   }
-
-  const start = parseInt(matches[1], 10);
-  let end = matches[2] ? parseInt(matches[2], 10) : total - 1;
-  if (end >= total) end = total - 1;
-
-  const chunk = ab.slice(start, end + 1);
-  const headers = new Headers(fullResponse.headers);
-  headers.set('Content-Range', `bytes ${start}-${end}/${total}`);
-  headers.set('Content-Length', String(chunk.byteLength));
-  headers.set('Accept-Ranges', 'bytes');
-
-  return new Response(chunk, {
-    status: 206,
-    statusText: 'Partial Content',
-    headers: headers
-  });
-}
+});

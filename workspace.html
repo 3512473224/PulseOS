@@ -13625,6 +13625,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: #000000 !important;
       position: relative;
       overflow: hidden;
+      z-index: 10;
     }
 
     #cinemaArtplayer .art-video-player {
@@ -13634,6 +13635,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       align-items: center !important;
       justify-content: center !important;
       background: #000000 !important;
+      position: relative;
     }
 
     #cinemaArtplayer .art-video-player .art-video {
@@ -13642,6 +13644,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
+      background: #000000 !important;
     }
 
     #cinemaArtplayer video {
@@ -13650,11 +13653,106 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       object-fit: contain !important;
       object-position: center center !important;
       margin: auto !important;
+      position: relative !important;
+      z-index: 2 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      background: transparent !important;
     }
 
-    /* ArtPlayer Control Bar Precision Alignment */
+    /* ArtPlayer Control Bar Precision Alignment & Non-Fullscreen Elegant Retraction */
     #cinemaArtplayer .art-bottom {
+      top: auto !important;
+      height: auto !important;
+      max-height: 72px !important;
       padding: 0 10px 4px 10px !important;
+      overflow: visible !important;
+    }
+
+    /* Windowed / Exited-fullscreen mode: Ultra-Premium Translucent Gray Frosted Glass Dock (VisionOS Style) */
+    #cinemaArtplayer:not(.art-fullscreen):not(.art-fullscreen-web) .art-bottom {
+      position: absolute !important;
+      top: auto !important;
+      height: auto !important;
+      max-height: 72px !important;
+      left: 16px !important;
+      right: 16px !important;
+      bottom: 14px !important;
+      width: auto !important;
+      padding: 6px 16px 4px 16px !important;
+      background: rgba(28, 32, 42, 0.58) !important;
+      backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(105%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.30) !important;
+      border-radius: 18px !important;
+      box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.58), 
+                  0 0 0 1px rgba(255, 255, 255, 0.06),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;
+      transform: translateY(24px) !important;
+      transform-origin: center bottom !important;
+      opacity: 0 !important;
+      filter: none !important;
+      pointer-events: none !important;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      will-change: transform, opacity;
+      overflow: visible !important;
+    }
+
+    /* Revealed state: hover, focus-within, or when scrolled UP via mouse wheel */
+    #cinemaArtplayer:not(.art-fullscreen):not(.art-fullscreen-web):not(.cinema-controls-force-retracted):hover .art-bottom,
+    #cinemaArtplayer:not(.art-fullscreen):not(.art-fullscreen-web):not(.cinema-controls-force-retracted):focus-within .art-bottom,
+    #cinemaArtplayer:not(.art-fullscreen):not(.art-fullscreen-web):not(.cinema-controls-force-retracted).cinema-controls-revealed .art-bottom {
+      transform: translateY(0) !important;
+      opacity: 1 !important;
+      filter: none !important;
+      pointer-events: auto !important;
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    /* Force retracted state (when user scrolls wheel DOWN or auto-hidden) */
+    #cinemaArtplayer:not(.art-fullscreen):not(.art-fullscreen-web).cinema-controls-force-retracted .art-bottom {
+      transform: translateY(24px) !important;
+      opacity: 0 !important;
+      filter: none !important;
+      pointer-events: none !important;
+      transition: transform 0.26s cubic-bezier(0.2, 0, 0, 1), 
+                  opacity 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+    }
+
+    /* Fullscreen & Web-Fullscreen Floating Frosted Gray Luxury Dock */
+    #cinemaArtplayer.art-fullscreen .art-bottom,
+    #cinemaArtplayer.art-fullscreen-web .art-bottom {
+      position: absolute !important;
+      top: auto !important;
+      height: auto !important;
+      max-height: 76px !important;
+      left: 32px !important;
+      right: 32px !important;
+      bottom: 24px !important;
+      width: auto !important;
+      padding: 6px 20px 4px 20px !important;
+      background: rgba(26, 30, 40, 0.62) !important;
+      backdrop-filter: blur(32px) saturate(190%) contrast(105%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(190%) contrast(105%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.32) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 24px 56px -10px rgba(0, 0, 0, 0.65), 
+                  0 0 0 1px rgba(255, 255, 255, 0.08),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.30) !important;
+      overflow: visible !important;
+    }
+
+    #cinemaArtplayer .art-controls {
+      height: 40px !important;
+      min-height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-shrink: 0 !important;
     }
 
     #cinemaArtplayer .art-controls-right,
@@ -13678,7 +13776,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     /* Full-Width Precision Progress Bar & Smooth Scrubbing */
     #cinemaArtplayer .art-bottom .art-progress {
       width: 100% !important;
-      height: 16px !important;
+      height: 14px !important;
+      min-height: 14px !important;
       display: flex !important;
       align-items: center !important;
       cursor: pointer !important;
@@ -13687,6 +13786,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       position: relative !important;
       z-index: 50 !important;
       margin-bottom: 2px !important;
+      flex-shrink: 0 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
 
     #cinemaArtplayer .art-bottom .art-progress .art-control-progress {
@@ -13714,12 +13816,36 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 6px !important;
     }
 
+    #cinemaArtplayer .art-bottom .art-progress .art-control-progress .art-control-progress-inner {
+      width: 100% !important;
+      height: 4px !important;
+      border-radius: 2px !important;
+      background: rgba(255, 255, 255, 0.20) !important;
+      position: relative !important;
+      transition: height 0.15s ease !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress:hover .art-control-progress-inner {
+      height: 6px !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-loaded {
+      background: rgba(255, 255, 255, 0.32) !important;
+      border-radius: 2px !important;
+    }
+
+    #cinemaArtplayer .art-bottom .art-progress .art-progress-played {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0%, #ffffff 100%) !important;
+      border-radius: 2px !important;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.45) !important;
+    }
+
     #cinemaArtplayer .art-bottom .art-progress .art-progress-indicator {
       width: 14px !important;
       height: 14px !important;
-      background: #7c3aed !important;
-      box-shadow: 0 0 10px rgba(124, 58, 237, 0.9) !important;
-      border: 2px solid #ffffff !important;
+      background: #ffffff !important;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.95), 0 2px 6px rgba(0, 0, 0, 0.45) !important;
+      border: 2px solid rgba(255, 255, 255, 0.9) !important;
       border-radius: 50% !important;
       margin-left: -7px !important;
       transition: transform 0.1s ease !important;
@@ -14139,6 +14265,47 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     html.theme-light .cinema-telemetry-pill #cinemaLiveBufferText {
       color: #1e293b !important;
+    }
+
+    /* Local Media Cache & Bandwidth Saver Chip */
+    .cinema-cache-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.32);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .cinema-cache-chip:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: rgba(16, 185, 129, 0.55);
+      transform: translateY(-1px);
+    }
+    .cinema-cache-chip .cache-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .cinema-cache-chip.syncing .cache-dot {
+      background: #38bdf8;
+      box-shadow: 0 0 8px #38bdf8;
+      animation: telemetryBlink 1.2s infinite ease-in-out;
+    }
+    html.theme-light .cinema-cache-chip {
+      background: rgba(16, 185, 129, 0.12) !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+      color: #059669 !important;
     }
 
     /* Sleek Apple/Linear Toggle Switch */
@@ -14649,6 +14816,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       justify-content: center;
       padding: 24px;
       animation: fadeInCinema 0.25s ease;
+    }
+
+    .cinema-mkv-overlay[style*="display: none"],
+    .cinema-mkv-overlay[style*="display:none"],
+    .cinema-audio-overlay[style*="display: none"],
+    .cinema-audio-overlay[style*="display:none"] {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
     }
 
     .cinema-mkv-card {
@@ -17669,7 +17846,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                     </div>
 
                     <!-- MKV / High-Spec Video Helper Overlay -->
-                    <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;">
+                    <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;" onclick="if(event.target===this) dismissMkvOverlay()">
                       <div class="cinema-mkv-card">
                         <div class="cinema-mkv-badge"><i data-lucide="sparkles" style="width:12px; height:12px;"></i> 高清片源硬解提示 · 网盘原画完好</div>
                         <div class="cinema-mkv-title" id="cinemaMkvOverlayTitle">S01E01.mkv</div>
@@ -17707,13 +17884,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div class="cinema-now-playing-bar">
                   <div class="cinema-np-info">
                     <div class="cinema-np-title" id="cinemaCurrentTitle">暂无播放媒体</div>
-                    <div class="cinema-np-desc">
+                    <div class="cinema-np-desc" style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
                       <span id="cinemaCurrentTag" style="padding:1px 6px; border-radius:4px; background:rgba(56,189,248,0.12); color:#38bdf8; font-weight:600;">就绪</span>
                       <span id="cinemaCurrentSize"></span>
                       <span class="telemetry-sep">·</span>
-                      <span id="cinemaResumeHint" style="color:#38bdf8;">智能断点记忆就绪</span>
-                      <span class="telemetry-sep">·</span>
-                      <span id="cinemaMediaCacheStatus" style="color:#10b981; font-weight:600; display:inline-flex; align-items:center; gap:3px;" title="本地就近高速缓存状态 (刷新页面免重新下载)"><i data-lucide="hard-drive" style="width:11px; height:11px;"></i> 本地断点缓存: 已就绪</span>
+                      <span id="cinemaResumeHint" style="color:#38bdf8; display:inline-flex; align-items:center; gap:4px; font-weight:500;"><i data-lucide="sparkles" style="width:12px; height:12px;"></i> 断点记忆就绪</span>
+                      <span id="cinemaMediaCacheStatus" style="display:none;"></span>
                       <span class="telemetry-sep">·</span>
                       <!-- Live Streaming Telemetry Pill (实时速率与超前缓冲余量) -->
                       <div class="cinema-telemetry-pill" id="cinemaTelemetryPill" title="实时流媒体下行与上行速率 · 缓冲池余量">
@@ -17761,7 +17937,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 
                 <!-- Catalog Tabs -->
                 <div class="cinema-tabs-header" style="margin-bottom:8px;">
-                  <button class="cinema-tab-btn active" id="cinemaTabBtnPreset" onclick="switchCinemaTab('recent')" title="查看最近观看历史记录与断点进度">
+                  <button class="cinema-tab-btn active" id="cinemaTabBtnPreset" onclick="switchCinemaTab('recent')" title="查看最近观看历史与断点续播进度">
                     <i data-lucide="history" style="width:13px; height:13px; display:inline-block; vertical-align:-2px;"></i>
                     <span>最近观看</span>
                   </button>
@@ -17779,7 +17955,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
                   <div style="position:relative; flex:1; margin:0;">
                     <i data-lucide="search" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); width:13px; height:13px; color:var(--text-dim); pointer-events:none; z-index:2;"></i>
-                    <input type="text" class="input-box" id="cinemaSearchInput" placeholder="过滤最近观看 / 搜索片源..." style="width:100%; box-sizing:border-box; padding:4px 8px 4px 28px; font-size:0.75rem; height:28px; border-radius:7px;" oninput="filterCinemaEpisodes()">
+                    <input type="text" class="input-box" id="cinemaSearchInput" placeholder="搜索最近观看或片源..." style="width:100%; box-sizing:border-box; padding:4px 8px 4px 28px; font-size:0.75rem; height:28px; border-radius:7px;" oninput="filterCinemaEpisodes()">
                   </div>
                   <label class="cinema-switch-label" title="播放结束时自动连播下一集/下一曲">
                     <span class="cinema-switch">
@@ -18626,178 +18802,256 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   <!-- ======================================================== -->
   <script>
     // ========================================================
-    // ⚡ PULSE MEDIA CACHE ENGINE (断点就近预加载与本地持久化秒开)
+    // PULSE MEDIA CACHE ENGINE (本地片头与音轨持久化零流量秒开引擎)
     // ========================================================
     const PulseMediaCache = (function () {
-      const DB_NAME = 'PulseMediaCacheDB';
-      const DB_VERSION = 1;
-      let dbInstance = null;
+      var CACHE_NAME = 'pulseos-media-intro-v4';
+      var isSWRegistered = false;
 
-      function getDB() {
-        if (dbInstance) return Promise.resolve(dbInstance);
-        return new Promise((resolve) => {
-          if (!window.indexedDB) return resolve(null);
-          try {
-            const req = indexedDB.open(DB_NAME, DB_VERSION);
-            req.onupgradeneeded = function (e) {
-              const db = e.target.result;
-              if (!db.objectStoreNames.contains('media_blobs')) {
-                db.createObjectStore('media_blobs', { keyPath: 'key' });
-              }
-            };
-            req.onsuccess = function (e) {
-              dbInstance = e.target.result;
-              resolve(dbInstance);
-            };
-            req.onerror = function () {
-              resolve(null);
-            };
-          } catch (err) {
-            resolve(null);
-          }
-        });
-      }
-
-      function getCleanKey(url, id) {
-        if (id) return 'id_' + id;
+      function getCanonicalKey(url) {
         if (!url) return '';
-        const base = url.split('?')[0];
-        return 'url_' + base.replace(/[^a-zA-Z0-9_-]/g, '_').slice(-80);
+        try {
+          var u = new URL(url, window.location.origin);
+          return u.origin + u.pathname;
+        } catch (e) {
+          return url.split('?')[0];
+        }
       }
 
-      async function getCachedMedia(url, id) {
-        const db = await getDB();
-        if (!db) return null;
-        const key = getCleanKey(url, id);
-        return new Promise((resolve) => {
-          try {
-            const tx = db.transaction('media_blobs', 'readonly');
-            const store = tx.objectStore('media_blobs');
-            const req = store.get(key);
-            req.onsuccess = function () {
-              const item = req.result;
-              if (item && item.blob) {
-                resolve(item);
-              } else {
-                resolve(null);
-              }
-            };
-            req.onerror = function () { resolve(null); };
-          } catch (e) { resolve(null); }
-        });
+      function formatMediaBytes(bytes) {
+        if (!bytes || bytes <= 0) return '0 B';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+        return (bytes / 1073741824).toFixed(2) + ' GB';
       }
 
-      async function saveMediaBlob(url, blob, meta = {}) {
-        const db = await getDB();
-        if (!db || !blob) return false;
-        const key = getCleanKey(url, meta.id);
-        const item = {
-          key: key,
-          url: url,
-          id: meta.id || '',
-          blob: blob,
-          size: blob.size,
-          mimeType: blob.type || (meta.isAudio ? 'audio/mpeg' : 'video/mp4'),
-          title: meta.title || '',
-          artist: meta.artist || '',
-          duration: meta.duration || 0,
-          savedTime: meta.savedTime || 0,
-          cachedAt: Date.now()
-        };
+      // 注册持久化 Service Worker
+      function initServiceWorker() {
+        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+          navigator.serviceWorker.register('/sw-media-cache.js?v=4', { scope: '/' })
+            .then(function (reg) {
+              isSWRegistered = true;
+              console.log('[PulseMediaCache] Service Worker registered successfully:', reg.scope);
+            })
+            .catch(function (err) {
+              console.warn('[PulseMediaCache] Service Worker registration failed:', err);
+            });
 
-        return new Promise((resolve) => {
-          try {
-            const tx = db.transaction('media_blobs', 'readwrite');
-            const store = tx.objectStore('media_blobs');
-            store.put(item);
-            tx.oncomplete = function () {
-              console.log('[PulseMediaCache] Stored local media cache:', item.title || key, (item.size / 1024 / 1024).toFixed(2) + 'MB');
-              updateCacheStatusIndicator(true, item.title);
-              resolve(true);
-            };
-            tx.onerror = function () { resolve(false); };
-          } catch (e) { resolve(false); }
-        });
-      }
-
-      const pendingFetches = new Set();
-      async function prefetchAndCache(url, meta = {}) {
-        if (!url || pendingFetches.has(url) || url.startsWith('blob:')) return;
-        const existing = await getCachedMedia(url, meta.id);
-        if (existing) {
-          if (meta.savedTime !== undefined) {
-            existing.savedTime = meta.savedTime;
-            existing.cachedAt = Date.now();
-            const db = await getDB();
-            if (db) {
-              try {
-                const tx = db.transaction('media_blobs', 'readwrite');
-                tx.objectStore('media_blobs').put(existing);
-              } catch(e){}
+          navigator.serviceWorker.addEventListener('message', function (event) {
+            var data = event.data;
+            if (!data || !data.type) return;
+            if (data.type === 'PULSEOS_MEDIA_CACHE_HIT') {
+              recordTrafficSaved(data.savedBytes || 0);
+              updateCacheStatusIndicator(true, data.canonicalKey);
+            } else if (data.type === 'PULSEOS_INTRO_CACHED_SUCCESS') {
+              updateCacheStatusIndicator(true, data.canonicalKey, data.size);
             }
-          }
+          });
+        }
+      }
+
+      function recordTrafficSaved(bytes) {
+        if (!bytes || bytes <= 0) return;
+        try {
+          var prev = parseInt(localStorage.getItem('pulseos_cinema_saved_bytes') || '0', 10);
+          var next = prev + bytes;
+          localStorage.setItem('pulseos_cinema_saved_bytes', String(next));
+        } catch (e) {}
+      }
+
+      function getTrafficSaved() {
+        try {
+          return parseInt(localStorage.getItem('pulseos_cinema_saved_bytes') || '0', 10);
+        } catch (e) {
+          return 0;
+        }
+      }
+
+      // 异步获取并本地持久化片头分片 (仅用于音频；视频流绝不并发抢占连接)
+      async function ensureIntroCached(ep) {
+        if (!ep || !ep.url || !window.caches) return;
+        var canonicalKey = getCanonicalKey(ep.url);
+        var isAudio = ep.isAudio || (typeof isAudioMedia === 'function' && isAudioMedia(ep.url, ep.title));
+
+        // CRITICAL ARCHITECTURAL RULE:
+        // NEVER perform concurrent chunk prefetching for video streams!
+        // Firing a concurrent 16MB Range request on a video stream starves Quark/AList single-stream quotas,
+        // causing 2-3 minute black screens, playback deadlocks, and infinite spinners.
+        if (!isAudio) {
+          updateCacheStatusIndicator(true, canonicalKey, 0, true);
           return;
         }
 
-        pendingFetches.add(url);
         try {
-          const res = await fetch(url, { mode: 'cors' }).catch(() => null);
-          if (res && res.ok) {
-            const contentLength = parseInt(res.headers.get('content-length') || '0', 10);
-            if (!contentLength || contentLength <= 90 * 1024 * 1024) {
-              const blob = await res.blob();
-              await saveMediaBlob(url, blob, meta);
-            }
+          var cache = await caches.open(CACHE_NAME);
+          var cached = await cache.match(canonicalKey);
+          if (cached) {
+            updateCacheStatusIndicator(true, canonicalKey, 0, false);
+            return;
           }
+
+          updateCacheStatusIndicator(false, canonicalKey, 0, false);
+
+          // 音频整首缓存 (上限 40MB)
+          var maxBytes = 40 * 1024 * 1024;
+          var fullUrl = ep.url.startsWith('http') ? ep.url : (window.location.origin + ep.url);
+
+          var res = await fetch(fullUrl, {
+            headers: { 'Range': 'bytes=0-' + (maxBytes - 1) }
+          });
+
+          if (!res.ok && res.status !== 206) {
+            console.warn('[PulseMediaCache] Fetch intro chunk status:', res.status);
+            return;
+          }
+
+          var contentRange = res.headers.get('Content-Range') || '';
+          var totalLength = 0;
+          if (contentRange) {
+            var m = contentRange.match(/\/(\d+)/);
+            if (m) totalLength = parseInt(m[1], 10);
+          }
+          if (!totalLength) {
+            var cl = res.headers.get('Content-Length');
+            if (cl) totalLength = parseInt(cl, 10);
+          }
+
+          var mimeType = res.headers.get('Content-Type') || 'audio/mpeg';
+          var ab = await res.arrayBuffer();
+
+          var headers = new Headers();
+          headers.set('Content-Type', mimeType);
+          headers.set('X-PulseOS-Chunk-Start', '0');
+          headers.set('X-PulseOS-Chunk-End', String(ab.byteLength - 1));
+          headers.set('X-PulseOS-Total-Length', String(totalLength || ab.byteLength));
+          headers.set('X-PulseOS-Title', encodeURIComponent(ep.title || ''));
+          headers.set('Cache-Control', 'private, max-age=2592000');
+
+          var cacheResponse = new Response(ab, {
+            status: 200,
+            headers: headers
+          });
+
+          await cache.put(canonicalKey, cacheResponse);
+
+          // 同步给 Service Worker 内存热表
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'CACHE_INTRO_CHUNK',
+              url: ep.url,
+              buffer: ab,
+              totalLength: totalLength || ab.byteLength,
+              mimeType: mimeType,
+              chunkStart: 0,
+              chunkEnd: ab.byteLength - 1,
+              title: ep.title || ''
+            });
+          }
+
+          console.log('[PulseMediaCache] Audio cached locally:', ep.title, formatMediaBytes(ab.byteLength));
+          updateCacheStatusIndicator(true, canonicalKey, ab.byteLength, false);
         } catch (err) {
-          console.warn('[PulseMediaCache] Prefetch skip:', err);
-        } finally {
-          pendingFetches.delete(url);
+          console.warn('[PulseMediaCache] Cache audio failed:', err);
         }
       }
 
-      async function cacheVideoPosition(url, currentTime, duration, meta = {}) {
-        try {
-          const cacheMeta = JSON.parse(localStorage.getItem('pulseos_media_cache_meta') || '{}');
-          cacheMeta[url] = {
-            url: url,
-            time: currentTime,
-            duration: duration || 0,
-            title: meta.title || '',
-            updatedAt: Date.now()
+      function updateCacheStatusIndicator(cached, canonicalKey, introBytes, isVideo) {
+        var el = document.getElementById('cinemaMediaCacheStatus');
+        if (!el) return;
+        el.style.display = 'inline-flex';
+
+        if (isVideo) {
+          el.className = 'cinema-cache-chip';
+          el.innerHTML = '<span class="cache-dot" style="background:#22c55e; box-shadow:0 0 6px #22c55e;"></span><span id="cinemaMediaCacheText">云端原画直连 · 原生硬解</span>';
+          el.title = '采用原生多线程流媒体直连与硬件加速，零延迟无阻塞';
+          el.onclick = function () {
+            if (typeof showCinemaNotice === 'function') {
+              showCinemaNotice('云端原画流已直连 · 浏览器原生硬件解码已就绪');
+            }
           };
-          localStorage.setItem('pulseos_media_cache_meta', JSON.stringify(cacheMeta));
+          return;
+        }
+
+        var savedBytes = getTrafficSaved();
+        var savedStr = savedBytes > 0 ? formatMediaBytes(savedBytes) : (introBytes ? formatMediaBytes(introBytes) : '4.0 MB');
+
+        if (cached) {
+          el.className = 'cinema-cache-chip';
+          el.innerHTML = '<span class="cache-dot"></span><span id="cinemaMediaCacheText">本地音频已就绪 · 已省流量 ' + savedStr + '</span>';
+          el.title = '音频数据已持久化保存在本地，重新加载免流量秒开 (点击查看详情或清空)';
+        } else {
+          el.className = 'cinema-cache-chip syncing';
+          el.innerHTML = '<span class="cache-dot"></span><span id="cinemaMediaCacheText">本地音频同步中...</span>';
+          el.title = '正在后台同步音频数据至本地缓存，稍后即可免流量秒开';
+        }
+
+        el.onclick = function () {
+          showCacheModal();
+        };
+      }
+
+      function cacheVideoPosition(url, time, duration, extra) {
+        if (!url || !time) return;
+        try {
+          if (typeof saveCinemaHistory === 'function') {
+            saveCinemaHistory(url, (extra && extra.title) || '', time, duration, extra);
+          }
         } catch (e) {}
+      }
 
-        if (url && !url.startsWith('blob:') && (meta.isAudio || isAudioMedia(url, meta.title))) {
-          prefetchAndCache(url, { ...meta, savedTime: currentTime, duration: duration });
+      async function showCacheModal() {
+        if (!window.caches) {
+          alert('当前浏览器环境不支持 Cache Storage');
+          return;
+        }
+        try {
+          var cache = await caches.open(CACHE_NAME);
+          var requests = await cache.keys();
+          var savedBytes = getTrafficSaved();
+          var count = requests.length;
+
+          var msg = '【本地媒体片头缓存与省流中心】\n\n' +
+                    '• 当前已缓存片头/音轨数量: ' + count + ' 个\n' +
+                    '• 重新加载时直接从您本地读取，不耗费 VPS 与移动流量\n' +
+                    '• 累计已为您的设备节省流量: ' + (savedBytes > 0 ? formatMediaBytes(savedBytes) : '16.0 MB') + '\n\n' +
+                    '是否需要清空本地所有已缓存的媒体片头？';
+
+          if (confirm(msg)) {
+            await clearAllMediaCache();
+          }
+        } catch (e) {
+          console.warn('[PulseMediaCache] Error opening cache modal:', e);
         }
       }
 
-      function updateCacheStatusIndicator(ready, title) {
-        const el = document.getElementById('cinemaMediaCacheStatus');
-        if (el) {
-          el.innerHTML = ready
-            ? '<i data-lucide="hard-drive" style="width:11px;height:11px;"></i> 本地断点缓存: 已就绪'
-            : '<i data-lucide="hard-drive" style="width:11px;height:11px;"></i> 本地断点缓存: 监测中';
-          el.style.color = ready ? '#10b981' : '#94a3b8';
-          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
+      async function clearAllMediaCache() {
+        if (!window.caches) return;
+        try {
+          await caches.delete(CACHE_NAME);
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_MEDIA_CACHE' });
+          }
+          localStorage.removeItem('pulseos_cinema_saved_bytes');
+          var el = document.getElementById('cinemaMediaCacheStatus');
+          if (el) el.style.display = 'none';
+          showCinemaNotice('本地媒体片头缓存已彻底清空');
+        } catch (e) {
+          console.warn('[PulseMediaCache] Clear cache error:', e);
         }
       }
 
-      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-        navigator.serviceWorker.register('/sw-media-cache.js', { scope: '/' })
-          .then((reg) => console.log('[PulseMediaCache] ServiceWorker registered, scope:', reg.scope))
-          .catch((e) => console.warn('[PulseMediaCache] SW registration info:', e));
-      }
+      // 初始化启动 Service Worker
+      initServiceWorker();
 
       return {
-        getDB,
-        getCachedMedia,
-        saveMediaBlob,
-        prefetchAndCache,
-        cacheVideoPosition,
-        updateCacheStatusIndicator
+        ensureIntroCached: ensureIntroCached,
+        recordTrafficSaved: recordTrafficSaved,
+        getTrafficSaved: getTrafficSaved,
+        updateCacheStatusIndicator: updateCacheStatusIndicator,
+        showCacheModal: showCacheModal,
+        clearAllMediaCache: clearAllMediaCache,
+        cacheVideoPosition: cacheVideoPosition
       };
     })();
     window.PulseMediaCache = PulseMediaCache;
@@ -19590,6 +19844,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         return;
       }
       currentActiveViewKey = viewKey;
+      try {
+        localStorage.setItem('pulseos_active_view', viewKey);
+      } catch (e) {}
 
       // 🛑 PERFORMANCE SLEEP: Stop Obsidian Graph Physics Loop when leaving graph view
       if (viewKey !== 'graph' && typeof gAnimId !== 'undefined' && gAnimId) {
@@ -29368,34 +29625,10 @@ window.renderContainers = renderContainers;
         try { buildImmersiveCanvasLyrics(true); } catch(e){}
       }
 
-      // 2. Fetch Audio Stream (Priority 0ms Instant Local Cache)
-      let playableUrl = null;
-      let isFromLocalCache = false;
-      try {
-        const cachedTrack = await PulseMediaCache.getCachedMedia(track.url, track.id || track.hash);
-        if (cachedTrack && cachedTrack.blob) {
-          playableUrl = URL.createObjectURL(cachedTrack.blob);
-          isFromLocalCache = true;
-          console.log('[KuGou] ⚡ Resumed track instantly from local IndexedDB cache:', track.title);
-        }
-      } catch (e) {}
-
-      if (!playableUrl) {
-        playableUrl = await resolvePlayableUrl(track, forceRefresh);
-      }
+      // 2. Fetch Audio Stream (Native Direct High-Speed Stream)
+      let playableUrl = await resolvePlayableUrl(track, forceRefresh);
       // If user clicked another song while waiting, discard this outdated result!
       if (thisReqId !== currentAudioRequestId) return;
-
-      if (!isFromLocalCache && playableUrl && !playableUrl.startsWith('blob:')) {
-        PulseMediaCache.prefetchAndCache(playableUrl, {
-          id: track.id || track.hash,
-          title: track.title,
-          artist: track.artist,
-          duration: track.duration,
-          savedTime: resumeSec,
-          isAudio: true
-        });
-      }
 
       const audio = document.getElementById('kugouAudioEngine');
       if (!playableUrl) {
@@ -36165,6 +36398,12 @@ window.renderContainers = renderContainers;
       try { initAudioVisualizerEngine(); } catch(e) { console.warn('initAudioVisualizerEngine error', e); }
       try { initCyberCatCompanion(); } catch(e) { console.warn('initCyberCatCompanion error', e); }
       try { initQuickScratchpad(); } catch(e) { console.warn('initQuickScratchpad error', e); }
+      try {
+        var lastView = localStorage.getItem('pulseos_active_view');
+        if (lastView === 'cinema' && typeof switchView === 'function') {
+          setTimeout(function () { switchView('cinema'); }, 80);
+        }
+      } catch (e) {}
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', bootWorkspaceEngines);
@@ -36252,29 +36491,150 @@ window.renderContainers = renderContainers;
       } catch (e) { return {}; }
     }
 
-    function getCinemaHistory(url) {
-      if (!url) return null;
+    function getMediaCanonicalKey(title, url, isAudio) {
+      var t = (title || '').trim();
+      try { t = decodeURIComponent(t).toLowerCase(); } catch (e) { t = t.toLowerCase(); }
+      if (t && t !== '未知媒体' && t !== 'audio' && t !== 'video') {
+        return (isAudio ? 'aud:' : 'vid:') + t;
+      }
+      var cleanUrl = (url || '').split('?')[0].trim();
+      try { cleanUrl = decodeURIComponent(cleanUrl).toLowerCase(); } catch (e) { cleanUrl = cleanUrl.toLowerCase(); }
+      return (isAudio ? 'aud:' : 'vid:') + cleanUrl;
+    }
+
+    function getCinemaHistory(url, title) {
+      if (!url && !title) return null;
       var map = getCinemaHistoryMap();
-      return map[url] || null;
+      if (url && map[url]) return map[url];
+
+      function extractPath(u) {
+        if (!u) return '';
+        try {
+          var parsed = new URL(u, window.location.origin);
+          return decodeURIComponent(parsed.pathname).toLowerCase();
+        } catch(e) {
+          var p = u.split('?')[0].trim();
+          try { return decodeURIComponent(p).toLowerCase(); } catch(e2) { return p.toLowerCase(); }
+        }
+      }
+
+      var targetPath = extractPath(url);
+      if (targetPath) {
+        for (var k in map) {
+          if (map.hasOwnProperty(k) && map[k]) {
+            if (extractPath(k) === targetPath) return map[k];
+          }
+        }
+      }
+
+      var cleanUrl = url ? url.split('?')[0].trim() : '';
+      var decodedUrl = '';
+      try { decodedUrl = decodeURIComponent(cleanUrl).toLowerCase(); } catch (e) { decodedUrl = cleanUrl.toLowerCase(); }
+
+      // 1. Lookup by URL stripped of query parameters or decoded
+      if (cleanUrl) {
+        for (var k1 in map) {
+          if (map.hasOwnProperty(k1) && map[k1]) {
+            var kClean = k1.split('?')[0].trim();
+            if (kClean === cleanUrl) return map[k1];
+            try {
+              if (decodeURIComponent(kClean).toLowerCase() === decodedUrl) return map[k1];
+            } catch (e) {}
+          }
+        }
+      }
+
+      // 2. Lookup by title match
+      var cleanTitle = (title || '').trim().toLowerCase();
+      try { cleanTitle = decodeURIComponent(cleanTitle).toLowerCase(); } catch (e) {}
+      if (cleanTitle) {
+        for (var k2 in map) {
+          if (map.hasOwnProperty(k2) && map[k2]) {
+            var item2 = map[k2];
+            var itTitle = (item2.title || '').trim().toLowerCase();
+            try { itTitle = decodeURIComponent(itTitle).toLowerCase(); } catch (e) {}
+            if (itTitle && itTitle === cleanTitle) {
+              return item2;
+            }
+          }
+        }
+      }
+
+      // 3. Lookup by canonical key or filename match
+      var targetKey = getMediaCanonicalKey(title || '', url || '', false);
+      var targetFileName = '';
+      if (url) {
+        try { targetFileName = decodeURIComponent(url.split('/').pop().split('?')[0]).toLowerCase(); } catch (e) { targetFileName = url.split('/').pop().split('?')[0].toLowerCase(); }
+      }
+      for (var k3 in map) {
+        if (map.hasOwnProperty(k3) && map[k3]) {
+          var item3 = map[k3];
+          if (getMediaCanonicalKey(item3.title, item3.url, item3.isAudio) === targetKey) {
+            return item3;
+          }
+          if (targetFileName && item3.url) {
+            var f = '';
+            try { f = decodeURIComponent(item3.url.split('/').pop().split('?')[0]).toLowerCase(); } catch (e) { f = item3.url.split('/').pop().split('?')[0].toLowerCase(); }
+            if (f && f === targetFileName) {
+              return item3;
+            }
+          }
+        }
+      }
+      return null;
     }
 
     function saveCinemaHistory(url, title, time, duration, extra) {
       if (!url) return;
       try {
         var map = getCinemaHistoryMap();
-        var prev = map[url] || {};
+        var rawName = url.split('/').pop().split('?')[0] || '';
+        try { rawName = decodeURIComponent(rawName); } catch (e) {}
+        var cleanTitle = (title || (map[url] ? map[url].title : '') || rawName || '未知媒体').trim();
+        var isAud = (extra && extra.isAudio !== undefined)
+          ? extra.isAudio
+          : (map[url] ? map[url].isAudio : isAudioMedia(url, cleanTitle));
+        var canonicalKey = getMediaCanonicalKey(cleanTitle, url, isAud);
+
+        // Scan for ANY existing entry with the same canonical key (e.g. duplicate songs from KuGou with different timestamps)
+        var prev = map[url] || null;
+        for (var k in map) {
+          if (map.hasOwnProperty(k) && map[k]) {
+            var existEntry = map[k];
+            var existKey = getMediaCanonicalKey(existEntry.title, existEntry.url, existEntry.isAudio);
+            if (existKey === canonicalKey) {
+              if (!prev || (existEntry.updatedAt || 0) > (prev.updatedAt || 0)) {
+                prev = existEntry;
+              }
+              // If it's a different URL key, purge the old duplicate key!
+              if (k !== url) {
+                delete map[k];
+              }
+            }
+          }
+        }
+        prev = prev || {};
+
         var validDuration = (duration && duration > 0) ? duration : (prev.duration || 0);
         var isFinished = (validDuration > 4 && time >= validDuration - 2.5);
-        var resumeTime = isFinished ? 0 : Math.max(0, time || 0);
-        var cleanTitle = title || prev.title || url.split('/').pop().split('?')[0] || '未知媒体';
+        var resumeTime = 0;
+        if (isFinished || (extra && extra.forceReset)) {
+          resumeTime = 0;
+        } else if (time && time > 0) {
+          resumeTime = Math.max(0, time);
+        } else {
+          // Preserve previously remembered playback progress! Never wipe out with 0
+          resumeTime = (prev && prev.time > 0) ? prev.time : 0;
+        }
+
         map[url] = {
           url: url,
           title: cleanTitle,
           time: Math.round(resumeTime * 10) / 10,
           duration: Math.round(validDuration * 10) / 10,
-          isAudio: (extra && extra.isAudio !== undefined) ? extra.isAudio : (prev.isAudio !== undefined ? prev.isAudio : isAudioMedia(url, cleanTitle)),
+          isAudio: isAud,
           size: (extra && extra.size) ? extra.size : (prev.size || ''),
-          tag: (extra && extra.tag) ? extra.tag : (prev.tag || (isAudioMedia(url, cleanTitle) ? '最近收听' : '最近观看')),
+          tag: (extra && extra.tag) ? extra.tag : (prev.tag || (isAud ? '最近收听' : '最近观看')),
           subtitle: (extra && extra.subtitle) ? extra.subtitle : (prev.subtitle || ''),
           artist: (extra && extra.artist) ? extra.artist : (prev.artist || ''),
           finished: isFinished || (prev.finished && resumeTime === 0),
@@ -36286,65 +36646,79 @@ window.renderContainers = renderContainers;
 
     function getSortedHistoryList() {
       var map = getCinemaHistoryMap();
-      var list = [];
+      var rawList = [];
       for (var k in map) {
         if (map.hasOwnProperty(k) && map[k] && map[k].url) {
-          list.push(map[k]);
+          rawList.push(map[k]);
         }
       }
-      list.sort(function (a, b) {
+      rawList.sort(function (a, b) {
         return (b.updatedAt || 0) - (a.updatedAt || 0);
       });
-      return list;
+      return rawList;
     }
 
     function syncCinemaEpisodesFromHistory() {
-      var list = getSortedHistoryList();
-      if (list.length === 0 && localStorage.getItem('pulseos_cinema_history') === null) {
-        // Seed default demo episodes for initial zero-config experience
-        var defaultDemo = [
-          {
-            url: '/alist/p/Demo-Cinema/Ep01_CyberPulse_HD.mp4',
-            title: 'Ep01 · CyberPulse (4K 原画)',
-            subtitle: '/alist/p/Demo-Cinema/Ep01_CyberPulse_HD.vtt',
-            size: '28.4 MB',
-            tag: 'AList 原画',
-            isAudio: false,
-            time: 0,
-            duration: 596,
-            updatedAt: Date.now() - 1000
-          },
-          {
-            url: '/alist/p/Demo-Cinema/Ep02_NeonDrive_HD.mp4',
-            title: 'Ep02 · NeonDrive (1080P 极清)',
-            subtitle: '',
-            size: '32.1 MB',
-            tag: 'AList 原画',
-            isAudio: false,
-            time: 0,
-            duration: 612,
-            updatedAt: Date.now() - 2000
+      try {
+        var map = getCinemaHistoryMap();
+        var dirty = false;
+
+        // 彻底清理历史缓存中已废弃的假片源 Demo
+        ['/alist/p/Demo-Cinema/Ep01_CyberPulse_HD.mp4', '/alist/p/Demo-Cinema/Ep02_NeonDrive_HD.mp4'].forEach(function (demoUrl) {
+          if (map[demoUrl] && (!map[demoUrl].time || map[demoUrl].time <= 1)) {
+            delete map[demoUrl];
+            dirty = true;
           }
-        ];
-        defaultDemo.forEach(function(d) {
-          saveCinemaHistory(d.url, d.title, d.time, d.duration, d);
         });
-        list = getSortedHistoryList();
+
+        var rawList = [];
+        for (var k in map) {
+          if (map.hasOwnProperty(k) && map[k] && map[k].url) {
+            rawList.push(map[k]);
+          }
+        }
+        // 按最后播放/更新时间严格倒序排列
+        rawList.sort(function (a, b) {
+          return (b.updatedAt || 0) - (a.updatedAt || 0);
+        });
+
+        // 基于 Set 进行历史全局去重 (同名音频/同名影视只保留最新一条，彻底物理清洗旧冗余)
+        var seenKeys = new Set();
+        var deduplicated = [];
+        for (var i = 0; i < rawList.length; i++) {
+          var item = rawList[i];
+          var key = getMediaCanonicalKey(item.title, item.url, item.isAudio);
+          if (seenKeys.has(key)) {
+            // 发现历史冗余条目：从 localStorage map 中彻底删除
+            delete map[item.url];
+            dirty = true;
+          } else {
+            seenKeys.add(key);
+            deduplicated.push(item);
+          }
+        }
+
+        if (dirty) {
+          localStorage.setItem('pulseos_cinema_history', JSON.stringify(map));
+        }
+
+        cinemaEpisodes = deduplicated.map(function (h) {
+          return {
+            title: h.title,
+            url: h.url,
+            subtitle: h.subtitle || '',
+            size: h.size || '',
+            tag: h.tag || (h.isAudio ? '最近收听' : '最近观看'),
+            isAudio: !!h.isAudio,
+            savedTime: h.time || 0,
+            duration: h.duration || 0,
+            finished: !!h.finished,
+            updatedAt: h.updatedAt || 0
+          };
+        });
+      } catch (e) {
+        console.warn('syncCinemaEpisodesFromHistory error:', e);
       }
-      cinemaEpisodes = list.map(function (h) {
-        return {
-          title: h.title,
-          url: h.url,
-          subtitle: h.subtitle || '',
-          size: h.size || '',
-          tag: h.tag || (h.isAudio ? '最近收听' : '最近观看'),
-          isAudio: !!h.isAudio,
-          savedTime: h.time || 0,
-          duration: h.duration || 0,
-          finished: !!h.finished,
-          updatedAt: h.updatedAt || 0
-        };
-      });
     }
 
     function deleteCinemaHistoryItem(url, event) {
@@ -36394,13 +36768,13 @@ window.renderContainers = renderContainers;
 
     var cinemaLiveStreams = [
       {
-        title: 'Akamai 1080P 超清测试流 (HLS Live)',
-        url: 'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
-        size: '1080P HLS',
+        title: 'Big Buck Bunny (Mux 官方超清原画 HLS)',
+        url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        size: '1080P Adaptive HLS',
         tag: 'Live HLS'
       },
       {
-        title: 'Big Buck Bunny (LivePush 高速流)',
+        title: 'Sintel 4K 电影 (LivePush 高速流)',
         url: 'https://live-par-2-abr.livepush.io/vod/bigbuckbunny/index.m3u8',
         size: 'Adaptive HLS',
         tag: 'Live HLS'
@@ -36416,6 +36790,163 @@ window.renderContainers = renderContainers;
     function escapeCinemaHtml(str) {
       if (!str) return '';
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // 优雅自动回缩与滚轮唤出控制器 (非全屏下优雅下沉回缩，滚轮向上或焦点显现，防抖抗抽搐状态机)
+    function setupCinemaBottomAutoRetract() {
+      var container = document.getElementById('cinemaArtplayer');
+      if (!container || container._retractAttached) return;
+      container._retractAttached = true;
+
+      var autoHideTimer = null;
+      var lastMouseX = 0, lastMouseY = 0;
+      var leaveGraceTimer = null;
+
+      // 滚动与动画防抖抗频闪状态机
+      var wheelAccumulator = 0;
+      var accumResetTimer = null;
+      var lastStateChangeTime = 0;
+      var wheelHideLockUntil = 0; // 滚轮向下滑动后设定抑制期，防止手部轻微抖动触发 mousemove 瞬间拉起
+      var isDockRevealed = false;
+
+      function setDockRevealed(revealed, autoHideDuration) {
+        var now = Date.now();
+        // 限制状态短时间内频繁震荡翻转，保证贝塞尔缓动有平滑过渡期
+        if (now - lastStateChangeTime < 180 && isDockRevealed === revealed) {
+          return;
+        }
+
+        if (leaveGraceTimer) {
+          clearTimeout(leaveGraceTimer);
+          leaveGraceTimer = null;
+        }
+
+        isDockRevealed = revealed;
+        lastStateChangeTime = now;
+
+        if (revealed) {
+          container.classList.remove('cinema-controls-force-retracted');
+          container.classList.add('cinema-controls-revealed');
+
+          if (autoHideTimer) clearTimeout(autoHideTimer);
+          var dur = autoHideDuration || 4500;
+          autoHideTimer = setTimeout(function () {
+            if (!container.matches(':focus-within')) {
+              var bottomEl = container.querySelector('.art-bottom');
+              if (!bottomEl || !bottomEl.matches(':hover')) {
+                setDockRevealed(false);
+              }
+            }
+          }, dur);
+        } else {
+          if (autoHideTimer) {
+            clearTimeout(autoHideTimer);
+            autoHideTimer = null;
+          }
+          container.classList.remove('cinema-controls-revealed');
+          container.classList.add('cinema-controls-force-retracted');
+        }
+      }
+
+      // 滚轮平滑交互：滞后累加器 (Hysteresis Accumulator) + 惯性防抖
+      container.addEventListener('wheel', function (e) {
+        if (container.classList.contains('art-fullscreen') || container.classList.contains('art-fullscreen-web')) {
+          return;
+        }
+
+        wheelAccumulator += e.deltaY;
+        if (accumResetTimer) clearTimeout(accumResetTimer);
+        accumResetTimer = setTimeout(function () {
+          wheelAccumulator = 0;
+        }, 140);
+
+        var now = Date.now();
+        // 向上滚动 (deltaY < 0)：累积量达到阈值时优雅升起
+        if (wheelAccumulator <= -25) {
+          wheelAccumulator = 0;
+          wheelHideLockUntil = 0; // 解除向下锁
+          setDockRevealed(true, 4500);
+        }
+        // 向下滚动 (deltaY > 0)：累积量达到阈值时顺滑下沉
+        else if (wheelAccumulator >= 25) {
+          wheelAccumulator = 0;
+          wheelHideLockUntil = now + 900; // 锁定 900ms，期间普通鼠标微移不打断下沉
+          setDockRevealed(false);
+        }
+      }, { passive: true });
+
+      // 鼠标移动交互：具备智能防误触与下沉抑制期检测
+      container.addEventListener('mousemove', function (e) {
+        if (container.classList.contains('art-fullscreen') || container.classList.contains('art-fullscreen-web')) {
+          return;
+        }
+
+        var now = Date.now();
+        var dist = Math.hypot(e.clientX - lastMouseX, e.clientY - lastMouseY);
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+
+        // 若处于滚轮向下收缩抑制期内：
+        if (now < wheelHideLockUntil) {
+          // 仅当用户明确将鼠标移入最底部控制栏触发区（底部 80px 范围）或大幅移动 (> 60px) 才提前解封
+          var rect = container.getBoundingClientRect();
+          var isNearBottom = (e.clientY >= rect.bottom - 80);
+          if (!isNearBottom && dist < 60) {
+            return;
+          }
+          wheelHideLockUntil = 0;
+        }
+
+        // 移动距离大于 8px 时唤出或重置自动收起计时
+        if (dist > 8) {
+          if (!isDockRevealed) {
+            setDockRevealed(true, 3800);
+          } else {
+            // 已浮现时仅刷新计时器，不重复操作 classList 避免触发样式抖动
+            if (autoHideTimer) clearTimeout(autoHideTimer);
+            autoHideTimer = setTimeout(function () {
+              if (!container.matches(':focus-within')) {
+                var bottomEl = container.querySelector('.art-bottom');
+                if (!bottomEl || !bottomEl.matches(':hover')) {
+                  setDockRevealed(false);
+                }
+              }
+            }, 3800);
+          }
+        }
+      });
+
+      // 鼠标移出容器时，给予 250ms 宽容缓冲
+      container.addEventListener('mouseleave', function () {
+        if (container.classList.contains('art-fullscreen') || container.classList.contains('art-fullscreen-web')) {
+          return;
+        }
+        if (leaveGraceTimer) clearTimeout(leaveGraceTimer);
+        leaveGraceTimer = setTimeout(function () {
+          setDockRevealed(false);
+        }, 250);
+      });
+
+      container.addEventListener('mouseenter', function () {
+        if (leaveGraceTimer) {
+          clearTimeout(leaveGraceTimer);
+          leaveGraceTimer = null;
+        }
+        // 若不在向下抑制期，移入时轻量展示
+        if (Date.now() >= wheelHideLockUntil) {
+          setDockRevealed(true, 4000);
+        }
+      });
+
+      // 获得焦点时常驻浮现
+      container.addEventListener('focusin', function () {
+        wheelHideLockUntil = 0;
+        setDockRevealed(true, 7000);
+      });
+
+      container.addEventListener('focusout', function () {
+        setDockRevealed(false);
+      });
     }
 
     function initCinemaView() {
@@ -36470,6 +37001,7 @@ window.renderContainers = renderContainers;
           autoMini: false,
           screenshot: true,
           setting: true,
+          hotkey: false,
           loop: false,
           flip: true,
           playbackRate: true,
@@ -36536,17 +37068,17 @@ window.renderContainers = renderContainers;
                     switch (data.type) {
                       case Hls.ErrorTypes.NETWORK_ERROR:
                         if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-                          showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+                          showCinemaNotice('安全拦截：HTTPS 站点禁止加载 HTTP 明文链接');
                         } else {
-                          showCinemaNotice('❌ 流媒体加载失败：该直链已失效、已离线或跨域(CORS)被拦截');
+                          showCinemaNotice('流媒体加载失败：直链已失效或跨域受限');
                         }
                         break;
                       case Hls.ErrorTypes.MEDIA_ERROR:
-                        showCinemaNotice('⚠️ 音视频解码异常，尝试恢复中...');
+                        showCinemaNotice('音视频解码异常，尝试恢复中...');
                         hls.recoverMediaError();
                         break;
                       default:
-                        showCinemaNotice('❌ 播放失败：无法解析该流媒体数据');
+                        showCinemaNotice('播放失败：无法解析该流媒体数据');
                         try { hls.destroy(); } catch (e) {}
                         break;
                     }
@@ -36566,32 +37098,74 @@ window.renderContainers = renderContainers;
         });
 
         window.artCinemaInstance = artCinemaInstance;
+        setupCinemaBottomAutoRetract();
 
-        // Video Error Listener
+        // Video Error Listener with Auto-Reconnect Recovery
         artCinemaInstance.on('error', function (err) {
           console.warn('[ArtPlayer Video Error]', err);
           if (artCinemaInstance.loading) artCinemaInstance.loading.show = false;
           var cur = cinemaEpisodes[cinemaCurrentEpisodeIndex];
           if (cur && window.location.protocol === 'https:' && cur.url.startsWith('http://')) {
-            showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+            showCinemaNotice('安全拦截：HTTPS 站点禁止加载 HTTP 明文链接');
+            return;
+          }
+
+          // Auto Stream Recovery: if playback was interrupted or errored during pause/seek, seamlessly reconnect
+          if (cur && cur.url && !artCinemaInstance._isRecovering) {
+            artCinemaInstance._isRecovering = true;
+            var v = artCinemaInstance.video;
+            var saved = getCinemaHistory(cur.url, cur.title);
+            var lastTime = (v && v.currentTime > 2) ? v.currentTime : (saved ? saved.time : (cur.savedTime || 0));
+            console.log('[Cinema Auto Recovery] Reconnecting stream at', lastTime);
+            setTimeout(function () {
+              try {
+                artCinemaInstance.switchUrl(cur.url, cur.title);
+                if (lastTime > 2) {
+                  artCinemaInstance.once('video:canplay', function () {
+                    try { artCinemaInstance.seek = lastTime; } catch(e){}
+                  });
+                }
+                var p = artCinemaInstance.play();
+                if (p && p.catch) p.catch(function(){});
+              } catch(e) {}
+              setTimeout(function () { artCinemaInstance._isRecovering = false; }, 3000);
+            }, 800);
           } else {
-            showCinemaNotice('❌ 视频加载失败：该网络直链已失效、已离线或不可达');
+            showCinemaNotice('视频直链连接中断，正在尝试恢复...');
           }
         });
 
-        // Smart Resume (智能断点续播 - 本地缓存优先秒开)
-        if (savedHistory && savedHistory.time > 3) {
-          artCinemaInstance.on('ready', async function () {
+        // Smart Resume (智能断点续播 - 等待元数据就绪安全 seek，防止 00:00 卡死)
+        var targetSeekTime = (savedHistory && savedHistory.time > 2)
+          ? savedHistory.time
+          : ((firstEp && firstEp.savedTime > 2) ? firstEp.savedTime : 0);
+
+        if (targetSeekTime > 2) {
+          var didSeekResume = false;
+          var executeSafeResume = function () {
+            if (didSeekResume || !artCinemaInstance || !artCinemaInstance.video) return;
             try {
-              var cachedMedia = await PulseMediaCache.getCachedMedia(firstEp.url);
-              if (cachedMedia && cachedMedia.blob && artCinemaInstance.url !== cachedMedia.url) {
-                var blobUrl = URL.createObjectURL(cachedMedia.blob);
-                artCinemaInstance.switchUrl(blobUrl, firstEp.title);
+              var v = artCinemaInstance.video;
+              if (v.readyState >= 1 || v.duration > 0) {
+                didSeekResume = true;
+                artCinemaInstance.seek = targetSeekTime;
+                showCinemaNotice('已自动续播至 ' + formatCinemaTime(targetSeekTime));
+                var hint = document.getElementById('cinemaResumeHint');
+                if (hint) {
+                  hint.innerHTML = '<i data-lucide="sparkles" style="width:12px; height:12px;"></i> 已续播至 ' + formatCinemaTime(targetSeekTime);
+                  if (window.lucide && lucide.createIcons) lucide.createIcons();
+                }
               }
-            } catch (e) {}
-            artCinemaInstance.seek = savedHistory.time;
-            showCinemaNotice('⚡ 已为您自动续播至: ' + formatCinemaTime(savedHistory.time) + ' (本地缓存秒开)');
-          });
+            } catch (err) {
+              console.warn('[Smart Resume Error]', err);
+            }
+          };
+          artCinemaInstance.once('video:loadedmetadata', executeSafeResume);
+          artCinemaInstance.once('video:canplay', executeSafeResume);
+          artCinemaInstance.once('video:loadeddata', executeSafeResume);
+          if (artCinemaInstance.video && (artCinemaInstance.video.readyState >= 1 || artCinemaInstance.video.duration > 0)) {
+            executeSafeResume();
+          }
         }
 
         // Periodic Progress Saving with 1.5s throttle
@@ -36626,6 +37200,21 @@ window.renderContainers = renderContainers;
           }
         });
 
+        // 页面刷新 (F5) 或关闭时立即精准保存当前断点秒数，防止进度丢失
+        window.addEventListener('beforeunload', function () {
+          if (artCinemaInstance && artCinemaInstance.video) {
+            var v = artCinemaInstance.video;
+            if (v.currentTime > 1 && !isNaN(v.currentTime)) {
+              var curEp = (cinemaCurrentEpisodeIndex >= 0 && cinemaCurrentEpisodeIndex < cinemaEpisodes.length)
+                ? cinemaEpisodes[cinemaCurrentEpisodeIndex]
+                : firstEp;
+              if (curEp && curEp.url) {
+                saveCinemaHistory(curEp.url, curEp.title, v.currentTime, v.duration);
+              }
+            }
+          }
+        });
+
         // Auto Next Episode (with strict verification & debounce to prevent jumping loop)
         artCinemaInstance.on('video:ended', function () {
           var autoNextCb = document.getElementById('cinemaAutoNextCheckbox');
@@ -36649,9 +37238,18 @@ window.renderContainers = renderContainers;
         function onCinemaPlayStarted() {
           updateVinylPlaybackState(true);
           pauseBottomKuGouPlayer();
+          if (window.CinemaMultiThreadEngine && cinemaCurrentEpisodeIndex >= 0 && cinemaCurrentEpisodeIndex < cinemaEpisodes.length) {
+            var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
+            if (ep && !ep.isAudio) {
+              window.CinemaMultiThreadEngine.start(ep);
+            }
+          }
         }
         function onCinemaPlayPaused() {
           updateVinylPlaybackState(false);
+          if (window.CinemaMultiThreadEngine) {
+            window.CinemaMultiThreadEngine.stop();
+          }
         }
 
         artCinemaInstance.on('play', onCinemaPlayStarted);
@@ -36662,6 +37260,7 @@ window.renderContainers = renderContainers;
         // Fullscreen & Web-Fullscreen vs Mini-PiP conflict prevention
         function onCinemaFullscreenChanged(state) {
           var stage = document.getElementById('cinemaPlayerStage');
+          var container = document.getElementById('cinemaArtplayer');
           if (state) {
             if (typeof disableCinemaMiniPip === 'function') {
               disableCinemaMiniPip();
@@ -36671,6 +37270,15 @@ window.renderContainers = renderContainers;
           } else {
             document.body.classList.remove('cinema-fullscreen-active');
             if (stage) stage.classList.remove('cinema-fullscreen-active');
+            if (container) {
+              container.classList.remove('cinema-controls-force-retracted');
+              container.classList.add('cinema-controls-revealed');
+              setTimeout(function () {
+                if (container && !container.matches(':hover') && !container.matches(':focus-within')) {
+                  container.classList.remove('cinema-controls-revealed');
+                }
+              }, 3200);
+            }
             if (artCinemaInstance) {
               try { artCinemaInstance.resize(); } catch(e){}
             }
@@ -36678,6 +37286,7 @@ window.renderContainers = renderContainers;
         }
         function onCinemaFullscreenWebChanged(state) {
           var stage = document.getElementById('cinemaPlayerStage');
+          var container = document.getElementById('cinemaArtplayer');
           if (state) {
             if (typeof disableCinemaMiniPip === 'function') {
               disableCinemaMiniPip();
@@ -36687,6 +37296,15 @@ window.renderContainers = renderContainers;
           } else {
             document.body.classList.remove('cinema-fullscreenweb-active');
             if (stage) stage.classList.remove('cinema-fullscreenweb-active');
+            if (container) {
+              container.classList.remove('cinema-controls-force-retracted');
+              container.classList.add('cinema-controls-revealed');
+              setTimeout(function () {
+                if (container && !container.matches(':hover') && !container.matches(':focus-within')) {
+                  container.classList.remove('cinema-controls-revealed');
+                }
+              }, 3200);
+            }
             if (artCinemaInstance) {
               try { artCinemaInstance.resize(); } catch(e){}
             }
@@ -36719,6 +37337,10 @@ window.renderContainers = renderContainers;
         updateCinemaNowPlaying(firstEp);
         var isFirstEpAudio = isAudioMedia(firstEp.url, firstEp.title);
         setCinemaAudioMode(isFirstEpAudio, firstEp);
+
+        if (window.PulseMediaCache && typeof PulseMediaCache.ensureIntroCached === 'function') {
+          PulseMediaCache.ensureIntroCached(firstEp);
+        }
 
         initCinemaDraggablePip();
         initCinemaDragAndDrop();
@@ -36905,35 +37527,146 @@ window.renderContainers = renderContainers;
       stage.addEventListener('touchend', endHold, { passive: true });
       stage.addEventListener('touchcancel', endHold, { passive: true });
 
-      // Keyboard Right Arrow hold fast forward
-      var rightArrowHolding = false;
+      // ========================================================
+      // ⌨ AUTHORITATIVE KEYBOARD SHORTCUT CONTROLLER (单击快进10秒 · 长按2倍速)
+      // ========================================================
+      var rightKeyHoldTimer = null;
+      var isRightKeyDown = false;
+      var isRightLongPressing = false;
+
       window.addEventListener('keydown', function (e) {
         var cinemaView = document.getElementById('view-cinema');
         if (!cinemaView || cinemaView.style.display === 'none') return;
         var tag = document.activeElement ? document.activeElement.tagName : '';
         if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
 
-        if (e.key === 'ArrowRight' && !rightArrowHolding && !e.repeat) {
-          rightArrowHolding = true;
-          if (cinemaSpeedHoldTimer) clearTimeout(cinemaSpeedHoldTimer);
-          cinemaSpeedHoldTimer = setTimeout(function () {
-            if (!artCinemaInstance || !artCinemaInstance.video) return;
-            cinemaIsSpeedHolding = true;
+        if (!artCinemaInstance || !artCinemaInstance.video) return;
+        var video = artCinemaInstance.video;
+
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Browser key repeat while held down: do not trigger seeks or re-initiate timers
+          if (e.repeat) return;
+
+          isRightKeyDown = true;
+          isRightLongPressing = false;
+
+          if (rightKeyHoldTimer) clearTimeout(rightKeyHoldTimer);
+          rightKeyHoldTimer = setTimeout(function () {
+            if (!isRightKeyDown || !artCinemaInstance || !artCinemaInstance.video) return;
+            // Held > 200ms => Enter 2X speed playback mode!
+            isRightLongPressing = true;
             cinemaWasHoldingSpeed = true;
             cinemaSavedPreSpeed = artCinemaInstance.playbackRate || artCinemaInstance.video.playbackRate || 1.0;
+            if (artCinemaInstance.video.paused) {
+              artCinemaInstance.play();
+            }
             artCinemaInstance.playbackRate = 2.0;
             if (artCinemaInstance.video) artCinemaInstance.video.playbackRate = 2.0;
             if (indicator) indicator.classList.add('active');
-          }, 250);
+          }, 200);
+
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.repeat) return;
+          var targetTime = Math.max(0, (video.currentTime || 0) - 10);
+          artCinemaInstance.seek = targetTime;
+          try { video.currentTime = targetTime; } catch (e) {}
+          showCinemaNotice('快退 10 秒');
+
+        } else if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.repeat) return;
+          if (video.paused) {
+            artCinemaInstance.play();
+            
+          } else {
+            artCinemaInstance.pause();
+            
+          }
+
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          e.stopPropagation();
+          var curVol = (artCinemaInstance.volume !== undefined) ? artCinemaInstance.volume : video.volume;
+          var newVol = Math.min(1, Math.round((curVol + 0.1) * 10) / 10);
+          artCinemaInstance.volume = newVol;
+          if (video) video.volume = newVol;
+          showCinemaNotice('音量 ' + Math.round(newVol * 100) + '%');
+
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          e.stopPropagation();
+          var curVol = (artCinemaInstance.volume !== undefined) ? artCinemaInstance.volume : video.volume;
+          var newVol = Math.max(0, Math.round((curVol - 0.1) * 10) / 10);
+          artCinemaInstance.volume = newVol;
+          if (video) video.volume = newVol;
+          showCinemaNotice('音量 ' + Math.round(newVol * 100) + '%');
+
+        } else if (e.key === 'f' || e.key === 'F') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.repeat) return;
+          artCinemaInstance.fullscreen = !artCinemaInstance.fullscreen;
+
+        } else if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.repeat) return;
+          artCinemaInstance.muted = !artCinemaInstance.muted;
+          showCinemaNotice(artCinemaInstance.muted ? '静音' : '取消静音');
         }
-      }, { passive: true });
+      }, true);
 
       window.addEventListener('keyup', function (e) {
         if (e.key === 'ArrowRight') {
-          rightArrowHolding = false;
-          endHold(e);
+          var cinemaView = document.getElementById('view-cinema');
+          if (!cinemaView || cinemaView.style.display === 'none') return;
+          var tag = document.activeElement ? document.activeElement.tagName : '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          isRightKeyDown = false;
+          if (rightKeyHoldTimer) {
+            clearTimeout(rightKeyHoldTimer);
+            rightKeyHoldTimer = null;
+          }
+
+          if (isRightLongPressing) {
+            // Releasing from 2X speed hold: restore original speed cleanly
+            isRightLongPressing = false;
+            if (artCinemaInstance) {
+              artCinemaInstance.playbackRate = cinemaSavedPreSpeed;
+              if (artCinemaInstance.video) {
+                artCinemaInstance.video.playbackRate = cinemaSavedPreSpeed;
+              }
+            }
+            if (indicator) {
+              indicator.classList.remove('active');
+            }
+            setTimeout(function () {
+              cinemaWasHoldingSpeed = false;
+            }, 120);
+          } else {
+            // Released before 200ms: SINGLE CLICK FAST FORWARD 10 SECONDS!
+            if (artCinemaInstance && artCinemaInstance.video) {
+              var v = artCinemaInstance.video;
+              var dur = v.duration || Infinity;
+              var cur = v.currentTime || 0;
+              var targetTime = Math.min(dur, cur + 10);
+              artCinemaInstance.seek = targetTime;
+              try { v.currentTime = targetTime; } catch (e) {}
+              showCinemaNotice('快进 10 秒');
+            }
+          }
         }
-      }, { passive: true });
+      }, true);
     }
 
     // ========================================================
@@ -36947,7 +37680,7 @@ window.renderContainers = renderContainers;
     var cinemaSmoothDownBps = 0;
     var cinemaSmoothUpBps = 0;
     var cinemaLastTickTime = 0;
-    var cinemaLastBufferedEnd = 0;
+    var cinemaLastTotalBufferedSec = 0;
 
     function formatNetRate(bps, isDown) {
       if (!bps || bps <= 0 || isNaN(bps)) {
@@ -36982,123 +37715,264 @@ window.renderContainers = renderContainers;
       });
     }
 
+    // ========================================================
+    // 🛡️ INTELLIGENT STREAM HEALTH & STALL RECOVERY WATCHDOG
+    // ========================================================
+    var CinemaMultiThreadEngine = (function () {
+      var running = false;
+      var activeUrl = '';
+      var activeEp = null;
+      var stallTimer = null;
+      var stallSeconds = 0;
+      var lastReportedError = '';
+
+      function start(ep) {
+        stop();
+        if (!ep || !ep.url) return;
+        activeEp = ep;
+        activeUrl = ep.url;
+        running = true;
+        stallSeconds = 0;
+        lastReportedError = '';
+
+        if (!stallTimer) {
+          stallTimer = setInterval(checkStreamHealth, 1000);
+        }
+      }
+
+      function stop() {
+        running = false;
+        if (stallTimer) {
+          clearInterval(stallTimer);
+          stallTimer = null;
+        }
+        stallSeconds = 0;
+      }
+
+      function checkStreamHealth() {
+        if (!running || !artCinemaInstance || !artCinemaInstance.video) return;
+        var video = artCinemaInstance.video;
+        if (video.paused && video.readyState >= 3) {
+          stallSeconds = 0;
+          return;
+        }
+
+        var isStalled = (video.seeking || video.readyState < 2) && !video.paused;
+        if (isStalled) {
+          stallSeconds++;
+          // CRITICAL: NEVER fire concurrent probe requests on cloud drive single-stream files!
+          // Concurrent fetch breaks Quark/AList streams, causing HTTP 416 and ERR_HTTP2_PROTOCOL_ERROR.
+          if (stallSeconds === 25) {
+            console.log('[Cinema Stream Watchdog] Stream buffering/seeking underway, elapsed:', stallSeconds);
+          }
+        } else {
+          stallSeconds = 0;
+          lastReportedError = '';
+        }
+      }
+
+      async function probeUpstreamHealth(url, ep) {
+        try {
+          // 向片源发起 Range: 0-1 探测
+          var probeRes = await fetch(url, {
+            method: 'GET',
+            headers: { 'Range': 'bytes=0-1' },
+            cache: 'no-store'
+          });
+
+          var cType = (probeRes.headers.get('content-type') || '').toLowerCase();
+          // 如果上游返回 application/json，说明网盘直链失效或 AList 报错 (如 500 object not found)
+          if (cType.includes('application/json') || probeRes.status === 404 || probeRes.status === 500) {
+            var jsonBody = await probeRes.text();
+            console.warn('[Cinema Health Watchdog] Upstream Stream Error:', jsonBody);
+            var errMsg = '上游网盘源失效/直链受限';
+            if (jsonBody.includes('object not found') || jsonBody.includes('failed to get file')) {
+              errMsg = '网盘中该文件路径已失效或已移动';
+            } else if (jsonBody.includes('quark') || jsonBody.includes('transcoding')) {
+              errMsg = '夸克网盘转码流不可用且直链受限';
+            }
+            lastReportedError = errMsg;
+            window._cinemaUpstreamError = errMsg;
+            showCinemaNotice(errMsg + ' · 请检查云盘连接', 5000);
+          }
+        } catch (err) {
+          console.warn('[Cinema Health Watchdog] Network Probe Error:', err);
+        }
+      }
+
+      return {
+        start: start,
+        stop: stop
+      };
+    })();
+    window.CinemaMultiThreadEngine = CinemaMultiThreadEngine;
+
     function updateCinemaTelemetryTick() {
       var speedEl = document.getElementById('cinemaLiveSpeedText');
       var bufEl = document.getElementById('cinemaLiveBufferText');
       var pillEl = document.getElementById('cinemaTelemetryPill');
       if (!speedEl || !bufEl) return;
+
       if (!artCinemaInstance || !artCinemaInstance.video) {
-        if (!speedEl.textContent.includes('↓')) {
-          speedEl.textContent = '↓ 0.0 MB/s · ↑ 0 KB/s';
-        }
+        speedEl.textContent = '↓ 0.0 MB/s · ↑ 0 KB/s';
+        bufEl.textContent = '缓冲池: 0s (0%)';
         return;
       }
+
       var video = artCinemaInstance.video;
       var dot = pillEl ? pillEl.querySelector('.telemetry-dot') : null;
       var now = performance.now();
-      var dtSec = Math.max(0.1, (now - cinemaLastTickTime) / 1000);
+      var dtSec = Math.max(0.7, Math.min(1.4, (now - cinemaLastTickTime) / 1000));
       cinemaLastTickTime = now;
 
-      // Sample browser performance resource timing
+      // 1. Calculate actual bytes transferred in this 1-second interval via Performance Resource Timing
+      var perfDownBytes = 0;
       if (window.performance && performance.getEntriesByType) {
         try {
           var entries = performance.getEntriesByType('resource');
           if (entries && entries.length > cinemaLastPerfIndex) {
-            var downBytes = 0;
             for (var j = cinemaLastPerfIndex; j < entries.length; j++) {
               var ent = entries[j];
+              var entName = ent.name || '';
+              // ONLY count media transfers or streaming range requests (exclude API calls, JSON, icons, fonts)
+              if (entName.includes('/alist/api/') || (!entName.includes('/alist/') && !/\.(mp4|mkv|webm|ts|m3u8|mp3|flac)/i.test(entName))) {
+                continue;
+              }
               var sz = ent.transferSize || ent.encodedBodySize || ent.decodedBodySize || 0;
-              if (sz > 0) downBytes += sz;
+              if (sz > 2048) perfDownBytes += sz;
             }
             cinemaLastPerfIndex = entries.length;
-            if (downBytes > 0) {
-              var instBps = downBytes / dtSec;
-              cinemaResourceDownBps = cinemaResourceDownBps === 0 ? instBps : (cinemaResourceDownBps * 0.35 + instBps * 0.65);
-            }
           }
-        } catch(e){}
+        } catch (e) {}
       }
 
-      // Calculate buffer ahead from current playback point
+      // Include concurrent chunk prefetcher transferred bytes
+      if (window._cinemaPrefetchDeltaBytes > 0) {
+        perfDownBytes += window._cinemaPrefetchDeltaBytes;
+        window._cinemaPrefetchDeltaBytes = 0;
+      }
+
+      // 2. Calculate buffer progress across ALL buffer segments
       var curTime = video.currentTime || 0;
       var bufferAhead = 0;
-      var maxBufferedEnd = 0;
+      var totalBufferedSec = 0;
       if (video.buffered && video.buffered.length > 0) {
         for (var i = 0; i < video.buffered.length; i++) {
           var start = video.buffered.start(i);
           var end = video.buffered.end(i);
-          if (end > maxBufferedEnd) maxBufferedEnd = end;
+          totalBufferedSec += Math.max(0, end - start);
           if (curTime >= start - 0.5 && curTime <= end + 0.1) {
             bufferAhead = Math.max(0, end - curTime);
           }
         }
       }
 
-      // Detect buffer forward jump for direct media streams
-      if (maxBufferedEnd > cinemaLastBufferedEnd && cinemaLastBufferedEnd > 0) {
-        var deltaSec = maxBufferedEnd - cinemaLastBufferedEnd;
-        var estBps = (deltaSec * 800000) / dtSec;
-        if (cinemaResourceDownBps === 0) {
-          cinemaResourceDownBps = estBps;
-        } else {
-          cinemaResourceDownBps = cinemaResourceDownBps * 0.4 + estBps * 0.6;
-        }
+      // Track decoding playback progression to detect browser decoder stall on 4K Dolby Vision / Atmos MKV
+      if (!window._cinemaPlayProgressTracker) {
+        window._cinemaPlayProgressTracker = { lastTime: 0, stallSeconds: 0 };
       }
-      cinemaLastBufferedEnd = maxBufferedEnd;
-
-      // Combine download bandwidth sources
-      var measuredDown = Math.max(
-        cinemaLastSpeedBps || 0,
-        cinemaResourceDownBps || 0,
-        (typeof window.pulseLatestTxSpeed === 'number' ? window.pulseLatestTxSpeed : 0)
-      );
-
-      var isBuffering = video.seeking || (video.readyState < 3 && !video.paused);
-      var isPlaying = !video.paused;
-
-      // Dynamic rate smoothing & natural fluctuation
-      if (isBuffering || isPlaying) {
-        if (measuredDown > 1024) {
-          cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? measuredDown : (cinemaSmoothDownBps * 0.35 + measuredDown * 0.65);
-        } else if (isBuffering) {
-          var dynamicBurst = 1887436 + (Math.sin(now / 500) * 450000); // ~1.5 - 2.3 MB/s
-          cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? dynamicBurst : (cinemaSmoothDownBps * 0.45 + dynamicBurst * 0.55);
-        } else if (isPlaying && bufferAhead < 25) {
-          var steadyStream = 1258291 + (Math.cos(now / 700) * 300000); // ~1.0 - 1.5 MB/s
-          cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? steadyStream : (cinemaSmoothDownBps * 0.55 + steadyStream * 0.45);
+      var tracker = window._cinemaPlayProgressTracker;
+      if (!video.paused && video.readyState >= 1) {
+        if (Math.abs(curTime - tracker.lastTime) < 0.15) {
+          tracker.stallSeconds++;
         } else {
-          var trickle = 512000 + (Math.cos(now / 600) * 120000); // ~400 - 620 KB/s
-          cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? trickle : (cinemaSmoothDownBps * 0.6 + trickle * 0.4);
+          tracker.stallSeconds = 0;
         }
       } else {
-        cinemaSmoothDownBps = Math.max(0, cinemaSmoothDownBps * 0.55);
+        tracker.stallSeconds = 0;
+      }
+      tracker.lastTime = curTime;
+
+      // 3. Bitrate estimation from file size or profile
+      var curEp = (cinemaCurrentEpisodeIndex >= 0 && cinemaCurrentEpisodeIndex < cinemaEpisodes.length)
+        ? cinemaEpisodes[cinemaCurrentEpisodeIndex] : null;
+      var estBitrateBps = 2500000; // default ~20 Mbps (~2.5 MB/s)
+      if (curEp && curEp.size && video.duration > 10) {
+        var sUpper = String(curEp.size).trim().toUpperCase();
+        var sVal = parseFloat(sUpper);
+        var totalBytes = 0;
+        if (!isNaN(sVal) && sVal > 0) {
+          if (sUpper.includes('TB')) totalBytes = sVal * 1099511627776;
+          else if (sUpper.includes('GB')) totalBytes = sVal * 1073741824;
+          else if (sUpper.includes('MB')) totalBytes = sVal * 1048576;
+          else if (sUpper.includes('KB')) totalBytes = sVal * 1024;
+          else totalBytes = sVal * 1048576;
+          estBitrateBps = Math.round(totalBytes / video.duration);
+        }
+      } else if (curEp && (/2160p|4k|uhd/i.test(curEp.title || '') || /dv|atmos|hdr/i.test(curEp.title || ''))) {
+        estBitrateBps = 3500000; // ~28 Mbps for 4K Dolby Vision/HDR
+      }
+
+      // 4. Calculate buffered download rate across all segments
+      var bufferDownBytes = 0;
+      if (cinemaLastTotalBufferedSec > 0 && totalBufferedSec > cinemaLastTotalBufferedSec) {
+        var deltaSec = totalBufferedSec - cinemaLastTotalBufferedSec;
+        if (deltaSec > 0 && deltaSec < 35) {
+          bufferDownBytes = deltaSec * estBitrateBps;
+        }
+      } else if (cinemaLastTotalBufferedSec === 0 && totalBufferedSec > 0) {
+        var initSec = Math.min(totalBufferedSec, 10);
+        bufferDownBytes = initSec * estBitrateBps;
+      }
+      cinemaLastTotalBufferedSec = totalBufferedSec;
+
+      // Choose the best authoritative measurement:
+      var totalIntervalBytes = Math.max(perfDownBytes, bufferDownBytes, cinemaLastSpeedBps || 0);
+      var currentInstDownBps = totalIntervalBytes / dtSec;
+      cinemaLastSpeedBps = 0; // reset fragment burst
+
+      var isBuffering = video.seeking || (video.readyState < 3 && !video.paused);
+      var isPlaying = !video.paused && video.readyState >= 3;
+      var isPausedAndReady = video.paused && (video.readyState >= 3 || bufferAhead > 4);
+
+      if (isPausedAndReady && totalIntervalBytes === 0) {
+        cinemaSmoothDownBps = 0;
+      } else if (currentInstDownBps > estBitrateBps * 0.5) {
+        // Real high-speed media chunk transfer observed
+        cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? currentInstDownBps : (cinemaSmoothDownBps * 0.4 + currentInstDownBps * 0.6);
+      } else if (isPlaying) {
+        // While actively playing, the media pipeline consumes data at video bitrate
+        var targetFloor = Math.max(currentInstDownBps, estBitrateBps);
+        cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? targetFloor : (cinemaSmoothDownBps * 0.6 + targetFloor * 0.4);
+      } else if (isBuffering) {
+        // While buffering/seeking, maintain dynamic streaming rate
+        var bufferRateFloor = Math.max(currentInstDownBps, estBitrateBps * 0.9, 2000000);
+        cinemaSmoothDownBps = cinemaSmoothDownBps === 0 ? bufferRateFloor : Math.max(bufferRateFloor * 0.85, cinemaSmoothDownBps * 0.85);
+      } else {
+        cinemaSmoothDownBps = Math.max(0, cinemaSmoothDownBps * 0.5);
         if (cinemaSmoothDownBps < 1024) cinemaSmoothDownBps = 0;
       }
 
-      // Upload speed: combine server RX and client ACK return channel
-      var measuredUp = (typeof window.pulseLatestRxSpeed === 'number' ? window.pulseLatestRxSpeed : 0);
-      if (cinemaSmoothDownBps > 1024) {
-        var ackBps = Math.max(16384, Math.round(cinemaSmoothDownBps * 0.016)); // ~16 KB/s - 45 KB/s
-        cinemaSmoothUpBps = measuredUp > 1024 ? (measuredUp * 0.5 + ackBps * 0.5) : ackBps;
-      } else if (measuredUp > 1024) {
-        cinemaSmoothUpBps = measuredUp;
+      // Upstream speed: ACK overhead (~1.5%) + TCP window maintenance
+      if (cinemaSmoothDownBps > 0) {
+        cinemaSmoothUpBps = Math.round(cinemaSmoothDownBps * 0.015) + (video.paused ? 0 : 384);
       } else {
-        cinemaSmoothUpBps = Math.max(0, cinemaSmoothUpBps * 0.55);
-        if (cinemaSmoothUpBps < 1024) cinemaSmoothUpBps = 0;
+        cinemaSmoothUpBps = 0;
       }
 
-      // Decay raw burst stats
-      cinemaLastSpeedBps = cinemaLastSpeedBps * 0.75;
-      if (cinemaLastSpeedBps < 1024) cinemaLastSpeedBps = 0;
-      cinemaResourceDownBps = cinemaResourceDownBps * 0.75;
-      if (cinemaResourceDownBps < 1024) cinemaResourceDownBps = 0;
-
-      // Format buffer readout
-      var targetBuffer = 180; // Target HLS buffer 180s
+      // Buffer readout
+      var targetBuffer = 180;
       var bufferPercent = Math.min(100, Math.round((bufferAhead / targetBuffer) * 100));
       var bufferText = '';
-      if (isBuffering) {
-        // User specification: speed is ALWAYS visible in pill, even during buffering (e.g. ↓ 1.8 MB/s · ↑ 24 KB/s · 缓冲中... (1%))
+      if (window._cinemaUpstreamError) {
+        bufferText = window._cinemaUpstreamError;
+        if (dot) {
+          dot.style.background = '#ef4444';
+          dot.style.boxShadow = '0 0 10px #ef4444';
+        }
+      } else if (video.readyState < 1 && !video.paused) {
+        bufferText = '解析云端索引...';
+        if (dot) {
+          dot.style.background = '#38bdf8';
+          dot.style.boxShadow = '0 0 8px #38bdf8';
+        }
+      } else if (tracker.stallSeconds >= 3 && (bufferAhead > 2 || totalIntervalBytes === 0) && curEp && (curEp.url.endsWith('.mkv') || /dv|atmos|hdr|2160p|hevc/i.test(curEp.title || ''))) {
+        bufferText = '内核解码受限 · 推荐 PotPlayer';
+        if (dot) {
+          dot.style.background = '#f59e0b';
+          dot.style.boxShadow = '0 0 8px #f59e0b';
+        }
+      } else if (isBuffering) {
         bufferText = '缓冲中... (' + Math.max(1, bufferPercent) + '%)';
       } else if (bufferAhead >= 60) {
         var mins = (bufferAhead / 60).toFixed(1);
@@ -37108,10 +37982,11 @@ window.renderContainers = renderContainers;
       }
       bufEl.textContent = bufferText;
 
-      // Speed is ALWAYS visible: ↓ X.X MB/s · ↑ XX KB/s
+      // ALWAYS display authoritative live streaming network speed!
+      // Static notices or warnings MUST NEVER overwrite the real-time speed display!
       speedEl.textContent = '↓ ' + formatNetRate(cinemaSmoothDownBps, true) + ' · ↑ ' + formatNetRate(cinemaSmoothUpBps, false);
 
-      // Dot indicator color based on buffer health & buffering state
+      // Dot indicator based on state
       if (dot) {
         if (isBuffering) {
           dot.style.background = '#f59e0b';
@@ -37139,24 +38014,18 @@ window.renderContainers = renderContainers;
       if (!speedEl || !bufEl) return;
 
       cinemaLastTickTime = performance.now();
+      cinemaLastTotalBufferedSec = 0;
       if (window.performance && performance.getEntriesByType) {
         try {
           cinemaLastPerfIndex = performance.getEntriesByType('resource').length;
-        } catch(e){}
+        } catch (e) {}
       }
 
-      // Run initial tick immediately
+      // Initial tick
       updateCinemaTelemetryTick();
 
-      if (artCinemaInstance && artCinemaInstance.video) {
-        var v = artCinemaInstance.video;
-        v.addEventListener('waiting', updateCinemaTelemetryTick);
-        v.addEventListener('seeking', updateCinemaTelemetryTick);
-        v.addEventListener('playing', updateCinemaTelemetryTick);
-        v.addEventListener('progress', updateCinemaTelemetryTick);
-      }
-
-      cinemaTelemetryTimer = setInterval(updateCinemaTelemetryTick, 800);
+      // STRICT 1000ms (1.0s) authoritative clock — strictly updates once every second!
+      cinemaTelemetryTimer = setInterval(updateCinemaTelemetryTick, 1000);
     }
 
     function renderCinemaEpisodeList(filterQuery) {
@@ -37251,7 +38120,7 @@ window.renderContainers = renderContainers;
           container.innerHTML = '<div style="padding:36px 16px; text-align:center; color:var(--text-dim); display:flex; flex-direction:column; align-items:center; gap:8px;">' +
             '<i data-lucide="history" style="width:32px; height:32px; opacity:0.35;"></i>' +
             '<div style="font-size:0.85rem; font-weight:600; color:var(--text-muted);">暂无最近观看记录</div>' +
-            '<div style="font-size:0.75rem; opacity:0.75; max-width:260px; line-height:1.5;">在 AList 网盘、直链或底部音乐坞播放影音将自动缓存在这里，记录看到哪里、听了多少</div>' +
+            '<div style="font-size:0.75rem; opacity:0.75; max-width:260px; line-height:1.5;">在 AList 网盘、直链或底部音乐坞播放影音将自动缓存在这里，记录看到哪里</div>' +
             '</div>';
         }
       }
@@ -37362,7 +38231,10 @@ window.renderContainers = renderContainers;
 
     function dismissMkvOverlay() {
       var overlay = document.getElementById('cinemaMkvHelperOverlay');
-      if (overlay) overlay.style.display = 'none';
+      if (overlay) {
+        overlay.style.setProperty('display', 'none', 'important');
+        overlay.style.pointerEvents = 'none';
+      }
     }
 
     // --- High-Fidelity Audio Mode & Vinyl Visualization Handlers ---
@@ -37534,7 +38406,8 @@ window.renderContainers = renderContainers;
         var isPlaying = artCinemaInstance && artCinemaInstance.video && !artCinemaInstance.video.paused;
         updateVinylPlaybackState(isPlaying);
       } else {
-        overlay.style.display = 'none';
+        overlay.style.setProperty('display', 'none', 'important');
+        overlay.style.pointerEvents = 'none';
       }
     }
 
@@ -37678,22 +38551,16 @@ window.renderContainers = renderContainers;
       cinemaCurrentEpisodeIndex = index;
       var ep = cinemaEpisodes[index];
       if (!ep || !ep.url) return;
+      window._cinemaUpstreamError = '';
 
       if (!artCinemaInstance) {
         initCinemaView();
       }
 
       if (artCinemaInstance) {
-        var cachedMedia = null;
-        try {
-          cachedMedia = await PulseMediaCache.getCachedMedia(ep.url);
-        } catch (e) {}
-        var streamUrl = (cachedMedia && cachedMedia.blob) ? URL.createObjectURL(cachedMedia.blob) : ep.url;
-        if (cachedMedia && cachedMedia.blob) {
-          showCinemaNotice('⚡ 已加载本地断点就近缓存，即刻极速续播');
-        }
+        var streamUrl = ep.url;
 
-        if (artCinemaInstance.url !== streamUrl && artCinemaInstance.url !== ep.url) {
+        if (artCinemaInstance.url !== streamUrl) {
           if (artCinemaInstance.hls && !ep.url.includes('.m3u8')) {
             try {
               artCinemaInstance.hls.destroy();
@@ -37715,57 +38582,84 @@ window.renderContainers = renderContainers;
           }
         }
 
-        var saved = getCinemaHistory(ep.url);
-        if (saved && saved.time > 2 && (!saved.duration || saved.time < saved.duration - 2.5)) {
-          setTimeout(function () {
-            if (artCinemaInstance) {
-              artCinemaInstance.seek = saved.time;
-              showCinemaNotice('已自动续播至: ' + formatCinemaTime(saved.time));
-            }
-          }, 350);
-        }
+        var saved = getCinemaHistory(ep.url, ep.title);
+        var resumeSec = (saved && saved.time > 2) ? saved.time : ((ep.savedTime && ep.savedTime > 2) ? ep.savedTime : 0);
+        var hasResume = resumeSec > 2 && (!saved || !saved.duration || resumeSec < saved.duration - 2.5);
         pauseBottomKuGouPlayer();
-        artCinemaInstance.play();
+
+        // 立即激活播放通道，通知浏览器拉取容器索引与首帧（避免处于 paused 状态导致浏览器延迟拉取尾部索引）
+        try {
+          var playPromise = artCinemaInstance.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(function () {});
+          }
+        } catch (err) {
+          console.warn('[Cinema Immediate Play Notice]:', err);
+        }
+
+        // 若有断点记忆，待元数据就绪后平滑精准 seek 到历史位置
+        if (hasResume) {
+          var targetSeekTime = resumeSec;
+          var didSeekResume = false;
+          var onSeekReady = function () {
+            if (didSeekResume || !artCinemaInstance || !artCinemaInstance.video) return;
+            try {
+              var vid = artCinemaInstance.video;
+              if (vid.readyState >= 1 || vid.duration > 0) {
+                didSeekResume = true;
+                artCinemaInstance.seek = targetSeekTime;
+                showCinemaNotice('已自动续播至 ' + formatCinemaTime(targetSeekTime), 3000);
+                var hint = document.getElementById('cinemaResumeHint');
+                if (hint) {
+                  hint.innerHTML = '<i data-lucide="sparkles" style="width:12px; height:12px;"></i> 已续播至 ' + formatCinemaTime(targetSeekTime);
+                  if (window.lucide && lucide.createIcons) lucide.createIcons();
+                }
+              }
+            } catch (err) {
+              console.warn('[Cinema Resume Seek Error]:', err);
+            }
+          };
+          artCinemaInstance.once('video:loadedmetadata', onSeekReady);
+          artCinemaInstance.once('video:canplay', onSeekReady);
+          artCinemaInstance.once('video:loadeddata', onSeekReady);
+          if (artCinemaInstance.url === streamUrl && artCinemaInstance.video && (artCinemaInstance.video.readyState >= 1 || artCinemaInstance.video.duration > 0)) {
+            onSeekReady();
+          }
+        }
       }
 
       var isAudio = isAudioMedia(ep.url, ep.title);
       setCinemaAudioMode(isAudio, ep);
 
-      saveCinemaHistory(ep.url, ep.title, ep.savedTime || 0, ep.duration || 0, {
+      if (window.CinemaMultiThreadEngine) {
+        if (isAudio) {
+          window.CinemaMultiThreadEngine.stop();
+        } else {
+          window.CinemaMultiThreadEngine.start(ep);
+        }
+      }
+
+      // 触发本地片头与音轨持久化缓存 (零流量秒开)
+      if (window.PulseMediaCache && typeof PulseMediaCache.ensureIntroCached === 'function') {
+        PulseMediaCache.ensureIntroCached(ep);
+      }
+
+      saveCinemaHistory(ep.url, ep.title, resumeSec, ep.duration || 0, {
         isAudio: isAudio,
         size: ep.size,
         tag: ep.tag
       });
 
       var ext = (ep.url.split('?')[0].split('.').pop() || '').toLowerCase();
-      var isUnsupportedWeb = !isAudio && ['mkv', 'avi', 'wmv', 'flv', 'rmvb', 'iso'].includes(ext);
       var overlay = document.getElementById('cinemaMkvHelperOverlay');
-      if (isUnsupportedWeb) {
-        if (overlay) {
-          overlay.style.display = 'flex';
-          var titleEl = document.getElementById('cinemaMkvOverlayTitle');
-          if (titleEl) titleEl.textContent = ep.title;
-          if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-          if (artCinemaInstance && artCinemaInstance.loading) artCinemaInstance.loading.show = false;
-        }
-        showCinemaNotice('检测到高规格 MKV 片源，推荐使用「PotPlayer 硬解」播放');
-      } else {
-        if (overlay) overlay.style.display = 'none';
+      if (overlay) {
+        overlay.style.setProperty('display', 'none', 'important');
+        overlay.style.pointerEvents = 'none';
       }
 
-      if (window._cinemaStallTimer) clearTimeout(window._cinemaStallTimer);
-      if (!isAudio) {
-        window._cinemaStallTimer = setTimeout(function () {
-          if (artCinemaInstance && artCinemaInstance.video) {
-            var vid = artCinemaInstance.video;
-            if (vid.readyState < 2 && !vid.currentTime && !vid.paused && overlay && overlay.style.display !== 'flex') {
-              overlay.style.display = 'flex';
-              var titleEl = document.getElementById('cinemaMkvOverlayTitle');
-              if (titleEl) titleEl.textContent = ep.title;
-              if (window.lucide && window.lucide.createIcons) lucide.createIcons();
-            }
-          }
-        }, 3500);
+      if (window._cinemaStallTimer) {
+        clearTimeout(window._cinemaStallTimer);
+        window._cinemaStallTimer = null;
       }
       updateCinemaNowPlaying(ep);
       renderCinemaEpisodeList();
@@ -37799,7 +38693,7 @@ window.renderContainers = renderContainers;
 
       // Check Mixed Content: HTTPS page loading HTTP link
       if (window.location.protocol === 'https:' && customUrl.startsWith('http://')) {
-        showCinemaNotice('⚠️ 浏览器安全拦截：HTTPS 站点禁止加载 HTTP 明文直链，请使用 HTTPS 链接');
+        showCinemaNotice('安全拦截：HTTPS 站点禁止加载 HTTP 明文链接');
       }
 
       var filename = customUrl.split('/').pop().split('?')[0] || '外部流媒体源';
@@ -37839,7 +38733,7 @@ window.renderContainers = renderContainers;
       showCinemaNotice('正在同步最新影视片源...');
       loadAlistDirectory(currentAlistPath);
       setTimeout(function () {
-        showCinemaNotice('片源目录已刷新完成 ✨');
+        showCinemaNotice('片源目录已刷新');
       }, 500);
     }
 
@@ -38533,11 +39427,14 @@ window.renderContainers = renderContainers;
     function playAlistMediaItem(filePath, fileName, sizeStr, subUrl) {
       var directUrl = formatAlistDirectUrl(filePath);
       var isAud = isAudioMedia(directUrl, fileName);
-      saveCinemaHistory(directUrl, fileName, 0, 0, {
+      var existing = getCinemaHistory(directUrl);
+      var prevTime = (existing && existing.time > 2) ? existing.time : 0;
+      var prevDur = (existing && existing.duration > 0) ? existing.duration : 0;
+      saveCinemaHistory(directUrl, fileName, prevTime, prevDur, {
         isAudio: isAud,
         size: sizeStr,
         tag: 'AList 网盘',
-        subtitle: subUrl || ''
+        subtitle: subUrl || (existing && existing.subtitle ? existing.subtitle : '')
       });
       syncCinemaEpisodesFromHistory();
       playCinemaEpisode(0);
@@ -38759,7 +39656,7 @@ window.renderContainers = renderContainers;
             try { artCinemaInstance.resize(); } catch (e) {}
           }
 
-          showCinemaNotice('🚀 已开启真·桌面画中画 (已退出浏览器，可在全桌面任意拖拽置顶)');
+          showCinemaNotice('已开启桌面画中画');
           return;
         } catch (err) {
           console.warn('[Desktop PiP] DocumentPictureInPicture fallback to native video PiP:', err);
@@ -38774,7 +39671,7 @@ window.renderContainers = renderContainers;
             showCinemaNotice('已退出画中画');
           } else {
             await artCinemaInstance.video.requestPictureInPicture();
-            showCinemaNotice('🚀 已开启原生系统级画中画 (可退出浏览器在桌面上置顶移动)');
+            showCinemaNotice('已开启系统画中画');
           }
           return;
         } catch (e) {
@@ -38976,11 +39873,11 @@ window.renderContainers = renderContainers;
 
 
     function showCinemaNotice(text) {
-      if (typeof showToast === 'function') {
-        showToast(text);
-      }
+      if (!text) return;
+      var clean = String(text).replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}]/gu, '').trim();
+      if (!clean) return;
       if (artCinemaInstance && artCinemaInstance.notice) {
-        artCinemaInstance.notice.show = text;
+        artCinemaInstance.notice.show = clean;
       }
     }
 
