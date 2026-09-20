@@ -38,4 +38,7 @@
    - 速率指示器（`↓ X.X MB/s · ↑ X KB/s`）必须永久独立存在，任何状态提示、解码看门狗警示语只能放在缓冲胶囊或独立徽章中，严禁覆盖下载速率数值。
 5. **本地与生产一致性强制校验**：
    - 每次前端核心改动后，必须校验本地与 VPS 生产服务器的文件哈希一致性，杜绝本地修改未部署导致用户在生产端验证失败。
+6. **🚫 核心播放引擎永久冻结保护 (Cinema Core Engine Frozen)**：
+   - 影视视听舱核心播放管线（`artCinemaInstance` 初始化、`updateCinemaTelemetryTick` 速率引擎、`getCinemaHistory`/`saveCinemaHistory` 断点记忆、`playCinemaEpisode` 事件生命周期、`extractPath` 规范化匹配）已达到生产级高稳状态。**严禁以任何理由擅自修改、重构或触碰此处的播放核心代码，除非用户明确要求！**
+
 
