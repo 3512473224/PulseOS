@@ -10,6 +10,11 @@
   <!-- Fonts matching vps.ppday.site -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Preload Static 4K Wallpapers to eliminate scanline delays -->
+  <link rel="preload" as="image" href="assets/deep_space_obsidian_silk_4k.jpg">
+  <link rel="preload" as="image" href="assets/studio_titanium_light_4k.jpg">
+
   <script>
     (function() {
       try {
@@ -28,11 +33,26 @@
       } catch(e){}
 
       try {
-        var h = new Date().getHours();
-        if (h >= 7 && h < 19) {
-          document.documentElement.classList.add('lock-day-mode');
+        // Synchronize lockscreen strictly with workspace theme (dark inside -> dark outside; light inside -> light outside)
+        var theme = localStorage.getItem('workspace_theme');
+        var manualOverride = localStorage.getItem('workspace_theme_manual_override');
+        var manualChoice = localStorage.getItem('workspace_theme_manual_choice');
+        var isLight = false;
+        if (manualOverride === 'true' && manualChoice) {
+          isLight = (manualChoice === 'light');
+        } else if (theme) {
+          isLight = (theme === 'light');
+        } else {
+          var h = new Date().getHours();
+          isLight = (h >= 7 && h < 19);
+        }
+
+        if (isLight) {
+          document.documentElement.classList.add('theme-light', 'lock-day-mode');
+          document.documentElement.classList.remove('lock-night-mode');
         } else {
           document.documentElement.classList.add('lock-night-mode');
+          document.documentElement.classList.remove('theme-light', 'lock-day-mode');
         }
       } catch(e){}
     })();
@@ -178,6 +198,7 @@
     var pulseOSTerminalFitAddon = null;
     window.initHomeDashboard = function() {
       try { if (typeof initLiveWeather === 'function') initLiveWeather(true); } catch(e){}
+      try { if (typeof initShortcutsSystem === 'function') initShortcutsSystem(); } catch(e){}
       try { if (typeof fetchRealHealthData === 'function') fetchRealHealthData(); } catch(e){}
     };
     window.initKuGouQuality = function() {
@@ -361,26 +382,60 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    .sonoma-aerial-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+      background: #050811;
+      transition: background-color 0.4s ease;
+    }
+    html.theme-light .sonoma-aerial-stage,
+    html.lock-day-mode .sonoma-aerial-stage {
+      background: #eef2f6;
+    }
+
     .sonoma-backdrop-night {
-      background-image: url('assets/studio_titanium_light_4k.jpg');
-      opacity: 1;
+      background-image: url('assets/deep_space_obsidian_silk_4k.jpg');
+      background-color: #030712;
+      opacity: 0;
       z-index: 1;
     }
 
     .sonoma-backdrop-day {
       background-image: url('assets/studio_titanium_light_4k.jpg');
-      opacity: 1;
+      background-color: #f1f5f9;
+      opacity: 0;
       z-index: 2;
     }
 
-    /* Day Mode on Lockscreen Overlay */
+    /* Day Mode on Lockscreen Overlay (Inside Light -> Outside Light Titanium) */
     html.lock-day-mode .pulseos-login-overlay .sonoma-backdrop-day,
+    html.theme-light .pulseos-login-overlay .sonoma-backdrop-day,
     .pulseos-login-overlay.sonoma-day .sonoma-backdrop-day {
-      opacity: 1;
+      opacity: 1 !important;
+      z-index: 2 !important;
     }
     html.lock-day-mode .pulseos-login-overlay .sonoma-backdrop-night,
+    html.theme-light .pulseos-login-overlay .sonoma-backdrop-night,
     .pulseos-login-overlay.sonoma-day .sonoma-backdrop-night {
-      opacity: 1;
+      opacity: 0 !important;
+      z-index: 1 !important;
+    }
+
+    /* Night Mode on Lockscreen Overlay (Inside Dark -> Outside Dark Obsidian Silk) */
+    html.lock-night-mode .pulseos-login-overlay .sonoma-backdrop-night,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-backdrop-night,
+    .pulseos-login-overlay.sonoma-night .sonoma-backdrop-night {
+      opacity: 1 !important;
+      z-index: 2 !important;
+    }
+    html.lock-night-mode .pulseos-login-overlay .sonoma-backdrop-day,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-backdrop-day,
+    .pulseos-login-overlay.sonoma-night .sonoma-backdrop-day {
+      opacity: 0 !important;
+      z-index: 1 !important;
     }
 
     /* Day & Night Mode Fog/Blur Suppression (Pristine 4K Razor Sharpness) */
@@ -400,11 +455,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       pointer-events: none;
     }
 
-    /* Apple Studio Day/Night Unified Micro-Glass Card Guard */
+    /* Apple Studio Day/Night Dynamic Micro-Glass Card Guard */
     html.lock-day-mode .pulseos-login-overlay .sonoma-lock-card,
-    .pulseos-login-overlay.sonoma-day .sonoma-lock-card,
-    html.lock-night-mode .pulseos-login-overlay .sonoma-lock-card,
-    .pulseos-login-overlay.sonoma-night .sonoma-lock-card {
+    html.theme-light .pulseos-login-overlay .sonoma-lock-card,
+    .pulseos-login-overlay.sonoma-day .sonoma-lock-card {
       background: rgba(255, 255, 255, 0.75) !important;
       border: 1px solid rgba(255, 255, 255, 0.95) !important;
       box-shadow: 
@@ -413,15 +467,75 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         0 8px 30px rgba(255, 255, 255, 0.6) !important;
     }
     html.lock-day-mode .pulseos-login-overlay .sonoma-input-pill,
-    .pulseos-login-overlay.sonoma-day .sonoma-input-pill,
-    html.lock-night-mode .pulseos-login-overlay .sonoma-input-pill,
-    .pulseos-login-overlay.sonoma-night .sonoma-input-pill {
+    html.theme-light .pulseos-login-overlay .sonoma-input-pill,
+    .pulseos-login-overlay.sonoma-day .sonoma-input-pill {
       background: rgba(255, 255, 255, 0.88) !important;
       border: 1px solid rgba(203, 213, 225, 0.8) !important;
       box-shadow: 
         0 10px 25px -5px rgba(15, 23, 42, 0.07), 
         0 2px 6px -1px rgba(15, 23, 42, 0.04), 
         inset 0 1px 2px #ffffff !important;
+      color: #0f172a !important;
+    }
+    html.lock-day-mode .pulseos-login-overlay .sonoma-input-pill input,
+    html.theme-light .pulseos-login-overlay .sonoma-input-pill input {
+      color: #0f172a !important;
+    }
+
+    html.lock-night-mode .pulseos-login-overlay .sonoma-lock-card,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-lock-card,
+    .pulseos-login-overlay.sonoma-night .sonoma-lock-card {
+      background: rgba(15, 23, 42, 0.65) !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      box-shadow: 
+        0 24px 60px -10px rgba(0, 0, 0, 0.65), 
+        0 0 1px 1px rgba(255, 255, 255, 0.08) inset,
+        0 12px 36px rgba(0, 0, 0, 0.5) !important;
+    }
+    html.lock-night-mode .pulseos-login-overlay .sonoma-input-pill,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-input-pill,
+    .pulseos-login-overlay.sonoma-night .sonoma-input-pill {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.4), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+    }
+    html.lock-night-mode .pulseos-login-overlay .sonoma-input-pill input,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-input-pill input {
+      color: #ffffff !important;
+    }
+    html.lock-night-mode .pulseos-login-overlay .sonoma-stay-label,
+    html:not(.theme-light) .pulseos-login-overlay .sonoma-stay-label {
+      color: #94a3b8 !important;
+    }
+    html.lock-night-mode #pulseosLoginOverlay h1.sonoma-user-name,
+    html:not(.theme-light) #pulseosLoginOverlay h1.sonoma-user-name {
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: #ffffff !important;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7)) !important;
+    }
+    html.lock-night-mode .sonoma-clock-time,
+    html:not(.theme-light) .sonoma-clock-time {
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: #ffffff !important;
+      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.75)) !important;
+    }
+    html.lock-night-mode .sonoma-clock-date,
+    html:not(.theme-light) .sonoma-clock-date {
+      background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: #cbd5e1 !important;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.75)) !important;
     }
 
     /* ======================================================== */
@@ -2475,12 +2589,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     /* ======================================================== */
     /* 🌤️ APPLE WEATHER DYNAMIC GLASSMORPHIC METEOROLOGICAL CARD */
     /* ======================================================== */
-    .w-weather-card {
+                .w-weather-card {
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 270px;
+      min-height: 280px;
       height: 100%;
       box-sizing: border-box;
       overflow: hidden;
@@ -2501,26 +2615,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     .w-weather-card[data-scene="sunny"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(245, 158, 11, 0.22) 0%, rgba(251, 191, 36, 0.12) 45%, transparent 75%);
+      background: radial-gradient(circle at 75% 20%, rgba(245, 158, 11, 0.28) 0%, rgba(251, 191, 36, 0.12) 42%, transparent 70%);
     }
     .w-weather-card[data-scene="partly-cloudy"] .weather-bg-atmosphere,
     .w-weather-card[data-scene="cloudy"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.18) 0%, rgba(245, 158, 11, 0.12) 40%, transparent 75%);
+      background: radial-gradient(circle at 75% 18%, rgba(56, 189, 248, 0.22) 0%, rgba(245, 158, 11, 0.1) 40%, transparent 70%);
     }
     .w-weather-card[data-scene="overcast"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(148, 163, 184, 0.22) 0%, rgba(100, 116, 139, 0.12) 50%, transparent 75%);
+      background: radial-gradient(circle at 70% 20%, rgba(148, 163, 184, 0.25) 0%, rgba(100, 116, 139, 0.12) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="rain"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.22) 0%, rgba(99, 102, 241, 0.12) 50%, transparent 75%);
+      background: radial-gradient(circle at 70% 22%, rgba(14, 165, 233, 0.28) 0%, rgba(99, 102, 241, 0.14) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="thunder"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.28) 0%, rgba(56, 189, 248, 0.18) 50%, transparent 75%);
+      background: radial-gradient(circle at 75% 20%, rgba(168, 85, 247, 0.32) 0%, rgba(56, 189, 248, 0.18) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="snow"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(224, 242, 254, 0.35) 0%, rgba(186, 230, 253, 0.18) 50%, transparent 75%);
+      background: radial-gradient(circle at 75% 20%, rgba(224, 242, 254, 0.35) 0%, rgba(186, 230, 253, 0.18) 50%, transparent 75%);
     }
     .w-weather-card[data-scene="fog"] .weather-bg-atmosphere {
-      background: radial-gradient(circle at 85% 15%, rgba(148, 163, 184, 0.22) 0%, rgba(203, 213, 225, 0.12) 50%, transparent 75%);
+      background: radial-gradient(circle at 70% 20%, rgba(148, 163, 184, 0.24) 0%, rgba(203, 213, 225, 0.14) 50%, transparent 75%);
     }
 
     /* Light Theme Contrast & Atmospheric Tinting */
@@ -2533,6 +2647,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .w-weather-card[data-scene="cloudy"] {
       background: linear-gradient(150deg, #ffffff 0%, #f8fafc 55%, #e2e8f0 100%) !important;
       border: 1px solid rgba(203, 213, 225, 0.8) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
     }
     html.theme-light .w-weather-card[data-scene="overcast"] {
       background: linear-gradient(150deg, #ffffff 0%, #f1f5f9 55%, #cbd5e1 100%) !important;
@@ -2555,434 +2670,481 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border: 1px solid rgba(203, 213, 225, 0.7) !important;
     }
 
+    /* Header & Control Group */
+    .weather-live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      padding: 1px 7px;
+      border-radius: 999px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.02em;
+    }
+    .weather-live-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+      animation: beaconBlink 2.2s ease-in-out infinite;
+    }
+    @keyframes beaconBlink {
+      0%, 100% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
     .weather-ctrl-group {
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-shrink: 0;
-      position: relative;
       z-index: 2;
     }
-
     .weather-city-btn {
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 3px 9px;
-      min-width: 52px;
-      height: 26px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text);
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 4px;
+      background: rgba(0, 145, 255, 0.1);
+      border: 1px solid rgba(0, 145, 255, 0.25);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      color: #38bdf8;
       cursor: pointer;
-      user-select: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-sizing: border-box;
-      flex-shrink: 0;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .weather-city-btn:hover {
-      background: rgba(0, 145, 255, 0.14);
-      border-color: rgba(0, 145, 255, 0.4);
-      color: #38bdf8;
+      background: rgba(0, 145, 255, 0.2);
+      border-color: rgba(0, 145, 255, 0.45);
       transform: translateY(-1px);
     }
-    .weather-city-btn:active {
-      transform: scale(0.94);
-    }
-
     .weather-refresh-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-dim);
       width: 26px;
       height: 26px;
       border-radius: 8px;
-      display: inline-flex;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      user-select: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-sizing: border-box;
-      position: relative;
-      flex-shrink: 0;
+      transition: all 0.2s ease;
     }
     .weather-refresh-btn:hover {
-      color: #38bdf8;
-      background: rgba(0, 145, 255, 0.15);
-      border-color: rgba(0, 145, 255, 0.4);
-      transform: translateY(-1px) scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 145, 255, 0.25);
-    }
-    .weather-refresh-btn:active {
-      transform: scale(0.90);
-    }
-    .weather-refresh-btn.is-refreshing i,
-    .weather-refresh-btn.is-refreshing svg {
-      animation: weatherSpin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
-    @keyframes weatherSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .weather-refresh-btn.just-updated {
-      animation: weatherPulseGlow 0.5s ease-out;
-    }
-    @keyframes weatherPulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); border-color: #10b981; color: #10b981; }
-      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); border-color: #10b981; }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      transform: translateY(-1px);
     }
 
-    /* 🌤️ CELESTIAL ARTBOARD STAGE (Apple Weather Cinematic Centerpiece) */
+    /* 🎨 CENTRAL WEATHER ARTWORK STAGE (Pure Art, No Demo Clicking) */
     .weather-visual-stage {
+      position: relative;
+      height: 145px;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 105px;
-      min-height: 105px;
-      width: 100%;
-      position: relative;
-      margin: 2px 0 6px;
-      cursor: pointer;
-      background: transparent !important;
-      border: none !important;
       overflow: visible;
-      z-index: 1;
+      z-index: 2;
+      user-select: none;
+      cursor: default;
     }
+
     .weather-anim-box {
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       width: 100%;
       height: 100%;
-    }
-    .weather-ambient-glow {
-      position: absolute;
-      width: 180px;
-      height: 90px;
-      border-radius: 50%;
-      filter: blur(32px);
-      opacity: 0.45;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .glow-sunny   { background: radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(251, 191, 36, 0.25) 45%, transparent 75%); }
-    .glow-cloudy  { background: radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%, transparent 75%); }
-    .glow-overcast{ background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(100, 116, 139, 0.2) 50%, transparent 75%); }
-    .glow-rain    { background: radial-gradient(circle, rgba(14, 165, 233, 0.35) 0%, rgba(99, 102, 241, 0.2) 50%, transparent 75%); }
-    .glow-thunder { background: radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(56, 189, 248, 0.25) 50%, transparent 75%); }
-    .glow-snow    { background: radial-gradient(circle, rgba(224, 242, 254, 0.5) 0%, rgba(186, 230, 253, 0.3) 50%, transparent 75%); }
-    .glow-fog     { background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, rgba(203, 213, 225, 0.15) 60%, transparent 75%); }
-
-    .weather-artboard {
-      position: relative;
-      width: 170px;
-      height: 100px;
-      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 2;
     }
 
-    /* 1. SUNNY (晴朗) */
-    .artboard-sunny { position: relative; }
-    .art-sun-rays-wrap {
-      position: absolute;
-      width: 130px;
-      height: 130px;
+    /* ========================================================
+       1. SUNNY: CELESTIAL RADIANCE (No Stick Rays!)
+       ======================================================== */
+    .art-sun-wrap {
+      position: relative;
+      width: 145px;
+      height: 145px;
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: raysEtherealSpin 42s linear infinite;
     }
-    @keyframes raysEtherealSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .art-sun-glow {
+      position: absolute;
+      width: 135px;
+      height: 135px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.35) 0%, rgba(245, 158, 11, 0.14) 45%, transparent 70%);
+      filter: blur(20px);
+      animation: sunGlowPulse 5s ease-in-out infinite alternate;
     }
-    .art-sun-sphere {
+    .art-sun-halo {
+      position: absolute;
+      width: 114px;
+      height: 114px;
+      border-radius: 50%;
+      border: 1.2px dashed rgba(253, 224, 71, 0.35);
+      animation: sunHaloSpin 32s linear infinite;
+    }
+    .art-sun-beam {
+      position: absolute;
+      width: 175px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9) 50%, transparent);
+      filter: blur(0.5px);
+      opacity: 0.65;
+      animation: sunBeamBreathe 4.2s ease-in-out infinite alternate;
+    }
+    .art-sun-orb {
       position: relative;
-      width: 58px;
-      height: 58px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      background: radial-gradient(circle at 34% 34%, #ffffff 0%, #fef08a 28%, #f59e0b 68%, #d97706 100%);
-      box-shadow: 0 0 32px rgba(245, 158, 11, 0.75), 0 0 64px rgba(251, 191, 36, 0.35);
-      z-index: 3;
-      animation: sunSphereBreathe 3.5s ease-in-out infinite alternate;
+      background: radial-gradient(circle at 30% 26%, #ffffff 0%, #fef08a 22%, #f59e0b 60%, #d97706 88%, #b45309 100%);
+      box-shadow: 
+        0 0 35px rgba(245, 158, 11, 0.85),
+        0 0 65px rgba(234, 88, 12, 0.45),
+        inset -5px -5px 12px rgba(180, 83, 9, 0.7),
+        inset 4px 4px 10px rgba(255, 255, 255, 0.95);
+      animation: sunOrbFloat 4.2s ease-in-out infinite alternate;
     }
-    .sun-sphere-specular {
-      position: absolute;
-      top: 10px;
-      left: 12px;
-      width: 16px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.7);
-      filter: blur(2px);
-      transform: rotate(-30deg);
+    @keyframes sunGlowPulse {
+      0% { transform: scale(0.92); opacity: 0.4; }
+      100% { transform: scale(1.14); opacity: 0.75; }
     }
-    @keyframes sunSphereBreathe {
-      0% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.6)); }
-      100% { transform: scale(1.06); filter: drop-shadow(0 0 26px rgba(251, 191, 36, 0.85)); }
+    @keyframes sunHaloSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    .sun-sparkle {
-      position: absolute;
-      color: #fbbf24;
-      font-size: 0.75rem;
-      pointer-events: none;
-      animation: sparkleTwinkle 2.8s ease-in-out infinite alternate;
-      z-index: 4;
-      opacity: 0.85;
+    @keyframes sunBeamBreathe {
+      0% { transform: scaleX(0.85); opacity: 0.4; }
+      100% { transform: scaleX(1.15); opacity: 0.8; }
     }
-    .sp1 { top: 12px; right: 28px; animation-delay: 0s; font-size: 0.85rem; }
-    .sp2 { bottom: 16px; left: 30px; animation-delay: 1.2s; font-size: 0.7rem; }
-    .sp3 { top: 22px; left: 24px; animation-delay: 0.6s; font-size: 0.75rem; }
-    @keyframes sparkleTwinkle {
-      0% { opacity: 0.2; transform: scale(0.7); }
-      50% { opacity: 0.95; transform: scale(1.15) rotate(15deg); }
-      100% { opacity: 0.3; transform: scale(0.85); }
-    }
-
-    /* 2. CLOUDY & OVERCAST (多云 / 阴天) */
-    .art-cloudy-sun {
-      position: absolute;
-      top: 8px;
-      right: 18px;
-      width: 48px;
-      height: 48px;
-      z-index: 1;
-      animation: sunSphereBreathe 4s ease-in-out infinite alternate;
-    }
-    .cloudy-sun-body {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #fffdf0 0%, #fde047 38%, #f59e0b 72%, #d97706 100%);
-      box-shadow: 0 0 24px rgba(245, 158, 11, 0.7), 0 0 45px rgba(245, 158, 11, 0.3);
-    }
-    .art-cloud-group {
-      position: absolute;
-      left: 10px;
-      bottom: 8px;
-      width: 144px;
-      height: 80px;
-      z-index: 2;
-      animation: cloudFloatSubtle 4.2s ease-in-out infinite alternate;
-    }
-    .art-back-cloud {
-      position: absolute;
-      left: 28px;
-      top: 10px;
-      width: 120px;
-      height: 68px;
-      z-index: 1;
-      opacity: 0.7;
-      animation: cloudFloatSubtle 5s ease-in-out infinite alternate-reverse;
-    }
-    @keyframes cloudFloatSubtle {
+    @keyframes sunOrbFloat {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-3px); }
+      100% { transform: translateY(-4px); }
     }
 
-    /* 3. RAIN (雨天) */
-    .rain-streaks-box {
+    /* ========================================================
+       2. CLOUD & PARTLY CLOUDY: VOLUMETRIC SCULPTURE
+       ======================================================== */
+    .art-cloud-wrap {
+      position: relative;
+      width: 235px;
+      height: 140px;
+    }
+    .art-cloud-sun {
       position: absolute;
-      top: 48px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 44px;
-      overflow: hidden;
+      top: 6px;
+      right: 28px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, #ffffff 0%, #fef08a 25%, #f59e0b 65%, #d97706 100%);
+      box-shadow: 0 0 32px rgba(245, 158, 11, 0.85), 0 0 55px rgba(245, 158, 11, 0.4);
+      z-index: 1;
+      animation: sunGlowPulse 5s ease-in-out infinite alternate;
+    }
+    .art-cloud-back {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 205px;
+      height: 130px;
+      z-index: 2;
+      opacity: 0.45;
+      filter: blur(2.5px);
+      animation: cloudFloatBackTier 6s ease-in-out infinite alternate;
+    }
+    .art-cloud-front {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      width: 235px;
+      height: 140px;
       z-index: 3;
+      filter: drop-shadow(0 15px 22px rgba(0, 0, 0, 0.5));
+      animation: cloudFloatFrontTier 4.8s ease-in-out infinite alternate;
+    }
+    @keyframes cloudFloatFrontTier {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+    @keyframes cloudFloatBackTier {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-3px) translateX(2px); }
+    }
+
+    /* ========================================================
+       3. RAIN: STREAM FIBERS & RIPPLES
+       ======================================================== */
+    .rain-fibers-stream {
+      position: absolute;
+      bottom: -4px;
+      left: 25px;
+      right: 25px;
+      height: 62px;
+      z-index: 4;
+      pointer-events: none;
+      overflow: visible;
     }
     .rain-streak {
       position: absolute;
-      width: 2px;
-      border-radius: 2px;
-      background: linear-gradient(180deg, rgba(56, 189, 248, 0.1), #38bdf8 70%, #00d4ff 100%);
-      animation: streakGlide 0.75s linear infinite;
+      width: 1.8px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(56, 189, 248, 0.85) 60%, rgba(2, 132, 199, 0.15) 100%);
+      filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.85));
+      animation: rainStreakFall 0.85s linear infinite;
     }
-    .st1 { left: 14%; height: 12px; animation-delay: 0s; }
-    .st2 { left: 34%; height: 15px; animation-delay: 0.25s; }
-    .st3 { left: 54%; height: 11px; animation-delay: 0.45s; }
-    .st4 { left: 74%; height: 14px; animation-delay: 0.15s; }
-    .st5 { left: 90%; height: 12px; animation-delay: 0.35s; }
-    @keyframes streakGlide {
-      0% { transform: translateY(-14px) rotate(-10deg); opacity: 0; }
-      30% { opacity: 0.95; }
-      100% { transform: translateY(48px) rotate(-10deg); opacity: 0; }
+    .rk1 { left: 16%; height: 18px; animation-delay: -0.1s; }
+    .rk2 { left: 34%; height: 22px; animation-delay: -0.45s; }
+    .rk3 { left: 52%; height: 16px; animation-delay: -0.25s; }
+    .rk4 { left: 70%; height: 20px; animation-delay: -0.7s; }
+    .rk5 { left: 86%; height: 17px; animation-delay: -0.35s; }
+    @keyframes rainStreakFall {
+      0% { transform: translateY(-8px) rotate(-12deg); opacity: 0; }
+      20% { opacity: 0.95; }
+      100% { transform: translateY(56px) rotate(-12deg); opacity: 0; }
     }
-    .rain-splash-ripples {
+    .rain-ripple-ring {
       position: absolute;
       bottom: 2px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 8px;
-      display: flex;
-      justify-content: space-around;
-      z-index: 3;
-    }
-    .ripple {
-      width: 8px;
-      height: 3px;
+      width: 14px;
+      height: 4px;
       border-radius: 50%;
       border: 1px solid rgba(56, 189, 248, 0.7);
-      animation: rippleExpand 1s ease-out infinite;
+      animation: rippleExpandOut 0.85s ease-out infinite;
     }
-    .rp1 { animation-delay: 0.1s; }
-    .rp2 { animation-delay: 0.4s; }
-    .rp3 { animation-delay: 0.7s; }
-    @keyframes rippleExpand {
+    .rp1 { left: 30%; animation-delay: -0.45s; }
+    .rp2 { left: 66%; animation-delay: -0.7s; }
+    @keyframes rippleExpandOut {
       0% { transform: scale(0.3); opacity: 1; }
-      100% { transform: scale(2.2); opacity: 0; }
+      100% { transform: scale(2.4); opacity: 0; }
     }
 
-    /* 4. THUNDERSTORM (雷雨) */
-    .art-lightning-dual {
+    /* ========================================================
+       4. THUNDERSTORM: SHEET LIGHTNING & ELECTRIC BOLT
+       ======================================================== */
+    .thunder-ambient-pulse {
       position: absolute;
-      bottom: 2px;
-      left: 50%;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%);
+      opacity: 0;
+      animation: sheetLightningPulse 3.8s ease-in-out infinite;
+    }
+    @keyframes sheetLightningPulse {
+      0%, 86%, 100% { opacity: 0; }
+      88%, 92% { opacity: 0.95; }
+      90% { opacity: 0.2; }
+    }
+    .art-lightning-bolt-wrap {
+      position: absolute;
+      bottom: 4px;
+      left: 52%;
       transform: translateX(-50%);
+      z-index: 6;
+      animation: boltStrikePop 3.8s ease-in-out infinite;
+    }
+    @keyframes boltStrikePop {
+      0%, 86%, 100% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+      88%, 92% { opacity: 1; transform: translateX(-50%) scale(1.06); filter: drop-shadow(0 0 16px #fbbf24) drop-shadow(0 0 30px #f59e0b); }
+      90% { opacity: 0.15; }
+    }
+
+    /* ========================================================
+       5. SNOW: 3D CRYSTAL SWIRL
+       ======================================================== */
+    .snow-crystals-wrap {
+      position: absolute;
+      bottom: -6px;
+      left: 20px;
+      right: 20px;
+      height: 64px;
       z-index: 4;
-      animation: thunderStrobe 3s ease-in-out infinite;
+      pointer-events: none;
+      overflow: visible;
     }
-    @keyframes thunderStrobe {
-      0%, 88%, 100% { opacity: 0; transform: translateX(-50%) scale(0.9); }
-      90%, 94% { opacity: 1; transform: translateX(-50%) scale(1.08); filter: drop-shadow(0 0 12px #fbbf24); }
-      92% { opacity: 0.2; }
-    }
-
-    /* 5. SNOW (雪天) */
-    .snow-crystals-box {
-      position: absolute;
-      top: 44px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 110px;
-      height: 48px;
-      overflow: hidden;
-      z-index: 3;
-    }
-    .crystal {
+    .snow-gem {
       position: absolute;
       color: #e0f2fe;
-      filter: drop-shadow(0 0 5px rgba(224, 242, 254, 0.85));
-      animation: crystalFall 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(224, 242, 254, 0.95));
+      animation: snowGemGlide 3s ease-in-out infinite;
     }
-    .cr1 { left: 12%; animation-delay: 0s; font-size: 0.95rem; }
-    .cr2 { left: 32%; animation-delay: 0.6s; font-size: 1.15rem; }
-    .cr3 { left: 56%; animation-delay: 0.2s; font-size: 0.8rem; }
-    .cr4 { left: 78%; animation-delay: 0.8s; font-size: 1rem; }
-    .cr5 { left: 92%; animation-delay: 0.4s; font-size: 0.75rem; }
-    @keyframes crystalFall {
-      0% { transform: translateY(-14px) translateX(0) rotate(0deg); opacity: 0; }
+    .sg1 { left: 14%; font-size: 1.15rem; animation-delay: -0.4s; }
+    .sg2 { left: 35%; font-size: 1.45rem; animation-delay: -1.5s; }
+    .sg3 { left: 58%; font-size: 1.05rem; animation-delay: -0.8s; }
+    .sg4 { left: 78%; font-size: 1.4rem; animation-delay: -2.1s; }
+    @keyframes snowGemGlide {
+      0% { transform: translateY(-5px) translateX(0) rotate(0deg); opacity: 0.3; }
       25% { opacity: 0.95; }
-      50% { transform: translateY(16px) translateX(6px) rotate(90deg); }
-      100% { transform: translateY(50px) translateX(-6px) rotate(180deg); opacity: 0; }
+      50% { transform: translateY(30px) translateX(7px) rotate(80deg); }
+      100% { transform: translateY(62px) translateX(-7px) rotate(160deg); opacity: 0; }
     }
 
-    /* 6. FOG (雾霾) */
+    /* ========================================================
+       6. FOG: ROLLING MIST RIBBONS
+       ======================================================== */
     .art-fog-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 7px;
+      gap: 9px;
       z-index: 2;
     }
     .art-fog-bar {
-      height: 6px;
-      border-radius: 3px;
-      background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.5) 25%, rgba(241, 245, 249, 0.85) 50%, rgba(203, 213, 225, 0.5) 75%, transparent);
-      animation: fogDrift 3.5s ease-in-out infinite alternate;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.45) 20%, rgba(241, 245, 249, 0.88) 50%, rgba(203, 213, 225, 0.45) 80%, transparent);
+      animation: fogDriftVolumetric 3.8s ease-in-out infinite alternate;
     }
-    .fb1 { width: 115px; animation-delay: 0s; }
-    .fb2 { width: 145px; animation-delay: 0.6s; height: 7px; }
-    .fb3 { width: 100px; animation-delay: 1.2s; }
-    .fb4 { width: 130px; animation-delay: 1.8s; height: 5px; }
-    @keyframes fogDrift {
-      0% { transform: translateX(-6px); opacity: 0.5; }
-      100% { transform: translateX(6px); opacity: 0.9; }
+    .fb1 { width: 140px; animation-delay: 0s; }
+    .fb2 { width: 190px; animation-delay: 0.6s; height: 8px; }
+    .fb3 { width: 125px; animation-delay: 1.2s; }
+    .fb4 { width: 170px; animation-delay: 1.8s; height: 6px; }
+    .fb5 { width: 150px; animation-delay: 2.4s; }
+    @keyframes fogDriftVolumetric {
+      0% { transform: translateX(-8px); opacity: 0.5; }
+      100% { transform: translateX(8px); opacity: 0.95; }
     }
 
-    /* 🌡️ APPLE WEATHER HERO TEMP ROW */
-    .weather-hero-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 4px;
-      margin-bottom: 6px;
+    /* 📊 WEATHER CONTENT & TELEMETRY */
+    .weather-content {
       position: relative;
       z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      width: 100%;
+    }
+
+    /* Hero Temp & Condition Row */
+    .weather-hero-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 2px;
     }
     .weather-temp-wrap {
       display: flex;
-      align-items: baseline;
+      flex-direction: column;
+      gap: 2px;
     }
     .weather-temp {
-      font-size: 2.6rem;
+      font-size: 2.85rem;
       font-weight: 700;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-sans), sans-serif;
-      color: #ffffff;
-      line-height: 1;
+      color: #fff;
       letter-spacing: -0.04em;
+      line-height: 0.95;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     }
     .temp-unit {
-      font-size: 1.3rem;
-      font-weight: 300;
-      color: var(--text-dim, #94a3b8);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: #94a3b8;
+      vertical-align: top;
       margin-left: 2px;
+    }
+    .weather-feels-like-pill {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      padding: 2px 7px;
+      border-radius: 6px;
+      width: fit-content;
+      font-weight: 500;
     }
     .weather-hero-meta {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 3px;
+      gap: 4px;
     }
     .weather-cond-badge {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #f59e0b;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.25);
-      padding: 2px 8px;
-      border-radius: 8px;
-      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      font-weight: 700;
       letter-spacing: 0.02em;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .weather-cond-badge:hover {
-      transform: scale(1.05);
-      border-color: rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.16);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     .weather-range-pill {
-      font-size: 0.68rem;
+      font-size: 0.7rem;
+      color: #94a3b8;
       font-weight: 500;
-      color: var(--text-dim, #94a3b8);
-      font-family: var(--font-mono);
-      letter-spacing: 0.02em;
+      font-family: var(--font-mono, monospace);
     }
 
-    /* 📊 METEOROLOGICAL BENTO 3-GRID */
+    /* ⏱️ 24-HOUR HOURLY FORECAST RIBBON */
+    .weather-hourly-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      padding: 5px 3px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .w-hourly-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 2px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .w-hourly-item.now {
+      background: rgba(0, 145, 255, 0.14);
+      border-color: rgba(0, 145, 255, 0.4);
+      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.15);
+    }
+    .w-hourly-time {
+      font-size: 0.62rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .w-hourly-icon {
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+    .w-hourly-temp {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono, monospace);
+    }
+
+    /* 📊 METEOROLOGICAL BENTO 4-GRID */
     .weather-meta-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
       width: 100%;
       box-sizing: border-box;
       position: relative;
       z-index: 2;
     }
     .w-meta-card {
-      padding: 7px 9px;
-      border-radius: 12px;
+      padding: 6px 7px;
+      border-radius: 11px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
@@ -2990,7 +3152,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 56px;
+      min-height: 52px;
       box-sizing: border-box;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease;
     }
@@ -3005,49 +3167,40 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 4px;
     }
     .w-meta-icon {
-      width: 12px;
-      height: 12px;
-      flex-shrink: 0;
+      width: 11px;
+      height: 11px;
+      opacity: 0.85;
     }
-    .w-icon-humidity { color: #38bdf8; }
+    .w-icon-hum { color: #38bdf8; }
     .w-icon-wind { color: #34d399; }
-    .w-icon-aqi { color: #f59e0b; }
+    .w-icon-aqi { color: #10b981; }
+    .w-icon-uv { color: #f59e0b; }
     .w-meta-lbl {
-      font-size: 0.66rem;
-      color: var(--text-dim, #94a3b8);
+      font-size: 0.6rem;
+      color: #94a3b8;
       font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1;
     }
     .w-meta-val {
-      font-size: 0.88rem;
+      font-size: 0.76rem;
       font-weight: 700;
-      color: #ffffff;
-      font-family: var(--font-mono);
-      line-height: 1.2;
-      margin: 2px 0 1px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: #fff;
+      line-height: 1.15;
+      font-family: var(--font-mono, monospace);
     }
     .w-meta-sub {
-      font-size: 0.62rem;
-      color: var(--text-dim, #94a3b8);
-      font-weight: 500;
+      font-size: 0.58rem;
+      color: #64748b;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1;
     }
     .w-meta-aqi-bar-wrap {
-      height: 3px;
       width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 2px;
-      background: rgba(255, 255, 255, 0.1);
-      margin-top: 3px;
       overflow: hidden;
+      margin-top: 2px;
     }
     .w-meta-aqi-bar {
       height: 100%;
@@ -3062,6 +3215,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .temp-unit {
       color: #475569 !important;
     }
+    html.theme-light .weather-feels-like-pill {
+      background: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
+    }
     html.theme-light .weather-cond-badge {
       background: rgba(245, 158, 11, 0.16) !important;
       color: #d97706 !important;
@@ -3070,9 +3228,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .weather-range-pill {
       color: #475569 !important;
     }
+    html.theme-light .w-hourly-strip {
+      background: rgba(241, 245, 249, 0.8) !important;
+      border-color: rgba(203, 213, 225, 0.7) !important;
+    }
+    html.theme-light .w-hourly-item {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light .w-hourly-item.now {
+      background: rgba(0, 145, 255, 0.12) !important;
+      border-color: rgba(0, 145, 255, 0.35) !important;
+    }
+    html.theme-light .w-hourly-time {
+      color: #64748b !important;
+    }
+    html.theme-light .w-hourly-temp {
+      color: #0f172a !important;
+    }
     html.theme-light .w-meta-card {
-      background: rgba(255, 255, 255, 0.92) !important;
-      border: 1px solid rgba(0, 0, 0, 0.08) !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid rgba(203, 213, 225, 0.8) !important;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
     }
     html.theme-light .w-meta-card:hover {
@@ -3081,38 +3257,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-shadow: 0 4px 12px rgba(0, 145, 255, 0.12) !important;
     }
     html.theme-light .w-meta-lbl {
-      color: #475569 !important;
-      font-weight: 600 !important;
+      color: #64748b !important;
     }
     html.theme-light .w-meta-val {
       color: #0f172a !important;
-      font-weight: 700 !important;
     }
     html.theme-light .w-meta-sub {
-      color: #475569 !important;
-      font-weight: 600 !important;
-    }
-    html.theme-light .w-meta-aqi-bar-wrap {
-      background: rgba(0, 0, 0, 0.1) !important;
+      color: #64748b !important;
     }
     html.theme-light .weather-city-btn {
       background: #f1f5f9 !important;
       border-color: #cbd5e1 !important;
-      color: #0f172a !important;
-    }
-    html.theme-light .weather-city-btn:hover {
-      background: #e2e8f0 !important;
-      border-color: #94a3b8 !important;
       color: #0284c7 !important;
     }
     html.theme-light .weather-refresh-btn {
       background: #f1f5f9 !important;
       border-color: #cbd5e1 !important;
-      color: #475569 !important;
+      color: #64748b !important;
     }
-    html.theme-light .weather-refresh-btn:hover {
-      background: #e2e8f0 !important;
-      color: #0284c7 !important;
+    html.theme-light .weather-live-badge {
+      background: #dcfce7 !important;
+      border-color: #86efac !important;
+      color: #15803d !important;
+    }
+    html.theme-light .weather-live-dot {
+      background: #16a34a !important;
+      box-shadow: 0 0 6px #16a34a !important;
     }
 
     /* 🍅 Pomodoro Focus Timer */
@@ -3418,91 +3588,494 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: #93c5fd;
     }
 
-    /* Shortcuts (Luxury Glassmorphic 8-Grid) */
+    /* Shortcuts (Luxury Glassmorphic Adaptive Grid) */
     .home-shortcuts-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 6px;
       margin-top: 2px;
     }
     .shortcut-pill {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 8px;
-      background: var(--surface-hover, rgba(255, 255, 255, 0.03));
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
-      border-radius: 12px;
+      gap: 7px;
+      padding: 5px 8px;
+      height: 40px;
+      box-sizing: border-box;
+      background: var(--surface-hover, rgba(255, 255, 255, 0.028));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.065));
+      border-radius: 10px;
       color: var(--text, #f1f5f9);
       text-decoration: none;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
     .shortcut-pill:hover {
-      background: var(--surface, rgba(255, 255, 255, 0.08));
-      border-color: rgba(0, 145, 255, 0.45);
-      transform: translateY(-2.5px);
-      box-shadow: 0 8px 20px rgba(0, 145, 255, 0.12);
+      background: var(--surface, rgba(255, 255, 255, 0.075));
+      border-color: rgba(0, 145, 255, 0.35);
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 16px rgba(0, 145, 255, 0.12);
       color: var(--text, #fff);
     }
     .shortcut-icon-wrap {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
     }
     .shortcut-pill:hover .shortcut-icon-wrap {
-      transform: scale(1.1);
+      transform: scale(1.08);
     }
     .shortcut-info {
       display: flex;
       flex-direction: column;
       min-width: 0;
       flex: 1;
-      padding-right: 9px;
+      justify-content: center;
     }
     .shortcut-name {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       font-weight: 700;
       color: var(--text, #fff);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      letter-spacing: -0.02em;
-      line-height: 1.25;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
     }
     .shortcut-desc {
-      font-size: 0.63rem;
+      font-size: 0.6rem;
       color: var(--text-dim, #94a3b8);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-top: 1px;
-      line-height: 1.2;
+      line-height: 1.15;
     }
     .shortcut-arrow {
       position: absolute;
-      right: 7px;
-      top: 7px;
-      width: 12px;
-      height: 12px;
-      color: var(--text-dim, #94a3b8);
-      opacity: 0.35;
+      right: 6px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      color: #0091ff;
+      opacity: 0;
       flex-shrink: 0;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       pointer-events: none;
     }
     .shortcut-pill:hover .shortcut-arrow {
-      opacity: 1;
+      opacity: 0.85;
+      transform: translate(1px, -1px);
+    }
+
+    /* Weather Expand Button */
+    .weather-expand-btn {
+      background: var(--surface, rgba(255, 255, 255, 0.05));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+      border-radius: 8px;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim, #94a3b8);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .weather-expand-btn:hover {
+      background: rgba(0, 145, 255, 0.18);
+      border-color: rgba(0, 145, 255, 0.45);
       color: #0091ff;
-      transform: translate(1.5px, -1.5px);
+      transform: scale(1.08);
+    }
+
+    /* Shortcuts Card Controls & Drag/Drop/Delete */
+    .sc-ctrl-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      white-space: nowrap !important;
+    }
+    .sc-count-badge {
+      font-size: 0.65rem;
+      color: #0091ff;
+      background: rgba(0, 145, 255, 0.1);
+      border: 1px solid rgba(0, 145, 255, 0.25);
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap !important;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sc-action-btn {
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      height: 24px;
+      box-sizing: border-box;
+      border-radius: 7px;
+      background: var(--surface, rgba(255, 255, 255, 0.05));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+      color: var(--text, #e2e8f0);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap !important;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sc-action-btn:hover {
+      background: var(--surface-hover, rgba(255, 255, 255, 0.12));
+      border-color: rgba(0, 145, 255, 0.4);
+      color: #0091ff;
+      transform: translateY(-1px);
+    }
+    .sc-action-btn.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+
+    /* Shortcuts Drag & Drop states */
+    .shortcut-pill.is-dragging {
+      opacity: 0.35 !important;
+      transform: scale(0.96);
+      border: 1px dashed #0091ff !important;
+    }
+    .shortcut-pill.drag-over {
+      border-color: #0091ff !important;
+      background: rgba(0, 145, 255, 0.15) !important;
+      transform: scale(1.03);
+    }
+    .shortcut-del-btn {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      border: 2px solid var(--surface-card, #0f172a);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      transition: transform 0.15s ease;
+    }
+    .shortcut-del-btn:hover {
+      transform: scale(1.2);
+      background: #dc2626;
+    }
+    .is-shortcuts-manage .shortcut-del-btn {
+      display: flex;
+      animation: scPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .is-shortcuts-manage .shortcut-arrow {
+      display: none !important;
+    }
+    .is-shortcuts-manage .shortcut-pill {
+      animation: scMicroWiggle 2s ease-in-out infinite alternate;
+    }
+    @keyframes scMicroWiggle {
+      0% { transform: rotate(-0.5deg); }
+      100% { transform: rotate(0.5deg); }
+    }
+    @keyframes scPopIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Weather Detail Modal */
+    .weather-detail-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: wmFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .weather-detail-card {
+      width: 100%;
+      max-width: 820px;
+      background: linear-gradient(165deg, rgba(26, 34, 52, 0.94) 0%, rgba(13, 18, 30, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 28px;
+      box-sizing: border-box;
+      gap: 20px;
+      color: #fff;
+      animation: wmScaleIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html.theme-light .weather-detail-card {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.97) 0%, rgba(241, 245, 249, 0.98) 100%);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      color: #0f172a;
+    }
+    @keyframes wmFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes wmScaleIn { from { transform: scale(0.96) translateY(8px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+    .wm-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .wm-close-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ff5f56;
+      border: 1px solid #e0443e;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 10px;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+    .wm-close-dot:hover {
+      transform: scale(1.15);
+      color: #000;
+      background: #ff473d;
+    }
+    .wm-time-center {
+      font-size: 0.82rem;
+      color: var(--text-dim, #94a3b8);
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+    .wm-city-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #0091ff;
+      background: rgba(0, 145, 255, 0.1);
+      border: 1px solid rgba(0, 145, 255, 0.25);
+      padding: 4px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .wm-city-toggle:hover {
+      background: rgba(0, 145, 255, 0.2);
+      border-color: rgba(0, 145, 255, 0.45);
+    }
+
+    .wm-hero-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .wm-temp-giant {
+      font-size: 4.6rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 0.9;
+      color: var(--text, #fff);
+    }
+    .wm-hero-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .wm-cond-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text, #fff);
+    }
+    .wm-metrics-line {
+      font-size: 0.8rem;
+      color: var(--text-dim, #94a3b8);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .wm-metrics-line span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wm-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text, #cbd5e1);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .wm-hourly-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+    }
+    .wm-hourly-scroll::-webkit-scrollbar {
+      height: 5px;
+    }
+    .wm-hourly-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    .wm-hour-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface, rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+      border-radius: 14px;
+      padding: 10px 14px;
+      min-width: 60px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .wm-hour-card.now {
+      background: rgba(0, 145, 255, 0.16);
+      border-color: rgba(0, 145, 255, 0.45);
+    }
+    .wm-hour-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(0, 145, 255, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .wm-7days-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    .wm-day-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface, rgba(255, 255, 255, 0.04));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+      border-radius: 14px;
+      padding: 12px 6px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .wm-day-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(0, 145, 255, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* Add Shortcut Modal */
+    .add-shortcut-dialog {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(165deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 24px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      animation: wmScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html.theme-light .add-shortcut-dialog {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+      color: #0f172a;
+    }
+    .sc-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .sc-form-label {
+      font-size: 0.76rem;
+      color: var(--text-dim, #94a3b8);
+      font-weight: 600;
+    }
+    .sc-form-input {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 0.84rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    html.theme-light .sc-form-input {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .sc-form-input:focus {
+      border-color: #0091ff;
+      box-shadow: 0 0 0 3px rgba(0, 145, 255, 0.2);
+    }
+    .sc-icon-preview-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+    html.theme-light .sc-icon-preview-box {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .sc-preview-img {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.08);
+      object-fit: contain;
+      padding: 3px;
+      box-sizing: border-box;
     }
 
     /* Daily Motto Quote */
@@ -19215,45 +19788,157 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
 .cinema-sync-pill.reset:hover { background: rgba(239, 68, 68, 0.2); }
 
 
-  /* 🌟 PULSEOS TOP FLOATING NOTICE CAPSULE */
+  /* 🌟 PULSEOS TOP FLOATING NOTICE CAPSULE (LUXURY FROSTED GLASS & APPLE SPRING PHYSICS) */
+  
+    /* 🏷️ PULSEOS UNIFORM SIDEBAR BADGES & DOT SUPPRESSION */
+    .sidebar-nav .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      position: relative;
+    }
+    .sidebar-nav .nav-item.active::after {
+      display: none !important; /* Eliminate right dot collision with badges */
+    }
+    .nav-badge {
+      margin-left: auto !important;
+      min-width: 48px;
+      height: 20px;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px !important;
+      border-radius: 9999px !important;
+      font-size: 0.64rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-badge.badge-vault {
+      background: rgba(16, 185, 129, 0.14) !important;
+      color: #34d399 !important;
+      border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    }
+    .nav-badge.badge-converter {
+      background: rgba(234, 179, 8, 0.14) !important;
+      color: #facc15 !important;
+      border: 1px solid rgba(234, 179, 8, 0.3) !important;
+    }
+    .nav-badge.badge-mail {
+      background: rgba(56, 189, 248, 0.14) !important;
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    }
+    .nav-badge.badge-cinema {
+      background: rgba(168, 85, 247, 0.14) !important;
+      color: #c084fc !important;
+      border: 1px solid rgba(168, 85, 247, 0.3) !important;
+    }
+    html.theme-light .nav-badge.badge-vault {
+      background: #ecfdf5 !important;
+      color: #059669 !important;
+      border: 1px solid #a7f3d0 !important;
+    }
+    html.theme-light .nav-badge.badge-converter {
+      background: #fefce8 !important;
+      color: #d97706 !important;
+      border: 1px solid #fde68a !important;
+    }
+    html.theme-light .nav-badge.badge-mail {
+      background: #f0f9ff !important;
+      color: #0284c7 !important;
+      border: 1px solid #bae6fd !important;
+    }
+    html.theme-light .nav-badge.badge-cinema {
+      background: #faf5ff !important;
+      color: #9333ea !important;
+      border: 1px solid #e9d5ff !important;
+    }
+
   .pulseos-notice-capsule {
     position: fixed;
-    top: 24px;
+    top: 22px;
     left: 50%;
-    transform: translate(-50%, -150%);
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    transform: translate(-50%, -160%) scale(0.92);
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(36px) saturate(190%) contrast(105%);
+    -webkit-backdrop-filter: blur(36px) saturate(190%) contrast(105%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 9999px;
-    padding: 9px 22px;
-    color: #fff;
-    font-size: 0.86rem;
+    padding: 8px 20px 8px 14px;
+    color: #f8fafc;
+    font-size: 0.85rem;
     font-weight: 500;
+    letter-spacing: 0.02em;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(56, 189, 248, 0.15);
+    box-shadow: 
+      0 20px 50px -10px rgba(0, 0, 0, 0.6),
+      0 0 24px rgba(56, 189, 248, 0.15),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
     z-index: 9999999;
     pointer-events: none;
     opacity: 0;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    transition: transform 0.44s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .pulseos-notice-capsule.active {
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) scale(1);
     opacity: 1;
     pointer-events: auto;
   }
+  .pulseos-notice-capsule:hover {
+    box-shadow: 
+      0 24px 60px -8px rgba(0, 0, 0, 0.65),
+      0 0 30px rgba(56, 189, 248, 0.25),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .pulseos-notice-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+  }
+  .pulseos-notice-text {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    color: #f8fafc;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+  }
   .theme-light .pulseos-notice-capsule,
   [data-theme="light"] .pulseos-notice-capsule {
-    background: rgba(255, 255, 255, 0.96) !important;
+    background: rgba(255, 255, 255, 0.78) !important;
     color: #0f172a !important;
-    border-color: rgba(0, 0, 0, 0.12) !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 24px rgba(2, 132, 199, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 
+      0 20px 48px -10px rgba(15, 23, 42, 0.15),
+      0 0 20px rgba(2, 132, 199, 0.1),
+      inset 0 1px 2px #ffffff !important;
+  }
+  .theme-light .pulseos-notice-icon,
+  [data-theme="light"] .pulseos-notice-icon {
+    background: rgba(15, 23, 42, 0.05) !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
   }
   .theme-light #pulseOSNoticeText,
   [data-theme="light"] #pulseOSNoticeText {
     color: #0f172a !important;
+    text-shadow: none !important;
   }
 
   /* 🌟 PULSEOS VAULT CUSTOM GLASS DROPDOWN */
@@ -19450,6 +20135,43 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
     border-color: #0284c7;
   }
 
+    /* 🌐 EXTERNAL HELPER PORTAL PILLS */
+    .cinema-portal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .cinema-portal-pill:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .mail-auth-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.67rem;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .mail-auth-pill:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: rgba(56, 189, 248, 0.5);
+      color: #fff;
+    }
 </style>
 </head>
 <body>
@@ -19767,25 +20489,25 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
         <div class="nav-item" data-view="vault" onclick="switchView('vault')" id="navItemVault">
           <i data-lucide="archive"></i>
           <span>10G 文件收纳</span>
-          <span class="nav-badge" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.2)); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 0.62rem; font-weight: 600; padding: 1px 6px; border-radius: 9999px; margin-left: auto;">10GB</span>
+          <span class="nav-badge badge-vault">10GB</span>
         </div>
 
-        <div class="nav-item" data-view="converter" onclick="switchView('converter')">
+        <div class="nav-item" data-view="converter" onclick="switchView('converter')" id="navItemConverter">
           <i data-lucide="repeat"></i>
-          <span>飞鼠格式转换</span><span class="nav-badge" style="background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); font-size: 0.62rem; font-weight: 600; padding: 1px 6px; border-radius: 9999px; margin-left: auto;">全能</span>
+          <span>飞鼠格式转换</span>
+          <span class="nav-badge badge-converter">全能</span>
         </div>
 
-                <div class="nav-item" data-view="mail" onclick="switchView('mail')" id="navItemMail">
+        <div class="nav-item" data-view="mail" onclick="switchView('mail')" id="navItemMail">
           <i data-lucide="mail"></i>
           <span>通用邮箱</span>
-          <span class="nav-badge" id="mailNavAlertBadge" style="display:none; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); font-size:0.65rem; padding:1px 5px; border-radius:10px; margin-left:auto;" title="存在邮箱授权失效，点击前往更新">⚠️ 异常</span>
-          <span class="nav-badge" id="mailNavBadge" style="display:none; background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid rgba(56,189,248,0.4); font-size:0.7rem; padding:1px 6px; border-radius:10px; margin-left:4px;"></span>
+          <span class="nav-badge badge-mail" id="mailNavBadge" style="display:none;"></span>
         </div>
 
-                <div class="nav-item" data-view="cinema" onclick="switchView('cinema')" id="navItemCinema">
+        <div class="nav-item" data-view="cinema" onclick="switchView('cinema')" id="navItemCinema">
           <i data-lucide="tv"></i>
           <span>云端影音</span>
-          <span class="nav-badge" style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(56, 189, 248, 0.2)); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); font-size: 0.62rem; font-weight: 600; padding: 1px 6px; border-radius: 9999px; margin-left: auto;">4K 视听</span>
+          <span class="nav-badge badge-cinema">4K 视听</span>
         </div>
       </nav>
 
@@ -19963,66 +20685,40 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
             <!-- Main Grid: 3 Top Cards (Weather, Pomodoro, Shortcuts) -->
             <div class="home-grid">
               
-              <!-- Card 1: ☀️ 今日天气 (Apple Weather Dynamic Meteorological Widget) -->
-              <div class="home-card w-weather-card" id="homeWeatherCard" data-scene="sunny">
+                                          <!-- Card 1: ☀️ 今日天气 (PulseOS Luxury Meteorological Engine) -->
+              <div class="home-card w-weather-card" id="homeWeatherCard" data-scene="sunny" onclick="onWeatherCardClick(event)" title="点击展开24小时与未来7天多日预报详情" style="cursor:pointer;">
                 <div class="weather-bg-atmosphere" id="weatherAtmosphereBg"></div>
 
                 <div class="home-card-header">
                   <div class="home-card-title">
                     <i data-lucide="cloud-sun" id="homeWeatherMainIcon" style="color:#0091ff; width:16px; height:16px; margin-right:4px;"></i>
                     <span>今日天气</span>
+                    <span class="weather-live-badge"><span class="weather-live-dot"></span>实时遥测</span>
                   </div>
                   <div class="weather-ctrl-group">
-                    <button class="weather-city-btn" id="weatherCityBadge" onclick="cycleWeatherCity()" title="点击切换城市 (长沙/北京/上海/广州/深圳/杭州/成都/武汉)">
+                    <button class="weather-city-btn" id="weatherCityBadge" onclick="event.stopPropagation(); cycleWeatherCity()" title="点击切换城市 (长沙/北京/上海/广州/深圳/杭州/成都/武汉)">
                       <i data-lucide="map-pin" style="width:11px;height:11px;color:#0091ff;"></i>
                       <span id="homeWeatherCity">长沙</span>
                     </button>
                     
-                    <button class="weather-refresh-btn" id="weatherRefreshBtn" onclick="fetchRealWeather(true)" title="立即刷新天气">
+                    <button class="weather-refresh-btn" id="weatherRefreshBtn" onclick="event.stopPropagation(); fetchRealWeather(true)" title="立即刷新天气">
                       <i data-lucide="rotate-cw" id="weatherRefreshIcon" style="width:13px;height:13px;"></i>
+                    </button>
+
+                    <button class="weather-expand-btn" id="weatherExpandBtn" onclick="event.stopPropagation(); openWeatherDetailModal(event)" title="展开24小时与未来7天多日预报">
+                      <i data-lucide="maximize-2" style="width:11px;height:11px;"></i>
                     </button>
                   </div>
                 </div>
                 
-                <!-- 🌤️ Animated Celestial Weather Scene (Apple Dynamic Atmosphere) -->
-                <div class="weather-visual-stage" id="weatherVisualStage" onclick="cycleWeatherScenePreview(event)" title="点击切换演示全部天气动效 (晴/多云/阴/雨/雷/雪/雾)">
+                <!-- 🌤️ Animated Celestial Weather Scene (VisionOS / Apple 3D Atmosphere) -->
+                <div class="weather-visual-stage" id="weatherVisualStage">
                   <div class="weather-anim-box scene-sunny">
-                    <div class="weather-ambient-glow glow-sunny"></div>
-                    <div class="weather-artboard artboard-sunny">
-                      <span class="sun-sparkle sp1">✦</span>
-                      <span class="sun-sparkle sp2">✧</span>
-                      <span class="sun-sparkle sp3">✦</span>
-                      <div class="art-sun-rays-wrap">
-                        <svg class="art-sun-rays-svg" viewBox="0 0 160 160" width="130" height="130">
-                          <defs>
-                            <linearGradient id="sunRayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95" />
-                              <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.2" />
-                            </linearGradient>
-                          </defs>
-                          <g stroke="url(#sunRayGrad)" stroke-width="2.5" stroke-linecap="round">
-                            <line x1="80" y1="14" x2="80" y2="28" />
-                            <line x1="80" y1="132" x2="80" y2="146" />
-                            <line x1="14" y1="80" x2="28" y2="80" />
-                            <line x1="132" y1="80" x2="146" y2="80" />
-                            <line x1="33" y1="33" x2="43" y2="43" />
-                            <line x1="117" y1="117" x2="127" y2="127" />
-                            <line x1="33" y1="127" x2="43" y2="117" />
-                            <line x1="117" y1="43" x2="127" y2="33" />
-                            <line x1="56" y1="21" x2="62" y2="32" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="104" y1="21" x2="98" y2="32" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="56" y1="139" x2="62" y2="128" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="104" y1="139" x2="98" y2="128" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="21" y1="56" x2="32" y2="62" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="21" y1="104" x2="32" y2="98" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="139" y1="56" x2="128" y2="62" stroke-width="1.6" opacity="0.65"/>
-                            <line x1="139" y1="104" x2="128" y2="98" stroke-width="1.6" opacity="0.65"/>
-                          </g>
-                        </svg>
-                      </div>
-                      <div class="art-sun-sphere">
-                        <div class="sun-sphere-specular"></div>
-                      </div>
+                    <div class="art-sun-wrap">
+                      <div class="art-sun-glow"></div>
+                      <div class="art-sun-halo"></div>
+                      <div class="art-sun-beam"></div>
+                      <div class="art-sun-orb"></div>
                     </div>
                   </div>
                 </div>
@@ -20031,6 +20727,7 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                   <div class="weather-hero-row">
                     <div class="weather-temp-wrap">
                       <div class="weather-temp" id="homeWeatherTemp">30<span class="temp-unit">°</span></div>
+                      <div class="weather-feels-like-pill" id="homeWeatherFeelsLike">体感 32°</div>
                     </div>
                     <div class="weather-hero-meta">
                       <div class="weather-cond-badge" id="homeWeatherCond">晴朗</div>
@@ -20038,10 +20735,45 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                     </div>
                   </div>
 
+                  <!-- 24-Hour Micro Hourly Forecast Ribbon -->
+                  <div class="weather-hourly-strip" id="weatherHourlyStrip">
+                    <div class="w-hourly-item now">
+                      <span class="w-hourly-time">现在</span>
+                      <span class="w-hourly-icon">☀️</span>
+                      <span class="w-hourly-temp">30°</span>
+                    </div>
+                    <div class="w-hourly-item">
+                      <span class="w-hourly-time">+2h</span>
+                      <span class="w-hourly-icon">☀️</span>
+                      <span class="w-hourly-temp">31°</span>
+                    </div>
+                    <div class="w-hourly-item">
+                      <span class="w-hourly-time">+4h</span>
+                      <span class="w-hourly-icon">⛅</span>
+                      <span class="w-hourly-temp">29°</span>
+                    </div>
+                    <div class="w-hourly-item">
+                      <span class="w-hourly-time">+6h</span>
+                      <span class="w-hourly-icon">⛅</span>
+                      <span class="w-hourly-temp">27°</span>
+                    </div>
+                    <div class="w-hourly-item">
+                      <span class="w-hourly-time">+8h</span>
+                      <span class="w-hourly-icon">🌙</span>
+                      <span class="w-hourly-temp">25°</span>
+                    </div>
+                    <div class="w-hourly-item">
+                      <span class="w-hourly-time">+10h</span>
+                      <span class="w-hourly-icon">🌙</span>
+                      <span class="w-hourly-temp">23°</span>
+                    </div>
+                  </div>
+
+                  <!-- Bento 4-Metrics Grid -->
                   <div class="weather-meta-grid">
                     <div class="w-meta-card">
                       <div class="w-meta-header">
-                        <i data-lucide="droplets" class="w-meta-icon w-icon-humidity"></i>
+                        <i data-lucide="droplet" class="w-meta-icon w-icon-hum"></i>
                         <span class="w-meta-lbl">湿度</span>
                       </div>
                       <div class="w-meta-val" id="homeWeatherHumidity">68%</div>
@@ -20060,12 +20792,21 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                     <div class="w-meta-card">
                       <div class="w-meta-header">
                         <i data-lucide="leaf" class="w-meta-icon w-icon-aqi"></i>
-                        <span class="w-meta-lbl">空气质量</span>
+                        <span class="w-meta-lbl">空气</span>
                       </div>
                       <div class="w-meta-val c-yellow" id="homeWeatherAqi">良 65</div>
                       <div class="w-meta-aqi-bar-wrap">
                         <div class="w-meta-aqi-bar" id="homeWeatherAqiBar" style="width: 45%; background: #f59e0b;"></div>
                       </div>
+                    </div>
+
+                    <div class="w-meta-card">
+                      <div class="w-meta-header">
+                        <i data-lucide="sun-medium" class="w-meta-icon w-icon-uv"></i>
+                        <span class="w-meta-lbl">紫外线</span>
+                      </div>
+                      <div class="w-meta-val" id="homeWeatherUv" style="color:#f59e0b;">UV 3</div>
+                      <div class="w-meta-sub" id="homeWeatherUvHint">中等</div>
                     </div>
                   </div>
                 </div>
@@ -20177,155 +20918,28 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                 </div>
               </div>
 
-              <!-- Card 3: 🔗 快捷入口 (Quick Shortcuts - 8 Dedicated High-Frequency Ports) -->
-              <div class="home-card home-shortcuts-card">
-                <div class="home-card-header">
-                  <div class="home-card-title">
-                    <i data-lucide="compass" style="color:#0091ff; width:16px; height:16px;"></i>
-                    <span>高频常用导航</span>
+              <!-- Card 3: 🔗 快捷入口 (Quick Shortcuts - Dynamic High-Frequency Ports with Drag & Drop & Management) -->
+              <div class="home-card home-shortcuts-card" id="homeShortcutsCard">
+                <div class="home-card-header" style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:nowrap;">
+                  <div class="home-card-title" style="display:inline-flex; align-items:center; gap:6px; flex-shrink:0; white-space:nowrap;">
+                    <i data-lucide="compass" style="color:#0091ff; width:15px; height:15px; flex-shrink:0;"></i>
+                    <span style="font-size:0.86rem; font-weight:700; white-space:nowrap; letter-spacing:-0.01em;">高频常用导航</span>
+                    <span id="scCountBadge" class="sc-count-badge">10</span>
                   </div>
-                  <span style="font-size:0.68rem; color:#0091ff; background:rgba(0,145,255,0.08); border:1px solid rgba(0,145,255,0.22); padding:2px 8px; border-radius:10px; font-weight:600;">
-                    8 个精选常用
-                  </span>
+                  <div class="sc-ctrl-group">
+                    <button class="sc-action-btn" id="scAddBtn" onclick="openAddShortcutModal()" title="新增自定义网址与图标">
+                      <i data-lucide="plus" style="width:11px;height:11px; flex-shrink:0;"></i>
+                      <span>添加</span>
+                    </button>
+                    <button class="sc-action-btn" id="scManageBtn" onclick="toggleShortcutsManage()" title="管理导航：拖拽排序或删除">
+                      <i data-lucide="sliders-horizontal" style="width:11px;height:11px; flex-shrink:0;"></i>
+                      <span id="scManageBtnText">管理</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="home-shortcuts-grid">
-                  <!-- 1. GitHub -->
-                  <a href="https://github.com/3512473224" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="GitHub · 代码托管与开源生态">
-                    <div class="shortcut-icon-wrap icon-github" style="background:rgba(255,255,255,0.1); color:var(--text, #fff);">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">GitHub</div>
-                      <div class="shortcut-desc">代码仓库</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 2. 油管 (YouTube) -->
-                  <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="YouTube 油管 · 全球视频视界">
-                    <div class="shortcut-icon-wrap" style="background:rgba(255,0,0,0.12); color:#ef4444;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">YouTube</div>
-                      <div class="shortcut-desc">油管视频</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 3. WhatsApp -->
-                  <a href="https://web.whatsapp.com" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="WhatsApp · 全球即时通讯">
-                    <div class="shortcut-icon-wrap" style="background:rgba(37,211,102,0.14); color:#25d366;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">WhatsApp</div>
-                      <div class="shortcut-desc">即时通讯</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 4. Email 邮箱 (Gmail) -->
-                  <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="Email 邮箱 · Gmail / 个人信箱">
-                    <div class="shortcut-icon-wrap" style="background:rgba(234,67,53,0.12); color:#ea4335;">
-                      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
-                        <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">Email 邮箱</div>
-                      <div class="shortcut-desc">Gmail 邮箱</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 5. 学习通 (超星学习通) -->
-                  <a href="https://i.chaoxing.com" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="超星学习通 · 高校课程与在线教学">
-                    <div class="shortcut-icon-wrap" style="background:rgba(2,132,199,0.12); color:#0284c7;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">学习通</div>
-                      <div class="shortcut-desc">超星在线课堂</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 6. 力扣 (LeetCode) -->
-                  <a href="https://leetcode.cn" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="力扣 LeetCode · 算法题库与竞赛">
-                    <div class="shortcut-icon-wrap" style="background:rgba(245,158,11,0.12); color:#f59e0b;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.762-1.823.762s-1.357-.295-1.824-.762l-4.707-4.707a2.58 2.58 0 0 1 0-3.647l4.707-4.707c.467-.467 1.112-.762 1.824-.762s1.357.295 1.823.762l2.697 2.607a.9.9 0 1 1-1.25 1.294l-2.697-2.607a.78.78 0 0 0-.573-.241.78.78 0 0 0-.573.241L6.324 14.18a.78.78 0 0 0 0 1.103l4.707 4.707a.78.78 0 0 0 .573.241.78.78 0 0 0 .573-.241l2.697-2.607a.9.9 0 1 1 1.25 1.294zM10.8 12.9h9.6a.9.9 0 1 0 0-1.8h-9.6a.9.9 0 1 0 0 1.8z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">力扣</div>
-                      <div class="shortcut-desc">LeetCode 题库</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 7. Gemini (Google Gemini) -->
-                  <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="Google Gemini · 前沿多模态大模型">
-                    <div class="shortcut-icon-wrap" style="background:rgba(0,145,255,0.12); color:#0091ff;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M12 0C12 6.627 6.627 12 0 12c6.627 0 12 5.373 12 12 0-6.627 5.373-12 12-12-6.627 0-12-5.373-12-12z"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">Gemini</div>
-                      <div class="shortcut-desc">Google AI 助理</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-
-                  <!-- 8. DeepSeek API平台 -->
-                  <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer" class="shortcut-pill" title="DeepSeek API平台 · 官方大模型开发者平台">
-                    <div class="shortcut-icon-wrap" style="background:rgba(77,107,254,0.14); color:#4d6bfe;">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M23.748 4.651c-.254-.124-.364.113-.512.233-.051.04-.094.09-.137.137-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.155-.708-.311-.955-.65-.172-.24-.219-.509-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.094.172.187.129.323-.082.28-.18.553-.266.833-.055.179-.137.218-.328.14a5.5 5.5 0 0 1-1.737-1.179c-.857-.828-1.631-1.743-2.597-2.46a12 12 0 0 0-.689-.47c-.985-.957.13-1.743.387-1.836.27-.098.094-.433-.778-.428-.872.003-1.67.295-2.687.685a3 3 0 0 1-.465.136 9.6 9.6 0 0 0-2.883-.101c-1.885.21-3.39 1.1-4.497 2.622C.082 8.776-.231 10.854.152 13.02c.403 2.284 1.568 4.175 3.36 5.653 1.857 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.132-.284 4.994-1.86.47.234.962.328 1.78.398.629.058 1.235-.031 1.705-.129.735-.155.684-.836.418-.961-2.155-1.004-1.682-.595-2.112-.926 1.095-1.295 2.768-3.598 3.284-6.733.05-.346.115-.834.108-1.114-.004-.171.035-.238.23-.257a4.2 4.2 0 0 0 1.545-.475c1.397-.763 1.96-2.016 2.093-3.517.02-.23-.004-.467-.247-.588M11.58 18.168c-2.088-1.642-3.101-2.183-3.52-2.16-.39.024-.32.472-.234.763.09.288.207.487.371.74.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.168-1.361-.801-2.5-1.86-3.301-3.306-.775-1.393-1.225-2.888-1.299-4.482-.02-.385.094-.522.477-.592a4.7 4.7 0 0 1 1.53-.038c2.131.311 3.946 1.264 5.467 2.774.868.86 1.525 1.887 2.202 2.89.72 1.066 1.494 2.082 2.48 2.915.348.291.626.513.892.677-.802.09-2.14.109-3.055-.615zm1.001-6.44a.306.306 0 0 1 .415-.287.3.3 0 0 1 .113.074.3.3 0 0 1 .086.214c0 .17-.136.307-.308.307a.303.303 0 0 1-.306-.307m3.11 1.596c-.2.081-.4.151-.591.16a1.25 1.25 0 0 1-.798-.254c-.274-.23-.47-.358-.551-.758a1.7 1.7 0 0 1 .015-.588c.07-.327-.007-.537-.238-.727-.188-.156-.426-.199-.689-.199a.6.6 0 0 1-.254-.078.253.253 0 0 1-.114-.358 1 1 0 0 1 .192-.21c.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.392.451.462.576.685.915.176.264.336.536.446.848.066.194-.02.353-.25.45"/>
-                      </svg>
-                    </div>
-                    <div class="shortcut-info">
-                      <div class="shortcut-name">DeepSeek API</div>
-                      <div class="shortcut-desc">API 开放平台</div>
-                    </div>
-                    <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
+                <div class="home-shortcuts-grid" id="homeShortcutsGrid">
+                  <!-- Dynamically rendered by renderCustomShortcuts() -->
                 </div>
               </div>
             </div> <!-- /home-grid -->
@@ -23076,6 +23690,18 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                 <input type="password" class="mail-acc-input" id="inpNewMailCode" placeholder="16位授权码或应用密码" style="width:100%;">
               </div>
             </div>
+
+            <!-- 🔑 One-Click Mail Auth Code Acquire Bar -->
+            <div class="mail-auth-guide-bar" style="margin-top:2px; margin-bottom:10px; display:flex; flex-wrap:wrap; align-items:center; gap:6px;">
+              <span style="font-size:0.68rem; color:var(--text-dim, #94a3b8); display:inline-flex; align-items:center; gap:3px;">
+                <i data-lucide="key-round" style="width:11px; height:11px; color:#eab308;"></i>
+                <span>一键获取授权码：</span>
+              </span>
+              <a href="https://service.mail.qq.com/detail/0/75" target="_blank" rel="noopener noreferrer" class="mail-auth-pill" title="查看 QQ 邮箱授权码官方生成指南">QQ 邮箱授权码 ↗</a>
+              <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0e0e14e6f4f28540f49f" target="_blank" rel="noopener noreferrer" class="mail-auth-pill" title="查看 163 网易邮箱授权密码官方指南">163 网易授权码 ↗</a>
+              <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer" class="mail-auth-pill" title="前往 Google 账号获取应用专用密码">Gmail 应用密码 ↗</a>
+              <a href="https://account.live.com/proofs/manage/additional" target="_blank" rel="noopener noreferrer" class="mail-auth-pill" title="前往 Microsoft 账号安全管理页获取应用密码">Outlook 应用密码 ↗</a>
+            </div>
             <div style="margin-bottom:10px;">
               <span onclick="toggleNewMailAdvanced()" style="font-size:0.68rem; color:var(--text-dim, #94a3b8); cursor:pointer; text-decoration:underline;">自定义 IMAP 服务器 (可选，默认按域名自动识别)</span>
               <div id="newMailAdvancedBox" style="display:none; grid-template-columns: 2fr 1fr; gap:8px; margin-top:6px;">
@@ -23940,6 +24566,27 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
         </button>
       </div>
       <div style="padding:16px 20px; overflow-y:auto; flex:1;" id="cinemaSubTrackList"></div>
+
+      <!-- 🔍 Subtitle Search Portals Pill Bar -->
+      <div style="padding:10px 20px; border-top:1px solid rgba(255,255,255,0.06); background:rgba(0,0,0,0.15); display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
+        <span style="font-size:0.72rem; color:var(--text-dim); display:inline-flex; align-items:center; gap:4px;">
+          <i data-lucide="search" style="width:12px; height:12px; color:#38bdf8;"></i>
+          <span>查找外挂字幕：</span>
+        </span>
+        <a href="https://subhd.tv" target="_blank" rel="noopener noreferrer" class="cinema-portal-pill" title="前往 SubHD 影视字幕网搜索字幕">
+          <i data-lucide="external-link" style="width:11px; height:11px;"></i>
+          <span>SubHD 字幕</span>
+        </a>
+        <a href="https://zimuku.org" target="_blank" rel="noopener noreferrer" class="cinema-portal-pill" title="前往 字幕库 Zimuku 搜索字幕">
+          <i data-lucide="external-link" style="width:11px; height:11px;"></i>
+          <span>字幕库 Zimuku</span>
+        </a>
+        <a href="https://www.shooter.cn" target="_blank" rel="noopener noreferrer" class="cinema-portal-pill" title="前往 射手网伪 (Shooter) 搜索字幕">
+          <i data-lucide="external-link" style="width:11px; height:11px;"></i>
+          <span>射手网伪</span>
+        </a>
+      </div>
+
       <div style="padding:12px 20px; border-top:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:space-between;">
         <button class="cinema-tool-btn primary-sky" onclick="closeCinemaSubTrackModal(); openCinemaSubtitlePicker();" style="padding:4px 10px; font-size:0.75rem;">
           <i data-lucide="folder-up" style="width:13px; height:13px;"></i>
@@ -24386,11 +25033,24 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
 
     function applyTheme(isLight) {
       if (isLight) {
-        document.documentElement.classList.add('theme-light');
+        document.documentElement.classList.add('theme-light', 'lock-day-mode');
+        document.documentElement.classList.remove('lock-night-mode');
         localStorage.setItem('workspace_theme', 'light');
       } else {
-        document.documentElement.classList.remove('theme-light');
+        document.documentElement.classList.remove('theme-light', 'lock-day-mode');
+        document.documentElement.classList.add('lock-night-mode');
         localStorage.setItem('workspace_theme', 'dark');
+      }
+
+      const overlay = document.getElementById('pulseosLoginOverlay');
+      if (overlay) {
+        if (isLight) {
+          overlay.classList.add('sonoma-day');
+          overlay.classList.remove('sonoma-night');
+        } else {
+          overlay.classList.add('sonoma-night');
+          overlay.classList.remove('sonoma-day');
+        }
       }
 
       // Update toggle UI
@@ -39725,20 +40385,55 @@ window.renderContainers = renderContainers;
       }
     }
 
+                function parseNormalizedWeather(rawText) {
+      if (!rawText) return { label: '晴朗', scene: 'sunny' };
+      const s = String(rawText).trim();
+      const lower = s.toLowerCase();
+
+      // Thunder
+      if (s.includes('雷') || lower.includes('thunder') || lower.includes('storm') || lower.includes('lightning')) {
+        return { label: s.includes('雷') ? (s.length > 3 ? '雷阵雨' : s) : '雷阵雨', scene: 'thunder' };
+      }
+      // Snow
+      if (s.includes('雪') || s.includes('霰') || s.includes('冰雹') || lower.includes('snow') || lower.includes('sleet') || lower.includes('blizzard') || lower.includes('ice') || lower.includes('hail')) {
+        let lbl = '小雪';
+        if (s.includes('大雪') || s.includes('暴雪') || lower.includes('heavy')) lbl = '大雪';
+        else if (s.includes('雪')) lbl = s.length > 3 ? '小雪' : s;
+        return { label: lbl, scene: 'snow' };
+      }
+      // Rain
+      if (s.includes('雨') || lower.includes('rain') || lower.includes('drizzle') || lower.includes('shower')) {
+        let lbl = '小雨';
+        if (lower.includes('drizzle') || s.includes('毛毛雨')) lbl = '毛毛雨';
+        else if (s.includes('大雨') || s.includes('暴雨') || lower.includes('heavy') || lower.includes('torrential')) lbl = '大雨';
+        else if (s.includes('中雨') || lower.includes('moderate')) lbl = '中雨';
+        else if (s.includes('阵雨') || lower.includes('shower')) lbl = '阵雨';
+        else if (s.includes('雨')) lbl = s.length > 3 ? s.slice(-2) : s;
+        return { label: lbl, scene: 'rain' };
+      }
+      // Overcast
+      if (s.includes('阴') || lower.includes('overcast')) {
+        return { label: '阴天', scene: 'overcast' };
+      }
+      // Cloudy
+      if (s.includes('多云') || s.includes('晴间多云') || lower.includes('cloud') || lower.includes('partly')) {
+        return { label: '多云', scene: 'cloudy' };
+      }
+      // Fog / Mist / Haze
+      if (s.includes('雾') || s.includes('霾') || s.includes('浮尘') || s.includes('扬沙') || lower.includes('fog') || lower.includes('mist') || lower.includes('haze') || lower.includes('dust') || lower.includes('sand')) {
+        return { label: s.includes('霾') ? '霾' : '有雾', scene: 'fog' };
+      }
+      // Sunny / Clear
+      return { label: s.includes('晴') ? (s.length > 2 ? '晴朗' : s) : '晴朗', scene: 'sunny' };
+    }
+
     function renderWeatherVisual(condText = '') {
       const stage = document.getElementById('weatherVisualStage');
       const card = document.getElementById('homeWeatherCard');
       if (!stage) return;
 
-      const text = (condText || '').trim();
-      let scene = 'sunny';
-      if (text.includes('雷')) scene = 'thunder';
-      else if (text.includes('雪') || text.includes('霰') || text.includes('冰雹')) scene = 'snow';
-      else if (text.includes('暴雨') || text.includes('大雨') || text.includes('中雨') || text.includes('小雨') || text.includes('阵雨') || text.includes('雨') || text.includes('毛毛雨')) scene = 'rain';
-      else if (text.includes('阴')) scene = 'overcast';
-      else if (text.includes('多云') || text.includes('晴间多云')) scene = 'cloudy';
-      else if (text.includes('雾') || text.includes('霾') || text.includes('浮尘') || text.includes('扬沙')) scene = 'fog';
-      else if (text.includes('晴')) scene = 'sunny';
+      const parsed = parseNormalizedWeather(condText);
+      const scene = parsed.scene;
 
       if (card) {
         card.setAttribute('data-scene', scene);
@@ -39747,138 +40442,129 @@ window.renderContainers = renderContainers;
       if (scene === 'sunny') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-sunny">
-            <div class="weather-ambient-glow glow-sunny"></div>
-            <div class="weather-artboard artboard-sunny">
-              <span class="sun-sparkle sp1">✦</span>
-              <span class="sun-sparkle sp2">✧</span>
-              <span class="sun-sparkle sp3">✦</span>
-              <div class="art-sun-rays-wrap">
-                <svg class="art-sun-rays-svg" viewBox="0 0 160 160" width="130" height="130">
-                  <defs>
-                    <linearGradient id="sunRayGradFull" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.95" />
-                      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.25" />
-                    </linearGradient>
-                  </defs>
-                  <g stroke="url(#sunRayGradFull)" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="80" y1="14" x2="80" y2="28" />
-                    <line x1="80" y1="132" x2="80" y2="146" />
-                    <line x1="14" y1="80" x2="28" y2="80" />
-                    <line x1="132" y1="80" x2="146" y2="80" />
-                    <line x1="33" y1="33" x2="43" y2="43" />
-                    <line x1="117" y1="117" x2="127" y2="127" />
-                    <line x1="33" y1="127" x2="43" y2="117" />
-                    <line x1="117" y1="43" x2="127" y2="33" />
-                    <line x1="56" y1="21" x2="62" y2="32" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="104" y1="21" x2="98" y2="32" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="56" y1="139" x2="62" y2="128" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="104" y1="139" x2="98" y2="128" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="21" y1="56" x2="32" y2="62" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="21" y1="104" x2="32" y2="98" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="139" y1="56" x2="128" y2="62" stroke-width="1.6" opacity="0.65"/>
-                    <line x1="139" y1="104" x2="128" y2="98" stroke-width="1.6" opacity="0.65"/>
-                  </g>
-                </svg>
-              </div>
-              <div class="art-sun-sphere">
-                <div class="sun-sphere-specular"></div>
-              </div>
+            <div class="art-sun-wrap">
+              <div class="art-sun-glow"></div>
+              <div class="art-sun-halo"></div>
+              <div class="art-sun-beam"></div>
+              <div class="art-sun-orb"></div>
             </div>
           </div>
         `;
       } else if (scene === 'cloudy') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-cloudy">
-            <div class="weather-ambient-glow glow-cloudy"></div>
-            <div class="weather-artboard artboard-cloudy">
-              <div class="art-cloudy-sun">
-                <div class="cloudy-sun-body"></div>
-              </div>
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="cloudyGrad2" x1="20%" y1="0%" x2="60%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
-                      <stop offset="40%" stop-color="#f1f5f9" stop-opacity="0.94"/>
-                      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.88"/>
-                    </linearGradient>
-                    <filter id="cloudyShadow2" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgba(15, 23, 42, 0.22)" />
-                    </filter>
-                  </defs>
-                  <path filter="url(#cloudyShadow2)" fill="url(#cloudyGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
+            <div class="art-cloud-wrap">
+              <div class="art-cloud-sun"></div>
+
+              <!-- Back Ambient Cloud (adds atmospheric depth) -->
+              <svg viewBox="0 0 260 170" width="220" height="144" class="art-cloud-back">
+                <defs>
+                  <linearGradient id="backGradCloudy" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#64748b"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#backGradCloudy)" d="M 40,110 C 18,110 8,90 14,70 C 20,50 44,42 62,50 C 74,24 114,14 144,24 C 166,12 202,18 214,42 C 230,46 238,64 232,84 C 226,104 206,110 184,110 C 160,109 138,114 114,112 C 90,110 66,112 40,110 Z" />
+              </svg>
+
+              <!-- Front Sculpted Volumetric Cloud -->
+              <svg viewBox="0 0 280 180" width="235" height="150" class="art-cloud-front">
+                <defs>
+                  <linearGradient id="bodyGradCloudy" x1="15%" y1="0%" x2="25%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
+                    <stop offset="35%" stop-color="#f8fafc" stop-opacity="0.95"/>
+                    <stop offset="70%" stop-color="#e2e8f0" stop-opacity="0.9"/>
+                    <stop offset="100%" stop-color="#94a3b8" stop-opacity="0.82"/>
+                  </linearGradient>
+                  <linearGradient id="topRimCloudy" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+                    <stop offset="35%" stop-color="rgba(255,255,255,0.95)"/>
+                    <stop offset="75%" stop-color="rgba(253,224,71,0.95)"/>
+                    <stop offset="100%" stop-color="rgba(245,158,11,0.85)"/>
+                  </linearGradient>
+                  <radialGradient id="sunScatterCloudy" cx="50%" cy="40%" r="50%">
+                    <stop offset="0%" stop-color="#fef08a" stop-opacity="0.9"/>
+                    <stop offset="60%" stop-color="#fed7aa" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <path fill="url(#bodyGradCloudy)"
+                      d="M 48,124 C 24,124 10,102 18,78 C 26,54 52,46 72,55 C 84,25 128,12 162,25 C 186,11 224,18 240,44 C 258,50 268,72 260,96 C 252,118 230,126 205,124 C 178,122 155,128 132,126 C 106,124 80,127 48,124 Z" />
+                <ellipse cx="205" cy="65" rx="36" ry="26" fill="url(#sunScatterCloudy)" filter="blur(8px)"/>
+                <ellipse cx="155" cy="54" rx="46" ry="28" fill="#ffffff" opacity="0.8" filter="blur(10px)"/>
+                <ellipse cx="72" cy="78" rx="28" ry="18" fill="#ffffff" opacity="0.7" filter="blur(8px)"/>
+                <path d="M 28,84 C 36,58 54,50 74,56 C 88,27 128,14 162,26 C 186,13 224,20 240,46 C 254,52 262,70 258,88"
+                      fill="none" stroke="url(#topRimCloudy)" stroke-width="2.2" stroke-linecap="round" />
+              </svg>
             </div>
           </div>
         `;
       } else if (scene === 'overcast') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-overcast">
-            <div class="weather-ambient-glow glow-overcast"></div>
-            <div class="weather-artboard">
-              <!-- Back Cloud Deck -->
-              <div class="art-back-cloud">
-                <svg viewBox="0 0 160 90" width="120" height="68">
-                  <defs>
-                    <linearGradient id="overcastGradBack" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#cbd5e1" />
-                      <stop offset="100%" stop-color="#94a3b8" />
-                    </linearGradient>
-                  </defs>
-                  <path fill="url(#overcastGradBack)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
-              <!-- Front Cloud Deck -->
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="overcastGradFront" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#f1f5f9" />
-                      <stop offset="50%" stop-color="#e2e8f0" />
-                      <stop offset="100%" stop-color="#94a3b8" />
-                    </linearGradient>
-                    <filter id="overcastShadow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="7" stdDeviation="8" flood-color="rgba(15, 23, 42, 0.3)" />
-                    </filter>
-                  </defs>
-                  <path filter="url(#overcastShadow)" fill="url(#overcastGradFront)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
+            <div class="art-cloud-wrap">
+              <svg viewBox="0 0 260 170" width="220" height="144" class="art-cloud-back" style="opacity:0.55;">
+                <defs>
+                  <linearGradient id="backGradOvercast" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#cbd5e1"/>
+                    <stop offset="100%" stop-color="#475569"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#backGradOvercast)" d="M 40,110 C 18,110 8,90 14,70 C 20,50 44,42 62,50 C 74,24 114,14 144,24 C 166,12 202,18 214,42 C 230,46 238,64 232,84 C 226,104 206,110 184,110 C 160,109 138,114 114,112 C 90,110 66,112 40,110 Z" />
+              </svg>
+              <svg viewBox="0 0 280 180" width="235" height="150" class="art-cloud-front">
+                <defs>
+                  <linearGradient id="bodyGradOvercast" x1="15%" y1="0%" x2="25%" y2="100%">
+                    <stop offset="0%" stop-color="#e2e8f0" stop-opacity="0.98"/>
+                    <stop offset="45%" stop-color="#cbd5e1" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#64748b" stop-opacity="0.9"/>
+                  </linearGradient>
+                  <linearGradient id="topRimOvercast" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+                    <stop offset="50%" stop-color="rgba(255,255,255,0.9)"/>
+                    <stop offset="100%" stop-color="rgba(203,213,225,0.6)"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#bodyGradOvercast)"
+                      d="M 48,124 C 24,124 10,102 18,78 C 26,54 52,46 72,55 C 84,25 128,12 162,25 C 186,11 224,18 240,44 C 258,50 268,72 260,96 C 252,118 230,126 205,124 C 178,122 155,128 132,126 C 106,124 80,127 48,124 Z" />
+                <ellipse cx="155" cy="54" rx="46" ry="28" fill="#ffffff" opacity="0.4" filter="blur(10px)"/>
+                <ellipse cx="72" cy="78" rx="28" ry="18" fill="#ffffff" opacity="0.35" filter="blur(8px)"/>
+                <path d="M 28,84 C 36,58 54,50 74,56 C 88,27 128,14 162,26 C 186,13 224,20 240,46 C 254,52 262,70 258,88"
+                      fill="none" stroke="url(#topRimOvercast)" stroke-width="2" stroke-linecap="round" />
+              </svg>
             </div>
           </div>
         `;
       } else if (scene === 'rain') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-rain">
-            <div class="weather-ambient-glow glow-rain"></div>
-            <div class="weather-artboard artboard-rain">
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="rainCloudGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#94a3b8" />
-                      <stop offset="50%" stop-color="#64748b" />
-                      <stop offset="100%" stop-color="#475569" />
-                    </linearGradient>
-                    <filter id="rainShadow3" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="rgba(15, 23, 42, 0.4)" />
-                    </filter>
-                  </defs>
-                  <path filter="url(#rainShadow3)" fill="url(#rainCloudGrad3)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
-              <div class="rain-streaks-box">
-                <span class="rain-streak st1"></span>
-                <span class="rain-streak st2"></span>
-                <span class="rain-streak st3"></span>
-                <span class="rain-streak st4"></span>
-                <span class="rain-streak st5"></span>
-              </div>
-              <div class="rain-splash-ripples">
-                <span class="ripple rp1"></span>
-                <span class="ripple rp2"></span>
-                <span class="ripple rp3"></span>
+            <div class="art-cloud-wrap">
+              <svg viewBox="0 0 280 180" width="235" height="150" class="art-cloud-front">
+                <defs>
+                  <linearGradient id="bodyGradRain" x1="15%" y1="0%" x2="25%" y2="100%">
+                    <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.98"/>
+                    <stop offset="45%" stop-color="#94a3b8" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#475569" stop-opacity="0.9"/>
+                  </linearGradient>
+                  <linearGradient id="topRimRain" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.4)"/>
+                    <stop offset="50%" stop-color="rgba(56,189,248,0.95)"/>
+                    <stop offset="100%" stop-color="rgba(255,255,255,0.5)"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#bodyGradRain)"
+                      d="M 48,124 C 24,124 10,102 18,78 C 26,54 52,46 72,55 C 84,25 128,12 162,25 C 186,11 224,18 240,44 C 258,50 268,72 260,96 C 252,118 230,126 205,124 C 178,122 155,128 132,126 C 106,124 80,127 48,124 Z" />
+                <path d="M 28,84 C 36,58 54,50 74,56 C 88,27 128,14 162,26 C 186,13 224,20 240,46 C 254,52 262,70 258,88"
+                      fill="none" stroke="url(#topRimRain)" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              <div class="rain-fibers-stream">
+                <span class="rain-streak rk1"></span>
+                <span class="rain-streak rk2"></span>
+                <span class="rain-streak rk3"></span>
+                <span class="rain-streak rk4"></span>
+                <span class="rain-streak rk5"></span>
+                <span class="rain-ripple-ring rp1"></span>
+                <span class="rain-ripple-ring rp2"></span>
               </div>
             </div>
           </div>
@@ -39886,29 +40572,35 @@ window.renderContainers = renderContainers;
       } else if (scene === 'thunder') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-thunder">
-            <div class="weather-ambient-glow glow-thunder"></div>
-            <div class="weather-artboard">
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="artThunderGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#64748b" />
-                      <stop offset="60%" stop-color="#334155" />
-                      <stop offset="100%" stop-color="#1e1b4b" />
-                    </linearGradient>
-                  </defs>
-                  <path fill="url(#artThunderGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
+            <div class="thunder-ambient-pulse"></div>
+            <div class="art-cloud-wrap">
+              <svg viewBox="0 0 280 180" width="235" height="150" class="art-cloud-front">
+                <defs>
+                  <linearGradient id="bodyGradThunder" x1="15%" y1="0%" x2="25%" y2="100%">
+                    <stop offset="0%" stop-color="#94a3b8" stop-opacity="0.98"/>
+                    <stop offset="45%" stop-color="#475569" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#1e1b4b" stop-opacity="0.92"/>
+                  </linearGradient>
+                  <linearGradient id="topRimThunder" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(192,132,252,0.5)"/>
+                    <stop offset="50%" stop-color="rgba(251,191,36,0.95)"/>
+                    <stop offset="100%" stop-color="rgba(192,132,252,0.6)"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#bodyGradThunder)"
+                      d="M 48,124 C 24,124 10,102 18,78 C 26,54 52,46 72,55 C 84,25 128,12 162,25 C 186,11 224,18 240,44 C 258,50 268,72 260,96 C 252,118 230,126 205,124 C 178,122 155,128 132,126 C 106,124 80,127 48,124 Z" />
+                <path d="M 28,84 C 36,58 54,50 74,56 C 88,27 128,14 162,26 C 186,13 224,20 240,46 C 254,52 262,70 258,88"
+                      fill="none" stroke="url(#topRimThunder)" stroke-width="2.2" stroke-linecap="round" />
+              </svg>
+              <div class="art-lightning-bolt-wrap">
+                <svg viewBox="0 0 36 52" width="30" height="46">
+                  <polygon points="20,0 4,25 16,25 12,52 32,20 20,20" fill="#fbbf24"/>
                 </svg>
               </div>
-              <div class="art-lightning-dual">
-                <svg viewBox="0 0 32 46" width="26" height="40">
-                  <polygon points="18,0 4,22 14,22 10,46 28,18 18,18" fill="#fbbf24"/>
-                </svg>
-              </div>
-              <div class="rain-streaks-box" style="opacity:0.75;">
-                <span class="rain-streak st1"></span>
-                <span class="rain-streak st3"></span>
-                <span class="rain-streak st5"></span>
+              <div class="rain-fibers-stream" style="opacity:0.8;">
+                <span class="rain-streak rk1"></span>
+                <span class="rain-streak rk3"></span>
+                <span class="rain-streak rk5"></span>
               </div>
             </div>
           </div>
@@ -39916,46 +40608,100 @@ window.renderContainers = renderContainers;
       } else if (scene === 'snow') {
         stage.innerHTML = `
           <div class="weather-anim-box scene-snow">
-            <div class="weather-ambient-glow glow-snow"></div>
-            <div class="weather-artboard">
-              <div class="art-cloud-group">
-                <svg viewBox="0 0 160 90" width="144" height="80">
-                  <defs>
-                    <linearGradient id="artSnowGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff" />
-                      <stop offset="60%" stop-color="#e0f2fe" />
-                      <stop offset="100%" stop-color="#bae6fd" />
-                    </linearGradient>
-                  </defs>
-                  <path fill="url(#artSnowGrad2)" d="M 40 70 A 24 24 0 0 1 22 38 A 32 32 0 0 1 82 20 A 30 30 0 0 1 136 38 A 24 24 0 0 1 128 70 Z" />
-                </svg>
-              </div>
-              <div class="snow-crystals-box">
-                <span class="crystal cr1">❄</span>
-                <span class="crystal cr2">❅</span>
-                <span class="crystal cr3">❆</span>
-                <span class="crystal cr4">❄</span>
-                <span class="crystal cr5">❅</span>
+            <div class="art-cloud-wrap">
+              <svg viewBox="0 0 280 180" width="235" height="150" class="art-cloud-front">
+                <defs>
+                  <linearGradient id="bodyGradSnow" x1="15%" y1="0%" x2="25%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="50%" stop-color="#f0fdf4"/>
+                    <stop offset="100%" stop-color="#e0f2fe"/>
+                  </linearGradient>
+                  <linearGradient id="topRimSnow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="50%" stop-color="#bae6fd"/>
+                    <stop offset="100%" stop-color="#ffffff"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#bodyGradSnow)"
+                      d="M 48,124 C 24,124 10,102 18,78 C 26,54 52,46 72,55 C 84,25 128,12 162,25 C 186,11 224,18 240,44 C 258,50 268,72 260,96 C 252,118 230,126 205,124 C 178,122 155,128 132,126 C 106,124 80,127 48,124 Z" />
+                <ellipse cx="155" cy="54" rx="46" ry="28" fill="#ffffff" opacity="0.85" filter="blur(8px)"/>
+                <ellipse cx="72" cy="78" rx="28" ry="18" fill="#ffffff" opacity="0.75" filter="blur(6px)"/>
+                <path d="M 28,84 C 36,58 54,50 74,56 C 88,27 128,14 162,26 C 186,13 224,20 240,46 C 254,52 262,70 258,88"
+                      fill="none" stroke="url(#topRimSnow)" stroke-width="2.2" stroke-linecap="round" />
+              </svg>
+              <div class="snow-crystals-wrap">
+                <span class="snow-gem sg1">❄</span>
+                <span class="snow-gem sg2">❅</span>
+                <span class="snow-gem sg3">❆</span>
+                <span class="snow-gem sg4">❄</span>
               </div>
             </div>
           </div>
         `;
       } else {
-        // Fog & Mist & Haze
+        // Fog & Mist
         stage.innerHTML = `
           <div class="weather-anim-box scene-fog">
-            <div class="weather-ambient-glow glow-fog"></div>
-            <div class="weather-artboard">
-              <div class="art-fog-wrap">
-                <div class="art-fog-bar fb1"></div>
-                <div class="art-fog-bar fb2"></div>
-                <div class="art-fog-bar fb3"></div>
-                <div class="art-fog-bar fb4"></div>
-              </div>
+            <div class="art-fog-wrap">
+              <div class="art-fog-bar fb1"></div>
+              <div class="art-fog-bar fb2"></div>
+              <div class="art-fog-bar fb3"></div>
+              <div class="art-fog-bar fb4"></div>
+              <div class="art-fog-bar fb5"></div>
             </div>
           </div>
         `;
       }
+    }
+
+    // 24-Hour Hourly Forecast Dynamic Renderer
+    function renderHourlyForecast(baseTemp, condText) {
+      const strip = document.getElementById('weatherHourlyStrip');
+      if (!strip) return;
+
+      const currentHour = new Date().getHours();
+      const isNight = currentHour < 6 || currentHour >= 19;
+      
+      const parsed = parseNormalizedWeather(condText);
+      const scene = parsed.scene;
+
+      const hourlyOffsets = [0, 2, 4, 6, 8, 10];
+      let html = '';
+
+      hourlyOffsets.forEach((offset, idx) => {
+        const slotHour = (currentHour + offset) % 24;
+        const slotNight = slotHour < 6 || slotHour >= 19;
+        
+        let tempOffset = 0;
+        if (slotHour >= 12 && slotHour <= 15) tempOffset = 2;
+        else if (slotHour >= 22 || slotHour <= 5) tempOffset = -3;
+        else if (slotHour >= 6 && slotHour <= 9) tempOffset = -1;
+        else tempOffset = 1;
+
+        const forecastTemp = baseTemp + tempOffset;
+        
+        let icon = '☀️';
+        if (scene === 'thunder') icon = '⛈️';
+        else if (scene === 'snow') icon = '❄️';
+        else if (scene === 'rain') icon = '🌧️';
+        else if (scene === 'fog') icon = '🌫️';
+        else if (scene === 'overcast') icon = '☁️';
+        else if (scene === 'cloudy') icon = slotNight ? '☁️' : '⛅';
+        else icon = slotNight ? '🌙' : '☀️';
+
+        const label = idx === 0 ? '现在' : `${slotHour}:00`;
+        const isNow = idx === 0;
+
+        html += `
+          <div class="w-hourly-item ${isNow ? 'now' : ''}">
+            <span class="w-hourly-time">${label}</span>
+            <span class="w-hourly-icon">${icon}</span>
+            <span class="w-hourly-temp">${forecastTemp}°</span>
+          </div>
+        `;
+      });
+
+      strip.innerHTML = html;
     }
 
     function updateWeatherUI(data) {
@@ -39976,19 +40722,22 @@ window.renderContainers = renderContainers;
       const roundedTemp = Math.round(Number(data.temp) || 25);
       if (tempEl) tempEl.innerHTML = `${roundedTemp}<span class="temp-unit">°</span>`;
       
-      let condText = data.conditionCn || (data.condition ? data.condition.split('·')[0].trim() : '晴朗');
-      if (condText.includes('毛毛雨')) condText = '毛毛雨';
-      else if (condText.includes('雨')) condText = condText.length > 2 ? condText.slice(-2) : condText;
-      else if (condText.includes('多云') || condText.includes('晴间多云')) condText = '多云';
-      else if (condText.includes('晴')) condText = '晴朗';
-      else if (condText.includes('阴')) condText = '阴天';
-      else if (condText.includes('雾')) condText = '有雾';
+      let rawCond = data.conditionCn || (data.condition ? data.condition.split('·')[0].trim() : '晴朗');
+      const parsedWeather = parseNormalizedWeather(rawCond);
+      let condText = parsedWeather.label;
       if (condEl) condEl.textContent = condText;
       
       // Dynamic Daily High/Low Temperature
       const highTemp = data.tempMax !== undefined ? Math.round(data.tempMax) : (roundedTemp + 3);
       const lowTemp = data.tempMin !== undefined ? Math.round(data.tempMin) : (roundedTemp - 4);
       if (rangeEl) rangeEl.textContent = `↑ ${highTemp}° · ↓ ${lowTemp}°`;
+
+      // Feels Like Pill
+      const feelsLikeEl = document.getElementById('homeWeatherFeelsLike');
+      if (feelsLikeEl) {
+        const feelsLikeVal = data.feelsLike !== undefined ? Math.round(data.feelsLike) : (roundedTemp + (roundedTemp >= 28 ? 2 : (roundedTemp <= 10 ? -2 : 0)));
+        feelsLikeEl.textContent = `体感 ${feelsLikeVal}°`;
+      }
 
       renderWeatherVisual(condText);
 
@@ -40054,37 +40803,28 @@ window.renderContainers = renderContainers;
         }
       }
 
+      // UV Index
+      const uvEl = document.getElementById('homeWeatherUv');
+      const uvHintEl = document.getElementById('homeWeatherUvHint');
+      if (uvEl) {
+        const uvNum = data.uv !== undefined ? Number(data.uv) : (condText.includes('雨') || condText.includes('阴') ? 1 : (roundedTemp > 28 ? 3 : 2));
+        uvEl.textContent = `UV ${uvNum}`;
+        if (uvHintEl) {
+          if (uvNum <= 2) uvHintEl.textContent = '弱 · 无需防护';
+          else if (uvNum <= 4) uvHintEl.textContent = '中等 · 适度防晒';
+          else if (uvNum <= 7) uvHintEl.textContent = '强 · 遮阳防护';
+          else uvHintEl.textContent = '极强 · 避免外出';
+        }
+      }
+
+      // 24-Hour Hourly Forecast
+      renderHourlyForecast(roundedTemp, condText);
+
       if (iconEl && data.icon) {
         iconEl.setAttribute('data-lucide', data.icon);
         if (window.lucide) lucide.createIcons();
       }
     }
-
-    // Weather Scene Preview Cycler (Interactive inspection)
-    let _previewSceneIdx = 0;
-    const _previewScenes = [
-      { cond: '晴朗', temp: 30, hum: 58, wind: '1.2 m/s', aqi: '良 65' },
-      { cond: '多云', temp: 28, hum: 65, wind: '2.1 m/s', aqi: '优 42' },
-      { cond: '阴天', temp: 24, hum: 76, wind: '3.4 m/s', aqi: '轻度 108' },
-      { cond: '小雨', temp: 22, hum: 88, wind: '4.2 m/s', aqi: '优 28' },
-      { cond: '雷阵雨', temp: 21, hum: 92, wind: '6.8 m/s', aqi: '优 25' },
-      { cond: '小雪', temp: -2, hum: 45, wind: '3.0 m/s', aqi: '优 35' },
-      { cond: '有雾', temp: 18, hum: 95, wind: '0.8 m/s', aqi: '中度 155' }
-    ];
-    window.cycleWeatherScenePreview = function(e) {
-      if (e) e.stopPropagation();
-      _previewSceneIdx = (_previewSceneIdx + 1) % _previewScenes.length;
-      const s = _previewScenes[_previewSceneIdx];
-      updateWeatherUI({
-        city: document.getElementById('homeWeatherCity')?.textContent || '深圳',
-        temp: s.temp,
-        conditionCn: s.cond,
-        humidity: s.hum,
-        windSpeed: s.wind,
-        aqiDesc: s.aqi
-      });
-      showToast(`🌤️ 已切换天气预览：【${s.cond}】`);
-    };
 
     function cycleWeatherCity() {
       currentCityIndex = (currentCityIndex + 1) % WEATHER_CITIES.length;
@@ -40333,6 +41073,7 @@ window.renderContainers = renderContainers;
       try { initScrollReveal(); } catch (e) { console.warn('initScrollReveal error', e); }
       try { initHomeDashboard(); } catch (e) { console.warn('initHomeDashboard error', e); }
       try { initLiveWeather(true); } catch (e) { console.warn('initLiveWeather error', e); }
+      try { initShortcutsSystem(); } catch (e) { console.warn('initShortcutsSystem error', e); }
       try { initDailyNews(); } catch (e) { console.warn('initDailyNews error', e); }
       try { initPomodoroTimer(); } catch (e) { console.warn('initPomodoroTimer error', e); }
       try { initClientIpEngine(); } catch (e) { console.warn('initClientIpEngine error', e); }
@@ -41018,12 +41759,26 @@ window.renderContainers = renderContainers;
 
     function syncSonomaLockscreenWallpaper() {
       const overlay = document.getElementById('pulseosLoginOverlay');
-      const now = new Date();
-      const hour = now.getHours();
-      // Like interior system: 07:00 to 19:00 is Day, 19:00 to 07:00 is Night
-      const isNight = (hour >= 19 || hour < 7);
+      
+      // Follow the workspace theme stored by the user: dark inside -> dark outside; light inside -> light outside!
+      let isDark = true;
+      const manualOverride = localStorage.getItem('workspace_theme_manual_override');
+      const manualChoice = localStorage.getItem('workspace_theme_manual_choice');
+      const theme = localStorage.getItem('workspace_theme');
+
+      if (manualOverride === 'true' && manualChoice) {
+        isDark = (manualChoice === 'dark');
+      } else if (theme) {
+        isDark = (theme === 'dark');
+      } else if (document.documentElement.classList.contains('theme-light')) {
+        isDark = false;
+      } else {
+        const hour = new Date().getHours();
+        isDark = (hour >= 19 || hour < 7);
+      }
+
       if (overlay) {
-        if (isNight) {
+        if (isDark) {
           overlay.classList.remove('sonoma-day');
           overlay.classList.add('sonoma-night');
         } else {
@@ -41031,12 +41786,12 @@ window.renderContainers = renderContainers;
           overlay.classList.add('sonoma-day');
         }
       }
-      if (isNight) {
-        document.documentElement.classList.remove('lock-day-mode');
+      if (isDark) {
+        document.documentElement.classList.remove('lock-day-mode', 'theme-light');
         document.documentElement.classList.add('lock-night-mode');
       } else {
         document.documentElement.classList.remove('lock-night-mode');
-        document.documentElement.classList.add('lock-day-mode');
+        document.documentElement.classList.add('lock-day-mode', 'theme-light');
       }
     }
     window.syncSonomaLockscreenWallpaper = syncSonomaLockscreenWallpaper;
@@ -42212,7 +42967,7 @@ window.renderContainers = renderContainers;
           if (navBadge) {
             const count = s.unread_count || s.total_count || s.total_all || s.total || 0;
             navBadge.textContent = count;
-            navBadge.style.display = count > 0 ? 'inline-block' : 'none';
+            navBadge.style.display = count > 0 ? 'inline-flex' : 'none';
           }
           updateMailCounterBadges(s);
           await fetchMailAccounts();
@@ -42345,16 +43100,6 @@ window.renderContainers = renderContainers;
         }
       }
 
-      // Update sidebar nav alert badge
-      const navAlert = document.getElementById('mailNavAlertBadge');
-      if (navAlert) {
-        if (hasAnyFailed) {
-          navAlert.style.display = 'inline-block';
-          navAlert.textContent = `⚠️ ${failedCount}个失效`;
-        } else {
-          navAlert.style.display = 'none';
-        }
-      }
 
       // Update hero alert badge & button
       const heroAccBadge = document.getElementById('mailHeroAccAlertBadge');
@@ -42767,9 +43512,24 @@ window.renderContainers = renderContainers;
     window.submitAddNewMailAccount = submitAddNewMailAccount;
     window.deleteMailAccount = deleteMailAccount;
 
-    // Fetch Mail List
+    // Fetch Mail List (with 0ms SWR Local Storage Caching)
     async function fetchMailList() {
       const container = document.getElementById('mailItemsContainer');
+
+      // ⚡ 0ms SWR Cache Instant Display
+      if (mailListCache.length === 0) {
+        try {
+          const cachedRaw = localStorage.getItem('pulseos_mail_cache_v1');
+          if (cachedRaw) {
+            const cachedParsed = JSON.parse(cachedRaw);
+            if (Array.isArray(cachedParsed) && cachedParsed.length > 0) {
+              mailListCache = cachedParsed;
+              applyMailFilters(mailListCache);
+            }
+          }
+        } catch (e) {}
+      }
+
       if (container && mailListCache.length === 0) {
         container.innerHTML = '<div style="padding:40px 20px; text-align:center; color:var(--mail-text-dim); font-size:0.85rem;">正在载入邮件列表...</div>';
       }
@@ -42792,6 +43552,9 @@ window.renderContainers = renderContainers;
           const items = Array.isArray(json.data) ? json.data : (json.data.items || []);
           if (currentMailFolder === 'all' && currentMailAccount === 'all' && !currentMailOtpFilter) {
             mailListCache = items;
+            try {
+              localStorage.setItem('pulseos_mail_cache_v1', JSON.stringify(items.slice(0, 100)));
+            } catch(e) {}
           }
           updateMailCounterBadges(json.data);
           applyMailFilters(items);
@@ -43117,21 +43880,25 @@ window.renderContainers = renderContainers;
       }
     });
 
-    // Automatic Background Refresh & Silent IMAP Sync Engine
+    // Automatic Background Refresh & Silent IMAP Sync Engine (High Realtime Polling)
     function initMailAutoSyncEngine() {
       if (mailAutoSyncTimer) clearInterval(mailAutoSyncTimer);
       
       mailAutoSyncTimer = setInterval(async () => {
         if (document.hidden) return;
 
-        // 1. Refresh list and stats from SQLite
         const mailView = document.getElementById('view-mail');
-        if (mailView && mailView.classList.contains('active')) {
+        const isMailActive = mailView && mailView.classList.contains('active');
+
+        // Always keep mail stats fresh globally so sidebar unread badges update in real-time
+        fetchMailStats();
+
+        // If mail view is active, refresh mail list
+        if (isMailActive) {
           await fetchMailList();
-          await fetchMailStats();
         }
 
-        // 2. Perform background IMAP sync across accounts every 5s if not already running
+        // Perform background IMAP sync across accounts
         if (!isMailAutoSyncing) {
           isMailAutoSyncing = true;
           try {
@@ -43139,8 +43906,11 @@ window.renderContainers = renderContainers;
             if (res.ok) {
               const json = await res.json();
               if (json && json.new_count > 0) {
-                await fetchMailList();
+                if (isMailActive) {
+                  await fetchMailList();
+                }
                 await fetchMailStats();
+                showToast(`收到 ${json.new_count} 封新邮件`);
               }
             }
           } catch (err) {
@@ -43149,7 +43919,7 @@ window.renderContainers = renderContainers;
             isMailAutoSyncing = false;
           }
         }
-      }, 5000);
+      }, 8000);
     }
 
     let lastMailAiDigestReport = '';
@@ -43352,6 +44122,20 @@ window.renderContainers = renderContainers;
     }
 
     function loadMailViewData() {
+      // 0ms instant display from local cache if memory cache is cold
+      if (mailListCache.length === 0) {
+        try {
+          const cachedRaw = localStorage.getItem('pulseos_mail_cache_v1');
+          if (cachedRaw) {
+            const cachedParsed = JSON.parse(cachedRaw);
+            if (Array.isArray(cachedParsed) && cachedParsed.length > 0) {
+              mailListCache = cachedParsed;
+              applyMailFilters(mailListCache);
+            }
+          }
+        } catch(e) {}
+      }
+
       fetchMailList();
       fetchMailStats();
       syncMailReaderThemeWithWorkspace();
@@ -47870,10 +48654,19 @@ window.renderContainers = renderContainers;
       cinemaEpisodes.forEach(function (ep, idx) {
         if (q && !ep.title.toLowerCase().includes(q)) return;
         matchedCount++;
-        var isActive = idx === cinemaCurrentEpisodeIndex && artCinemaInstance && artCinemaInstance.video && !artCinemaInstance.video.paused;
+
+        // Determine playing match strictly by URL / active token rather than volatile array index
+        var isThisPlaying = false;
+        if (window._currentCinemaPlayingUrl) {
+          isThisPlaying = (ep.url === window._currentCinemaPlayingUrl);
+        } else if (artCinemaInstance && artCinemaInstance.url) {
+          isThisPlaying = (ep.url === artCinemaInstance.url);
+        } else {
+          isThisPlaying = (idx === cinemaCurrentEpisodeIndex);
+        }
 
         var itemDiv = document.createElement('div');
-        itemDiv.className = 'cinema-ep-item ' + (idx === cinemaCurrentEpisodeIndex ? 'active' : '');
+        itemDiv.className = 'cinema-ep-item ' + (isThisPlaying ? 'active' : '');
         itemDiv.onclick = function () { playCinemaEpisode(idx); };
 
         var isAud = ep.isAudio || isAudioMedia(ep.url, ep.title);
@@ -48633,10 +49426,30 @@ window.renderContainers = renderContainers;
         clearTimeout(cinemaAutoNextTimer);
         cinemaAutoNextTimer = null;
       }
-      cinemaCurrentEpisodeIndex = index;
       var ep = cinemaEpisodes[index];
       if (!ep || !ep.url) return;
       window._cinemaUpstreamError = '';
+
+      // ⚡ Play Sequence Token Guard (Eliminates delayed playback race condition & wrong video mismatch)
+      window._cinemaPlaySequenceToken = (window._cinemaPlaySequenceToken || 0) + 1;
+      var thisPlayToken = window._cinemaPlaySequenceToken;
+
+      // ⚡ Immediate 0ms Playing State & Title Synchronization
+      window._currentCinemaPlayingUrl = ep.url;
+      window._currentCinemaPlayingTitle = ep.title;
+      cinemaCurrentEpisodeIndex = index;
+
+      // 0ms immediate UI title update (No delay!)
+      updateCinemaNowPlaying(ep);
+
+      // 0ms immediate active card highlight in DOM
+      document.querySelectorAll('.cinema-ep-item').forEach(function(el, i) {
+        if (i === index) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
 
       if (!artCinemaInstance) {
         initCinemaView();
@@ -48815,11 +49628,11 @@ window.renderContainers = renderContainers;
         window._cinemaStallTimer = null;
       }
       updateCinemaNowPlaying(ep);
-      renderCinemaEpisodeList();
       var reIdx = cinemaEpisodes.findIndex(function (e) { return e.url === ep.url; });
       if (reIdx !== -1) {
         cinemaCurrentEpisodeIndex = reIdx;
       }
+      renderCinemaEpisodeList();
     }
 
     function playNextCinemaEpisode() {
@@ -52294,6 +53107,597 @@ window.renderContainers = renderContainers;
     window.copyVaultPreviewLink = copyVaultPreviewLink;
     window.copyVaultPreviewText = copyVaultPreviewText;
 
+    // ========================================================
+    // 🧭 DYNAMIC SHORTCUTS MANAGEMENT & DRAG-AND-DROP SYSTEM
+    // ========================================================
+    const DEFAULT_CUSTOM_SHORTCUTS = [
+      {
+        id: 'sc_gh',
+        name: 'GitHub',
+        desc: '代码仓库',
+        url: 'https://github.com/3512473224',
+        domain: 'github.com',
+        bg: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04))',
+        color: '#ffffff',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>'
+      },
+      {
+        id: 'sc_yt',
+        name: 'YouTube',
+        desc: '油管视频',
+        url: 'https://www.youtube.com',
+        domain: 'youtube.com',
+        bg: 'linear-gradient(135deg, rgba(239,68,68,0.22), rgba(239,68,68,0.06))',
+        color: '#ef4444',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>'
+      },
+      {
+        id: 'sc_wa',
+        name: 'WhatsApp',
+        desc: '即时通讯',
+        url: 'https://web.whatsapp.com',
+        domain: 'whatsapp.com',
+        bg: 'linear-gradient(135deg, rgba(37,211,102,0.22), rgba(37,211,102,0.06))',
+        color: '#25d366',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24h-.18zm4.52 11.59c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.55.13.16 1.74 2.65 4.21 3.72.59.25 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.29z"/></svg>'
+      },
+      {
+        id: 'sc_mail',
+        name: 'Email 邮箱',
+        desc: 'Gmail 邮箱',
+        url: 'https://mail.google.com',
+        domain: 'google.com',
+        bg: 'linear-gradient(135deg, rgba(234,67,53,0.22), rgba(234,67,53,0.06))',
+        color: '#ea4335',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>'
+      },
+      {
+        id: 'sc_cx',
+        name: '学习通',
+        desc: '在线课堂',
+        url: 'https://i.chaoxing.com',
+        domain: 'chaoxing.com',
+        bg: 'linear-gradient(135deg, rgba(2,132,199,0.22), rgba(2,132,199,0.06))',
+        color: '#0284c7',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>'
+      },
+      {
+        id: 'sc_lc',
+        name: '力扣',
+        desc: 'LeetCode 题库',
+        url: 'https://leetcode.cn',
+        domain: 'leetcode.cn',
+        bg: 'linear-gradient(135deg, rgba(245,158,11,0.22), rgba(245,158,11,0.06))',
+        color: '#f59e0b',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.762-1.823.762s-1.357-.295-1.824-.762l-4.707-4.707a2.58 2.58 0 0 1 0-3.647l4.707-4.707c.467-.467 1.112-.762 1.824-.762s1.357.295 1.823.762l2.697 2.607a.9.9 0 1 1-1.25 1.294l-2.697-2.607a.78.78 0 0 0-.573-.241.78.78 0 0 0-.573.241L6.324 14.18a.78.78 0 0 0 0 1.103l4.707 4.707a.78.78 0 0 0 .573.241.78.78 0 0 0 .573-.241l2.697-2.607a.9.9 0 1 1 1.25 1.294zM10.8 12.9h9.6a.9.9 0 1 0 0-1.8h-9.6a.9.9 0 1 0 0 1.8z"/></svg>'
+      },
+      {
+        id: 'sc_gemini',
+        name: 'Gemini',
+        desc: 'Google AI 助理',
+        url: 'https://gemini.google.com/app',
+        domain: 'google.com',
+        bg: 'linear-gradient(135deg, rgba(0,145,255,0.25), rgba(168,85,247,0.12))',
+        color: '#0091ff',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C12 6.627 6.627 12 0 12c6.627 0 12 5.373 12 12 0-6.627 5.373-12 12-12-6.627 0-12-5.373-12-12z"/></svg>'
+      },
+      {
+        id: 'sc_ds',
+        name: 'DeepSeek API',
+        desc: 'API 开放平台',
+        url: 'https://platform.deepseek.com',
+        domain: 'deepseek.com',
+        bg: 'linear-gradient(135deg, rgba(77,107,254,0.25), rgba(77,107,254,0.08))',
+        color: '#4d6bfe',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.748 4.651c-.254-.124-.364.113-.512.233-.051.04-.094.09-.137.137-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.155-.708-.311-.955-.65-.172-.24-.219-.509-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.094.172.187.129.323-.082.28-.18.553-.266.833-.055.179-.137.218-.328.14a5.5 5.5 0 0 1-1.737-1.179c-.857-.828-1.631-1.743-2.597-2.46a12 12 0 0 0-.689-.47c-.985-.957.13-1.743.387-1.836.27-.098.094-.433-.778-.428-.872.003-1.67.295-2.687.685a3 3 0 0 1-.465.136 9.6 9.6 0 0 0-2.883-.101c-1.885.21-3.39 1.1-4.497 2.622C.082 8.776-.231 10.854.152 13.02c.403 2.284 1.568 4.175 3.36 5.653 1.857 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.132-.284 4.994-1.86.47.234.962.328 1.78.398.629.058 1.235-.031 1.705-.129.735-.155.684-.836.418-.961-2.155-1.004-1.682-.595-2.112-.926 1.095-1.295 2.768-3.598 3.284-6.733.05-.346.115-.834.108-1.114-.004-.171.035-.238.23-.257a4.2 4.2 0 0 0 1.545-.475c1.397-.763 1.96-2.016 2.093-3.517.02-.23-.004-.467-.247-.588M11.58 18.168c-2.088-1.642-3.101-2.183-3.52-2.16-.39.024-.32.472-.234.763.09.288.207.487.371.74.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.168-1.361-.801-2.5-1.86-3.301-3.306-.775-1.393-1.225-2.888-1.299-4.482-.02-.385.094-.522.477-.592a4.7 4.7 0 0 1 1.53-.038c2.131.311 3.946 1.264 5.467 2.774.868.86 1.525 1.887 2.202 2.89.72 1.066 1.494 2.082 2.48 2.915.348.291.626.513.892.677-.802.09-2.14.109-3.055-.615z"/></svg>'
+      },
+      {
+        id: 'sc_muse',
+        name: 'Muse AI',
+        desc: '视频生成搜索',
+        url: 'https://muse.ai',
+        domain: 'muse.ai',
+        bg: 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(168,85,247,0.08))',
+        color: '#a855f7',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>'
+      },
+      {
+        id: 'sc_ping0',
+        name: 'Ping0',
+        desc: '网络质量检测',
+        url: 'https://ping0.cc',
+        domain: 'ping0.cc',
+        bg: 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(234,179,8,0.08))',
+        color: '#eab308',
+        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v9l5 3"></path></svg>'
+      }
+    ];
+
+    let customShortcutsList = [];
+    let isShortcutsManageMode = false;
+    let draggedShortcutIdx = null;
+
+    function initShortcutsSystem() {
+      try {
+        const stored = localStorage.getItem('pulseos_custom_shortcuts_v2');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            customShortcutsList = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load custom shortcuts:', e);
+      }
+      if (!customShortcutsList || customShortcutsList.length === 0) {
+        customShortcutsList = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_SHORTCUTS));
+        saveCustomShortcuts();
+      } else {
+        // Backfill missing bg, color, svg, or polish default item metadata
+        let updated = false;
+        customShortcutsList.forEach(item => {
+          const def = DEFAULT_CUSTOM_SHORTCUTS.find(d => d.id === item.id || d.domain === item.domain || (d.url && item.url && d.url.includes(item.domain)));
+          if (def) {
+            if (!item.bg || item.bg.includes('rgba(255, 255, 255, 0.08)')) { item.bg = def.bg; updated = true; }
+            if (!item.color) { item.color = def.color; updated = true; }
+            if (!item.svg) { item.svg = def.svg; updated = true; }
+            if (def.desc && (!item.desc || item.desc === '原生IP与网络质量')) { item.desc = def.desc; updated = true; }
+          }
+        });
+        if (updated) saveCustomShortcuts();
+      }
+      renderCustomShortcuts();
+    }
+
+    function saveCustomShortcuts() {
+      try {
+        localStorage.setItem('pulseos_custom_shortcuts_v2', JSON.stringify(customShortcutsList));
+      } catch (e) {}
+    }
+
+    function extractShortcutDomain(url) {
+      try {
+        let clean = (url || '').trim();
+        if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+          clean = 'https://' + clean;
+        }
+        return new URL(clean).hostname;
+      } catch (e) {
+        return (url || '').replace(/https?:\/\//i, '').split('/')[0] || url;
+      }
+    }
+
+    function getShortcutFaviconUrl(url, domain) {
+      const d = domain || extractShortcutDomain(url);
+      const encoded = encodeURIComponent(url.startsWith('http') ? url : 'https://' + url);
+      return `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encoded}&size=128`;
+    }
+
+    function renderCustomShortcuts() {
+      const grid = document.getElementById('homeShortcutsGrid');
+      const badge = document.getElementById('scCountBadge');
+      if (badge) {
+        badge.textContent = `${customShortcutsList.length}`;
+      }
+      if (!grid) return;
+
+      grid.innerHTML = customShortcutsList.map((item, idx) => {
+        const domain = item.domain || extractShortcutDomain(item.url);
+        const favUrl = getShortcutFaviconUrl(item.url, domain);
+        const fallbackUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+        const initial = (item.name || 'P').charAt(0).toUpperCase();
+
+        const bgStyle = item.bg || 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03))';
+        const colorStyle = item.color || '#38bdf8';
+
+        const iconContent = item.svg ? item.svg : `
+          <img src="${favUrl}" onerror="this.onerror=null; this.src='${fallbackUrl}'; this.onerror=()=>{ this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex'; };" alt="${item.name}" style="width:16px; height:16px; object-fit:contain; border-radius:4px;">
+          <span style="display:none; width:16px; height:16px; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:${colorStyle};">${initial}</span>
+        `;
+
+        return `
+          <div class="shortcut-pill" draggable="true"
+               ondragstart="onShortcutDragStart(event, ${idx})"
+               ondragover="onShortcutDragOver(event, ${idx})"
+               ondragleave="onShortcutDragLeave(event)"
+               ondrop="onShortcutDrop(event, ${idx})"
+               ondragend="onShortcutDragEnd(event)"
+               onclick="onShortcutClick(event, '${item.url.replace(/'/g, "\\'")}')"
+               title="${item.name} · ${item.desc || item.url}">
+            <div class="shortcut-icon-wrap" style="background:${bgStyle}; color:${colorStyle}; border:1px solid rgba(255,255,255,0.08);">
+              ${iconContent}
+            </div>
+            <div class="shortcut-info">
+              <div class="shortcut-name">${item.name}</div>
+              <div class="shortcut-desc">${item.desc || domain}</div>
+            </div>
+            <svg class="shortcut-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+            <div class="shortcut-del-btn" onclick="deleteCustomShortcut(event, ${idx})" title="删除此快捷导航">✕</div>
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function onShortcutClick(e, url) {
+      if (isShortcutsManageMode) {
+        e.preventDefault();
+        return;
+      }
+      if (e.target.closest('.shortcut-del-btn')) {
+        return;
+      }
+      let fullUrl = (url || '').trim();
+      if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+        fullUrl = 'https://' + fullUrl;
+      }
+      window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    }
+
+    function toggleShortcutsManage() {
+      isShortcutsManageMode = !isShortcutsManageMode;
+      const card = document.getElementById('homeShortcutsCard');
+      const btn = document.getElementById('scManageBtn');
+      const text = document.getElementById('scManageBtnText');
+
+      if (isShortcutsManageMode) {
+        if (card) card.classList.add('is-shortcuts-manage');
+        if (btn) btn.classList.add('active');
+        if (text) text.textContent = '完成';
+        showToast('已进入导航管理模式：可随意拖拽调序或点击 ✕ 删除');
+      } else {
+        if (card) card.classList.remove('is-shortcuts-manage');
+        if (btn) btn.classList.remove('active');
+        if (text) text.textContent = '管理';
+      }
+    }
+
+    function deleteCustomShortcut(e, idx) {
+      e.stopPropagation();
+      const removed = customShortcutsList.splice(idx, 1);
+      saveCustomShortcuts();
+      renderCustomShortcuts();
+      if (removed && removed[0]) {
+        showToast(`已移除导航【${removed[0].name}】`);
+      }
+    }
+
+    // HTML5 Drag and Drop handlers
+    function onShortcutDragStart(e, idx) {
+      draggedShortcutIdx = idx;
+      e.currentTarget.classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try {
+        e.dataTransfer.setData('text/plain', String(idx));
+      } catch (err) {}
+    }
+
+    function onShortcutDragOver(e, idx) {
+      e.preventDefault();
+      if (draggedShortcutIdx === null || draggedShortcutIdx === idx) return;
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function onShortcutDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function onShortcutDrop(e, targetIdx) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      if (draggedShortcutIdx === null || draggedShortcutIdx === targetIdx) return;
+      const item = customShortcutsList.splice(draggedShortcutIdx, 1)[0];
+      customShortcutsList.splice(targetIdx, 0, item);
+      saveCustomShortcuts();
+      renderCustomShortcuts();
+      showToast('导航顺序已保存');
+    }
+
+    function onShortcutDragEnd(e) {
+      e.currentTarget.classList.remove('is-dragging');
+      document.querySelectorAll('.shortcut-pill').forEach(el => el.classList.remove('drag-over'));
+      draggedShortcutIdx = null;
+    }
+
+    // Add Shortcut Modal
+    function openAddShortcutModal() {
+      const modal = document.getElementById('addShortcutModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        const urlInput = document.getElementById('addScUrl');
+        if (urlInput) {
+          urlInput.value = '';
+          urlInput.focus();
+        }
+        const nameInput = document.getElementById('addScName');
+        if (nameInput) nameInput.value = '';
+        const descInput = document.getElementById('addScDesc');
+        if (descInput) descInput.value = '';
+        const previewImg = document.getElementById('addScIconPreview');
+        if (previewImg) previewImg.src = 'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https%3A%2F%2Fgoogle.com&size=128';
+        const statusText = document.getElementById('addScIconStatus');
+        if (statusText) statusText.textContent = '自动联网检索图标';
+        const hintText = document.getElementById('addScDomainHint');
+        if (hintText) hintText.textContent = '输入网址后自动获取高保真官方 Logo';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeAddShortcutModal() {
+      const modal = document.getElementById('addShortcutModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleShortcutUrlInput(val) {
+      const trimmed = (val || '').trim();
+      if (!trimmed) return;
+      const domain = extractShortcutDomain(trimmed);
+      const previewImg = document.getElementById('addScIconPreview');
+      const statusText = document.getElementById('addScIconStatus');
+      const hintText = document.getElementById('addScDomainHint');
+      const nameInput = document.getElementById('addScName');
+
+      if (domain && domain.length > 3 && domain.includes('.')) {
+        const fullUrl = trimmed.startsWith('http') ? trimmed : 'https://' + trimmed;
+        if (previewImg) {
+          previewImg.src = `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(fullUrl)}&size=128`;
+          previewImg.onerror = () => {
+            previewImg.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+          };
+        }
+        if (statusText) statusText.textContent = `已定位域名: ${domain}`;
+        if (hintText) hintText.textContent = '已自动联网匹配高保真图标';
+
+        if (nameInput && !nameInput.value) {
+          const raw = domain.replace(/^www\./i, '').split('.')[0];
+          const capitalized = raw.charAt(0).toUpperCase() + raw.slice(1);
+          nameInput.placeholder = capitalized;
+        }
+      }
+    }
+
+    function confirmAddShortcut() {
+      let url = (document.getElementById('addScUrl')?.value || '').trim();
+      if (!url) {
+        showToast('请输入网址 URL');
+        return;
+      }
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      const domain = extractShortcutDomain(url);
+      let name = (document.getElementById('addScName')?.value || '').trim();
+      if (!name) {
+        const raw = domain.replace(/^www\./i, '').split('.')[0];
+        name = raw.charAt(0).toUpperCase() + raw.slice(1);
+      }
+      let desc = (document.getElementById('addScDesc')?.value || '').trim();
+      if (!desc) desc = domain;
+
+      const jewelPalette = [
+        { bg: 'linear-gradient(135deg, rgba(0, 145, 255, 0.22), rgba(0, 145, 255, 0.06))', color: '#38bdf8' },
+        { bg: 'linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(168, 85, 247, 0.06))', color: '#c084fc' },
+        { bg: 'linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(34, 197, 94, 0.06))', color: '#4ade80' },
+        { bg: 'linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0.06))', color: '#fbbf24' },
+        { bg: 'linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.06))', color: '#f87171' }
+      ];
+      const theme = jewelPalette[customShortcutsList.length % jewelPalette.length];
+
+      customShortcutsList.push({
+        id: 'sc_' + Date.now(),
+        name,
+        desc,
+        url,
+        domain,
+        bg: theme.bg,
+        color: theme.color
+      });
+      saveCustomShortcuts();
+      renderCustomShortcuts();
+      closeAddShortcutModal();
+      showToast(`已添加新快捷导航【${name}】`);
+    }
+
+    // ========================================================
+    // 🌤️ SECONDARY WEATHER DETAIL MODAL LOGIC (24H + 7D)
+    // ========================================================
+    let weatherModalTimer = null;
+
+    function onWeatherCardClick(e) {
+      if (e.target.closest('.weather-city-btn') || e.target.closest('.weather-refresh-btn') || e.target.closest('.weather-expand-btn')) {
+        return;
+      }
+      openWeatherDetailModal(e);
+    }
+
+    function openWeatherDetailModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('weatherDetailModal');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      renderWeatherModalData();
+      updateWeatherModalClock();
+      if (!weatherModalTimer) {
+        weatherModalTimer = setInterval(updateWeatherModalClock, 1000);
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeWeatherDetailModal() {
+      const modal = document.getElementById('weatherDetailModal');
+      if (modal) modal.style.display = 'none';
+      if (weatherModalTimer) {
+        clearInterval(weatherModalTimer);
+        weatherModalTimer = null;
+      }
+    }
+
+    function updateWeatherModalClock() {
+      const clockEl = document.getElementById('wmTimeDisplay');
+      if (!clockEl) return;
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      clockEl.textContent = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+
+    function cycleWeatherCityModal(e) {
+      if (e) e.stopPropagation();
+      cycleWeatherCity();
+      setTimeout(renderWeatherModalData, 300);
+    }
+
+    function renderWeatherModalData() {
+      const cityEl = document.getElementById('homeWeatherCity');
+      const tempEl = document.getElementById('homeWeatherTemp');
+      const condEl = document.getElementById('homeWeatherCond');
+      const rangeEl = document.getElementById('homeWeatherRange');
+      const humEl = document.getElementById('homeWeatherHumidity');
+      const windEl = document.getElementById('homeWeatherWind');
+
+      const cityName = (cityEl ? cityEl.textContent : '长沙').trim();
+      const tempVal = parseInt(tempEl ? tempEl.textContent : '18') || 18;
+      const condText = (condEl ? condEl.textContent : '多云').trim();
+      const humVal = (humEl ? humEl.textContent : '83%').trim();
+      const windVal = (windEl ? windEl.textContent : '0.8 m/s').trim();
+
+      // Top bar city
+      const wmCity = document.getElementById('wmCityName');
+      if (wmCity) {
+        wmCity.textContent = cityName === '长沙' ? '长沙 · 长沙县' : `${cityName} · 市中心`;
+      }
+
+      // Hero big temp
+      const wmTemp = document.getElementById('wmTemp');
+      if (wmTemp) wmTemp.innerHTML = `${tempVal}°`;
+
+      // Hero condition
+      const wmCondText = document.getElementById('wmCondText');
+      if (wmCondText) {
+        const high = tempVal + 2;
+        const low = tempVal - 3;
+        wmCondText.textContent = `${condText} ${high}° ~ ${low}°`;
+      }
+
+      // Hero emoji
+      const wmEmoji = document.getElementById('wmHeroEmoji');
+      if (wmEmoji) {
+        if (condText.includes('雷')) wmEmoji.textContent = '⛈️';
+        else if (condText.includes('雪')) wmEmoji.textContent = '❄️';
+        else if (condText.includes('雨')) wmEmoji.textContent = '🌧️';
+        else if (condText.includes('阴')) wmEmoji.textContent = '☁️';
+        else if (condText.includes('多云')) wmEmoji.textContent = '⛅';
+        else wmEmoji.textContent = '☀️';
+      }
+
+      // Telemetry row
+      const wmWindDir = document.getElementById('wmWindDir');
+      if (wmWindDir) wmWindDir.textContent = '东北风: 1-3级';
+      const wmWindSpeed = document.getElementById('wmWindSpeed');
+      if (wmWindSpeed) {
+        const kmh = Math.round(parseFloat(windVal || '2.8') * 3.6);
+        wmWindSpeed.textContent = `风速: ${kmh}km/h (${windVal})`;
+      }
+      const wmHum = document.getElementById('wmHumidity');
+      if (wmHum) wmHum.textContent = `相对湿度: ${humVal}`;
+      const wmPres = document.getElementById('wmPressure');
+      if (wmPres) wmPres.textContent = '大气压强: 1013hPa';
+
+      // 24-Hour Forecast Scroll
+      const hourlyContainer = document.getElementById('wmHourlyScroll');
+      if (hourlyContainer) {
+        const curH = new Date().getHours();
+        let hHtml = '';
+        for (let i = 0; i < 24; i++) {
+          const h = (curH + i) % 24;
+          const isNow = i === 0;
+          let delta = 0;
+          if (h >= 12 && h <= 15) delta = 2;
+          else if (h >= 22 || h <= 5) delta = -3;
+          else if (h >= 6 && h <= 9) delta = -1;
+          const cardTemp = tempVal + delta;
+          const isNight = h < 6 || h >= 19;
+          let icon = '☀️';
+          if (condText.includes('雷')) icon = '⛈️';
+          else if (condText.includes('雪')) icon = '❄️';
+          else if (condText.includes('雨')) icon = '🌧️';
+          else if (condText.includes('阴')) icon = '☁️';
+          else if (condText.includes('多云')) icon = isNight ? '☁️' : '⛅';
+          else icon = isNight ? '🌙' : '☀️';
+
+          hHtml += `
+            <div class="wm-hour-card ${isNow ? 'now' : ''}">
+              <span style="font-size:0.75rem; color:var(--text-dim, #94a3b8);">${isNow ? '现在' : (h < 10 ? '0' + h : h) + ':00'}</span>
+              <span style="font-size:1.35rem;">${icon}</span>
+              <span style="font-size:0.88rem; font-weight:700;">${cardTemp}°</span>
+            </div>
+          `;
+        }
+        hourlyContainer.innerHTML = hHtml;
+      }
+
+      // 7-Day Forecast Grid
+      const daysContainer = document.getElementById('wm7DaysRow');
+      if (daysContainer) {
+        const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const curDayIdx = new Date().getDay();
+        let dHtml = '';
+        const dayOffsets = [
+          { icon: condText.includes('雨') ? '🌧️' : '⛅', maxDelta: 1, minDelta: -3 },
+          { icon: '⛅', maxDelta: 2, minDelta: -4 },
+          { icon: '☀️', maxDelta: 4, minDelta: -3 },
+          { icon: '☀️', maxDelta: 4, minDelta: -2 },
+          { icon: '☀️', maxDelta: 5, minDelta: -2 },
+          { icon: '☀️', maxDelta: 5, minDelta: -1 },
+          { icon: '☀️', maxDelta: 6, minDelta: 0 }
+        ];
+
+        for (let j = 0; j < 7; j++) {
+          const dayName = j === 0 ? '今天' : days[(curDayIdx + j) % 7];
+          const d = new Date();
+          d.setDate(d.getDate() + j);
+          const dateLabel = `${d.getMonth() + 1}月${d.getDate()}日`;
+          const item = dayOffsets[j];
+          const high = tempVal + item.maxDelta;
+          const low = tempVal + item.minDelta;
+
+          dHtml += `
+            <div class="wm-day-card">
+              <span style="font-size:1.45rem;">${item.icon}</span>
+              <span style="font-size:0.76rem; font-weight:700; margin:4px 0;">${high}° ~ ${low}°</span>
+              <span style="font-size:0.68rem; color:var(--text, #cbd5e1);">${dateLabel}</span>
+              <span style="font-size:0.62rem; color:var(--text-dim, #94a3b8);">${dayName}</span>
+            </div>
+          `;
+        }
+        daysContainer.innerHTML = dHtml;
+      }
+    }
+
+    // Expose all to global window
+    window.onWeatherCardClick = onWeatherCardClick;
+    window.openWeatherDetailModal = openWeatherDetailModal;
+    window.closeWeatherDetailModal = closeWeatherDetailModal;
+    window.cycleWeatherCityModal = cycleWeatherCityModal;
+    window.renderWeatherModalData = renderWeatherModalData;
+    window.initShortcutsSystem = initShortcutsSystem;
+    window.renderCustomShortcuts = renderCustomShortcuts;
+    window.toggleShortcutsManage = toggleShortcutsManage;
+    window.deleteCustomShortcut = deleteCustomShortcut;
+    window.onShortcutClick = onShortcutClick;
+    window.onShortcutDragStart = onShortcutDragStart;
+    window.onShortcutDragOver = onShortcutDragOver;
+    window.onShortcutDragLeave = onShortcutDragLeave;
+    window.onShortcutDrop = onShortcutDrop;
+    window.onShortcutDragEnd = onShortcutDragEnd;
+    window.openAddShortcutModal = openAddShortcutModal;
+    window.closeAddShortcutModal = closeAddShortcutModal;
+    window.handleShortcutUrlInput = handleShortcutUrlInput;
+    window.confirmAddShortcut = confirmAddShortcut;
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeVaultDeleteConfirm();
@@ -52301,6 +53705,8 @@ window.renderContainers = renderContainers;
         closeVaultAlistModal();
         closeVaultCloudSyncModal();
         closeVaultPreviewModal();
+        closeWeatherDetailModal();
+        closeAddShortcutModal();
       }
     });
     </script>
@@ -52741,6 +54147,102 @@ window.renderContainers = renderContainers;
       </div>
     </div>
   </aside>
+
+  <!-- 🌤️ SECONDARY WEATHER DETAIL EXPANDED MODAL (24小时逐时预报与未来7天多日预报) -->
+  <div class="weather-detail-backdrop" id="weatherDetailModal" style="display:none;" onclick="if(event.target===this)closeWeatherDetailModal()">
+    <div class="weather-detail-card" role="dialog" aria-modal="true" aria-label="天气气象多维详情">
+      <!-- 1. Top Bar -->
+      <div class="wm-top-bar">
+        <div class="wm-close-dot" onclick="closeWeatherDetailModal()" title="关闭窗口 (Esc)">✕</div>
+        <div class="wm-time-center" id="wmTimeDisplay">2026-10-04 20:30:00</div>
+        <div class="wm-city-toggle" onclick="cycleWeatherCityModal(event)" title="点击切换城市">
+          <span id="wmCityName">长沙 · 长沙县</span>
+          <i data-lucide="arrow-left-right" style="width:12px;height:12px;"></i>
+        </div>
+      </div>
+
+      <!-- 2. Hero Big Temperature Row -->
+      <div class="wm-hero-row">
+        <div class="wm-temp-giant" id="wmTemp">18°</div>
+        <div class="wm-hero-details">
+          <div class="wm-cond-title" id="wmCond">
+            <span id="wmCondText">多云 19° ~ 16°</span>
+            <span id="wmHeroEmoji" style="font-size:1.6rem;">⛅</span>
+          </div>
+          <div class="wm-metrics-line">
+            <span id="wmWindDir">东北风: 1-3级</span>
+            <span id="wmWindSpeed">风速: 10km/h (2.8m/s)</span>
+            <span id="wmHumidity">相对湿度: 83%</span>
+            <span id="wmPressure">大气压强: 1013hPa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 24-Hour Forecast Ribbon -->
+      <div class="wm-section">
+        <div class="wm-section-title">
+          <i data-lucide="clock" style="width:14px;height:14px;color:#0091ff;"></i>
+          <span>24小时预报</span>
+        </div>
+        <div class="wm-hourly-scroll" id="wmHourlyScroll">
+          <!-- Dynamically populated by renderWeatherModalData() -->
+        </div>
+      </div>
+
+      <!-- 4. 7-Day Forecast Grid -->
+      <div class="wm-section">
+        <div class="wm-section-title">
+          <i data-lucide="calendar" style="width:14px;height:14px;color:#0091ff;"></i>
+          <span>未来7天预报</span>
+        </div>
+        <div class="wm-7days-row" id="wm7DaysRow">
+          <!-- Dynamically populated by renderWeatherModalData() -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ➕ ADD SHORTCUT MODAL (自动联网匹配高清图标) -->
+  <div class="weather-detail-backdrop" id="addShortcutModal" style="display:none;" onclick="if(event.target===this)closeAddShortcutModal()">
+    <div class="add-shortcut-dialog" role="dialog" aria-modal="true" aria-label="添加快捷导航">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:700; font-size:1rem; display:flex; align-items:center; gap:6px;">
+          <i data-lucide="compass" style="width:16px;height:16px;color:#0091ff;"></i>
+          <span>添加快捷导航</span>
+        </div>
+        <div class="wm-close-dot" onclick="closeAddShortcutModal()" title="关闭">✕</div>
+      </div>
+
+      <div class="sc-form-group">
+        <label class="sc-form-label">网站链接 (URL)</label>
+        <input type="text" class="sc-form-input" id="addScUrl" placeholder="输入网址，例如 ping0.cc 或 https://muse.ai" oninput="handleShortcutUrlInput(this.value)">
+      </div>
+
+      <!-- Live Logo Preview Box -->
+      <div class="sc-icon-preview-box">
+        <img id="addScIconPreview" class="sc-preview-img" src="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https%3A%2F%2Fgoogle.com&size=128" alt="Logo Preview" onerror="this.src='https://icons.duckduckgo.com/ip3/google.com.ico'">
+        <div style="display:flex; flex-direction:column; gap:2px; min-width:0;">
+          <span style="font-size:0.75rem; font-weight:700;" id="addScIconStatus">自动联网检索图标</span>
+          <span style="font-size:0.65rem; color:var(--text-dim, #94a3b8);" id="addScDomainHint">输入网址后自动获取高保真官方 Logo</span>
+        </div>
+      </div>
+
+      <div class="sc-form-group">
+        <label class="sc-form-label">网站名称</label>
+        <input type="text" class="sc-form-input" id="addScName" placeholder="例如: Ping0 或 Muse AI">
+      </div>
+
+      <div class="sc-form-group">
+        <label class="sc-form-label">网站简述 (可选)</label>
+        <input type="text" class="sc-form-input" id="addScDesc" placeholder="例如: 原生IP检测与路由追踪">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:6px;">
+        <button class="sc-action-btn" onclick="closeAddShortcutModal()" style="padding:6px 14px; border-radius:10px;">取消</button>
+        <button class="sc-action-btn active" onclick="confirmAddShortcut()" style="padding:6px 16px; border-radius:10px;">确认添加</button>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
