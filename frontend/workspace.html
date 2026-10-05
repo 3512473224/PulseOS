@@ -3602,37 +3602,75 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       padding: 5px 8px;
       height: 40px;
       box-sizing: border-box;
-      background: var(--surface-hover, rgba(255, 255, 255, 0.028));
-      border: 1px solid var(--border, rgba(255, 255, 255, 0.065));
       border-radius: 10px;
-      color: var(--text, #f1f5f9);
       text-decoration: none;
       cursor: pointer;
       position: relative;
-      overflow: hidden;
+      overflow: visible !important;
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    .shortcut-pill:hover {
-      background: var(--surface, rgba(255, 255, 255, 0.075));
-      border-color: rgba(0, 145, 255, 0.35);
+    html:not(.theme-light) .shortcut-pill {
+      background: var(--surface-hover, rgba(255, 255, 255, 0.03));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+      color: var(--text, #f1f5f9);
+    }
+    html:not(.theme-light) .shortcut-pill:hover {
+      background: var(--surface, rgba(255, 255, 255, 0.08));
+      border-color: rgba(0, 145, 255, 0.4);
       transform: translateY(-1.5px);
       box-shadow: 0 6px 16px rgba(0, 145, 255, 0.12);
       color: var(--text, #fff);
     }
+    html.theme-light .shortcut-pill {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    html.theme-light .shortcut-pill:hover {
+      background: #f8fafc;
+      border-color: rgba(0, 145, 255, 0.45);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 12px rgba(0, 145, 255, 0.1);
+      color: #0f172a;
+    }
     .shortcut-icon-wrap {
       width: 28px;
       height: 28px;
-      border-radius: 7px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      background: var(--surface, rgba(255, 255, 255, 0.06));
+      border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
       transition: transform 0.22s ease, box-shadow 0.22s ease;
+      overflow: hidden;
+    }
+    html.theme-light .shortcut-icon-wrap {
+      background: #f1f5f9;
+      border: 1px solid rgba(0, 0, 0, 0.06);
     }
     .shortcut-pill:hover .shortcut-icon-wrap {
       transform: scale(1.08);
+    }
+    .sc-favicon-img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      border-radius: 4px;
+      display: block;
+    }
+    .sc-fallback-initial {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #0091ff;
     }
     .shortcut-info {
       display: flex;
@@ -3644,22 +3682,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .shortcut-name {
       font-size: 0.73rem;
       font-weight: 700;
-      color: var(--text, #fff);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       letter-spacing: -0.01em;
       line-height: 1.2;
     }
+    html:not(.theme-light) .shortcut-name { color: #ffffff; }
+    html.theme-light .shortcut-name { color: #0f172a; }
+
     .shortcut-desc {
       font-size: 0.6rem;
-      color: var(--text-dim, #94a3b8);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-top: 1px;
       line-height: 1.15;
     }
+    html:not(.theme-light) .shortcut-desc { color: #94a3b8; }
+    html.theme-light .shortcut-desc { color: #64748b; }
+
     .shortcut-arrow {
       position: absolute;
       right: 6px;
@@ -3766,26 +3808,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .shortcut-del-btn {
       position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 17px;
-      height: 17px;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: #ef4444;
-      color: #fff;
+      color: #ffffff;
       font-size: 10px;
-      font-weight: 800;
-      border: 2px solid var(--surface-card, #0f172a);
+      font-weight: 900;
+      line-height: 1;
       display: none;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-      z-index: 10;
-      transition: transform 0.15s ease;
+      z-index: 50;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    html.theme-light .shortcut-del-btn {
+      border: 2px solid #ffffff !important;
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+    }
+    html:not(.theme-light) .shortcut-del-btn {
+      border: 2px solid #0f172a !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
     .shortcut-del-btn:hover {
-      transform: scale(1.2);
+      transform: scale(1.18);
       background: #dc2626;
     }
     .is-shortcuts-manage .shortcut-del-btn {
@@ -53111,106 +53161,16 @@ window.renderContainers = renderContainers;
     // 🧭 DYNAMIC SHORTCUTS MANAGEMENT & DRAG-AND-DROP SYSTEM
     // ========================================================
     const DEFAULT_CUSTOM_SHORTCUTS = [
-      {
-        id: 'sc_gh',
-        name: 'GitHub',
-        desc: '代码仓库',
-        url: 'https://github.com/3512473224',
-        domain: 'github.com',
-        bg: 'linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04))',
-        color: '#ffffff',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>'
-      },
-      {
-        id: 'sc_yt',
-        name: 'YouTube',
-        desc: '油管视频',
-        url: 'https://www.youtube.com',
-        domain: 'youtube.com',
-        bg: 'linear-gradient(135deg, rgba(239,68,68,0.22), rgba(239,68,68,0.06))',
-        color: '#ef4444',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>'
-      },
-      {
-        id: 'sc_wa',
-        name: 'WhatsApp',
-        desc: '即时通讯',
-        url: 'https://web.whatsapp.com',
-        domain: 'whatsapp.com',
-        bg: 'linear-gradient(135deg, rgba(37,211,102,0.22), rgba(37,211,102,0.06))',
-        color: '#25d366',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24h-.18zm4.52 11.59c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.55.13.16 1.74 2.65 4.21 3.72.59.25 1.05.41 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.29z"/></svg>'
-      },
-      {
-        id: 'sc_mail',
-        name: 'Email 邮箱',
-        desc: 'Gmail 邮箱',
-        url: 'https://mail.google.com',
-        domain: 'google.com',
-        bg: 'linear-gradient(135deg, rgba(234,67,53,0.22), rgba(234,67,53,0.06))',
-        color: '#ea4335',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>'
-      },
-      {
-        id: 'sc_cx',
-        name: '学习通',
-        desc: '在线课堂',
-        url: 'https://i.chaoxing.com',
-        domain: 'chaoxing.com',
-        bg: 'linear-gradient(135deg, rgba(2,132,199,0.22), rgba(2,132,199,0.06))',
-        color: '#0284c7',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>'
-      },
-      {
-        id: 'sc_lc',
-        name: '力扣',
-        desc: 'LeetCode 题库',
-        url: 'https://leetcode.cn',
-        domain: 'leetcode.cn',
-        bg: 'linear-gradient(135deg, rgba(245,158,11,0.22), rgba(245,158,11,0.06))',
-        color: '#f59e0b',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.762-1.823.762s-1.357-.295-1.824-.762l-4.707-4.707a2.58 2.58 0 0 1 0-3.647l4.707-4.707c.467-.467 1.112-.762 1.824-.762s1.357.295 1.823.762l2.697 2.607a.9.9 0 1 1-1.25 1.294l-2.697-2.607a.78.78 0 0 0-.573-.241.78.78 0 0 0-.573.241L6.324 14.18a.78.78 0 0 0 0 1.103l4.707 4.707a.78.78 0 0 0 .573.241.78.78 0 0 0 .573-.241l2.697-2.607a.9.9 0 1 1 1.25 1.294zM10.8 12.9h9.6a.9.9 0 1 0 0-1.8h-9.6a.9.9 0 1 0 0 1.8z"/></svg>'
-      },
-      {
-        id: 'sc_gemini',
-        name: 'Gemini',
-        desc: 'Google AI 助理',
-        url: 'https://gemini.google.com/app',
-        domain: 'google.com',
-        bg: 'linear-gradient(135deg, rgba(0,145,255,0.25), rgba(168,85,247,0.12))',
-        color: '#0091ff',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C12 6.627 6.627 12 0 12c6.627 0 12 5.373 12 12 0-6.627 5.373-12 12-12-6.627 0-12-5.373-12-12z"/></svg>'
-      },
-      {
-        id: 'sc_ds',
-        name: 'DeepSeek API',
-        desc: 'API 开放平台',
-        url: 'https://platform.deepseek.com',
-        domain: 'deepseek.com',
-        bg: 'linear-gradient(135deg, rgba(77,107,254,0.25), rgba(77,107,254,0.08))',
-        color: '#4d6bfe',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M23.748 4.651c-.254-.124-.364.113-.512.233-.051.04-.094.09-.137.137-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.155-.708-.311-.955-.65-.172-.24-.219-.509-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.094.172.187.129.323-.082.28-.18.553-.266.833-.055.179-.137.218-.328.14a5.5 5.5 0 0 1-1.737-1.179c-.857-.828-1.631-1.743-2.597-2.46a12 12 0 0 0-.689-.47c-.985-.957.13-1.743.387-1.836.27-.098.094-.433-.778-.428-.872.003-1.67.295-2.687.685a3 3 0 0 1-.465.136 9.6 9.6 0 0 0-2.883-.101c-1.885.21-3.39 1.1-4.497 2.622C.082 8.776-.231 10.854.152 13.02c.403 2.284 1.568 4.175 3.36 5.653 1.857 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.132-.284 4.994-1.86.47.234.962.328 1.78.398.629.058 1.235-.031 1.705-.129.735-.155.684-.836.418-.961-2.155-1.004-1.682-.595-2.112-.926 1.095-1.295 2.768-3.598 3.284-6.733.05-.346.115-.834.108-1.114-.004-.171.035-.238.23-.257a4.2 4.2 0 0 0 1.545-.475c1.397-.763 1.96-2.016 2.093-3.517.02-.23-.004-.467-.247-.588M11.58 18.168c-2.088-1.642-3.101-2.183-3.52-2.16-.39.024-.32.472-.234.763.09.288.207.487.371.74.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.168-1.361-.801-2.5-1.86-3.301-3.306-.775-1.393-1.225-2.888-1.299-4.482-.02-.385.094-.522.477-.592a4.7 4.7 0 0 1 1.53-.038c2.131.311 3.946 1.264 5.467 2.774.868.86 1.525 1.887 2.202 2.89.72 1.066 1.494 2.082 2.48 2.915.348.291.626.513.892.677-.802.09-2.14.109-3.055-.615z"/></svg>'
-      },
-      {
-        id: 'sc_muse',
-        name: 'Muse AI',
-        desc: '视频生成搜索',
-        url: 'https://muse.ai',
-        domain: 'muse.ai',
-        bg: 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(168,85,247,0.08))',
-        color: '#a855f7',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>'
-      },
-      {
-        id: 'sc_ping0',
-        name: 'Ping0',
-        desc: '网络质量检测',
-        url: 'https://ping0.cc',
-        domain: 'ping0.cc',
-        bg: 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(234,179,8,0.08))',
-        color: '#eab308',
-        svg: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v9l5 3"></path></svg>'
-      }
+      { id: 'sc_gh', name: 'GitHub', desc: '代码仓库', url: 'https://github.com/3512473224', domain: 'github.com' },
+      { id: 'sc_yt', name: 'YouTube', desc: '油管视频', url: 'https://www.youtube.com', domain: 'youtube.com' },
+      { id: 'sc_wa', name: 'WhatsApp', desc: '即时通讯', url: 'https://web.whatsapp.com', domain: 'whatsapp.com' },
+      { id: 'sc_mail', name: 'Email 邮箱', desc: 'Gmail 邮箱', url: 'https://mail.google.com', domain: 'mail.google.com' },
+      { id: 'sc_cx', name: '学习通', desc: '超星在线课堂', url: 'https://i.chaoxing.com', domain: 'i.chaoxing.com' },
+      { id: 'sc_lc', name: '力扣', desc: 'LeetCode 题库', url: 'https://leetcode.cn', domain: 'leetcode.cn' },
+      { id: 'sc_gemini', name: 'Gemini', desc: 'Google AI 助理', url: 'https://gemini.google.com', domain: 'gemini.google.com' },
+      { id: 'sc_ds', name: 'DeepSeek API', desc: 'API 开放平台', url: 'https://platform.deepseek.com', domain: 'deepseek.com' },
+      { id: 'sc_muse', name: 'Muse AI', desc: 'AI 视频与搜索', url: 'https://muse.ai', domain: 'muse.ai' },
+      { id: 'sc_ping0', name: 'Ping0', desc: '原生IP与网络质量', url: 'https://ping0.cc', domain: 'ping0.cc' }
     ];
 
     let customShortcutsList = [];
@@ -53219,11 +53179,24 @@ window.renderContainers = renderContainers;
 
     function initShortcutsSystem() {
       try {
-        const stored = localStorage.getItem('pulseos_custom_shortcuts_v2');
+        const stored = localStorage.getItem('pulseos_custom_shortcuts_v3') || localStorage.getItem('pulseos_custom_shortcuts_v2');
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            customShortcutsList = parsed;
+            // Strip out any stale hardcoded SVGs or dummy mock backgrounds so web favicon search is always used
+            customShortcutsList = parsed.map(item => {
+              const clean = { ...item };
+              delete clean.svg;
+              delete clean.bg;
+              delete clean.color;
+              if (clean.url && clean.url.includes('chaoxing') && (!clean.domain || clean.domain === 'chaoxing.com')) {
+                clean.domain = 'i.chaoxing.com';
+              }
+              if (clean.url && clean.url.includes('gemini') && (!clean.domain || clean.domain === 'google.com')) {
+                clean.domain = 'gemini.google.com';
+              }
+              return clean;
+            });
           }
         }
       } catch (e) {
@@ -53231,27 +53204,14 @@ window.renderContainers = renderContainers;
       }
       if (!customShortcutsList || customShortcutsList.length === 0) {
         customShortcutsList = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_SHORTCUTS));
-        saveCustomShortcuts();
-      } else {
-        // Backfill missing bg, color, svg, or polish default item metadata
-        let updated = false;
-        customShortcutsList.forEach(item => {
-          const def = DEFAULT_CUSTOM_SHORTCUTS.find(d => d.id === item.id || d.domain === item.domain || (d.url && item.url && d.url.includes(item.domain)));
-          if (def) {
-            if (!item.bg || item.bg.includes('rgba(255, 255, 255, 0.08)')) { item.bg = def.bg; updated = true; }
-            if (!item.color) { item.color = def.color; updated = true; }
-            if (!item.svg) { item.svg = def.svg; updated = true; }
-            if (def.desc && (!item.desc || item.desc === '原生IP与网络质量')) { item.desc = def.desc; updated = true; }
-          }
-        });
-        if (updated) saveCustomShortcuts();
       }
+      saveCustomShortcuts();
       renderCustomShortcuts();
     }
 
     function saveCustomShortcuts() {
       try {
-        localStorage.setItem('pulseos_custom_shortcuts_v2', JSON.stringify(customShortcutsList));
+        localStorage.setItem('pulseos_custom_shortcuts_v3', JSON.stringify(customShortcutsList));
       } catch (e) {}
     }
 
@@ -53269,8 +53229,8 @@ window.renderContainers = renderContainers;
 
     function getShortcutFaviconUrl(url, domain) {
       const d = domain || extractShortcutDomain(url);
-      const encoded = encodeURIComponent(url.startsWith('http') ? url : 'https://' + url);
-      return `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encoded}&size=128`;
+      const clean = (url || '').trim().startsWith('http') ? (url || '').trim() : 'https://' + d;
+      return `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(clean)}&size=128`;
     }
 
     function renderCustomShortcuts() {
@@ -53284,16 +53244,9 @@ window.renderContainers = renderContainers;
       grid.innerHTML = customShortcutsList.map((item, idx) => {
         const domain = item.domain || extractShortcutDomain(item.url);
         const favUrl = getShortcutFaviconUrl(item.url, domain);
-        const fallbackUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+        const ddgUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+        const directUrl = `https://${domain}/favicon.ico`;
         const initial = (item.name || 'P').charAt(0).toUpperCase();
-
-        const bgStyle = item.bg || 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03))';
-        const colorStyle = item.color || '#38bdf8';
-
-        const iconContent = item.svg ? item.svg : `
-          <img src="${favUrl}" onerror="this.onerror=null; this.src='${fallbackUrl}'; this.onerror=()=>{ this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex'; };" alt="${item.name}" style="width:16px; height:16px; object-fit:contain; border-radius:4px;">
-          <span style="display:none; width:16px; height:16px; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:${colorStyle};">${initial}</span>
-        `;
 
         return `
           <div class="shortcut-pill" draggable="true"
@@ -53304,8 +53257,13 @@ window.renderContainers = renderContainers;
                ondragend="onShortcutDragEnd(event)"
                onclick="onShortcutClick(event, '${item.url.replace(/'/g, "\\'")}')"
                title="${item.name} · ${item.desc || item.url}">
-            <div class="shortcut-icon-wrap" style="background:${bgStyle}; color:${colorStyle}; border:1px solid rgba(255,255,255,0.08);">
-              ${iconContent}
+            <div class="shortcut-icon-wrap">
+              <img src="${favUrl}"
+                   alt="${item.name}"
+                   loading="lazy"
+                   class="sc-favicon-img"
+                   onerror="if(!this.dataset.fb1){this.dataset.fb1=1;this.src='${ddgUrl}';}else if(!this.dataset.fb2){this.dataset.fb2=1;this.src='${directUrl}';}else{this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='flex';}">
+              <span class="sc-fallback-initial" style="display:none;">${initial}</span>
             </div>
             <div class="shortcut-info">
               <div class="shortcut-name">${item.name}</div>
@@ -53478,23 +53436,12 @@ window.renderContainers = renderContainers;
       let desc = (document.getElementById('addScDesc')?.value || '').trim();
       if (!desc) desc = domain;
 
-      const jewelPalette = [
-        { bg: 'linear-gradient(135deg, rgba(0, 145, 255, 0.22), rgba(0, 145, 255, 0.06))', color: '#38bdf8' },
-        { bg: 'linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(168, 85, 247, 0.06))', color: '#c084fc' },
-        { bg: 'linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(34, 197, 94, 0.06))', color: '#4ade80' },
-        { bg: 'linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0.06))', color: '#fbbf24' },
-        { bg: 'linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.06))', color: '#f87171' }
-      ];
-      const theme = jewelPalette[customShortcutsList.length % jewelPalette.length];
-
       customShortcutsList.push({
         id: 'sc_' + Date.now(),
         name,
         desc,
         url,
-        domain,
-        bg: theme.bg,
-        color: theme.color
+        domain
       });
       saveCustomShortcuts();
       renderCustomShortcuts();
