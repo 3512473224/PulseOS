@@ -3873,8 +3873,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     .weather-detail-card {
       width: 100%;
-      max-width: 820px;
-      background: linear-gradient(165deg, rgba(26, 34, 52, 0.94) 0%, rgba(13, 18, 30, 0.98) 100%);
+      max-width: 860px;
+      background: linear-gradient(165deg, rgba(20, 26, 42, 0.96) 0%, rgba(11, 15, 26, 0.98) 100%);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 26px;
       box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -3883,14 +3883,21 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       flex-direction: column;
       padding: 24px 28px;
       box-sizing: border-box;
-      gap: 20px;
+      gap: 16px;
       color: #fff;
       animation: wmScaleIn 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+    .weather-detail-card.is-switching {
+      opacity: 0.65;
+      transform: scale(0.992) translateZ(0);
     }
     html.theme-light .weather-detail-card {
-      background: linear-gradient(165deg, rgba(255, 255, 255, 0.97) 0%, rgba(241, 245, 249, 0.98) 100%);
-      border: 1px solid rgba(203, 213, 225, 0.8);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 248, 252, 0.98) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
       color: #0f172a;
     }
     @keyframes wmFadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -3900,6 +3907,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 2px;
     }
     .wm-close-dot {
       width: 16px;
@@ -3937,20 +3945,76 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #0091ff;
       background: rgba(0, 145, 255, 0.1);
       border: 1px solid rgba(0, 145, 255, 0.25);
-      padding: 4px 12px;
-      border-radius: 10px;
+      padding: 5px 14px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
     }
     .wm-city-toggle:hover {
       background: rgba(0, 145, 255, 0.2);
       border-color: rgba(0, 145, 255, 0.45);
+      transform: translateY(-1px);
+    }
+    .wm-city-toggle .wm-swap-icon {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .wm-city-toggle.is-rotating .wm-swap-icon {
+      transform: rotate(180deg);
+    }
+
+    /* City Quick Selection Bar */
+    .wm-cities-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 0 4px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .wm-cities-bar::-webkit-scrollbar { display: none; }
+    .wm-city-chip {
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-dim, #94a3b8);
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .wm-city-chip:hover {
+      background: rgba(0, 145, 255, 0.14);
+      color: #0091ff;
+      border-color: rgba(0, 145, 255, 0.3);
+      transform: translateY(-1px);
+    }
+    .wm-city-chip.active {
+      background: #0091ff;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.4);
+    }
+    html.theme-light .wm-city-chip {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.07);
+      color: #64748b;
+    }
+    html.theme-light .wm-city-chip.active {
+      background: #0091ff;
+      border-color: #0091ff;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 145, 255, 0.3);
     }
 
     .wm-hero-row {
       display: flex;
       align-items: center;
       gap: 24px;
+      padding: 4px 0;
     }
     .wm-temp-giant {
       font-size: 4.6rem;
@@ -3958,19 +4022,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       letter-spacing: -0.05em;
       line-height: 0.9;
       color: var(--text, #fff);
+      transition: transform 0.2s ease;
+    }
+    html.theme-light .wm-temp-giant {
+      color: #0f172a;
     }
     .wm-hero-details {
       display: flex;
       flex-direction: column;
       gap: 8px;
+      flex: 1;
     }
     .wm-cond-title {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
       color: var(--text, #fff);
+    }
+    html.theme-light .wm-cond-title {
+      color: #0f172a;
     }
     .wm-metrics-line {
       font-size: 0.8rem;
@@ -3979,57 +4051,197 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       flex-wrap: wrap;
       gap: 14px;
     }
+    html.theme-light .wm-metrics-line {
+      color: #64748b;
+    }
     .wm-metrics-line span {
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
+    /* 24-Hour Section & Smooth Controls */
+    .wm-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .wm-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .wm-section-title {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--text, #cbd5e1);
-      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
+    html.theme-light .wm-section-title {
+      color: #1e293b;
+    }
+    .wm-scroll-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .wm-scroll-nav-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text, #e2e8f0);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .wm-scroll-nav-btn:hover {
+      background: #0091ff;
+      color: #fff;
+      border-color: #0091ff;
+      transform: scale(1.08);
+    }
+    html.theme-light .wm-scroll-nav-btn {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: #334155;
+    }
+    html.theme-light .wm-scroll-nav-btn:hover {
+      background: #0091ff;
+      color: #fff;
+    }
+
     .wm-hourly-scroll {
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      padding-bottom: 8px;
+      overflow-y: hidden;
+      padding: 4px 2px 10px;
       scrollbar-width: thin;
+      scrollbar-color: rgba(0, 145, 255, 0.3) transparent;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      will-change: scroll-position;
+      transform: translateZ(0);
+      user-select: none;
+      cursor: grab;
+    }
+    .wm-hourly-scroll.is-dragging {
+      cursor: grabbing;
     }
     .wm-hourly-scroll::-webkit-scrollbar {
-      height: 5px;
+      height: 6px;
+    }
+    .wm-hourly-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
     }
     .wm-hourly-scroll::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      background: rgba(0, 145, 255, 0.35);
+      border-radius: 3px;
     }
+    .wm-hourly-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 145, 255, 0.6);
+    }
+    html.theme-light .wm-hourly-scroll::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    html.theme-light .wm-hourly-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 145, 255, 0.35);
+    }
+
     .wm-hour-card {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: var(--surface, rgba(255, 255, 255, 0.04));
       border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-      border-radius: 14px;
-      padding: 10px 14px;
-      min-width: 60px;
+      border-radius: 16px;
+      padding: 10px 12px;
+      min-width: 72px;
       box-sizing: border-box;
       flex-shrink: 0;
-      transition: all 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, border-color 0.15s ease;
+      will-change: transform;
+      transform: translateZ(0);
     }
     .wm-hour-card.now {
       background: rgba(0, 145, 255, 0.16);
-      border-color: rgba(0, 145, 255, 0.45);
+      border-color: rgba(0, 145, 255, 0.55);
+      box-shadow: 0 4px 14px rgba(0, 145, 255, 0.15);
     }
     .wm-hour-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(0, 145, 255, 0.35);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(0, 145, 255, 0.4);
       transform: translateY(-2px);
+    }
+    html.theme-light .wm-hour-card {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    html.theme-light .wm-hour-card.now {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
+    }
+    html.theme-light .wm-hour-card:hover {
+      background: #f8fafc;
+      border-color: #0091ff;
+    }
+    .wm-hour-time {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-dim, #94a3b8);
+    }
+    .wm-hour-card.now .wm-hour-time {
+      color: #0091ff;
+      font-weight: 700;
+    }
+    html.theme-light .wm-hour-time {
+      color: #64748b;
+    }
+    .wm-hour-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .wm-hour-cond {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text, #e2e8f0);
+    }
+    html.theme-light .wm-hour-cond {
+      color: #334155;
+    }
+    .wm-hour-pop {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-dim, #94a3b8);
+      opacity: 0.7;
+    }
+    .wm-hour-pop.active {
+      color: #38bdf8;
+      opacity: 1;
+      font-weight: 700;
+    }
+    .wm-hour-temp {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text, #ffffff);
+      margin-top: 2px;
+    }
+    html.theme-light .wm-hour-temp {
+      color: #0f172a;
     }
 
     .wm-7days-row {
@@ -4041,18 +4253,84 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: var(--surface, rgba(255, 255, 255, 0.04));
       border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
-      border-radius: 14px;
-      padding: 12px 6px;
+      border-radius: 16px;
+      padding: 10px 6px;
       text-align: center;
-      transition: all 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, border-color 0.15s ease;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+    .wm-day-card.today {
+      border-color: rgba(0, 145, 255, 0.35);
+      background: rgba(0, 145, 255, 0.08);
     }
     .wm-day-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(0, 145, 255, 0.35);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(0, 145, 255, 0.4);
       transform: translateY(-2px);
+    }
+    html.theme-light .wm-day-card {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    html.theme-light .wm-day-card.today {
+      background: #f0f9ff;
+      border-color: #38bdf8;
+    }
+    html.theme-light .wm-day-card:hover {
+      background: #f8fafc;
+      border-color: #0091ff;
+    }
+    .wm-day-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text, #e2e8f0);
+    }
+    html.theme-light .wm-day-title {
+      color: #1e293b;
+    }
+    .wm-day-date {
+      font-size: 0.65rem;
+      color: var(--text-dim, #94a3b8);
+    }
+    html.theme-light .wm-day-date {
+      color: #64748b;
+    }
+    .wm-day-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      margin: 2px 0;
+    }
+    .wm-day-cond {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text, #cbd5e1);
+    }
+    html.theme-light .wm-day-cond {
+      color: #475569;
+    }
+    .wm-day-pop {
+      font-size: 0.62rem;
+      color: var(--text-dim, #94a3b8);
+      opacity: 0.7;
+    }
+    .wm-day-pop.active {
+      color: #38bdf8;
+      opacity: 1;
+      font-weight: 700;
+    }
+    .wm-day-range {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text, #ffffff);
+      margin-top: 2px;
+    }
+    html.theme-light .wm-day-range {
+      color: #0f172a;
     }
 
     /* Add Shortcut Modal */
@@ -40354,7 +40632,7 @@ window.renderContainers = renderContainers;
           try {
             const ctrl = new AbortController();
             const tid = setTimeout(() => ctrl.abort(), 3500);
-            const directRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geo.lat}&longitude=${geo.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FShanghai`, {
+            const directRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${geo.lat}&longitude=${geo.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,weather_code,precipitation_probability,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FShanghai`, {
               signal: ctrl.signal
             });
             clearTimeout(tid);
@@ -40364,11 +40642,93 @@ window.renderContainers = renderContainers;
               const wCode = cur.weather_code || 0;
               const wMap = { 0: '晴朗', 1: '晴间多云', 2: '多云', 3: '阴天', 45: '有雾', 48: '浓雾', 51: '毛毛雨', 61: '小雨', 63: '中雨', 65: '大雨', 80: '阵雨', 95: '雷雨' };
               const iconMap = { 0: 'sun', 1: 'sun', 2: 'cloud-sun', 3: 'cloud', 45: 'cloud-fog', 48: 'cloud-fog', 51: 'cloud-drizzle', 61: 'cloud-rain', 63: 'cloud-rain', 65: 'cloud-rain', 80: 'cloud-rain', 95: 'cloud-lightning' };
+
+              // Parse 24-hour hourly list
+              const hourlyRaw = d.hourly || {};
+              const curTimeStr = cur.time || '';
+              const times = hourlyRaw.time || [];
+              let startIdx = 0;
+              for (let ti = 0; ti < times.length; ti++) {
+                if (times[ti] >= curTimeStr.slice(0, 13)) {
+                  startIdx = ti;
+                  break;
+                }
+              }
+
+              const parsedHourly = [];
+              for (let hi = startIdx; hi < Math.min(startIdx + 24, times.length); hi++) {
+                const tStr = times[hi];
+                const hTemp = Math.round(hourlyRaw.temperature_2m ? hourlyRaw.temperature_2m[hi] : 25);
+                const hHum = hourlyRaw.relative_humidity_2m ? hourlyRaw.relative_humidity_2m[hi] : 50;
+                const hCode = hourlyRaw.weather_code ? hourlyRaw.weather_code[hi] : 0;
+                const hPop = hourlyRaw.precipitation_probability ? (hourlyRaw.precipitation_probability[hi] || 0) : 0;
+                const hWind = Math.round(((hourlyRaw.wind_speed_10m ? hourlyRaw.wind_speed_10m[hi] : 10) / 3.6) * 10) / 10;
+                const hCond = wMap[hCode] || '晴朗';
+                const hourNum = tStr.includes('T') ? parseInt(tStr.split('T')[1].split(':')[0]) : (hi % 24);
+                const isNow = (hi === startIdx);
+                const isNight = (hourNum < 6 || hourNum >= 19);
+                let emoji = '☀️';
+                if (hCond.includes('雷')) emoji = '⛈️';
+                else if (hCond.includes('雪')) emoji = '❄️';
+                else if (hCond.includes('雨')) emoji = '🌧️';
+                else if (hCond.includes('阴')) emoji = '☁️';
+                else if (hCond.includes('多云')) emoji = isNight ? '☁️' : '⛅';
+                else emoji = isNight ? '🌙' : '☀️';
+
+                parsedHourly.push({
+                  time: isNow ? '现在' : `${hourNum < 10 ? '0' + hourNum : hourNum}:00`,
+                  hour: hourNum,
+                  temp: hTemp,
+                  humidity: `${hHum}%`,
+                  pop: `${hPop}%`,
+                  popVal: hPop,
+                  wind: `${hWind} m/s`,
+                  condition: hCond,
+                  emoji: emoji,
+                  isNow: isNow,
+                  isNight: isNight
+                });
+              }
+
+              // Parse 7-day daily list
+              const dailyRaw = d.daily || {};
+              const dTimes = dailyRaw.time || [];
+              const parsedDaily = [];
+              const weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+              for (let di = 0; di < Math.min(7, dTimes.length); di++) {
+                const dT = dTimes[di];
+                const dCode = dailyRaw.weather_code ? dailyRaw.weather_code[di] : 0;
+                const dMax = Math.round(dailyRaw.temperature_2m_max ? dailyRaw.temperature_2m_max[di] : 26);
+                const dMin = Math.round(dailyRaw.temperature_2m_min ? dailyRaw.temperature_2m_min[di] : 18);
+                const dPop = dailyRaw.precipitation_probability_max ? (dailyRaw.precipitation_probability_max[di] || 0) : 0;
+                const dCond = wMap[dCode] || '多云';
+                const parts = dT.split('-');
+                const dateLabel = parts.length === 3 ? `${parseInt(parts[1])}月${parseInt(parts[2])}日` : dT;
+
+                let dEmoji = '☀️';
+                if (dCond.includes('雷')) dEmoji = '⛈️';
+                else if (dCond.includes('雪')) dEmoji = '❄️';
+                else if (dCond.includes('雨')) dEmoji = '🌧️';
+                else if (dCond.includes('阴')) dEmoji = '☁️';
+                else if (dCond.includes('多云')) dEmoji = '⛅';
+
+                parsedDaily.push({
+                  dayName: di === 0 ? '今天' : weekdays[(di + 2) % 7],
+                  dateLabel: dateLabel,
+                  tempMax: dMax,
+                  tempMin: dMin,
+                  pop: `${dPop}%`,
+                  popVal: dPop,
+                  condition: dCond,
+                  emoji: dEmoji
+                });
+              }
               
               data = {
                 city: geo.name,
                 cityKey: cityKey,
                 temp: Math.round(cur.temperature_2m || 25),
+                apparentTemp: Math.round(cur.apparent_temperature || cur.temperature_2m || 25),
                 humidity: cur.relative_humidity_2m || 50,
                 windSpeed: (Math.round((cur.wind_speed_10m || 10) / 3.6 * 10) / 10) + ' m/s',
                 condition: wMap[wCode] || '多云',
@@ -40376,6 +40736,8 @@ window.renderContainers = renderContainers;
                 aqiDesc: '良 (65)',
                 aqiColor: 'c-yellow',
                 icon: iconMap[wCode] || 'sun',
+                hourly: parsedHourly,
+                daily: parsedDaily,
                 live: true
               };
             }
@@ -40867,6 +41229,9 @@ window.renderContainers = renderContainers;
         }
       }
 
+      // Cache global weather reference
+      window.lastWeatherData = data;
+
       // 24-Hour Hourly Forecast
       renderHourlyForecast(roundedTemp, condText);
 
@@ -40874,11 +41239,17 @@ window.renderContainers = renderContainers;
         iconEl.setAttribute('data-lucide', data.icon);
         if (window.lucide) lucide.createIcons();
       }
+
+      // If modal is open, immediately sync with latest live data!
+      const modal = document.getElementById('weatherDetailModal');
+      if (modal && modal.style.display === 'flex' && typeof renderWeatherModalData === 'function') {
+        renderWeatherModalData(data);
+      }
     }
 
     function cycleWeatherCity() {
       currentCityIndex = (currentCityIndex + 1) % WEATHER_CITIES.length;
-      fetchRealWeather(true);
+      return fetchRealWeather(true);
     }
 
     function initLiveWeather(forceRefresh = true) {
@@ -40969,6 +41340,10 @@ window.renderContainers = renderContainers;
 
         const activeSection = document.querySelector('.view-section.active.scrollable, .view-section.active');
         if (activeSection && activeSection.scrollHeight - activeSection.clientHeight > 2) {
+          // Do not leak-scroll background activeSection when interacting within modal
+          if (target && target.closest && target.closest('.weather-detail-backdrop, .modal-backdrop')) {
+            return null;
+          }
           return activeSection;
         }
         return null;
@@ -41029,6 +41404,20 @@ window.renderContainers = renderContainers;
 
       window.addEventListener('wheel', (e) => {
         if (e.target.closest('textarea, input, select, pre code')) return;
+
+        // 🌟 Leave horizontal scroll elements (e.g. 24-hour weather ribbon) to their dedicated horizontal engine
+        if (e.target.closest('.wm-hourly-scroll, [data-horizontal-scroll="true"]')) {
+          return;
+        }
+
+        // 🌟 Modal scroll isolation: never leak wheel events to background desktop
+        const modalBackdrop = e.target.closest('.weather-detail-backdrop, .modal-backdrop');
+        if (modalBackdrop) {
+          const modalCard = modalBackdrop.querySelector('.weather-detail-card, .modal-dialog');
+          if (modalCard && modalCard.scrollHeight <= modalCard.clientHeight + 2) {
+            return;
+          }
+        }
 
         // Precision trackpad pass-through
         const isTrackpad = (Math.abs(e.deltaY) < 32 && (e.deltaY % 1 !== 0 || Math.abs(e.deltaX) > 0));
@@ -53491,45 +53880,349 @@ window.renderContainers = renderContainers;
       clockEl.textContent = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
 
-    function cycleWeatherCityModal(e) {
-      if (e) e.stopPropagation();
-      cycleWeatherCity();
-      setTimeout(renderWeatherModalData, 300);
+    function updateModalCityChips() {
+      const container = document.getElementById('wmCitiesBar');
+      if (!container) return;
+      const currentKey = WEATHER_CITIES[currentCityIndex] || 'changsha';
+      container.querySelectorAll('.wm-city-chip').forEach(chip => {
+        if (chip.getAttribute('data-city') === currentKey) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
     }
 
-    function renderWeatherModalData() {
+    async function selectWeatherCity(idx) {
+      if (idx < 0 || idx >= WEATHER_CITIES.length) return;
+      currentCityIndex = idx;
+      updateModalCityChips();
+
+      const modal = document.getElementById('weatherDetailModal');
+      const card = modal ? modal.querySelector('.weather-detail-card') : null;
+      if (card) card.classList.add('is-switching');
+
+      const wmCity = document.getElementById('wmCityName');
+      const cityNameMap = { changsha: '长沙', beijing: '北京', shanghai: '上海', guangzhou: '广州', shenzhen: '深圳', hangzhou: '杭州', chengdu: '成都', wuhan: '武汉' };
+      const nextKey = WEATHER_CITIES[currentCityIndex];
+      if (wmCity) wmCity.textContent = `${cityNameMap[nextKey] || '城市'} · 同步中...`;
+
+      try {
+        await fetchRealWeather(true);
+      } finally {
+        if (card) setTimeout(() => card.classList.remove('is-switching'), 220);
+      }
+    }
+
+    async function cycleWeatherCityModal(e) {
+      if (e) e.stopPropagation();
+      const toggleBtn = document.getElementById('wmCityToggleBtn');
+      if (toggleBtn) toggleBtn.classList.add('is-rotating');
+
+      const modal = document.getElementById('weatherDetailModal');
+      const card = modal ? modal.querySelector('.weather-detail-card') : null;
+      if (card) card.classList.add('is-switching');
+
+      currentCityIndex = (currentCityIndex + 1) % WEATHER_CITIES.length;
+      updateModalCityChips();
+
+      const wmCity = document.getElementById('wmCityName');
+      const cityNameMap = { changsha: '长沙', beijing: '北京', shanghai: '上海', guangzhou: '广州', shenzhen: '深圳', hangzhou: '杭州', chengdu: '成都', wuhan: '武汉' };
+      const nextKey = WEATHER_CITIES[currentCityIndex];
+      if (wmCity) wmCity.textContent = `${cityNameMap[nextKey] || '城市'} · 同步中...`;
+
+      try {
+        await fetchRealWeather(true);
+      } finally {
+        if (toggleBtn) setTimeout(() => toggleBtn.classList.remove('is-rotating'), 400);
+        if (card) setTimeout(() => card.classList.remove('is-switching'), 220);
+      }
+    }
+
+    function scrollHourlyBy(offset) {
+      const el = document.getElementById('wmHourlyScroll');
+      if (!el) return;
+      el.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+
+    function updateHourlyChevrons() {
+      const el = document.getElementById('wmHourlyScroll');
+      const prevBtn = document.getElementById('wmHourlyPrevBtn');
+      const nextBtn = document.getElementById('wmHourlyNextBtn');
+      if (!el || !prevBtn || !nextBtn) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      prevBtn.style.opacity = el.scrollLeft <= 5 ? '0.35' : '1';
+      prevBtn.style.pointerEvents = el.scrollLeft <= 5 ? 'none' : 'auto';
+      nextBtn.style.opacity = el.scrollLeft >= maxScroll - 5 ? '0.35' : '1';
+      nextBtn.style.pointerEvents = el.scrollLeft >= maxScroll - 5 ? 'none' : 'auto';
+    }
+
+    let _hourlyScrollBound = false;
+    function initHorizontalHourlyScroll() {
+      const el = document.getElementById('wmHourlyScroll');
+      if (!el || _hourlyScrollBound) {
+        updateHourlyChevrons();
+        return;
+      }
+      _hourlyScrollBound = true;
+
+      // 1. Butter-smooth exponential lerp momentum wheel
+      let targetX = el.scrollLeft;
+      let currentX = el.scrollLeft;
+      let isGliding = false;
+      let rAF = null;
+      let lastTime = 0;
+
+      function glideStep(now) {
+        if (!lastTime) lastTime = now;
+        const dt = Math.min(now - lastTime, 35);
+        lastTime = now;
+
+        const baseFactor = 0.12;
+        const ratio = dt / 16.667;
+        const factor = 1 - Math.pow(1 - baseFactor, ratio);
+
+        const diff = targetX - currentX;
+        currentX += diff * factor;
+
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        currentX = Math.max(0, Math.min(maxScroll, currentX));
+        el.scrollLeft = currentX;
+
+        if (Math.abs(diff) > 0.4) {
+          rAF = requestAnimationFrame(glideStep);
+        } else {
+          el.scrollLeft = targetX;
+          currentX = targetX;
+          isGliding = false;
+          lastTime = 0;
+          updateHourlyChevrons();
+        }
+      }
+
+      el.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 0.5) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (maxScroll <= 0) return;
+
+        if (Math.abs(el.scrollLeft - currentX) > 8) {
+          if (isGliding) cancelAnimationFrame(rAF);
+          currentX = el.scrollLeft;
+          targetX = el.scrollLeft;
+        }
+
+        let notch = delta;
+        if (e.deltaMode === 1) notch *= 32;
+        else if (e.deltaMode === 2) notch *= 100;
+        else notch = Math.sign(delta) * Math.min(160, Math.max(75, Math.abs(delta) * 0.9));
+
+        targetX = Math.max(0, Math.min(maxScroll, targetX + notch));
+
+        if (!isGliding) {
+          isGliding = true;
+          lastTime = 0;
+          rAF = requestAnimationFrame(glideStep);
+        }
+      }, { passive: false });
+
+      // 2. Mouse Drag Panning with Kinetic Throw
+      let isDragging = false;
+      let startX = 0;
+      let startScrollLeft = 0;
+      let velocityQueue = [];
+
+      el.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isDragging = true;
+        el.classList.add('is-dragging');
+        startX = e.pageX;
+        startScrollLeft = el.scrollLeft;
+        velocityQueue = [{ x: e.pageX, t: performance.now() }];
+        if (isGliding) {
+          cancelAnimationFrame(rAF);
+          isGliding = false;
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.pageX - startX;
+        el.scrollLeft = startScrollLeft - dx;
+        velocityQueue.push({ x: e.pageX, t: performance.now() });
+        if (velocityQueue.length > 5) velocityQueue.shift();
+        updateHourlyChevrons();
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        el.classList.remove('is-dragging');
+
+        if (velocityQueue.length >= 2) {
+          const p1 = velocityQueue[0];
+          const p2 = velocityQueue[velocityQueue.length - 1];
+          const dt = p2.t - p1.t;
+          if (dt > 0 && dt < 150) {
+            const vx = (p2.x - p1.x) / dt;
+            const throwDistance = -vx * 220;
+            const maxScroll = el.scrollWidth - el.clientWidth;
+            currentX = el.scrollLeft;
+            targetX = Math.max(0, Math.min(maxScroll, currentX + throwDistance));
+            if (Math.abs(throwDistance) > 8) {
+              isGliding = true;
+              lastTime = 0;
+              rAF = requestAnimationFrame(glideStep);
+            }
+          }
+        }
+      });
+
+      el.addEventListener('scroll', () => {
+        if (!isGliding && !isDragging) {
+          currentX = el.scrollLeft;
+          targetX = el.scrollLeft;
+        }
+        updateHourlyChevrons();
+      }, { passive: true });
+
+      updateHourlyChevrons();
+    }
+
+    function generateSynthesizedHourly(baseTemp, condText) {
+      const curH = new Date().getHours();
+      const list = [];
+      for (let i = 0; i < 24; i++) {
+        const h = (curH + i) % 24;
+        const isNow = i === 0;
+        const isNight = h < 6 || h >= 19;
+        let delta = 0;
+        if (h >= 13 && h <= 15) delta = 2;
+        else if (h >= 11 && h <= 17) delta = 1;
+        else if (h >= 22 || h <= 5) delta = -4;
+        else if (h >= 6 && h <= 8) delta = -2;
+
+        let subCond = condText;
+        let pop = 0;
+        if (condText.includes('雷')) { subCond = (h >= 14 && h <= 18) ? '雷阵雨' : '阵雨'; pop = 80; }
+        else if (condText.includes('雪')) { subCond = '小雪'; pop = 70; }
+        else if (condText.includes('雨')) { subCond = (h % 3 === 0) ? '中雨' : '小雨'; pop = 65; }
+        else if (condText.includes('阴')) { subCond = '阴天'; pop = 20; }
+        else if (condText.includes('多云')) { subCond = '多云'; pop = 10; }
+        else { subCond = isNight ? '晴朗' : '晴天'; pop = 0; }
+
+        let emoji = '☀️';
+        if (subCond.includes('雷')) emoji = '⛈️';
+        else if (subCond.includes('雪')) emoji = '❄️';
+        else if (subCond.includes('雨')) emoji = '🌧️';
+        else if (subCond.includes('阴')) emoji = '☁️';
+        else if (subCond.includes('多云')) emoji = isNight ? '☁️' : '⛅';
+        else emoji = isNight ? '🌙' : '☀️';
+
+        list.push({
+          time: isNow ? '现在' : `${h < 10 ? '0' + h : h}:00`,
+          hour: h,
+          temp: baseTemp + delta,
+          humidity: `${Math.min(95, Math.max(35, 55 - delta * 4))}%`,
+          pop: `${pop}%`,
+          popVal: pop,
+          wind: '2.1 m/s',
+          condition: subCond,
+          emoji: emoji,
+          isNow: isNow,
+          isNight: isNight
+        });
+      }
+      return list;
+    }
+
+    function generateSynthesizedDaily(baseTemp, condText) {
+      const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const curDayIdx = new Date().getDay();
+      const list = [];
+      const presets = [
+        { deltaMax: 2, deltaMin: -3, cond: condText, pop: condText.includes('雨') ? 60 : 10 },
+        { deltaMax: 3, deltaMin: -4, cond: '多云', pop: 15 },
+        { deltaMax: 4, deltaMin: -3, cond: '晴间多云', pop: 5 },
+        { deltaMax: 3, deltaMin: -2, cond: '晴天', pop: 0 },
+        { deltaMax: 2, deltaMin: -3, cond: '多云', pop: 20 },
+        { deltaMax: 1, deltaMin: -4, cond: '阴天', pop: 30 },
+        { deltaMax: 3, deltaMin: -2, cond: '晴朗', pop: 0 }
+      ];
+
+      for (let j = 0; j < 7; j++) {
+        const d = new Date();
+        d.setDate(d.getDate() + j);
+        const dayName = j === 0 ? '今天' : days[(curDayIdx + j) % 7];
+        const dateLabel = `${d.getMonth() + 1}月${d.getDate()}日`;
+        const p = presets[j];
+
+        let emoji = '☀️';
+        if (p.cond.includes('雷')) emoji = '⛈️';
+        else if (p.cond.includes('雪')) emoji = '❄️';
+        else if (p.cond.includes('雨')) emoji = '🌧️';
+        else if (p.cond.includes('阴')) emoji = '☁️';
+        else if (p.cond.includes('多云')) emoji = '⛅';
+
+        list.push({
+          dayName: dayName,
+          dateLabel: dateLabel,
+          tempMax: baseTemp + p.deltaMax,
+          tempMin: baseTemp + p.deltaMin,
+          pop: `${p.pop}%`,
+          popVal: p.pop,
+          condition: p.cond,
+          emoji: emoji
+        });
+      }
+      return list;
+    }
+
+    function renderWeatherModalData(overrideData) {
       const cityEl = document.getElementById('homeWeatherCity');
       const tempEl = document.getElementById('homeWeatherTemp');
       const condEl = document.getElementById('homeWeatherCond');
-      const rangeEl = document.getElementById('homeWeatherRange');
       const humEl = document.getElementById('homeWeatherHumidity');
       const windEl = document.getElementById('homeWeatherWind');
 
-      const cityName = (cityEl ? cityEl.textContent : '长沙').trim();
-      const tempVal = parseInt(tempEl ? tempEl.textContent : '18') || 18;
-      const condText = (condEl ? condEl.textContent : '多云').trim();
-      const humVal = (humEl ? humEl.textContent : '83%').trim();
-      const windVal = (windEl ? windEl.textContent : '0.8 m/s').trim();
+      let data = overrideData || window.lastWeatherData;
+      if (!data) {
+        try {
+          const cached = localStorage.getItem('pulseos_weather_cache');
+          if (cached) data = JSON.parse(cached).data;
+        } catch (e) {}
+      }
 
-      // Top bar city
+      const cityName = (data && data.city) ? data.city : ((cityEl ? cityEl.textContent : '长沙').trim());
+      const tempVal = (data && data.temp !== undefined) ? Number(data.temp) : (parseInt(tempEl ? tempEl.textContent : '24') || 24);
+      const condText = (data && (data.conditionCn || data.condition)) ? (data.conditionCn || data.condition.split('·')[0]).trim() : ((condEl ? condEl.textContent : '多云').trim());
+      const humVal = (data && data.humidity !== undefined) ? `${data.humidity}%` : ((humEl ? humEl.textContent : '50%').trim());
+      const windVal = (data && data.windSpeed) ? data.windSpeed : ((windEl ? windEl.textContent : '2.0 m/s').trim());
+
+      // 1. Update City chips
+      updateModalCityChips();
+
+      // 2. Top bar city name
       const wmCity = document.getElementById('wmCityName');
       if (wmCity) {
         wmCity.textContent = cityName === '长沙' ? '长沙 · 长沙县' : `${cityName} · 市中心`;
       }
 
-      // Hero big temp
+      // 3. Hero Temperature & Condition
       const wmTemp = document.getElementById('wmTemp');
       if (wmTemp) wmTemp.innerHTML = `${tempVal}°`;
 
-      // Hero condition
       const wmCondText = document.getElementById('wmCondText');
       if (wmCondText) {
-        const high = tempVal + 2;
-        const low = tempVal - 3;
+        const high = (data && data.daily && data.daily[0]) ? data.daily[0].tempMax : (tempVal + 2);
+        const low = (data && data.daily && data.daily[0]) ? data.daily[0].tempMin : (tempVal - 4);
         wmCondText.textContent = `${condText} ${high}° ~ ${low}°`;
       }
 
-      // Hero emoji
       const wmEmoji = document.getElementById('wmHeroEmoji');
       if (wmEmoji) {
         if (condText.includes('雷')) wmEmoji.textContent = '⛈️';
@@ -53540,88 +54233,90 @@ window.renderContainers = renderContainers;
         else wmEmoji.textContent = '☀️';
       }
 
-      // Telemetry row
+      // 4. Metrics Line
       const wmWindDir = document.getElementById('wmWindDir');
-      if (wmWindDir) wmWindDir.textContent = '东北风: 1-3级';
+      if (wmWindDir) wmWindDir.innerHTML = `<i data-lucide="compass" style="width:13px;height:13px;color:#38bdf8;"></i> 风向: 东北风`;
+
       const wmWindSpeed = document.getElementById('wmWindSpeed');
       if (wmWindSpeed) {
-        const kmh = Math.round(parseFloat(windVal || '2.8') * 3.6);
-        wmWindSpeed.textContent = `风速: ${kmh}km/h (${windVal})`;
+        wmWindSpeed.innerHTML = `<i data-lucide="wind" style="width:13px;height:13px;color:#38bdf8;"></i> 风速: ${windVal}`;
       }
-      const wmHum = document.getElementById('wmHumidity');
-      if (wmHum) wmHum.textContent = `相对湿度: ${humVal}`;
-      const wmPres = document.getElementById('wmPressure');
-      if (wmPres) wmPres.textContent = '大气压强: 1013hPa';
 
-      // 24-Hour Forecast Scroll
+      const wmHum = document.getElementById('wmHumidity');
+      if (wmHum) wmHum.innerHTML = `<i data-lucide="droplets" style="width:13px;height:13px;color:#38bdf8;"></i> 湿度: ${humVal}`;
+
+      const wmApparent = document.getElementById('wmApparent');
+      if (wmApparent) {
+        const apparent = (data && data.apparentTemp !== undefined) ? data.apparentTemp : tempVal;
+        wmApparent.innerHTML = `<i data-lucide="thermometer" style="width:13px;height:13px;color:#38bdf8;"></i> 体感: ${apparent}°`;
+      }
+
+      const wmPres = document.getElementById('wmPressure');
+      if (wmPres) wmPres.innerHTML = `<i data-lucide="gauge" style="width:13px;height:13px;color:#38bdf8;"></i> 气压: 1013hPa`;
+
+      const wmAqi = document.getElementById('wmAqiCapsule');
+      if (wmAqi) {
+        const aqiDesc = (data && data.aqiDesc) ? data.aqiDesc : '优 (AQI 45)';
+        wmAqi.innerHTML = `<i data-lucide="leaf" style="width:13px;height:13px;color:#10b981;"></i> 空气: ${aqiDesc}`;
+      }
+
+      // 5. 24-Hour Forecast Ribbon
       const hourlyContainer = document.getElementById('wmHourlyScroll');
       if (hourlyContainer) {
-        const curH = new Date().getHours();
+        let hourlyList = (data && Array.isArray(data.hourly) && data.hourly.length >= 24) ? data.hourly : null;
+        if (!hourlyList) {
+          hourlyList = generateSynthesizedHourly(tempVal, condText);
+        }
+
         let hHtml = '';
-        for (let i = 0; i < 24; i++) {
-          const h = (curH + i) % 24;
-          const isNow = i === 0;
-          let delta = 0;
-          if (h >= 12 && h <= 15) delta = 2;
-          else if (h >= 22 || h <= 5) delta = -3;
-          else if (h >= 6 && h <= 9) delta = -1;
-          const cardTemp = tempVal + delta;
-          const isNight = h < 6 || h >= 19;
-          let icon = '☀️';
-          if (condText.includes('雷')) icon = '⛈️';
-          else if (condText.includes('雪')) icon = '❄️';
-          else if (condText.includes('雨')) icon = '🌧️';
-          else if (condText.includes('阴')) icon = '☁️';
-          else if (condText.includes('多云')) icon = isNight ? '☁️' : '⛅';
-          else icon = isNight ? '🌙' : '☀️';
+        hourlyList.forEach((item, idx) => {
+          const isNow = item.isNow || idx === 0;
+          const popNum = parseInt(item.pop) || (item.popVal || 0);
+          const popHtml = popNum > 0 ? `<span class="wm-hour-pop active">💧 ${popNum}%</span>` : `<span class="wm-hour-pop">💧 0%</span>`;
 
           hHtml += `
-            <div class="wm-hour-card ${isNow ? 'now' : ''}">
-              <span style="font-size:0.75rem; color:var(--text-dim, #94a3b8);">${isNow ? '现在' : (h < 10 ? '0' + h : h) + ':00'}</span>
-              <span style="font-size:1.35rem;">${icon}</span>
-              <span style="font-size:0.88rem; font-weight:700;">${cardTemp}°</span>
+            <div class="wm-hour-card ${isNow ? 'now' : ''}" title="${item.time} · ${item.condition} · 温度 ${item.temp}° · 降水概率 ${item.pop} · 湿度 ${item.humidity}">
+              <span class="wm-hour-time">${item.time}</span>
+              <span class="wm-hour-icon">${item.emoji || '☀️'}</span>
+              <span class="wm-hour-cond">${item.condition}</span>
+              ${popHtml}
+              <span class="wm-hour-temp">${item.temp}°</span>
             </div>
           `;
-        }
+        });
         hourlyContainer.innerHTML = hHtml;
+        initHorizontalHourlyScroll();
       }
 
-      // 7-Day Forecast Grid
+      // 6. 7-Day Forecast Grid
       const daysContainer = document.getElementById('wm7DaysRow');
       if (daysContainer) {
-        const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-        const curDayIdx = new Date().getDay();
-        let dHtml = '';
-        const dayOffsets = [
-          { icon: condText.includes('雨') ? '🌧️' : '⛅', maxDelta: 1, minDelta: -3 },
-          { icon: '⛅', maxDelta: 2, minDelta: -4 },
-          { icon: '☀️', maxDelta: 4, minDelta: -3 },
-          { icon: '☀️', maxDelta: 4, minDelta: -2 },
-          { icon: '☀️', maxDelta: 5, minDelta: -2 },
-          { icon: '☀️', maxDelta: 5, minDelta: -1 },
-          { icon: '☀️', maxDelta: 6, minDelta: 0 }
-        ];
+        let dailyList = (data && Array.isArray(data.daily) && data.daily.length >= 7) ? data.daily : null;
+        if (!dailyList) {
+          dailyList = generateSynthesizedDaily(tempVal, condText);
+        }
 
-        for (let j = 0; j < 7; j++) {
-          const dayName = j === 0 ? '今天' : days[(curDayIdx + j) % 7];
-          const d = new Date();
-          d.setDate(d.getDate() + j);
-          const dateLabel = `${d.getMonth() + 1}月${d.getDate()}日`;
-          const item = dayOffsets[j];
-          const high = tempVal + item.maxDelta;
-          const low = tempVal + item.minDelta;
+        let dHtml = '';
+        dailyList.forEach((item, idx) => {
+          const isToday = idx === 0 || item.dayName === '今天';
+          const popNum = parseInt(item.pop) || (item.popVal || 0);
+          const popHtml = popNum > 0 ? `<span class="wm-day-pop active">💧 ${popNum}%</span>` : `<span class="wm-day-pop">💧 0%</span>`;
 
           dHtml += `
-            <div class="wm-day-card">
-              <span style="font-size:1.45rem;">${item.icon}</span>
-              <span style="font-size:0.76rem; font-weight:700; margin:4px 0;">${high}° ~ ${low}°</span>
-              <span style="font-size:0.68rem; color:var(--text, #cbd5e1);">${dateLabel}</span>
-              <span style="font-size:0.62rem; color:var(--text-dim, #94a3b8);">${dayName}</span>
+            <div class="wm-day-card ${isToday ? 'today' : ''}" title="${item.dayName} (${item.dateLabel}) · ${item.condition} · 气温 ${item.tempMax}° ~ ${item.tempMin}°">
+              <span class="wm-day-title">${item.dayName}</span>
+              <span class="wm-day-date">${item.dateLabel}</span>
+              <span class="wm-day-icon">${item.emoji || '☀️'}</span>
+              <span class="wm-day-cond">${item.condition}</span>
+              ${popHtml}
+              <span class="wm-day-range">${item.tempMax}° ~ ${item.tempMin}°</span>
             </div>
           `;
-        }
+        });
         daysContainer.innerHTML = dHtml;
       }
+
+      if (window.lucide) lucide.createIcons();
     }
 
     // Expose all to global window
@@ -53629,6 +54324,9 @@ window.renderContainers = renderContainers;
     window.openWeatherDetailModal = openWeatherDetailModal;
     window.closeWeatherDetailModal = closeWeatherDetailModal;
     window.cycleWeatherCityModal = cycleWeatherCityModal;
+    window.selectWeatherCity = selectWeatherCity;
+    window.scrollHourlyBy = scrollHourlyBy;
+    window.updateModalCityChips = updateModalCityChips;
     window.renderWeatherModalData = renderWeatherModalData;
     window.initShortcutsSystem = initShortcutsSystem;
     window.renderCustomShortcuts = renderCustomShortcuts;
@@ -54101,46 +54799,69 @@ window.renderContainers = renderContainers;
       <!-- 1. Top Bar -->
       <div class="wm-top-bar">
         <div class="wm-close-dot" onclick="closeWeatherDetailModal()" title="关闭窗口 (Esc)">✕</div>
-        <div class="wm-time-center" id="wmTimeDisplay">2026-10-04 20:30:00</div>
-        <div class="wm-city-toggle" onclick="cycleWeatherCityModal(event)" title="点击切换城市">
+        <div class="wm-time-center" id="wmTimeDisplay">2026-10-06 15:30:00</div>
+        <div class="wm-city-toggle" id="wmCityToggleBtn" onclick="cycleWeatherCityModal(event)" title="点击快速轮换城市">
           <span id="wmCityName">长沙 · 长沙县</span>
-          <i data-lucide="arrow-left-right" style="width:12px;height:12px;"></i>
+          <i data-lucide="arrow-left-right" class="wm-swap-icon" style="width:13px;height:13px;"></i>
         </div>
       </div>
 
-      <!-- 2. Hero Big Temperature Row -->
+      <!-- 2. City Quick Switcher Bar -->
+      <div class="wm-cities-bar" id="wmCitiesBar">
+        <button type="button" class="wm-city-chip active" data-city="changsha" onclick="selectWeatherCity(0)">长沙</button>
+        <button type="button" class="wm-city-chip" data-city="beijing" onclick="selectWeatherCity(1)">北京</button>
+        <button type="button" class="wm-city-chip" data-city="shanghai" onclick="selectWeatherCity(2)">上海</button>
+        <button type="button" class="wm-city-chip" data-city="guangzhou" onclick="selectWeatherCity(3)">广州</button>
+        <button type="button" class="wm-city-chip" data-city="shenzhen" onclick="selectWeatherCity(4)">深圳</button>
+        <button type="button" class="wm-city-chip" data-city="hangzhou" onclick="selectWeatherCity(5)">杭州</button>
+        <button type="button" class="wm-city-chip" data-city="chengdu" onclick="selectWeatherCity(6)">成都</button>
+        <button type="button" class="wm-city-chip" data-city="wuhan" onclick="selectWeatherCity(7)">武汉</button>
+      </div>
+
+      <!-- 3. Hero Big Temperature Row -->
       <div class="wm-hero-row">
-        <div class="wm-temp-giant" id="wmTemp">18°</div>
+        <div class="wm-temp-giant" id="wmTemp">24°</div>
         <div class="wm-hero-details">
           <div class="wm-cond-title" id="wmCond">
-            <span id="wmCondText">多云 19° ~ 16°</span>
-            <span id="wmHeroEmoji" style="font-size:1.6rem;">⛅</span>
+            <span id="wmCondText">晴朗 26° ~ 18°</span>
+            <span id="wmHeroEmoji" style="font-size:1.6rem;">☀️</span>
           </div>
           <div class="wm-metrics-line">
-            <span id="wmWindDir">东北风: 1-3级</span>
-            <span id="wmWindSpeed">风速: 10km/h (2.8m/s)</span>
-            <span id="wmHumidity">相对湿度: 83%</span>
-            <span id="wmPressure">大气压强: 1013hPa</span>
+            <span id="wmWindDir"><i data-lucide="compass" style="width:13px;height:13px;color:#38bdf8;"></i> 风向: 东北风</span>
+            <span id="wmWindSpeed"><i data-lucide="wind" style="width:13px;height:13px;color:#38bdf8;"></i> 风速: 10km/h (2.8m/s)</span>
+            <span id="wmHumidity"><i data-lucide="droplets" style="width:13px;height:13px;color:#38bdf8;"></i> 湿度: 50%</span>
+            <span id="wmApparent"><i data-lucide="thermometer" style="width:13px;height:13px;color:#38bdf8;"></i> 体感: 25°</span>
+            <span id="wmPressure"><i data-lucide="gauge" style="width:13px;height:13px;color:#38bdf8;"></i> 气压: 1013hPa</span>
+            <span id="wmAqiCapsule"><i data-lucide="leaf" style="width:13px;height:13px;color:#10b981;"></i> 空气: 优 (AQI 45)</span>
           </div>
         </div>
       </div>
 
-      <!-- 3. 24-Hour Forecast Ribbon -->
+      <!-- 4. 24-Hour Forecast Ribbon -->
       <div class="wm-section">
-        <div class="wm-section-title">
-          <i data-lucide="clock" style="width:14px;height:14px;color:#0091ff;"></i>
-          <span>24小时预报</span>
+        <div class="wm-section-header">
+          <div class="wm-section-title">
+            <i data-lucide="clock" style="width:14px;height:14px;color:#0091ff;"></i>
+            <span>24小时逐时预报</span>
+            <span style="font-size:0.72rem;font-weight:400;color:var(--text-dim,#94a3b8);margin-left:4px;">(滚轮或按住拖动浏览)</span>
+          </div>
+          <div class="wm-scroll-controls">
+            <button type="button" class="wm-scroll-nav-btn" id="wmHourlyPrevBtn" onclick="scrollHourlyBy(-280)" title="向前滑动">◀</button>
+            <button type="button" class="wm-scroll-nav-btn" id="wmHourlyNextBtn" onclick="scrollHourlyBy(280)" title="向后滑动">▶</button>
+          </div>
         </div>
-        <div class="wm-hourly-scroll" id="wmHourlyScroll">
+        <div class="wm-hourly-scroll" id="wmHourlyScroll" data-horizontal-scroll="true">
           <!-- Dynamically populated by renderWeatherModalData() -->
         </div>
       </div>
 
-      <!-- 4. 7-Day Forecast Grid -->
+      <!-- 5. 7-Day Forecast Grid -->
       <div class="wm-section">
-        <div class="wm-section-title">
-          <i data-lucide="calendar" style="width:14px;height:14px;color:#0091ff;"></i>
-          <span>未来7天预报</span>
+        <div class="wm-section-header">
+          <div class="wm-section-title">
+            <i data-lucide="calendar" style="width:14px;height:14px;color:#0091ff;"></i>
+            <span>未来7天多日预报</span>
+          </div>
         </div>
         <div class="wm-7days-row" id="wm7DaysRow">
           <!-- Dynamically populated by renderWeatherModalData() -->
