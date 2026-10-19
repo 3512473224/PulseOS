@@ -2999,7 +2999,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     .home-hero-card {
-      background: linear-gradient(135deg, rgba(20, 22, 48, 0.85), rgba(10, 11, 24, 0.95));
+      background:
+        radial-gradient(450px circle at var(--mx, 50%) var(--my, 25%), rgba(56, 189, 248, 0.12) 0%, transparent 65%),
+        linear-gradient(135deg, rgba(20, 22, 48, 0.88), rgba(10, 11, 24, 0.96));
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -3008,6 +3010,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
       position: relative;
       overflow: hidden;
+      transform-style: preserve-3d;
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: background 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+      will-change: transform;
+    }
+    .home-hero-card:hover {
+      border-color: rgba(56, 189, 248, 0.38);
+      transform-style: preserve-3d;
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.5);
     }
     .home-hero-card::before {
       content: '';
@@ -3018,6 +3030,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       height: 240px;
       background: radial-gradient(circle, rgba(124, 58, 237, 0.25), transparent 70%);
       pointer-events: none;
+    }
+    .home-hero-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.2px;
+      background: radial-gradient(
+        420px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(56, 189, 248, 0.65),
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 10;
     }
 
     .home-hero-top {
@@ -3086,21 +3116,66 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     .home-card {
+      position: relative;
       background: rgba(15, 17, 35, 0.75);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
+      border-radius: 20px;
       padding: 18px 20px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-style: preserve-3d;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: background 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+      will-change: transform;
     }
     .home-card:hover {
-      border-color: rgba(124, 58, 237, 0.35);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      border-color: rgba(0, 145, 255, 0.4);
+      transform-style: preserve-3d;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow: 0 18px 45px -8px rgba(0, 0, 0, 0.45);
+    }
+    /* 动态镜面折射边缘 */
+    .home-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.2px;
+      background: radial-gradient(
+        320px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(255, 255, 255, 0.65),
+        rgba(255, 255, 255, 0.08) 55%,
+        transparent 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 10;
+    }
+    html.theme-light .home-card {
+      background:
+        radial-gradient(130px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.95) 0%, transparent 60%),
+        radial-gradient(350px circle at var(--mx, 50%) var(--my, 25%), rgba(0, 145, 255, 0.12) 0%, transparent 68%),
+        linear-gradient(180deg, #ffffff 0%, #fafbfd 60%, #f4f6fa 100%);
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    html.theme-light .home-card:hover {
+      border-color: rgba(203, 213, 225, 0.95);
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08);
+    }
+    html.theme-light .home-card::before {
+      background: radial-gradient(
+        350px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(0, 145, 255, 0.65),
+        rgba(255, 255, 255, 0.85) 35%,
+        rgba(226, 232, 240, 0.35) 60%,
+        transparent 100%
+      ) !important;
     }
 
     .home-card-header {
@@ -5559,9 +5634,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     /* Light Theme overrides */
     html.theme-light .home-hero-card {
-      background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+      background:
+        radial-gradient(180px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.95) 0%, transparent 60%),
+        radial-gradient(450px circle at var(--mx, 50%) var(--my, 25%), rgba(0, 145, 255, 0.08) 0%, transparent 70%),
+        linear-gradient(135deg, #ffffff, #f8fafc) !important;
       border-color: #e2e8f0 !important;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.theme-light .home-hero-card:hover {
+      border-color: rgba(0, 145, 255, 0.4) !important;
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08) !important;
+    }
+    html.theme-light .home-hero-card::after {
+      background: radial-gradient(
+        420px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(0, 145, 255, 0.65),
+        rgba(255, 255, 255, 0.85) 35%,
+        rgba(226, 232, 240, 0.35) 60%,
+        transparent 100%
+      ) !important;
     }
     html.theme-light .home-greeting {
       color: #0f172a !important;
@@ -5571,7 +5662,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       text-shadow: none !important;
     }
     html.theme-light .home-card {
-      background: #ffffff !important;
+      background:
+        radial-gradient(130px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.95) 0%, transparent 60%),
+        radial-gradient(350px circle at var(--mx, 50%) var(--my, 25%), rgba(0, 145, 255, 0.12) 0%, transparent 68%),
+        linear-gradient(180deg, #ffffff 0%, #fafbfd 60%, #f4f6fa 100%) !important;
       border-color: #e2e8f0 !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
     }
@@ -5718,11 +5812,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     /* ======================================================== */
     .home-music-card {
-      background: linear-gradient(135deg, rgba(16, 24, 48, 0.85), rgba(10, 14, 28, 0.95));
+      background:
+        radial-gradient(350px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.14) 0%, transparent 60%),
+        radial-gradient(500px circle at var(--mx, 50%) var(--my, 25%), rgba(0, 212, 255, 0.14) 0%, transparent 70%),
+        linear-gradient(135deg, rgba(16, 24, 48, 0.88), rgba(10, 14, 28, 0.96));
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0, 145, 255, 0.22);
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 20px 24px;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       display: flex;
@@ -5730,11 +5827,34 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 16px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      transform-style: preserve-3d;
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: background 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+      will-change: transform;
     }
     .home-music-card:hover {
       border-color: rgba(0, 145, 255, 0.45);
-      box-shadow: 0 16px 40px rgba(0, 145, 255, 0.12);
+      transform-style: preserve-3d;
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow: 0 20px 48px -8px rgba(0, 145, 255, 0.18);
+    }
+    .home-music-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.2px;
+      background: radial-gradient(
+        350px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(0, 212, 255, 0.65),
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 10;
     }
     .music-card-header {
       display: flex;
@@ -6154,9 +6274,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-color: rgba(0, 145, 255, 0.3);
     }
     html.theme-light .home-music-card {
-      background: linear-gradient(135deg, #ffffff, #f0f9ff) !important;
+      background:
+        radial-gradient(180px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.95) 0%, transparent 60%),
+        radial-gradient(450px circle at var(--mx, 50%) var(--my, 25%), rgba(0, 145, 255, 0.1) 0%, transparent 70%),
+        linear-gradient(135deg, #ffffff, #f0f9ff) !important;
       border-color: #bae6fd !important;
       box-shadow: 0 10px 30px rgba(0, 145, 255, 0.06) !important;
+    }
+    html.theme-light .home-music-card:hover {
+      border-color: rgba(0, 145, 255, 0.45) !important;
+      box-shadow: 0 16px 36px -6px rgba(0, 145, 255, 0.12) !important;
+    }
+    html.theme-light .home-music-card::before {
+      background: radial-gradient(
+        350px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(0, 145, 255, 0.65),
+        rgba(255, 255, 255, 0.85) 35%,
+        rgba(226, 232, 240, 0.35) 60%,
+        transparent 100%
+      ) !important;
     }
     html.theme-light .music-track-title {
       color: #0f172a !important;
@@ -28022,6 +28158,9 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
           } else if (typeof updatePomoDisplay === 'function') {
             updatePomoDisplay();
           }
+          if (typeof initHomeCardsParallax === 'function') {
+            initHomeCardsParallax();
+          }
         } else if (viewKey === 'news') {
           // 0ms transition: If cache exists, view is already rendered with zero network jitter; only fetch if empty
           if (!cachedNewsData || !cachedNewsData.categories) {
@@ -43675,63 +43814,114 @@ window.renderContainers = renderContainers;
       initWeatherSpringParallax();
     }
 
-    // 3D 阻尼弹簧视差物理引擎
-    let _weatherParallaxInit = false;
-    let targetRX = 0, targetRY = 0, targetPX = 0, targetPY = 0;
-    let currentRX = 0, currentRY = 0, currentPX = 0, currentPY = 0;
+    // 🌟 3D 阻尼弹簧视差物理引擎 (Apple VisionOS / Linear 质感 - 全主页卡片自适应微倾斜)
+    function initHomeCardsParallax() {
+      // 获取主页所有核心卡片：问候名言卡片、天气卡片、专注时钟卡片、快捷入口卡片、酷狗随身听卡片
+      const cards = Array.from(
+        document.querySelectorAll(
+          '#view-home .home-hero-card, #view-home .home-grid > .home-card, #view-home .home-music-card'
+        )
+      );
+      if (!cards.length) return;
 
-    function initWeatherSpringParallax() {
-      if (_weatherParallaxInit) return;
-      const card = document.getElementById('homeWeatherCard');
-      if (!card) return;
-      _weatherParallaxInit = true;
+      cards.forEach((card) => {
+        if (card.__hasSpringParallax) return;
+        card.__hasSpringParallax = true;
 
-      card.addEventListener('pointermove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
+        // 判断卡片类型：超宽横幅卡片 (hero-card 或 music-card) 采用更克制沉稳的微倾角，常规 Bento 卡片采用细腻的微倾角
+        const isWideCard = card.classList.contains('home-hero-card') || card.classList.contains('home-music-card');
+        const maxRY = isWideCard ? 4.2 : 8.5; // 水平偏角 (幅度克制优雅)
+        const maxRX = isWideCard ? 3.5 : 7.5; // 垂直偏角
+        const maxPX = isWideCard ? 6.0 : 10.0; // 内部景深平移 X
+        const maxPY = isWideCard ? 5.0 : 8.0;  // 内部景深平移 Y
 
-        card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
-        card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+        let targetRX = 0, targetRY = 0, targetPX = 0, targetPY = 0;
+        let currentRX = 0, currentRY = 0, currentPX = 0, currentPY = 0;
+        let isHovered = false;
+        let rafId = null;
 
-        targetRY = (x - 0.5) * 16;
-        targetRX = (0.5 - y) * 14;
-        targetPX = (x - 0.5) * 22;
-        targetPY = (y - 0.5) * 18;
+        function tick() {
+          const damping = 0.12;
+          currentRX += (targetRX - currentRX) * damping;
+          currentRY += (targetRY - currentRY) * damping;
+          currentPX += (targetPX - currentPX) * damping;
+          currentPY += (targetPY - currentPY) * damping;
+
+          // 极致休眠与节能看门狗：当鼠标已离开且弹簧回归接近0时停止 RAF 避免无谓能耗
+          if (!isHovered && Math.abs(currentRX) < 0.01 && Math.abs(currentRY) < 0.01 && Math.abs(currentPX) < 0.05 && Math.abs(currentPY) < 0.05) {
+            currentRX = 0;
+            currentRY = 0;
+            currentPX = 0;
+            currentPY = 0;
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
+            card.style.setProperty('--px', '0px');
+            card.style.setProperty('--py', '0px');
+            rafId = null;
+            return;
+          }
+
+          card.style.setProperty('--rx', `${currentRX.toFixed(2)}deg`);
+          card.style.setProperty('--ry', `${currentRY.toFixed(2)}deg`);
+          card.style.setProperty('--px', `${currentPX.toFixed(2)}px`);
+          card.style.setProperty('--py', `${currentPY.toFixed(2)}px`);
+
+          rafId = requestAnimationFrame(tick);
+        }
+
+        function wakeRaf() {
+          if (!rafId) {
+            rafId = requestAnimationFrame(tick);
+          }
+        }
+
+        card.addEventListener('pointerenter', () => {
+          isHovered = true;
+          wakeRaf();
+        });
+
+        card.addEventListener('pointermove', (e) => {
+          isHovered = true;
+          const rect = card.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0) return;
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+
+          // 聚焦点跟随鼠标移动
+          card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+          card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+
+          // 3D 阻尼平滑倾斜
+          targetRY = (x - 0.5) * (maxRY * 2);
+          targetRX = (0.5 - y) * (maxRX * 2);
+          targetPX = (x - 0.5) * (maxPX * 2);
+          targetPY = (y - 0.5) * (maxPY * 2);
+
+          wakeRaf();
+        });
+
+        card.addEventListener('pointerleave', () => {
+          isHovered = false;
+          targetRX = 0;
+          targetRY = 0;
+          targetPX = 0;
+          targetPY = 0;
+          card.style.setProperty('--mx', '50%');
+          card.style.setProperty('--my', '25%');
+          wakeRaf();
+        });
       });
-
-      card.addEventListener('pointerleave', () => {
-        targetRX = 0;
-        targetRY = 0;
-        targetPX = 0;
-        targetPY = 0;
-        card.style.setProperty('--mx', '50%');
-        card.style.setProperty('--my', '25%');
-      });
-
-      function tickParallax() {
-        const damping = 0.12;
-        currentRX += (targetRX - currentRX) * damping;
-        currentRY += (targetRY - currentRY) * damping;
-        currentPX += (targetPX - currentPX) * damping;
-        currentPY += (targetPY - currentPY) * damping;
-
-        card.style.setProperty('--rx', `${currentRX.toFixed(2)}deg`);
-        card.style.setProperty('--ry', `${currentRY.toFixed(2)}deg`);
-        card.style.setProperty('--px', `${currentPX.toFixed(2)}px`);
-        card.style.setProperty('--py', `${currentPY.toFixed(2)}px`);
-
-        requestAnimationFrame(tickParallax);
-      }
-      requestAnimationFrame(tickParallax);
     }
-    window.initWeatherSpringParallax = initWeatherSpringParallax;
 
-    // Auto-init immediately on load
+    // 保持向后兼容与外部全局访问
+    window.initWeatherSpringParallax = initHomeCardsParallax;
+    window.initHomeCardsParallax = initHomeCardsParallax;
+
+    // 自动挂载生命周期
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initWeatherSpringParallax);
+      document.addEventListener('DOMContentLoaded', initHomeCardsParallax);
     } else {
-      setTimeout(initWeatherSpringParallax, 50);
+      setTimeout(initHomeCardsParallax, 50);
     }
 function renderHourlyForecast(baseTemp, condText) {
       const strip = document.getElementById('weatherHourlyStrip');
