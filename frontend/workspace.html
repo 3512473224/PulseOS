@@ -22953,8 +22953,8 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                     <div class="focus-stat-item">
                       <span class="stat-label">连续专注</span>
                       <div class="stat-val-wrap">
-                        <span class="stat-val highlight" id="topFocusStreak">3</span>
-                        <span class="stat-unit">天 🔥</span>
+                        <span class="stat-val" id="topFocusStreak">0</span>
+                        <span class="stat-unit" id="topFocusStreakUnit">天</span>
                       </div>
                     </div>
                   </div>
@@ -37774,9 +37774,87 @@ window.renderContainers = renderContainers;
       } catch (e) {}
     }
 
-    function getTodayKey() {
-      const d = new Date();
+    function formatDateKey(d) {
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getTodayKey() {
+      return formatDateKey(new Date());
+    }
+
+    function getPomoActiveDates() {
+      const dates = new Set();
+      try {
+        const saved = localStorage.getItem('pulseos_pomo_history_days');
+        if (saved) {
+          JSON.parse(saved).forEach(d => { if (d) dates.add(d); });
+        }
+      } catch (e) {}
+
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('pulseos_pomo_today_')) {
+            const count = parseInt(localStorage.getItem(k), 10) || 0;
+            if (count > 0) {
+              const dayStr = k.replace('pulseos_pomo_today_', '');
+              if (dayStr) dates.add(dayStr);
+            }
+          }
+        }
+      } catch (e) {}
+
+      return dates;
+    }
+
+    function savePomoActiveDate(dayKey) {
+      try {
+        const dates = getPomoActiveDates();
+        dates.add(dayKey);
+        localStorage.setItem('pulseos_pomo_history_days', JSON.stringify(Array.from(dates)));
+      } catch (e) {}
+    }
+
+    function getPomoFocusStreak() {
+      try {
+        const activeDates = getPomoActiveDates();
+        const todayKey = getTodayKey();
+        const todayCount = getTodayPomoCount();
+
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayKey = formatDateKey(yesterday);
+
+        let streak = 0;
+        let checkDate;
+
+        if (todayCount > 0 || activeDates.has(todayKey)) {
+          streak = 1;
+          checkDate = yesterday;
+        } else if (activeDates.has(yesterdayKey)) {
+          streak = 1;
+          const dayBeforeYesterday = new Date(yesterday);
+          dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 1);
+          checkDate = dayBeforeYesterday;
+        } else {
+          return 0;
+        }
+
+        while (true) {
+          const key = formatDateKey(checkDate);
+          if (activeDates.has(key)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+
+        return streak;
+      } catch (e) {
+        return 0;
+      }
     }
 
     function getTodayPomoCount() {
@@ -37790,9 +37868,11 @@ window.renderContainers = renderContainers;
 
     function incrementTodayPomoCount() {
       try {
-        const key = 'pulseos_pomo_today_' + getTodayKey();
+        const todayKey = getTodayKey();
+        const key = 'pulseos_pomo_today_' + todayKey;
         const count = getTodayPomoCount() + 1;
         localStorage.setItem(key, count);
+        savePomoActiveDate(todayKey);
         return count;
       } catch (e) {
         return 1;
@@ -37975,6 +38055,21 @@ window.renderContainers = renderContainers;
       const topMinsEl = document.getElementById('topFocusMins');
       if (topCountEl) topCountEl.textContent = count;
       if (topMinsEl) topMinsEl.textContent = mins;
+
+      // 真正记录连续专注天数（禁止硬编码，根据真实打卡历史动态计算）
+      const streak = getPomoFocusStreak();
+      const topStreakEl = document.getElementById('topFocusStreak');
+      const topStreakUnitEl = document.getElementById('topFocusStreakUnit');
+      if (topStreakEl) {
+        topStreakEl.textContent = streak;
+        if (streak > 0) {
+          topStreakEl.classList.add('highlight');
+          if (topStreakUnitEl) topStreakUnitEl.textContent = '天 🔥';
+        } else {
+          topStreakEl.classList.remove('highlight');
+          if (topStreakUnitEl) topStreakUnitEl.textContent = '天';
+        }
+      }
 
       const targetPomodoros = 8;
       const percent = Math.min(100, Math.round((count / targetPomodoros) * 100));
