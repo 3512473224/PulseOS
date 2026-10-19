@@ -3077,6 +3077,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      perspective: 1400px;
     }
     @media (max-width: 960px) {
       .home-grid {
@@ -3166,35 +3167,43 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: radial-gradient(circle at 70% 20%, rgba(148, 163, 184, 0.24) 0%, rgba(203, 213, 225, 0.14) 50%, transparent 75%);
     }
 
-    /* 🌤️ VisionOS 3D Weather Card: Light Theme (Pure White Card with Delicate Atmospheric Glow) */
-    html.theme-light .w-weather-card {
+    /* 🌤️ VisionOS 3D Weather Card: Light Theme (Pure White Card with Dynamic Weather Mouse Spotlight & Refraction) */
+    html.theme-light .home-card.w-weather-card,
+    html.theme-light .home-card.w-weather-card[data-scene] {
       background:
-        radial-gradient(circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.8) 0%, transparent 60%),
-        radial-gradient(circle at 50% 30%, var(--ambient-color, rgba(255, 190, 55, 0.22)) 0%, rgba(255, 255, 255, 0) 70%),
+        radial-gradient(130px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.96) 0%, transparent 60%),
+        radial-gradient(360px circle at var(--mx, 50%) var(--my, 25%), var(--ambient-color, rgba(255, 190, 55, 0.38)) 0%, transparent 68%),
+        radial-gradient(circle at 50% 30%, var(--ambient-color, rgba(255, 190, 55, 0.16)) 0%, transparent 70%),
         linear-gradient(180deg, #ffffff 0%, #fafbfd 60%, #f4f6fa 100%) !important;
       border: 1px solid rgba(226, 232, 240, 0.85) !important;
       box-shadow:
         0 4px 20px -2px rgba(0, 0, 0, 0.04),
         0 1px 3px rgba(0, 0, 0, 0.02),
-        0 0 35px -8px var(--ambient-color, rgba(255, 190, 55, 0.18)) inset !important;
+        0 0 35px -8px var(--ambient-color, rgba(255, 190, 55, 0.22)) inset !important;
+      transform-style: preserve-3d !important;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+      transition: background 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease !important;
     }
-    html.theme-light .w-weather-card[data-scene] {
-      background:
-        radial-gradient(circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.8) 0%, transparent 60%),
-        radial-gradient(circle at 50% 30%, var(--ambient-color, rgba(255, 190, 55, 0.22)) 0%, rgba(255, 255, 255, 0) 70%),
-        linear-gradient(180deg, #ffffff 0%, #fafbfd 60%, #f4f6fa 100%) !important;
+    html.theme-light .home-card.w-weather-card:hover {
+      transform-style: preserve-3d !important;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+      border-color: rgba(203, 213, 225, 0.95) !important;
+      box-shadow:
+        0 16px 36px -6px rgba(15, 23, 42, 0.08),
+        0 0 45px -6px var(--ambient-color, rgba(255, 190, 55, 0.32)) inset !important;
     }
     html.theme-light .w-weather-card::before {
       background: radial-gradient(
-        320px circle at var(--mx, 50%) var(--my, 25%),
-        rgba(255, 255, 255, 0.95),
-        rgba(241, 245, 249, 0.25) 60%,
+        350px circle at var(--mx, 50%) var(--my, 25%),
+        var(--accent, #38bdf8),
+        rgba(255, 255, 255, 0.85) 35%,
+        rgba(226, 232, 240, 0.35) 60%,
         transparent 100%
       ) !important;
     }
     html.theme-light .w-weather-card .weather-bg-atmosphere {
-      background: radial-gradient(circle at 50% 32%, var(--ambient-color, rgba(255, 190, 55, 0.24)), transparent 65%) !important;
-      opacity: 0.85 !important;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 32%), var(--ambient-color, rgba(255, 190, 55, 0.28)), transparent 65%) !important;
+      opacity: 0.9 !important;
     }
     html.theme-light .w-weather-card .city-title,
     html.theme-light .w-weather-card .home-card-title {
@@ -3387,7 +3396,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .w-weather-card {
+    .home-card.w-weather-card {
       position: relative;
       display: flex;
       flex-direction: column;
@@ -3398,16 +3407,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       overflow: hidden;
       border-radius: 24px;
       background:
-        radial-gradient(circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.12) 0%, transparent 55%),
+        radial-gradient(350px circle at var(--mx, 50%) var(--my, 25%), rgba(255, 255, 255, 0.22) 0%, transparent 60%),
+        radial-gradient(450px circle at var(--mx, 50%) var(--my, 25%), var(--ambient-color, rgba(255, 190, 55, 0.32)) 0%, transparent 70%),
         linear-gradient(165deg, var(--bg-top, #1f5fa8) 0%, var(--bg-mid, #153e75) 52%, var(--bg-bottom, #0c1d38) 100%) !important;
       box-shadow:
         0 24px 50px -10px rgba(0, 0, 0, 0.65),
         0 0 0 1px rgba(255, 255, 255, 0.15) inset,
         0 2px 18px rgba(255, 255, 255, 0.12) inset !important;
-      transform-style: preserve-3d;
-      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-      transition: background 0.85s var(--ease-out-expo), border-color 0.4s ease;
+      transform-style: preserve-3d !important;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+      transition: background 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease !important;
       z-index: 2;
+    }
+
+    .home-card.w-weather-card:hover {
+      transform-style: preserve-3d !important;
+      transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+      box-shadow:
+        0 34px 70px -10px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+        0 2px 24px rgba(255, 255, 255, 0.18) inset !important;
     }
 
     /* 动态镜面流光边缘折射 */
@@ -3418,9 +3437,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       border-radius: 24px;
       padding: 1.2px;
       background: radial-gradient(
-        320px circle at var(--mx, 50%) var(--my, 25%),
-        rgba(255, 255, 255, 0.55),
-        rgba(255, 255, 255, 0.05) 60%,
+        350px circle at var(--mx, 50%) var(--my, 25%),
+        rgba(255, 255, 255, 0.75),
+        rgba(255, 255, 255, 0.12) 55%,
         transparent 100%
       );
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -3433,7 +3452,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .weather-bg-atmosphere {
       position: absolute;
       inset: -30%;
-      background: radial-gradient(circle at 50% 34%, var(--ambient-color, rgba(255, 190, 55, 0.32)), transparent 60%);
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 34%), var(--ambient-color, rgba(255, 190, 55, 0.35)), transparent 60%);
       pointer-events: none;
       transition: background 0.85s ease;
       z-index: 0;
@@ -43558,6 +43577,7 @@ window.renderContainers = renderContainers;
         if (uvEl) uvEl.textContent = preset.uv;
         if (aqiEl) aqiEl.textContent = preset.visSub;
       }
+      initWeatherSpringParallax();
     }
 
     // 3D 阻尼弹簧视差物理引擎
@@ -43579,10 +43599,10 @@ window.renderContainers = renderContainers;
         card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
         card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
 
-        targetRY = (x - 0.5) * 14;
-        targetRX = (0.5 - y) * 12;
-        targetPX = (x - 0.5) * 18;
-        targetPY = (y - 0.5) * 14;
+        targetRY = (x - 0.5) * 16;
+        targetRX = (0.5 - y) * 14;
+        targetPX = (x - 0.5) * 22;
+        targetPY = (y - 0.5) * 18;
       });
 
       card.addEventListener('pointerleave', () => {
@@ -43595,7 +43615,7 @@ window.renderContainers = renderContainers;
       });
 
       function tickParallax() {
-        const damping = 0.1;
+        const damping = 0.12;
         currentRX += (targetRX - currentRX) * damping;
         currentRY += (targetRY - currentRY) * damping;
         currentPX += (targetPX - currentPX) * damping;
@@ -43611,6 +43631,13 @@ window.renderContainers = renderContainers;
       requestAnimationFrame(tickParallax);
     }
     window.initWeatherSpringParallax = initWeatherSpringParallax;
+
+    // Auto-init immediately on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWeatherSpringParallax);
+    } else {
+      setTimeout(initWeatherSpringParallax, 50);
+    }
 function renderHourlyForecast(baseTemp, condText) {
       const strip = document.getElementById('weatherHourlyStrip');
       if (!strip) return;
