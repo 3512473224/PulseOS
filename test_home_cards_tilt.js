@@ -102,11 +102,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     if (isNaN(rxNum) || isNaN(ryNum) || (rxNum === 0 && ryNum === 0)) {
       console.error(`[FAIL] ${item.name} did not tilt! rx=${state.rx}, ry=${state.ry}`);
     } else {
-      const maxExpected = item.isWide ? 4.5 : 9.0;
+      const maxExpected = item.isWide ? 2.6 : 5.0;
       if (Math.abs(ryNum) > maxExpected) {
         console.warn(`[WARN] Tilt angle ry=${ryNum} exceeds subtle limit ${maxExpected}`);
       } else {
-        console.log(`  -> Tilt amplitude verified subtle (${item.isWide ? 'Wide <= 4.2°' : 'Bento <= 8.5°'})`);
+        console.log(`  -> Tilt amplitude verified subtle (${item.isWide ? 'Wide <= 2.4°' : 'Bento <= 4.8°'})`);
       }
     }
   }

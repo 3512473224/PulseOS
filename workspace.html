@@ -43828,12 +43828,12 @@ window.renderContainers = renderContainers;
         if (card.__hasSpringParallax) return;
         card.__hasSpringParallax = true;
 
-        // 判断卡片类型：超宽横幅卡片 (hero-card 或 music-card) 采用更克制沉稳的微倾角，常规 Bento 卡片采用细腻的微倾角
+        // 判断卡片类型：超宽横幅卡片 (hero-card 或 music-card) 采用更克制沉稳的微倾角，常规 Bento 卡片采用更细腻微润的温雅倾角
         const isWideCard = card.classList.contains('home-hero-card') || card.classList.contains('home-music-card');
-        const maxRY = isWideCard ? 4.2 : 8.5; // 水平偏角 (幅度克制优雅)
-        const maxRX = isWideCard ? 3.5 : 7.5; // 垂直偏角
-        const maxPX = isWideCard ? 6.0 : 10.0; // 内部景深平移 X
-        const maxPY = isWideCard ? 5.0 : 8.0;  // 内部景深平移 Y
+        const maxRY = isWideCard ? 2.4 : 4.8; // 水平偏角 (微调更小更细腻，极具高级质感)
+        const maxRX = isWideCard ? 1.8 : 3.8; // 垂直偏角 (更克制、不突兀)
+        const maxPX = isWideCard ? 3.5 : 6.0; // 内部景深平移 X
+        const maxPY = isWideCard ? 2.8 : 4.8; // 内部景深平移 Y
 
         let targetRX = 0, targetRY = 0, targetPX = 0, targetPY = 0;
         let currentRX = 0, currentRY = 0, currentPX = 0, currentPY = 0;
