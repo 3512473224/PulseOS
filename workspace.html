@@ -6116,33 +6116,43 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     .music-progress-bar-bg {
       flex: 1;
       height: 5px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
+      background: rgba(0, 145, 255, 0.12);
+      border-radius: 6px;
       cursor: pointer;
       position: relative;
       overflow: visible;
+      transition: height 0.2s ease, background 0.2s ease;
+    }
+    .music-progress-bar-bg:hover {
+      height: 7px;
     }
     .music-progress-bar-fg {
       height: 100%;
-      background: linear-gradient(90deg, #0091ff, #38bdf8);
-      border-radius: 3px;
+      background: linear-gradient(90deg, #0052d4 0%, #0091ff 55%, #00f0ff 100%);
+      border-radius: 6px;
       position: relative;
+      box-shadow: 0 0 10px rgba(0, 145, 255, 0.45);
       transition: width 0.1s linear;
+      pointer-events: none;
     }
     .music-scrubber-dot {
       position: absolute;
-      right: -4px;
-      top: -3px;
-      width: 11px;
-      height: 11px;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 6px rgba(0, 145, 255, 0.8);
-      opacity: 0;
-      transition: opacity 0.15s;
+      background: #ffffff;
+      border: 2.5px solid #0091ff;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 2px 5px rgba(0, 0, 0, 0.25);
+      opacity: 1;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease;
+      z-index: 2;
     }
     .music-progress-bar-bg:hover .music-scrubber-dot {
-      opacity: 1;
+      transform: translateY(-50%) scale(1.25);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 1), 0 3px 8px rgba(0, 82, 212, 0.45);
     }
     .music-controls-row {
       display: flex;
@@ -6163,27 +6173,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       transition: all 0.15s;
     }
     .music-ctrl-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #38bdf8;
-      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(0, 145, 255, 0.15);
+      color: #00d4ff;
+      border-color: rgba(0, 145, 255, 0.4);
     }
     .music-play-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: linear-gradient(135deg, #0091ff 0%, #0066ee 55%, #004ecc 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 102, 238, 0.38), inset 0 1px 1.5px rgba(255, 255, 255, 0.55);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .music-play-btn:hover {
       transform: scale(1.08);
-      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      background: linear-gradient(135deg, #009eff 0%, #0075ff 55%, #0056dd 100%);
+      box-shadow: 0 6px 22px rgba(0, 114, 255, 0.55), inset 0 1px 1.5px rgba(255, 255, 255, 0.75);
+    }
+    .music-play-btn:active {
+      transform: scale(0.96);
     }
     .music-volume-group {
       display: flex;
@@ -6191,8 +6205,41 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       gap: 6px;
     }
     .music-vol-slider {
-      width: 60px;
-      accent-color: #0091ff;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 65px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(0, 145, 255, 0.2);
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .music-vol-slider:hover {
+      background: rgba(0, 145, 255, 0.35);
+    }
+    .music-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #0091ff;
+      box-shadow: 0 1px 4px rgba(0, 145, 255, 0.4);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .music-vol-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .music-vol-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #0091ff;
+      box-shadow: 0 1px 4px rgba(0, 145, 255, 0.4);
       cursor: pointer;
     }
     .music-playlist-drawer {
@@ -6297,10 +6344,39 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     html.theme-light .music-track-title {
       color: #0f172a !important;
     }
+    html.theme-light .music-progress-bar-bg {
+      background: rgba(0, 145, 255, 0.08) !important;
+      border: 1px solid rgba(0, 145, 255, 0.1) !important;
+    }
+    html.theme-light .music-progress-bar-fg {
+      background: linear-gradient(90deg, #0284c7 0%, #0091ff 55%, #00d4ff 100%) !important;
+      box-shadow: 0 0 10px rgba(0, 145, 255, 0.3) !important;
+    }
+    html.theme-light .music-scrubber-dot {
+      background: #ffffff !important;
+      border: 2.5px solid #0091ff !important;
+      box-shadow: 0 0 8px rgba(0, 145, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+    }
+    html.theme-light .music-play-btn {
+      background: linear-gradient(135deg, #0091ff 0%, #006ce6 60%, #004ec4 100%) !important;
+      border-color: rgba(255, 255, 255, 0.75) !important;
+      box-shadow: 0 4px 16px rgba(0, 102, 238, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.65) !important;
+    }
+    html.theme-light .music-play-btn:hover {
+      box-shadow: 0 6px 22px rgba(0, 102, 238, 0.5), inset 0 1px 1.5px rgba(255, 255, 255, 0.8) !important;
+    }
+    html.theme-light .music-vol-slider {
+      background: rgba(0, 145, 255, 0.14) !important;
+    }
     html.theme-light .music-ctrl-btn {
       background: #f8fafc !important;
       border-color: #cbd5e1 !important;
-      color: #334155 !important;
+      color: #475569 !important;
+    }
+    html.theme-light .music-ctrl-btn:hover {
+      background: rgba(0, 145, 255, 0.08) !important;
+      border-color: rgba(0, 145, 255, 0.3) !important;
+      color: #0091ff !important;
     }
     html.theme-light .music-playlist-drawer {
       background: rgba(255, 255, 255, 0.98) !important;
@@ -23371,9 +23447,9 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                   <!-- Progress Seekbar -->
                   <div class="music-seekbar-wrap" style="display:flex; align-items:center; gap:8px; margin:2px 0;">
                     <span class="music-time-lbl" id="kugouCurTime" style="font-size:0.7rem; font-family:var(--font-mono, monospace); color:var(--text-dim); min-width:34px;">00:00</span>
-                    <div class="music-progress-bar-bg" id="kugouProgressBarBg" onclick="seekKuGouTrack(event)" style="flex:1; height:5px; background:rgba(0,145,255,0.12); border-radius:5px; cursor:pointer; position:relative;">
-                      <div class="music-progress-bar-fg" id="kugouProgressBarFg" style="width: 0%; height:100%; background:linear-gradient(90deg, #8b5cf6, #38bdf8); border-radius:5px; position:relative; pointer-events:none;">
-                        <div class="music-scrubber-dot" style="position:absolute; right:-4px; top:-3px; width:11px; height:11px; border-radius:50%; background:#ffffff; box-shadow:0 0 8px rgba(139,92,246,0.8); border:2px solid #a855f7;"></div>
+                    <div class="music-progress-bar-bg" id="kugouProgressBarBg" onclick="seekKuGouTrack(event)">
+                      <div class="music-progress-bar-fg" id="kugouProgressBarFg" style="width: 0%;">
+                        <div class="music-scrubber-dot"></div>
                       </div>
                     </div>
                     <span class="music-time-lbl" id="kugouTotalTime" style="font-size:0.7rem; font-family:var(--font-mono, monospace); color:var(--text-dim); min-width:34px;">00:00</span>
@@ -23388,7 +23464,7 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                       <button class="music-ctrl-btn" onclick="prevKuGouTrack()" title="上一首" style="cursor:pointer; background:transparent; border:none; color:var(--text);">
                         <i data-lucide="skip-back" style="width:15px;height:15px;"></i>
                       </button>
-                      <button class="music-play-btn" id="btnKuGouMainPlay" onclick="toggleKuGouPlay()" title="播放 / 暂停" style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #6366f1); display:flex; align-items:center; justify-content:center; color:#fff; border:1px solid rgba(255, 255, 255, 0.22); cursor:pointer; box-shadow:0 3px 14px rgba(124, 58, 237, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3); transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
+                      <button class="music-play-btn" id="btnKuGouMainPlay" onclick="toggleKuGouPlay()" title="播放 / 暂停">
                         <i data-lucide="play" id="kugouMainPlayIcon" style="width:15px;height:15px;margin-left:2px;"></i>
                       </button>
                       <button class="music-ctrl-btn" onclick="nextKuGouTrack()" title="下一首" style="cursor:pointer; background:transparent; border:none; color:var(--text);">
@@ -23401,7 +23477,7 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                         <button class="music-ctrl-btn" onclick="toggleKuGouMute()" title="静音 / 恢复" style="cursor:pointer; background:transparent; border:none; color:var(--text-dim);">
                           <i data-lucide="volume-2" id="kugouVolIcon" style="width:13px;height:13px;"></i>
                         </button>
-                        <input type="range" class="music-vol-slider" id="kugouVolSlider" min="0" max="1" step="0.05" value="0.75" oninput="setKuGouVolume(this.value)" style="width:65px; height:4px; cursor:pointer;">
+                        <input type="range" class="music-vol-slider" id="kugouVolSlider" min="0" max="1" step="0.05" value="0.75" oninput="setKuGouVolume(this.value)" title="调节音量">
                       </div>
                       <button class="btn btn-ghost" onclick="openKuGouPlaylistModal()" title="查看歌单列表" style="padding:2px 8px; font-size:0.68rem; border-radius:6px; display:inline-flex; align-items:center; gap:4px; cursor:pointer;">
                         <i data-lucide="list-music" style="width:12px;height:12px;color:#0091ff;"></i>
@@ -47530,11 +47606,11 @@ function renderHourlyForecast(baseTemp, condText) {
         const amplitude = isPlaying ? (h * 0.35) : (h * 0.12);
         const midY = h * 0.5;
 
-        // Draw Ambient Wave 1 (Gradient Cyan to Purple)
+        // Draw Ambient Wave 1 (Gradient Sapphire to Electric Azure to Neon Cyan)
         const grad1 = ctx.createLinearGradient(0, 0, w, 0);
-        grad1.addColorStop(0, '#0091ff');
-        grad1.addColorStop(0.5, '#06b6d4');
-        grad1.addColorStop(1, '#8b5cf6');
+        grad1.addColorStop(0, '#0052d4');
+        grad1.addColorStop(0.5, '#0091ff');
+        grad1.addColorStop(1, '#00f0ff');
 
         ctx.beginPath();
         ctx.moveTo(0, midY);
@@ -47552,12 +47628,12 @@ function renderHourlyForecast(baseTemp, condText) {
         ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // Draw Ambient Wave 2 (Subtle Violet Counter-Wave)
+        // Draw Ambient Wave 2 (Subtle Sky Azure to Luminous Aquamarine Counter-Wave)
         if (isPlaying) {
           const grad2 = ctx.createLinearGradient(0, 0, w, 0);
           grad2.addColorStop(0, '#0070f3');
-          grad2.addColorStop(0.5, '#38bdf8');
-          grad2.addColorStop(1, '#ec4899');
+          grad2.addColorStop(0.5, '#00d4ff');
+          grad2.addColorStop(1, '#38bdf8');
 
           ctx.beginPath();
           ctx.moveTo(0, midY);
