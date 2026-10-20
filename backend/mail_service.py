@@ -170,6 +170,86 @@ def extract_otp_candidate(subject: str, text: str) -> Optional[str]:
                 return c
     return None
 
+FAILED_ACCOUNT_COOLDOWNS = {}  # {email: timestamp}
+COOLDOWN_SECONDS = 600  # 10 minutes
+
+def generate_local_email_summary(mail_dict: Dict[str, Any]) -> str:
+    subject = mail_dict.get("subject", "无主题")
+    sender = mail_dict.get("sender", "未知发件人")
+    snippet = mail_dict.get("snippet", "")
+    is_otp = mail_dict.get("is_otp", 0)
+    otp_code = mail_dict.get("otp_code", "")
+    
+    otp_section = f"\n- **🔐 动态安全验证码**：`{otp_code}`（点击可一键复制）\n" if is_otp and otp_code else ""
+    
+    action = "无需特别操作，已安全归档供备查。"
+    lower_comb = (subject + " " + snippet).lower()
+    if is_otp:
+        action = f"请及时将验证码 `{otp_code}` 填入认证页面，通常 10~15 分钟内有效。"
+    elif any(k in lower_comb for k in ["verify", "confirm", "安全", "登录", "alert", "security", "warning"]):
+        action = "检测到安全验证或账号活动，请核实是否为本人操作。"
+    elif any(k in lower_comb for k in ["bill", "invoice", "账单", "扣款", "payment", "due", "renew"]):
+        action = "涉及账单或订阅扣款，建议核对消费金额与续费周期。"
+    elif any(k in lower_comb for k in ["github", "pull request", "issue", "commit", "release"]):
+        action = "代码仓库协作动态，请视开发需要查阅或合并分支。"
+
+    return f"""### 📧 邮件核心智能速览
+> *(离线语义提炼引擎 · DeepSeek 额度受限时自动保障)*
+
+- **🎯 一句话核心**：来自 **{sender}** 的邮件，关于「**{subject}**」
+{otp_section}- **📝 内容摘要**：{snippet or '正文包含多媒体或富文本内容，已完整保留在阅读区'}
+- **⚡ 行动项建议**：{action}
+"""
+
+def generate_local_mail_digest(rows: List[Any]) -> str:
+    now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    total_count = len(rows)
+    
+    # Safely convert sqlite3.Row to dict
+    dict_rows = [dict(r) for r in rows]
+    otps = []
+    dev_work = []
+    general = []
+    
+    for r in dict_rows:
+        sender = r.get("sender", "")
+        subj = r.get("subject", "")
+        comb = (sender + " " + subj).lower()
+        if r.get("is_otp") or any(k in comb for k in ["验证码", "code", "pin", "otp", "security", "安全"]):
+            otps.append(r)
+        elif any(k in comb for k in ["github", "openai", "chatgpt", "cloudflare", "aws", "google", "linux", "git", "api"]):
+            dev_work.append(r)
+        else:
+            general.append(r)
+            
+    md = [f"## 📬 全渠道邮件智能资产早报 · 极客专报 ({now_str})\n"]
+    md.append(f"> 本次已聚合监控最新 **{total_count}** 封信件流水 *(离线智能聚合速报)*\n")
+    
+    if otps:
+        md.append("### 🔐 1. 安全验证码与账户变动")
+        for o in otps[:5]:
+            otp_val = o.get("otp_code")
+            otp_str = f" · **验证码: `{otp_val}`**" if otp_val else ""
+            md.append(f"- **{o.get('sender', '')}**: {o.get('subject', '')}{otp_str} ({o.get('account_email', '')})")
+        md.append("")
+        
+    if dev_work:
+        md.append("### 💼 2. 技术订阅与平台动态")
+        for d in dev_work[:6]:
+            md.append(f"- **{d.get('sender', '')}**: {d.get('subject', '')} ({d.get('account_email', '')})")
+        md.append("")
+        
+    if general:
+        md.append("### 📨 3. 业务往来与综合信件")
+        for g in general[:6]:
+            md.append(f"- **{g.get('sender', '')}**: {g.get('subject', '')} ({g.get('account_email', '')})")
+        md.append("")
+        
+    md.append("### 💡 4. 秘书今日指引")
+    md.append("- 今日信件主要集中在开发协作与日常服务通知，关键安全验证码已由系统自动归集提取，祝您工作顺利！")
+    
+    return "\n".join(md)
+
 def sync_single_account(acc: Dict[str, Any], fetch_limit: int = 15) -> List[Dict[str, Any]]:
     results = []
     user = acc.get("email")
@@ -180,6 +260,12 @@ def sync_single_account(acc: Dict[str, Any], fetch_limit: int = 15) -> List[Dict
 
     if not auth:
         return results
+
+    now_t = time.time()
+    if user in FAILED_ACCOUNT_COOLDOWNS:
+        if now_t - FAILED_ACCOUNT_COOLDOWNS[user] < COOLDOWN_SECONDS:
+            logger.debug(f"Skipping IMAP sync for {user} due to active auth cooldown")
+            return results
 
     mail = None
     try:
@@ -315,7 +401,11 @@ def sync_single_account(acc: Dict[str, Any], fetch_limit: int = 15) -> List[Dict
         conn.close()
 
     except Exception as e:
-        logger.warning(f"Mail sync error for {user}: {e}")
+        err_msg = str(e)
+        logger.warning(f"Mail sync error for {user}: {err_msg}")
+        if "AUTHENTICATIONFAILED" in err_msg or "Invalid credentials" in err_msg or "LOGIN failed" in err_msg:
+            FAILED_ACCOUNT_COOLDOWNS[user] = time.time()
+            logger.info(f"⏳ Activated {COOLDOWN_SECONDS}s sync cooldown for {user} due to auth failure")
     finally:
         if mail:
             try:
@@ -650,10 +740,255 @@ async def get_mail_raw_html(mail_id: int, theme: str = Query("auto")):
     wrapped = f"<!DOCTYPE html><html><head>{style_block}</head><body>{content_html}</body></html>"
     return HTMLResponse(wrapped)
 
+class MailAccountCreate(BaseModel):
+    email: str
+    auth_code: str
+    type: Optional[str] = None
+    host: Optional[str] = None
+    port: Optional[int] = 993
+    ssl: Optional[bool] = True
+
+class MailAccountDelete(BaseModel):
+    email: str
+    delete_messages: Optional[bool] = False
+
+class MailAccountUpdate(BaseModel):
+    email: str
+    auth_code: str
+
+def infer_imap_settings(email: str, host: Optional[str] = None, port: Optional[int] = None, ssl_flag: Optional[bool] = None, acc_type: Optional[str] = None):
+    email_lower = email.lower().strip()
+    domain = email_lower.split("@")[-1] if "@" in email_lower else ""
+    
+    if not host:
+        if domain in ["gmail.com", "googlemail.com"]:
+            host = "imap.gmail.com"
+            acc_type = acc_type or "gmail"
+        elif domain in ["qq.com", "foxmail.com", "vip.qq.com"]:
+            host = "imap.qq.com"
+            acc_type = acc_type or "qq"
+        elif domain in ["163.com", "vip.163.com"]:
+            host = "imap.163.com"
+            acc_type = acc_type or "163"
+        elif domain in ["126.com", "vip.126.com"]:
+            host = "imap.126.com"
+            acc_type = acc_type or "126"
+        elif domain in ["outlook.com", "hotmail.com", "live.com"]:
+            host = "outlook.office365.com"
+            acc_type = acc_type or "outlook"
+        elif domain in ["sina.com", "sina.cn"]:
+            host = "imap.sina.com"
+            acc_type = acc_type or "sina"
+        elif domain in ["aliyun.com"]:
+            host = "imap.aliyun.com"
+            acc_type = acc_type or "aliyun"
+        else:
+            host = f"imap.{domain}"
+            acc_type = acc_type or "custom"
+            
+    port = port or 993
+    ssl_flag = True if ssl_flag is None else ssl_flag
+    acc_type = acc_type or "custom"
+    return host, port, ssl_flag, acc_type
+
+@router.get("/accounts")
+async def get_mail_accounts():
+    cfg = load_config()
+    accs = cfg.get("accounts", [])
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT account_email, COUNT(*) as cnt, MAX(date_str) as latest_date FROM mail_messages GROUP BY account_email")
+    db_stats = {r["account_email"]: {"count": r["cnt"], "latest": r["latest_date"]} for r in cursor.fetchall()}
+    conn.close()
+
+    res = []
+    for a in accs:
+        em = a.get("email")
+        stat = db_stats.get(em, {"count": 0, "latest": ""})
+        status_val = "auth_failed" if em in FAILED_ACCOUNT_COOLDOWNS else "connected"
+        res.append({
+            "email": em,
+            "type": a.get("type", "imap"),
+            "host": a.get("host"),
+            "port": a.get("port", 993),
+            "enabled": a.get("enabled", True),
+            "has_auth": bool(a.get("auth_code")),
+            "status": status_val,
+            "count": stat["count"],
+            "latest_date": stat["latest"]
+        })
+    return {"code": 200, "data": res}
+
+@router.post("/accounts/update")
+async def update_mail_account(data: MailAccountUpdate):
+    em = data.email.strip()
+    code = data.auth_code.strip().replace(" ", "")
+    if not em or not code:
+        return JSONResponse(status_code=400, content={"code": 400, "message": "邮箱与授权应用密码不能为空"})
+
+    cfg = load_config()
+    target_acc = None
+    for a in cfg.get("accounts", []):
+        if a.get("email") == em:
+            target_acc = a
+            break
+    if not target_acc:
+        return JSONResponse(status_code=404, content={"code": 404, "message": f"未找到邮箱 {em} 的配置项"})
+
+    host = target_acc.get("host")
+    port = target_acc.get("port", 993)
+    ssl_flag = target_acc.get("ssl", True)
+
+    # Test live IMAP connection directly
+    test_mail = None
+    try:
+        test_mail = imaplib.IMAP4_SSL(host, port, timeout=12) if ssl_flag else imaplib.IMAP4(host, port, timeout=12)
+        test_mail.login(em, code)
+        test_mail.select("INBOX", readonly=True)
+        test_mail.close()
+        test_mail.logout()
+    except Exception as err:
+        err_str = str(err)
+        logger.warning(f"Test login failed for {em}: {err_str}")
+        return JSONResponse(status_code=400, content={
+            "code": 400,
+            "message": f"IMAP 连接测试失败: {err_str}。请核实密码或授权码是否正确。"
+        })
+
+    # Update config file
+    target_acc["auth_code"] = code
+    target_acc["enabled"] = True
+    if em in FAILED_ACCOUNT_COOLDOWNS:
+        del FAILED_ACCOUNT_COOLDOWNS[em]
+
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, ensure_ascii=False, indent=2)
+    except Exception as we:
+        return JSONResponse(status_code=500, content={"code": 500, "message": f"保存配置失败: {we}"})
+
+    # Immediately launch background sync with fetch_limit=50 for this renewed account!
+    asyncio.create_task(asyncio.to_thread(sync_single_account, target_acc, 50))
+
+    return {
+        "code": 200,
+        "message": f"✅ 邮箱 {em} 凭据验证通过并已持久化保存！已启动后台深度同步。",
+        "email": em,
+        "status": "connected"
+    }
+
+@router.post("/accounts/add")
+async def add_mail_account(data: MailAccountCreate):
+    em = data.email.strip().lower()
+    code = data.auth_code.strip().replace(" ", "")
+    if not em or "@" not in em:
+        return JSONResponse(status_code=400, content={"code": 400, "message": "请输入有效的电子邮箱地址"})
+    if not code:
+        return JSONResponse(status_code=400, content={"code": 400, "message": "授权码或应用专用密码不能为空"})
+        
+    cfg = load_config()
+    existing_accounts = cfg.get("accounts", [])
+    for a in existing_accounts:
+        if a.get("email", "").lower() == em:
+            return JSONResponse(status_code=400, content={"code": 400, "message": f"邮箱 {em} 已存在，如需更换密码请在已有账号中更新"})
+            
+    host, port, ssl_flag, acc_type = infer_imap_settings(em, data.host, data.port, data.ssl, data.type)
+    
+    # Test live IMAP connection directly
+    test_mail = None
+    try:
+        test_mail = imaplib.IMAP4_SSL(host, port, timeout=12) if ssl_flag else imaplib.IMAP4(host, port, timeout=12)
+        test_mail.login(em, code)
+        test_mail.select("INBOX", readonly=True)
+        test_mail.close()
+        test_mail.logout()
+    except Exception as err:
+        err_str = str(err)
+        logger.warning(f"Add account test login failed for {em}: {err_str}")
+        return JSONResponse(status_code=400, content={
+            "code": 400,
+            "message": f"IMAP 连接测试失败: {err_str}。请核实邮箱地址、授权码或服务器设置。"
+        })
+        
+    new_acc = {
+        "email": em,
+        "type": acc_type,
+        "host": host,
+        "port": port,
+        "ssl": ssl_flag,
+        "auth_code": code,
+        "enabled": True
+    }
+    existing_accounts.append(new_acc)
+    cfg["accounts"] = existing_accounts
+    
+    if em in FAILED_ACCOUNT_COOLDOWNS:
+        del FAILED_ACCOUNT_COOLDOWNS[em]
+        
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, ensure_ascii=False, indent=2)
+    except Exception as we:
+        return JSONResponse(status_code=500, content={"code": 500, "message": f"保存配置失败: {we}"})
+        
+    # Immediately launch background sync with fetch_limit=50 for this newly added account
+    asyncio.create_task(asyncio.to_thread(sync_single_account, new_acc, 50))
+    
+    return {
+        "code": 200,
+        "message": f"邮箱 {em} 添加成功！已通过 IMAP 验证并启动后台同步。",
+        "account": {
+            "email": em,
+            "type": acc_type,
+            "status": "connected",
+            "count": 0,
+            "latest_date": ""
+        }
+    }
+
+@router.post("/accounts/delete")
+async def delete_mail_account(data: MailAccountDelete):
+    em = data.email.strip().lower()
+    if not em:
+        return JSONResponse(status_code=400, content={"code": 400, "message": "邮箱地址不能为空"})
+        
+    cfg = load_config()
+    accounts = cfg.get("accounts", [])
+    initial_len = len(accounts)
+    accounts = [a for a in accounts if a.get("email", "").lower() != em]
+    
+    if len(accounts) == initial_len:
+        return JSONResponse(status_code=404, content={"code": 404, "message": f"未找到邮箱 {em}"})
+        
+    cfg["accounts"] = accounts
+    if em in FAILED_ACCOUNT_COOLDOWNS:
+        del FAILED_ACCOUNT_COOLDOWNS[em]
+        
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, ensure_ascii=False, indent=2)
+    except Exception as we:
+        return JSONResponse(status_code=500, content={"code": 500, "message": f"保存配置失败: {we}"})
+        
+    deleted_db_count = 0
+    if data.delete_messages:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM mail_messages WHERE account_email = ?", (em,))
+        deleted_db_count = cur.rowcount
+        conn.commit()
+        conn.close()
+        
+    return {
+        "code": 200,
+        "message": f"已成功移除邮箱 {em}" + (f"，并清除了 {deleted_db_count} 封本地缓存邮件" if deleted_db_count > 0 else ""),
+        "email": em
+    }
+
 @router.post("/sync")
-async def trigger_mail_sync(limit: int = Query(15)):
+async def trigger_mail_sync(limit: int = Query(30)):
     """
-    Triggers concurrent synchronization across all 4 mailboxes for both INBOX and TRASH.
+    Triggers concurrent synchronization across all mailboxes for both INBOX and TRASH.
     """
     cfg = load_config()
     accounts = [a for a in cfg.get("accounts", []) if a.get("enabled", True) and a.get("auth_code")]
@@ -664,20 +999,37 @@ async def trigger_mail_sync(limit: int = Query(15)):
 
     synced_total = 0
     new_count = 0
-    for res in results:
+    account_summaries = []
+    for i, res in enumerate(results):
+        acc = accounts[i] if i < len(accounts) else {}
+        em = acc.get("email", "unknown")
         if isinstance(res, list):
             synced_total += len(res)
-            new_count += sum(1 for r in res if not r.get("cached", False))
+            n_cnt = sum(1 for r in res if not r.get("cached", False))
+            new_count += n_cnt
+            account_summaries.append({
+                "email": em,
+                "status": "connected",
+                "scanned": len(res),
+                "new": n_cnt
+            })
+        else:
+            account_summaries.append({
+                "email": em,
+                "status": "auth_failed" if em in FAILED_ACCOUNT_COOLDOWNS else "error",
+                "error": str(res)
+            })
 
     duration = round(time.time() - start_t, 2)
     logger.info(f"📬 Synced {synced_total} emails ({new_count} new) across {len(accounts)} accounts in {duration}s")
 
     return {
         "code": 200,
-        "message": f"成功同步 4 大邮箱（总扫描 {synced_total} 封，新增/更新 {new_count} 封，耗时 {duration} 秒）",
+        "message": f"同步完成（共扫描 {synced_total} 封，新增/更新 {new_count} 封，耗时 {duration} 秒）",
         "synced_count": synced_total,
         "new_count": new_count,
-        "duration": duration
+        "duration": duration,
+        "accounts_summary": account_summaries
     }
 
 @router.get("/stats")
@@ -702,14 +1054,37 @@ async def get_mail_stats():
 
     conn.close()
 
+    cfg = load_config()
+    acc_status = {}
+    for a in cfg.get("accounts", []):
+        em = a.get("email")
+        if em in FAILED_ACCOUNT_COOLDOWNS:
+            acc_status[em] = "auth_failed"
+        elif not a.get("auth_code"):
+            acc_status[em] = "no_auth"
+        elif not a.get("enabled", True):
+            acc_status[em] = "disabled"
+        else:
+            acc_status[em] = "connected"
+
     return {
         "code": 200,
         "data": {
+            "total": total_all,
             "total_all": total_all,
+            "total_count": total_all,
+            "unread_count": total_inbox,
             "total_inbox": total_inbox,
             "total_trash": total_trash,
             "total_otp": total_otp,
-            "accounts": accounts
+            "otp_count": total_otp,
+            "accounts": accounts,
+            "account_counts": accounts,
+            "folder_counts": {
+                "INBOX": total_inbox,
+                "TRASH": total_trash
+            },
+            "account_status": acc_status
         }
     }
 
@@ -780,8 +1155,9 @@ async def summarize_single_mail(mail_id: int):
 
             return {"code": 200, "summary": summary, "data": {"summary": summary}}
     except Exception as e:
-        logger.error(f"Single mail AI summary error: {e}")
-        return {"code": 500, "message": f"AI 摘要生成失败: {e}"}
+        logger.warning(f"DeepSeek single mail AI summary unavailable ({e}), engaging local semantic engine")
+        summary = generate_local_email_summary(mail_dict)
+        return {"code": 200, "summary": summary, "data": {"summary": summary}, "offline_fallback": True}
 
 @router.post("/ai-digest")
 @router.post("/ai_digest")
@@ -795,14 +1171,14 @@ async def generate_mail_digest(folder: str = Query("all")):
     cursor = conn.cursor()
     if folder and folder.lower() not in ("all", "", "none"):
         cursor.execute("""
-            SELECT account_email, folder, sender, subject, snippet, date_str, timestamp
+            SELECT account_email, folder, sender, subject, snippet, date_str, timestamp, is_otp, otp_code
             FROM mail_messages
             WHERE UPPER(folder) = ?
             ORDER BY timestamp DESC LIMIT 30
         """, (folder.upper(),))
     else:
         cursor.execute("""
-            SELECT account_email, folder, sender, subject, snippet, date_str, timestamp
+            SELECT account_email, folder, sender, subject, snippet, date_str, timestamp, is_otp, otp_code
             FROM mail_messages
             ORDER BY timestamp DESC LIMIT 30
         """)
@@ -864,14 +1240,14 @@ async def generate_mail_digest(folder: str = Query("all")):
                 "mail_count": len(rows)
             }
     except Exception as e:
-        logger.error(f"Mail digest error: {e}")
-        fallback_msg = f"✨ **4大邮箱邮件速报**（本地概览）：当前已聚合监控 {len(rows)} 封最近邮件。点击各邮件可查看全文及单篇 AI 深度解析。"
+        logger.warning(f"Mail digest DeepSeek error ({e}), generating rich local intelligence report")
+        fallback_msg = generate_local_mail_digest(rows)
         return {
             "code": 200,
             "summary": fallback_msg,
             "data": {"report": fallback_msg, "summary": fallback_msg},
             "mail_count": len(rows),
-            "error": str(e)
+            "offline_fallback": True
         }
 
 @router.delete("/{mail_id}")

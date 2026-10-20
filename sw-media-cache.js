@@ -50,21 +50,24 @@ self.addEventListener('fetch', (event) => {
 
   const url = req.url;
 
-  // CRITICAL ARCHITECTURE RULE:
-  // NEVER intercept video streaming or AList video Range requests in Service Worker!
+  // CRITICAL ARCHITECTURE RULE (Rule 4):
+  // NEVER intercept video streaming, AList storage requests, or audio proxy Range requests in Service Worker!
   // Chromium's native C++ media pipeline handles Range requests, connection reuse,
   // multi-threading, cancellation upon pause/seek natively without ServiceWorker thread contention.
-  // Intercepting video requests in SW breaks socket pipelines, causing deadlocks,
-  // infinite spinners on pause->play, and 2-3 minute black screens.
+  // Intercepting /alist/ or stream proxy requests in SW breaks socket pipelines, causing deadlocks,
+  // infinite spinners, and decode failures for FLAC/WAV/MP3.
+  if (url.includes('/alist/') || url.includes('/api/audio/stream') || url.includes('/api/cinema/') || url.includes('/api/vault/')) {
+    return; // Passthrough directly to native browser C++ media pipeline!
+  }
+
   const isVideo = req.destination === 'video' ||
-                  /\.(mp4|mkv|webm|avi|mov|flv|ts|m2ts|iso)(\?|$)/i.test(url) ||
-                  (url.includes('/alist/') && !/\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url));
+                  /\.(mp4|mkv|webm|avi|mov|flv|ts|m2ts|iso)(\?|$)/i.test(url);
 
   if (isVideo) {
     return; // Passthrough directly to native browser C++ media pipeline!
   }
 
-  // Handle audio streams
+  // Handle local/static audio streams
   const isAudio = req.destination === 'audio' ||
                   /\.(mp3|flac|wav|m4a|aac|ogg)(\?|$)/i.test(url);
 

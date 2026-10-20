@@ -6,6 +6,9 @@
 - **国外闲用/日常邮箱 (Overseas Personal / Casual)**: `ppday666@gmail.com`
 - **工作专用邮箱 (Work / Professional)**: `clevercccp@gmail.com`
 - **GitHub**: https://github.com/3512473224/PulseOS
+- **云端存储资产 (Cloud Storage Assets)**:
+  - **夸克网盘 (Quark Drive)**: **SVIP 会员** (无上限极速下载、官方原画直连与大文件快速流传输)
+  - **谷歌云盘 (Google Drive)**: **5TB 超大空间** (美西 VPS 同区高速骨干直连、典藏级原盘媒体库)
 
 ## 2. Preferred Tech Stack
 - **后端架构 (Backend)**: **Java, Spring Boot** (用户最高优先级核心偏好)
@@ -41,4 +44,13 @@
 6. **🚫 核心播放引擎永久冻结保护 (Cinema Core Engine Frozen)**：
    - 影视视听舱核心播放管线（`artCinemaInstance` 初始化、`updateCinemaTelemetryTick` 速率引擎、`getCinemaHistory`/`saveCinemaHistory` 断点记忆、`playCinemaEpisode` 事件生命周期、`extractPath` 规范化匹配）已达到生产级高稳状态。**严禁以任何理由擅自修改、重构或触碰此处的播放核心代码，除非用户明确要求！**
 
-
+## 5. 纯网页端视听舱架构与用户最高偏好守则 (Web-Only Cinema Directive)
+1. **🚫 坚决只用纯网页端，绝不推脱给第三方播放器 (Web-Only First Principle)**：
+   - 用户坚决只在 PulseOS 网页端视听舱观看，坚决不用也不要建议使用 PotPlayer、VLC 等外部播放器。所有的音视频解码、次世代音频兼容、多音轨切换、字幕挂载、色彩调优必须 100% 在网页前端与自主后端中闭环实现。
+2. **HDR 色调映射永久自适应 (Tone Mapping)**：
+   - 网页端播放 HDR10 / BT.2020 视频时，必须默认提供色调映射（Cinema / Vibrant / Film 模式），彻底杜绝普通 SDR 显示器上的画面发灰发白，保证胶片级浓郁对比度与深邃黑位。
+3. **次世代音频实时中继 (DTS/TrueHD to Web AAC)**：
+   - 针对 Chromium 浏览器不支持的 DTS-HD MA / TrueHD 7.1 音轨，必须无缝提供后端无损视频直通 + 音频实时 AAC 重混流 (`/api/cinema/remux-stream`)，并标明国语配音与多音轨切换，确保网页端直接出声并保证音画严格同步。
+4. **超大原盘安全跳转与末尾索引看门狗**：
+   - 超大文件（>10GB）禁止开局直接同步调用 `currentTime` 暴力 Seek，防止网盘连接被掐断；
+   - MP4 尾部 `moov` 索引加载超时（>5s 处于 `00:00 / 00:00`）必须由看门狗自动接入 FastStart 中继。

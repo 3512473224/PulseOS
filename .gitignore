@@ -10,6 +10,24 @@ ENV/
 *.db
 *.db-wal
 *.db-shm
+.env
+
+# Root scratch / deploy / inspection scripts containing sensitive keys or temporary code
+/*.py
+!/main.py
+!/fetch_news.py
+
+# Screenshots, temp test artifacts & documents
+*.png
+*.jpg
+*.jpeg
+*.docx
+*.txt
+*.tmp
+_temp*
+*.js
+!/sw-media-cache.js
+!/frontend/**
 
 # IDE & OS
 .idea/
@@ -18,9 +36,21 @@ ENV/
 *.swo
 .DS_Store
 Thumbs.db
+target/
+*.class
+
+# Test html/zip/media artifacts
+test_*
+preview_*
+render_*
+downloaded_*
+output_*
+github_*
+pulseos_app.html
 
 *.bak*
 *.tar
 scratch/
 *.log
 server_main.py
+vps_*

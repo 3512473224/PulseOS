@@ -1,0 +1,107 @@
+[
+  {
+    "id": "sc_gh",
+    "name": "GitHub",
+    "desc": "代码仓库",
+    "url": "https://github.com/3512473224",
+    "domain": "github.com"
+  },
+  {
+    "id": "sc_wa",
+    "name": "WhatsApp",
+    "desc": "即时通讯",
+    "url": "https://web.whatsapp.com",
+    "domain": "whatsapp.com"
+  },
+  {
+    "id": "sc_cx",
+    "name": "学习通",
+    "desc": "超星在线课堂",
+    "url": "https://i.chaoxing.com",
+    "domain": "i.chaoxing.com"
+  },
+  {
+    "id": "sc_mail",
+    "name": "Email 邮箱",
+    "desc": "Gmail 邮箱",
+    "url": "https://mail.google.com",
+    "domain": "mail.google.com"
+  },
+  {
+    "id": "sc_ds",
+    "name": "DeepSeek API",
+    "desc": "API 开放平台",
+    "url": "https://platform.deepseek.com",
+    "domain": "deepseek.com"
+  },
+  {
+    "id": "sc_yt",
+    "name": "YouTube",
+    "desc": "油管视频",
+    "url": "https://www.youtube.com",
+    "domain": "youtube.com"
+  },
+  {
+    "id": "sc_gemini",
+    "name": "Gemini",
+    "desc": "Google AI 助理",
+    "url": "https://gemini.google.com",
+    "domain": "gemini.google.com"
+  },
+  {
+    "id": "sc_muse",
+    "name": "Muse AI",
+    "desc": "AI 视频与搜索",
+    "url": "https://muse.ai",
+    "domain": "muse.ai"
+  },
+  {
+    "id": "sc_ping0",
+    "name": "Ping0",
+    "desc": "网络质量检测",
+    "url": "https://ping0.cc",
+    "domain": "ping0.cc"
+  },
+  {
+    "id": "sc_lc",
+    "name": "力扣",
+    "desc": "LeetCode 题库",
+    "url": "https://leetcode.cn",
+    "domain": "leetcode.cn"
+  },
+  {
+    "id": "sc_cf",
+    "name": "Cloudflare",
+    "desc": "cloudflare.com",
+    "url": "https://dash.cloudflare.com",
+    "domain": "cloudflare.com"
+  },
+  {
+    "id": "sc_ipcheck",
+    "name": "Ipcheck",
+    "desc": "ipcheck.ing",
+    "url": "https://ipcheck.ing",
+    "domain": "ipcheck.ing"
+  },
+  {
+    "id": "sc_tiktok",
+    "name": "Tiktok",
+    "desc": "tiktok.com",
+    "url": "https://www.tiktok.com",
+    "domain": "tiktok.com"
+  },
+  {
+    "id": "sc_x",
+    "name": "X",
+    "desc": "x.com",
+    "url": "https://x.com",
+    "domain": "x.com"
+  },
+  {
+    "id": "sc_translate",
+    "name": "Translate",
+    "desc": "translate.google.com",
+    "url": "https://translate.google.com",
+    "domain": "translate.google.com"
+  }
+]

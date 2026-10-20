@@ -90,7 +90,8 @@
         '/api/ai/',
         '/api/mail/',
         '/api/subtitles/',
-        '/api/cinema/'
+        '/api/cinema/',
+        '/api/shortcuts'
       ];
 
       function isSecondaryEndpoint(u) {
@@ -56828,32 +56829,39 @@ function renderHourlyForecast(baseTemp, condText) {
     window.copyVaultPreviewText = copyVaultPreviewText;
 
     // ========================================================
-    // 🧭 DYNAMIC SHORTCUTS MANAGEMENT & DRAG-AND-DROP SYSTEM
+    // 🧭 DYNAMIC SHORTCUTS MANAGEMENT & DRAG-AND-DROP SYSTEM (CLOUD SYNCED)
     // ========================================================
     const DEFAULT_CUSTOM_SHORTCUTS = [
       { id: 'sc_gh', name: 'GitHub', desc: '代码仓库', url: 'https://github.com/3512473224', domain: 'github.com' },
-      { id: 'sc_yt', name: 'YouTube', desc: '油管视频', url: 'https://www.youtube.com', domain: 'youtube.com' },
       { id: 'sc_wa', name: 'WhatsApp', desc: '即时通讯', url: 'https://web.whatsapp.com', domain: 'whatsapp.com' },
-      { id: 'sc_mail', name: 'Email 邮箱', desc: 'Gmail 邮箱', url: 'https://mail.google.com', domain: 'mail.google.com' },
       { id: 'sc_cx', name: '学习通', desc: '超星在线课堂', url: 'https://i.chaoxing.com', domain: 'i.chaoxing.com' },
-      { id: 'sc_lc', name: '力扣', desc: 'LeetCode 题库', url: 'https://leetcode.cn', domain: 'leetcode.cn' },
-      { id: 'sc_gemini', name: 'Gemini', desc: 'Google AI 助理', url: 'https://gemini.google.com', domain: 'gemini.google.com' },
+      { id: 'sc_mail', name: 'Email 邮箱', desc: 'Gmail 邮箱', url: 'https://mail.google.com', domain: 'mail.google.com' },
       { id: 'sc_ds', name: 'DeepSeek API', desc: 'API 开放平台', url: 'https://platform.deepseek.com', domain: 'deepseek.com' },
+      { id: 'sc_yt', name: 'YouTube', desc: '油管视频', url: 'https://www.youtube.com', domain: 'youtube.com' },
+      { id: 'sc_gemini', name: 'Gemini', desc: 'Google AI 助理', url: 'https://gemini.google.com', domain: 'gemini.google.com' },
       { id: 'sc_muse', name: 'Muse AI', desc: 'AI 视频与搜索', url: 'https://muse.ai', domain: 'muse.ai' },
-      { id: 'sc_ping0', name: 'Ping0', desc: '原生IP与网络质量', url: 'https://ping0.cc', domain: 'ping0.cc' }
+      { id: 'sc_ping0', name: 'Ping0', desc: '网络质量检测', url: 'https://ping0.cc', domain: 'ping0.cc' },
+      { id: 'sc_lc', name: '力扣', desc: 'LeetCode 题库', url: 'https://leetcode.cn', domain: 'leetcode.cn' },
+      { id: 'sc_cf', name: 'Cloudflare', desc: 'cloudflare.com', url: 'https://dash.cloudflare.com', domain: 'cloudflare.com' },
+      { id: 'sc_ipcheck', name: 'Ipcheck', desc: 'ipcheck.ing', url: 'https://ipcheck.ing', domain: 'ipcheck.ing' },
+      { id: 'sc_tiktok', name: 'Tiktok', desc: 'tiktok.com', url: 'https://www.tiktok.com', domain: 'tiktok.com' },
+      { id: 'sc_x', name: 'X', desc: 'x.com', url: 'https://x.com', domain: 'x.com' },
+      { id: 'sc_translate', name: 'Translate', desc: 'translate.google.com', url: 'https://translate.google.com', domain: 'translate.google.com' }
     ];
 
     let customShortcutsList = [];
     let isShortcutsManageMode = false;
     let draggedShortcutIdx = null;
+    let isSyncingShortcutsToCloud = false;
 
     function initShortcutsSystem() {
       try {
-        const stored = localStorage.getItem('pulseos_custom_shortcuts_v3') || localStorage.getItem('pulseos_custom_shortcuts_v2');
+        const stored = localStorage.getItem('pulseos_custom_shortcuts_v4') ||
+                       localStorage.getItem('pulseos_custom_shortcuts_v3') ||
+                       localStorage.getItem('pulseos_custom_shortcuts_v2');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            // Strip out any stale hardcoded SVGs or dummy mock backgrounds so web favicon search is always used
+          if (Array.isArray(parsed) && parsed.length >= 15) {
             customShortcutsList = parsed.map(item => {
               const clean = { ...item };
               delete clean.svg;
@@ -56872,17 +56880,73 @@ function renderHourlyForecast(baseTemp, condText) {
       } catch (e) {
         console.warn('Failed to load custom shortcuts:', e);
       }
+
       if (!customShortcutsList || customShortcutsList.length === 0) {
         customShortcutsList = JSON.parse(JSON.stringify(DEFAULT_CUSTOM_SHORTCUTS));
       }
-      saveCustomShortcuts();
+
+      saveCustomShortcuts(false);
       renderCustomShortcuts();
+
+      // Pull latest authoritative shortcuts from backend server
+      fetchCloudShortcuts();
     }
 
-    function saveCustomShortcuts() {
+    function saveCustomShortcuts(syncToCloud = true) {
       try {
-        localStorage.setItem('pulseos_custom_shortcuts_v3', JSON.stringify(customShortcutsList));
+        localStorage.setItem('pulseos_custom_shortcuts_v4', JSON.stringify(customShortcutsList));
       } catch (e) {}
+
+      if (syncToCloud) {
+        syncShortcutsToCloud();
+      }
+    }
+
+    async function fetchCloudShortcuts() {
+      try {
+        const resp = await fetch('/api/shortcuts');
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && Array.isArray(data.shortcuts) && data.shortcuts.length > 0) {
+            customShortcutsList = data.shortcuts.map(item => {
+              const clean = { ...item };
+              delete clean.svg;
+              delete clean.bg;
+              delete clean.color;
+              if (clean.url && clean.url.includes('chaoxing') && (!clean.domain || clean.domain === 'chaoxing.com')) {
+                clean.domain = 'i.chaoxing.com';
+              }
+              if (clean.url && clean.url.includes('gemini') && (!clean.domain || clean.domain === 'google.com')) {
+                clean.domain = 'gemini.google.com';
+              }
+              return clean;
+            });
+            saveCustomShortcuts(false);
+            renderCustomShortcuts();
+          }
+        }
+      } catch (err) {
+        console.warn('[Shortcuts] Cloud fetch failed, continuing with local cache:', err);
+      }
+    }
+
+    async function syncShortcutsToCloud() {
+      if (isSyncingShortcutsToCloud) return;
+      isSyncingShortcutsToCloud = true;
+      try {
+        const resp = await fetch('/api/shortcuts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ shortcuts: customShortcutsList })
+        });
+        if (!resp.ok) {
+          console.warn('[Shortcuts] Server returned error during sync:', resp.status);
+        }
+      } catch (err) {
+        console.warn('[Shortcuts] Cloud sync error:', err);
+      } finally {
+        isSyncingShortcutsToCloud = false;
+      }
     }
 
     function extractShortcutDomain(url) {
@@ -56987,10 +57051,10 @@ function renderHourlyForecast(baseTemp, condText) {
     function deleteCustomShortcut(e, idx) {
       e.stopPropagation();
       const removed = customShortcutsList.splice(idx, 1);
-      saveCustomShortcuts();
+      saveCustomShortcuts(true);
       renderCustomShortcuts();
       if (removed && removed[0]) {
-        showToast(`已移除导航【${removed[0].name}】`);
+        showToast(`已移除导航【${removed[0].name}】并同步至云端`);
       }
     }
 
@@ -57020,9 +57084,9 @@ function renderHourlyForecast(baseTemp, condText) {
       if (draggedShortcutIdx === null || draggedShortcutIdx === targetIdx) return;
       const item = customShortcutsList.splice(draggedShortcutIdx, 1)[0];
       customShortcutsList.splice(targetIdx, 0, item);
-      saveCustomShortcuts();
+      saveCustomShortcuts(true);
       renderCustomShortcuts();
-      showToast('导航顺序已保存');
+      showToast('导航顺序已保存并同步至云端');
     }
 
     function onShortcutDragEnd(e) {
@@ -57113,10 +57177,10 @@ function renderHourlyForecast(baseTemp, condText) {
         url,
         domain
       });
-      saveCustomShortcuts();
+      saveCustomShortcuts(true);
       renderCustomShortcuts();
       closeAddShortcutModal();
-      showToast(`已添加新快捷导航【${name}】`);
+      showToast(`已添加新快捷导航【${name}】并同步至云端`);
     }
 
     // ========================================================
@@ -57611,6 +57675,8 @@ function renderHourlyForecast(baseTemp, condText) {
     window.renderWeatherModalData = renderWeatherModalData;
     window.initShortcutsSystem = initShortcutsSystem;
     window.renderCustomShortcuts = renderCustomShortcuts;
+    window.fetchCloudShortcuts = fetchCloudShortcuts;
+    window.syncShortcutsToCloud = syncShortcutsToCloud;
     window.toggleShortcutsManage = toggleShortcutsManage;
     window.deleteCustomShortcut = deleteCustomShortcut;
     window.onShortcutClick = onShortcutClick;

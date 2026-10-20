@@ -31,7 +31,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data") if os.name == "nt" el
 CACHE_FILE = os.path.join(DATA_DIR, "news_cache.json")
 POOL_FILE = os.path.join(DATA_DIR, "news_pool.json")
 STATE_FILE = os.path.join(DATA_DIR, "news_state.json")
-API_KEY = "sk-59667070f6b84ce28e7ec133fbb58feb"
+API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
