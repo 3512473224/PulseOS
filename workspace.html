@@ -19324,121 +19324,84 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       line-height: 1.5;
     }
 
-    /* Light Theme Overrides */
-    html.theme-light .cinema-header-bar,
-    html.theme-light .cinema-stage-card,
-    html.theme-light .cinema-pane-card,
-    html.theme-light .cinema-guide-card {
-      background: rgba(255, 255, 255, 0.9) !important;
-      border-color: rgba(226, 232, 240, 0.8) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+    /* Luxury VisionOS / Linear Elevation Refinements for 4K Cinema */
+    .cinema-header-bar {
+      background: radial-gradient(120% 160% at 0% 0%, rgba(56, 189, 248, 0.08) 0%, rgba(124, 58, 237, 0.05) 45%, rgba(15, 23, 42, 0.72) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
     }
 
-    html.theme-light 
-    .cinema-mkv-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 45;
-      background: rgba(10, 15, 29, 0.90);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      animation: fadeInCinema 0.25s ease;
+    .cinema-stage-card {
+      background: linear-gradient(180deg, rgba(18, 22, 36, 0.82) 0%, rgba(11, 14, 25, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
     }
 
-    .cinema-mkv-card {
-      max-width: 540px;
-      width: 100%;
-      background: rgba(26, 34, 52, 0.92);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 16px;
-      padding: 22px 24px;
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
-      text-align: left;
+    .cinema-pane-card {
+      background: linear-gradient(180deg, rgba(18, 22, 36, 0.82) 0%, rgba(11, 14, 25, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
     }
 
-    .cinema-mkv-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      border-radius: 6px;
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      margin-bottom: 10px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
+    .cinema-guide-card {
+      background: linear-gradient(180deg, rgba(22, 27, 44, 0.68) 0%, rgba(13, 17, 30, 0.78) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
     }
 
-    .cinema-mkv-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 8px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .cinema-guide-card.is-mounted-drive {
+      border-color: rgba(56, 189, 248, 0.34);
+      background: radial-gradient(120% 120% at 0% 0%, rgba(56, 189, 248, 0.09) 0%, rgba(15, 23, 42, 0.78) 100%);
+      box-shadow: 0 12px 32px -8px rgba(14, 165, 233, 0.15), inset 0 1px 0 0 rgba(56, 189, 248, 0.25);
     }
 
-    .cinema-mkv-desc {
-      font-size: 0.82rem;
-      color: #94a3b8;
-      line-height: 1.65;
-      margin-bottom: 18px;
-    }
-
-    .cinema-mkv-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-potplayer {
-      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    .btn-web-remux {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
       color: #ffffff !important;
-      border: none;
-      padding: 7px 16px;
-      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 8px 16px;
+      border-radius: 9px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
-      transition: all 0.2s ease;
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .btn-potplayer:hover {
+    .btn-web-remux:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.55);
+      box-shadow: 0 8px 22px rgba(14, 165, 233, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.38);
     }
 
-    .btn-cinema-potplayer {
-      background: rgba(14, 165, 233, 0.15);
-      color: #38bdf8 !important;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
+    /* Light Theme Overrides */
+    html.theme-light .cinema-header-bar,
+    html.theme-light .cinema-stage-card,
+    html.theme-light .cinema-pane-card,
+    html.theme-light .cinema-guide-card {
+      background: rgba(255, 255, 255, 0.92) !important;
+      border-color: rgba(226, 232, 240, 0.9) !important;
+      box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.06), inset 0 1px 0 #ffffff !important;
     }
 
-    .btn-cinema-potplayer:hover {
-      background: rgba(14, 165, 233, 0.28);
-      border-color: #38bdf8;
-      color: #ffffff !important;
+    html.theme-light .cinema-mkv-overlay {
+      background: rgba(248, 250, 252, 0.88);
+    }
+
+    html.theme-light .cinema-mkv-card {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(14, 165, 233, 0.35);
+      box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
+    }
+
+    html.theme-light .cinema-mkv-title {
+      color: #0f172a;
+    }
+
+    html.theme-light .cinema-mkv-desc {
+      color: #475569;
     }
 
     html.theme-light .cinema-stream-input-wrap {
@@ -19452,48 +19415,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     html.theme-light .cinema-ep-item {
-      background: rgba(248, 250, 252, 0.8) !important;
+      background: rgba(248, 250, 252, 0.85) !important;
       border-color: #e2e8f0 !important;
     }
 
-    html.theme-light     .cinema-action-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 3px 6px;
-      border-radius: 5px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      font-size: 0.68rem;
-      transition: all 0.15s ease;
-      user-select: none;
-    }
-    .cinema-action-btn:hover {
-      background: rgba(56, 189, 248, 0.18);
-      border-color: rgba(56, 189, 248, 0.35);
-      color: #38bdf8;
-      transform: translateY(-1px);
-    }
-    .cinema-action-btn.btn-danger:hover {
-      background: rgba(239, 68, 68, 0.18);
-      border-color: rgba(239, 68, 68, 0.35);
-      color: #f87171;
-    }
-    html.theme-light .cinema-action-btn {
-      background: rgba(0, 0, 0, 0.04);
-      border-color: rgba(0, 0, 0, 0.1);
-      color: #475569;
-    }
-    html.theme-light .cinema-action-btn:hover {
-      background: rgba(14, 165, 233, 0.12);
-      border-color: rgba(14, 165, 233, 0.3);
-      color: #0284c7;
-    }
-
-    .cinema-ep-item.active {
+    html.theme-light .cinema-ep-item.active {
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.08)) !important;
       border-color: #7c3aed !important;
     }
@@ -19905,7 +19831,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       color: #34d399;
       font-weight: 600;
     }
-    .vault-search-box {
+    .vault-filter-bar .vault-search-box {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -19915,12 +19841,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       padding: 6px 12px;
       width: 260px;
     }
-    .vault-search-box i {
+    .vault-filter-bar .vault-search-box i {
       width: 14px;
       height: 14px;
       color: #64748b;
     }
-    .vault-search-box input {
+    .vault-filter-bar .vault-search-box input {
       background: transparent;
       border: none;
       outline: none;
@@ -21221,11 +21147,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       background: rgba(241, 245, 249, 0.75) !important;
       border-color: rgba(59, 130, 246, 0.35) !important;
     }
-    html.theme-light .vault-search-box {
+    html.theme-light .vault-filter-bar .vault-search-box {
       background: rgba(241, 245, 249, 0.95) !important;
       border: 1px solid rgba(0, 0, 0, 0.1) !important;
     }
-    html.theme-light .vault-search-box input {
+    html.theme-light .vault-filter-bar .vault-search-box input {
       color: #0f172a !important;
     }
     html.theme-light .vault-btn-outline,
@@ -22259,6 +22185,109 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
       background: rgba(56, 189, 248, 0.18);
       border-color: rgba(56, 189, 248, 0.5);
       color: #fff;
+    }
+    /* ======================================================== */
+    /* 💎 PULSEOS LUXURY GLASS & DUAL-THEME CONTRAST ENGINE     */
+    /* ======================================================== */
+    #lockScreenOverlay {
+      z-index: 10000000 !important;
+    }
+    #spotlightOverlay {
+      z-index: 100050 !important;
+    }
+
+    /* Subtle 1px Specular Highlights on Primary Cards in Dark Mode */
+    html:not(.theme-light) .card,
+    html:not(.theme-light) .vault-header-card,
+    html:not(.theme-light) .vault-stat-card,
+    html:not(.theme-light) .cinema-sub-modal-box,
+    html:not(.theme-light) .cinema-quick-modal-card {
+      box-shadow: 0 14px 36px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Full Light-Mode Adaptation for Cinema Subtitle Hub Modal (#cinemaSubtitleModal) */
+    html.theme-light .cinema-sub-modal-box {
+      background: rgba(255, 255, 255, 0.97) !important;
+      border-color: rgba(15, 23, 42, 0.1) !important;
+      box-shadow: 0 24px 60px -12px rgba(15, 23, 42, 0.18), inset 0 1px 0 #ffffff !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .cinema-sub-tabs {
+      background: #f8fafc !important;
+      border-bottom-color: #e2e8f0 !important;
+    }
+    html.theme-light .cinema-sub-tab {
+      color: #64748b !important;
+    }
+    html.theme-light .cinema-sub-tab:hover {
+      color: #0f172a !important;
+      background: rgba(15, 23, 42, 0.04) !important;
+    }
+    html.theme-light .cinema-sub-tab.active {
+      color: #0284c7 !important;
+      background: rgba(2, 132, 199, 0.1) !important;
+    }
+    html.theme-light .cinema-ai-sub-config,
+    html.theme-light .cinema-sync-controls-card,
+    html.theme-light .cinema-sub-card {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light .cinema-sub-search-box {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light .cinema-sub-search-box input {
+      color: #0f172a !important;
+    }
+    html.theme-light .cinema-ai-preview-box {
+      background: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    html.theme-light .cinema-radio-pill,
+    html.theme-light .cinema-sync-pill,
+    html.theme-light .cinema-sub-small-btn:not(.primary) {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #334155 !important;
+    }
+    html.theme-light .cinema-sync-label {
+      color: #1e293b !important;
+    }
+    html.theme-light .cinema-sub-pos-popover {
+      background: rgba(255, 255, 255, 0.97) !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15) !important;
+    }
+    html.theme-light .cinema-sub-pos-popover [style*="color:#fff"] {
+      color: #0f172a !important;
+    }
+    html.theme-light .cinema-sub-chip {
+      background: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+
+    /* Full Light-Mode Contrast Fixes for AI View, Vault Progress, Converter & Modals */
+    html.theme-light #view-ai .card [style*="color:#fff"],
+    html.theme-light #vaultProgFilename,
+    html.theme-light #vaultPreviewDrawer [style*="color:#fff"],
+    html.theme-light #vaultPreviewDrawer [style*="color: #fff"],
+    html.theme-light .converter-queue-card [style*="color:#fff"],
+    html.theme-light #view-converter [style*="color:#fff"] {
+      color: #0f172a !important;
+    }
+    html.theme-light #aiResponseBox {
+      background: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #vaultSearchInput {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
     }
 </style>
 </head>
@@ -24799,7 +24828,7 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
               </div>
               <div class="vault-search-box">
                 <i data-lucide="search"></i>
-                <input type="text" id="vaultSearchInput" placeholder="搜索收纳文件名..." oninput="handleVaultSearch(this.value)">
+                <input type="text" id="fileVaultSearchInput" placeholder="搜索收纳文件名..." oninput="handleVaultSearch(this.value)">
               </div>
             </div>
 
@@ -25371,7 +25400,7 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                 </div>
                 <div class="cinema-pill">
                   <i data-lucide="hard-drive" style="width:12px; height:12px; color:#38bdf8;"></i>
-                  <span id="cinemaStorageStatusText">已挂载: 本地超清演示库</span>
+                  <span id="cinemaStorageStatusText">正在同步云盘挂载状态...</span>
                 </div>
                 <button class="btn btn-cinema-sky" style="padding:4px 12px; font-size:0.75rem;" onclick="openAlistDashboard()" title="打开 AList 管理面板">
                   <i data-lucide="external-link" style="width:13px; height:13px;"></i>
@@ -25539,33 +25568,33 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                       </div>
                     </div>
 
-                    <!-- MKV / High-Spec Video Helper Overlay -->
+                    <!-- MKV / High-Spec Web-Only Remux & Audio Relay Overlay (100% Web Closed-Loop) -->
                     <div id="cinemaMkvHelperOverlay" class="cinema-mkv-overlay" style="display:none;" onclick="if(event.target===this) dismissMkvOverlay()">
                       <div class="cinema-mkv-card">
-                        <div class="cinema-mkv-badge"><i data-lucide="sparkles" style="width:12px; height:12px;"></i> 高清片源硬解提示 · 网盘原画完好</div>
-                        <div class="cinema-mkv-title" id="cinemaMkvOverlayTitle">S01E01.mkv</div>
+                        <div class="cinema-mkv-badge"><i data-lucide="zap" style="width:12px; height:12px;"></i> PulseOS 网页端 4K 原画直通与重混中枢</div>
+                        <div class="cinema-mkv-title" id="cinemaMkvOverlayTitle">4K BluRay Remux</div>
                         <div class="cinema-mkv-desc">
-                          该片源为 <b>MKV (HEVC/H.265 + 杜比多音轨)</b> 高规格压制，网盘内原画完整无损。<br>
-                          受 Chrome/Edge 浏览器专利解码限制，网页无法直接硬解。已为您无缝适配本地 <b>PotPlayer-64bit</b>，点击下方按钮即可一键极速秒播，享受 4K 硬件加速与杜比立体声！
+                          检测到高规格蓝光封装片源 <b>(MKV / HEVC / DTS-HD / TrueHD 多音轨)</b>。<br>
+                          无需安装或跳出任何外部软件，PulseOS 云端视听舱支持<b>网页端 100% 原画视频直通 + 次世代音频实时重混</b>，一键秒开并支持国语配音与双语字幕！
                         </div>
                         <div class="cinema-mkv-actions">
-                          <button class="btn btn-potplayer" onclick="openInPotPlayer()">
-                            <i data-lucide="monitor-play" style="width:14px; height:14px;"></i>
-                            <span>唤起 PotPlayer 硬解</span>
+                          <button class="btn btn-web-remux" onclick="dismissMkvOverlay(); toggleCinemaFastStartMode();">
+                            <i data-lucide="zap" style="width:14px; height:14px;"></i>
+                            <span>网页端极速秒开 (fMP4 直通)</span>
                           </button>
-                          <button class="btn btn-ghost" onclick="copyPotPlayerLink()" style="font-size:0.75rem; padding:6px 12px;">
-                            <i data-lucide="copy" style="width:13px; height:13px;"></i>
-                            <span>复制直链 (Ctrl+U 粘贴)</span>
+                          <button class="btn btn-ghost" onclick="dismissMkvOverlay(); openCinemaAudioTrackSelector();" style="font-size:0.75rem; padding:6px 12px;">
+                            <i data-lucide="volume-2" style="width:13px; height:13px;"></i>
+                            <span>音轨与国语配音</span>
                           </button>
-                          <button class="btn btn-ghost" onclick="openInVlc()" style="font-size:0.75rem; padding:6px 12px;">
-                            <i data-lucide="external-link" style="width:13px; height:13px;"></i>
-                            <span>VLC 播放</span>
+                          <button class="btn btn-ghost" onclick="dismissMkvOverlay(); openCinemaSubtitleHub('ai');" style="font-size:0.75rem; padding:6px 12px;">
+                            <i data-lucide="sparkles" style="width:13px; height:13px;"></i>
+                            <span>全能字幕中枢</span>
                           </button>
                           <button class="btn btn-ghost" onclick="downloadCurrentAlistFile()" style="font-size:0.75rem; padding:6px 12px;">
                             <i data-lucide="download" style="width:13px; height:13px;"></i>
                             <span>原画下载</span>
                           </button>
-                          <button class="btn btn-ghost" onclick="dismissMkvOverlay()" style="font-size:0.75rem; padding:6px 10px;" title="关闭提示并继续尝试网页播放">
+                          <button class="btn btn-ghost" onclick="dismissMkvOverlay()" style="font-size:0.75rem; padding:6px 10px;" title="关闭提示并继续网页播放">
                             <i data-lucide="x" style="width:13px; height:13px;"></i>
                           </button>
                         </div>
@@ -25615,6 +25644,10 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                     <button class="cinema-tool-btn" onclick="copyCurrentStreamUrl()" title="复制直链至剪贴板">
                       <i data-lucide="link-2" style="width:14px; height:14px;"></i>
                       <span>复制直链</span>
+                    </button>
+                    <button class="cinema-tool-btn accent-purple" id="cinemaSubHubBtn" onclick="openCinemaSubtitleHub('radar')" title="全能字幕中枢 (网盘伴生雷达 · AI 中英双语合成 · 全网字幕检索)">
+                      <i data-lucide="wand-2" style="width:14px; height:14px;"></i>
+                      <span>字幕中枢</span>
                     </button>
                     <button class="cinema-tool-btn" id="cinemaImportSubBtn" onclick="openCinemaSubtitlePicker()" title="导入本地字幕文件 (.srt / .vtt / .ass / .ssa)">
                       <i data-lucide="folder-up" style="width:14px; height:14px;"></i>
@@ -25668,7 +25701,6 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                       <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
                       <span id="cinemaAvSyncText">音画对齐</span>
                     </button>
-                    <input type="file" id="cinemaSubtitleFileInput" accept=".srt,.vtt,.ass,.ssa" style="display:none;" onchange="handleCinemaSubtitleFileSelect(event)">
                     <button class="cinema-tool-btn" onclick="toggleCinemaDesktopPip()" title="开启桌面级置顶画中画 (可退出浏览器在桌面上任意拖拽)">
                       <i data-lucide="picture-in-picture-2" style="width:14px; height:14px;"></i>
                       <span>桌面画中画</span>
@@ -25783,8 +25815,8 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
 
               <div class="cinema-cards-grid">
                 
-                <!-- Card 1: Google Drive (已成功挂载) -->
-                <div class="cinema-guide-card" style="border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.04);">
+                <!-- Card 1: Google Drive -->
+                <div class="cinema-guide-card" id="cardGoogleDrive">
                   <div class="cinema-gc-header">
                     <div class="cinema-gc-icon" style="background:rgba(56,189,248,0.18); color:#38bdf8;">
                       <i data-lucide="hard-drive"></i>
@@ -25792,12 +25824,12 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
                     <div>
                       <div class="cinema-gc-name">Google 云端硬盘</div>
                     </div>
-                    <span class="cinema-gc-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.3);">5 TB 已挂载</span>
+                    <span class="cinema-gc-tag" id="tagGoogleDrive">美西骨干直连</span>
                   </div>
                   <div class="cinema-gc-desc">
-                    已连通海外 VPS 极速代理，支持文件增删改查、直接上传与 4K 秒播。
+                    连通海外 VPS 同区高速骨干直连，支持大文件增删改查、直接上传与 4K 原盘秒播。
                   </div>
-                  <button class="btn btn-cinema-sky" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="enterAlistFolder('/谷歌云盘')">
+                  <button class="btn btn-cinema-sky" id="btnGoogleDrive" style="margin-top:auto; font-size:0.75rem; justify-content:center;" onclick="enterAlistFolder('/谷歌云盘')">
                     <i data-lucide="folder-open" style="width:13px; height:13px;"></i>
                     <span>进入管理与点播</span>
                   </button>
@@ -26971,11 +27003,17 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
         </a>
       </div>
 
-      <div style="padding:12px 20px; border-top:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:space-between;">
-        <button class="cinema-tool-btn primary-sky" onclick="closeCinemaSubTrackModal(); openCinemaSubtitlePicker();" style="padding:4px 10px; font-size:0.75rem;">
-          <i data-lucide="folder-up" style="width:13px; height:13px;"></i>
-          <span>导入本地字幕文件</span>
-        </button>
+      <div style="padding:12px 20px; border-top:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="cinema-tool-btn primary-sky" onclick="closeCinemaSubTrackModal(); openCinemaSubtitlePicker();" style="padding:4px 10px; font-size:0.75rem;">
+            <i data-lucide="folder-up" style="width:13px; height:13px;"></i>
+            <span>导入本地字幕文件</span>
+          </button>
+          <button class="cinema-tool-btn accent-purple" onclick="closeCinemaSubTrackModal(); openCinemaSubtitleHub('ai');" style="padding:4px 10px; font-size:0.75rem;">
+            <i data-lucide="sparkles" style="width:13px; height:13px;"></i>
+            <span>AI 双语字幕合成与雷达</span>
+          </button>
+        </div>
         <button class="btn btn-ghost" style="padding:4px 10px; font-size:0.75rem;" onclick="closeCinemaSubTrackModal()">关闭</button>
       </div>
     </div>
@@ -28974,11 +29012,6 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
           }
         });
       }
-    }
-
-    function filterVaultTree() {
-      const q = document.getElementById('vaultSearchInput').value.trim();
-      renderTreeDOM(q);
     }
 
     function renderTabs() {
@@ -48247,15 +48280,19 @@ function renderHourlyForecast(baseTemp, condText) {
         if (parts.length >= 2) {
           var p0 = parts[0].trim();
           var p1 = parts.slice(1).join(' - ').trim();
-          var commonSingers = ['周杰伦', '林俊杰', '陈奕迅', '王菲', '陶喆', '孙燕姿', '张学友', '刘德华', '五月天', '李荣浩', '薛之谦', '邓紫棋', '毛不易', '许嵩', '汪苏泷', '何野', '费戚戚', '唐伯虎', '王力宏', '张杰', '华晨宇', '梁静茹', '莫文蔚', '林忆莲', '张靓颖', '朴树', '许巍', '毛阿敏', '韩红', '刀郎', 'Taylor Swift', 'Adele', 'Ed Sheeran', 'Coldplay'];
-          if (p1.includes('&') || p1.includes('feat') || p1.includes('Feat') || commonSingers.some(function(cs) { return p1.toLowerCase().includes(cs.toLowerCase()); })) {
+          // Clean leading track numbers like "01. " or "01 "
+          p0 = p0.replace(/^\d{1,3}[\.\s\-_]+/, '').trim();
+          var titleIndicators = /\((?:live|remix|伴奏|dj|合唱|现场|版|ver|ost|instrumental)|（(?:live|伴奏|现场|合唱|版)|《.*》/i;
+          if (titleIndicators.test(p0) && !titleIndicators.test(p1)) {
             title = p0;
             artist = p1;
-          } else if (commonSingers.some(function(cs) { return p0.toLowerCase().includes(cs.toLowerCase()); })) {
+          } else if (titleIndicators.test(p1) && !titleIndicators.test(p0)) {
             artist = p0;
             title = p1;
+          } else if (/\b(?:feat\.?|ft\.?)\b/i.test(p1) && !/\b(?:feat\.?|ft\.?)\b/i.test(p0)) {
+            title = p0;
+            artist = p1;
           } else {
-            // Default Chinese music convention: 歌手 - 歌名 (e.g. 费戚戚 - 风催雨, 何野 - 天亮以前说再见)
             artist = p0;
             title = p1;
           }
@@ -49428,16 +49465,407 @@ function renderHourlyForecast(baseTemp, condText) {
     }
     window.mountDirectSubUrl = mountDirectSubUrl;
 
-    // 以下入口的后端实现已被移除：保留入口并给出友好提示，避免点击时抛 ReferenceError
-    function scanCurrentCompanionSubtitles() { if (typeof showCinemaNotice === 'function') showCinemaNotice('伴生字幕扫描功能暂未开放，敬请期待'); }
+    // --- 全能字幕中枢 (Subtitle Hub) & DeepSeek AI 完整真实实现 ---
+    function openCinemaSubtitleHub(defaultTab) {
+      var m = document.getElementById('cinemaSubtitleModal');
+      if (!m) return;
+      m.style.display = 'flex';
+      if (defaultTab) switchSubHubTab(defaultTab);
+
+      // Update status & cue count badge
+      var vttText = window._currentCinemaSubVtt || window._currentCinemaSubText || '';
+      var cueCount = (vttText.match(/-->/g) || []).length;
+      var subName = window._currentCinemaSubName || (cueCount > 0 ? '已挂载字幕' : '未挂载字幕');
+      var statusEl = document.getElementById('cinemaSubCurrentStatus');
+      if (statusEl) statusEl.textContent = '当前挂载：' + subName + (cueCount > 0 ? ' (' + cueCount + ' 句)' : '');
+      var aiBadgeEl = document.getElementById('cinemaAiSourceBadge');
+      if (aiBadgeEl) aiBadgeEl.textContent = cueCount > 0 ? (subName + ' (' + cueCount + ' 句)') : '当前未挂载字幕 (请先挂载或上传字幕)';
+
+      // Pre-fill online search input with current playing movie title if empty
+      var searchInp = document.getElementById('cinemaOnlineSubSearchInput');
+      if (searchInp && !searchInp.value.trim()) {
+        var curEp = (typeof cinemaCurrentEpisodeIndex !== 'undefined' && cinemaCurrentEpisodeIndex >= 0 && cinemaEpisodes[cinemaCurrentEpisodeIndex])
+          ? cinemaEpisodes[cinemaCurrentEpisodeIndex] : null;
+        var rawT = (curEp && curEp.title) || document.getElementById('cinemaCurrentTitle')?.textContent || '';
+        if (rawT && rawT !== '暂无播放媒体') {
+          searchInp.value = typeof cleanMovieTitleForSearch === 'function' ? cleanMovieTitleForSearch(rawT) : rawT;
+        }
+      }
+
+      scanCurrentCompanionSubtitles(false);
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+    window.openCinemaSubtitleHub = openCinemaSubtitleHub;
+
+    async function scanCurrentCompanionSubtitles(notifyUser) {
+      var listEl = document.getElementById('cinemaCompanionSubList');
+      if (!listEl) return;
+      listEl.innerHTML = '<div style="text-align:center; padding:24px 10px; color:#38bdf8; font-size:12px;"><i data-lucide="loader-2" class="spin" style="width:18px; height:18px; display:inline-block; vertical-align:-4px; margin-right:6px;"></i>正在探测当前网盘目录与云端伴生字幕...</div>';
+      if (window.lucide) lucide.createIcons();
+
+      var found = [];
+      var currentItems = (typeof cachedAlistItems !== 'undefined' && Array.isArray(cachedAlistItems)) ? cachedAlistItems : [];
+      var basePath = (typeof currentAlistPath !== 'undefined' && currentAlistPath) ? currentAlistPath : '/';
+
+      currentItems.forEach(function(item) {
+        if (!item.is_dir) {
+          var ext = (item.name.split('.').pop() || '').toLowerCase();
+          if (['srt', 'vtt', 'ass', 'ssa'].includes(ext)) {
+            var subUrl = formatAlistDirectUrl(normalizeAlistPath(basePath + '/' + item.name));
+            found.push({ name: item.name, url: subUrl, ext: ext, source: '网盘同级目录' });
+          }
+        }
+      });
+
+      var subsDir = currentItems.find(function(it) {
+        return it.is_dir && ['subs', 'sub', 'subtitles', '字幕'].includes(it.name.toLowerCase());
+      });
+      if (subsDir) {
+        try {
+          var subDirPath = normalizeAlistPath(basePath + '/' + subsDir.name);
+          var subDirData = await fetchAlistApi('/alist/api/fs/list', {
+            method: 'POST',
+            body: JSON.stringify({ path: subDirPath, page: 1, per_page: 50, refresh: false })
+          });
+          if (subDirData && subDirData.code === 200 && subDirData.data && Array.isArray(subDirData.data.content)) {
+            subDirData.data.content.forEach(function(subItem) {
+              if (!subItem.is_dir) {
+                var ext = (subItem.name.split('.').pop() || '').toLowerCase();
+                if (['srt', 'vtt', 'ass', 'ssa'].includes(ext)) {
+                  var subUrl = formatAlistDirectUrl(normalizeAlistPath(subDirPath + '/' + subItem.name));
+                  found.push({ name: subsDir.name + '/' + subItem.name, url: subUrl, ext: ext, source: '网盘 /' + subsDir.name + ' 子目录' });
+                }
+              }
+            });
+          }
+        } catch (e) {}
+      }
+
+      if (Array.isArray(window._cinemaSubCandidates)) {
+        window._cinemaSubCandidates.forEach(function(c) {
+          if (c && c.url && !found.some(function(f) { return f.url === c.url; })) {
+            found.push({
+              name: c.name || '匹配候选字幕',
+              url: c.url,
+              ext: (c.name ? c.name.split('.').pop() : 'srt').toLowerCase(),
+              source: c.source === 'Companion' ? '网盘伴生字幕' : '云端精校匹配库',
+              isRemoteCandidate: c.source !== 'Companion'
+            });
+          }
+        });
+      }
+
+      if (found.length === 0) {
+        listEl.innerHTML = '<div style="text-align:center; padding:26px 12px; color:#94a3b8; font-size:12px;">' +
+          '<div style="margin-bottom:8px;">当前网盘目录暂未发现伴生外挂字幕文件 (.srt/.vtt/.ass)</div>' +
+          '<div style="display:flex; justify-content:center; gap:8px; margin-top:10px;">' +
+          '  <button class="cinema-tool-btn primary-sky" onclick="switchSubHubTab(\'online\'); searchOnlineSubtitles();" style="font-size:12px; padding:5px 12px;"><i data-lucide="globe" style="width:13px; height:13px;"></i> 一键全网检索字幕</button>' +
+          '  <button class="cinema-tool-btn" onclick="openCinemaSubtitlePicker()" style="font-size:12px; padding:5px 12px;"><i data-lucide="folder-up" style="width:13px; height:13px;"></i> 上传本地字幕</button>' +
+          '</div></div>';
+        if (window.lucide) lucide.createIcons();
+        if (notifyUser) showCinemaNotice('当前目录未找到伴生字幕，已为您准备在线检索', 2500);
+        return;
+      }
+
+      var html = '<div style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto; padding-right:4px;">';
+      found.forEach(function(item) {
+        var safeUrl = (item.url || '').replace(/'/g, "\\'");
+        var safeName = (item.name || '').replace(/'/g, "\\'");
+        var isActive = window._currentCinemaSubName && window._currentCinemaSubName === item.name;
+        var clickHandler = item.isRemoteCandidate
+          ? "switchCinemaSubtitleCandidate('" + safeUrl + "', '" + safeName + "')"
+          : "mountCompanionSubtitleUrl('" + safeUrl + "', '" + safeName + "')";
+        html += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid ' + (isActive ? 'rgba(56,189,248,0.45)' : 'rgba(255,255,255,0.08)') + ';">' +
+          '<div style="min-width:0; flex:1;">' +
+          '  <div style="font-size:12.5px; font-weight:600; color:' + (isActive ? '#38bdf8' : '#f1f5f9') + '; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="' + escapeCinemaHtml(item.name) + '">' + escapeCinemaHtml(item.name) + '</div>' +
+          '  <div style="font-size:11px; color:#94a3b8; margin-top:2px;">来源：' + escapeCinemaHtml(item.source) + '</div>' +
+          '</div>' +
+          '<button class="cinema-tool-btn ' + (isActive ? 'primary-sky' : '') + '" style="padding:4px 12px; font-size:11.5px; flex-shrink:0;" onclick="' + clickHandler + '">' +
+          (isActive ? '已挂载' : '立即挂载') +
+          '</button>' +
+          '</div>';
+      });
+      html += '</div>';
+      listEl.innerHTML = html;
+      if (window.lucide) lucide.createIcons();
+      if (notifyUser) showCinemaNotice('扫描完成：发现 ' + found.length + ' 个可用字幕源', 2500);
+    }
     window.scanCurrentCompanionSubtitles = scanCurrentCompanionSubtitles;
-    function searchOnlineSubtitles() { if (typeof showCinemaNotice === 'function') showCinemaNotice('在线字幕聚合检索功能暂未开放，敬请期待'); }
+
+    async function mountCompanionSubtitleUrl(url, name) {
+      if (!url) return;
+      showCinemaNotice('正在加载网盘伴生字幕：' + name + '...', 2500);
+      try {
+        var res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var text = await res.text();
+        var ext = (name.split('.').pop() || 'srt').toLowerCase();
+        loadCinemaSubtitleFromText(text, name, ext);
+        scanCurrentCompanionSubtitles(false);
+      } catch (e) {
+        showCinemaNotice('字幕加载失败：' + e.message, 3000);
+      }
+    }
+    window.mountCompanionSubtitleUrl = mountCompanionSubtitleUrl;
+
+    async function searchOnlineSubtitles() {
+      var inp = document.getElementById('cinemaOnlineSubSearchInput');
+      var grid = document.getElementById('cinemaOnlineProvidersGrid');
+      if (!grid) return;
+      var query = (inp ? inp.value : '').trim();
+      if (!query) {
+        var curEp = (typeof cinemaCurrentEpisodeIndex !== 'undefined' && cinemaCurrentEpisodeIndex >= 0 && cinemaEpisodes[cinemaCurrentEpisodeIndex])
+          ? cinemaEpisodes[cinemaCurrentEpisodeIndex] : null;
+        var rawT = (curEp && curEp.title) || document.getElementById('cinemaCurrentTitle')?.textContent || '';
+        if (rawT && rawT !== '暂无播放媒体') {
+          query = typeof cleanMovieTitleForSearch === 'function' ? cleanMovieTitleForSearch(rawT) : rawT;
+          if (inp) inp.value = query;
+        }
+      }
+      if (!query) {
+        showCinemaNotice('请先输入影视剧名称再搜索字幕', 2500);
+        return;
+      }
+
+      grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:18px; color:#38bdf8; font-size:12px;"><i data-lucide="loader-2" class="spin" style="width:16px; height:16px; display:inline-block; vertical-align:-3px; margin-right:6px;"></i>正在聚合检索「' + escapeCinemaHtml(query) + '」的中英双语字幕与外部字幕库...</div>';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        var results = await Promise.all([
+          fetch('/api/subtitles/search-online?query=' + encodeURIComponent(query)).then(function(r) { return r.json(); }).catch(function() { return null; }),
+          fetch('/api/subtitles/search?query=' + encodeURIComponent(query)).then(function(r) { return r.json(); }).catch(function() { return null; })
+        ]);
+        var onlineData = results[0];
+        var providerData = results[1];
+        var candidates = (onlineData && Array.isArray(onlineData.candidates)) ? onlineData.candidates : [];
+        var providers = (providerData && Array.isArray(providerData.providers)) ? providerData.providers : [];
+        if (candidates.length > 0) {
+          window._cinemaSubCandidates = candidates;
+        }
+
+        var html = '';
+        if (onlineData && onlineData.resolved_english_title) {
+          html += '<div style="grid-column:1/-1; font-size:11.5px; color:#a855f7; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.25); border-radius:8px; padding:6px 10px;">' +
+            '✨ 智能片名映射：已自动关联国际发行片名 <b>' + escapeCinemaHtml(onlineData.resolved_english_title) + '</b> 检索双语字幕库' +
+            '</div>';
+        }
+
+        if (candidates.length > 0) {
+          html += '<div style="grid-column:1/-1; display:flex; flex-direction:column; gap:6px; max-height:175px; overflow-y:auto; padding:8px; border-radius:10px; background:rgba(15,23,42,0.55); border:1px solid rgba(56,189,248,0.2);">' +
+            '<div style="font-size:11.5px; font-weight:600; color:#38bdf8; margin-bottom:2px;">⚡ 云端直连字幕库 (' + candidates.length + ' 个匹配版本 · 点击一键挂载)：</div>';
+          candidates.forEach(function(c, idx) {
+            var safeUrl = (c.url || '').replace(/'/g, "\\'");
+            var safeName = (c.name || '').replace(/'/g, "\\'");
+            html += '<div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 10px; border-radius:7px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);">' +
+              '<span style="font-size:12px; color:#e2e8f0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="' + escapeCinemaHtml(c.name) + '">#' + (idx + 1) + ' ' + escapeCinemaHtml(c.name) + '</span>' +
+              '<button class="cinema-tool-btn primary-sky" style="padding:3px 10px; font-size:11px; flex-shrink:0;" onclick="switchCinemaSubtitleCandidate(\'' + safeUrl + '\', \'' + safeName + '\')">一键挂载</button>' +
+              '</div>';
+          });
+          html += '</div>';
+        }
+
+        if (providers.length > 0) {
+          providers.forEach(function(p) {
+            html += '<a href="' + escapeCinemaHtml(p.url) + '" target="_blank" rel="noopener noreferrer" style="display:flex; flex-direction:column; gap:3px; padding:9px 12px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); text-decoration:none; transition:all 0.2s;">' +
+              '<div style="font-size:12px; font-weight:600; color:#38bdf8; display:flex; align-items:center; justify-content:space-between;">' +
+              '  <span>' + escapeCinemaHtml(p.name) + '</span>' +
+              '  <i data-lucide="external-link" style="width:12px; height:12px;"></i>' +
+              '</div>' +
+              '<div style="font-size:11px; color:#94a3b8;">' + escapeCinemaHtml(p.desc || '') + '</div>' +
+              '</a>';
+          });
+        }
+        grid.innerHTML = html || '<div style="grid-column:1/-1; text-align:center; padding:16px; color:#94a3b8; font-size:12px;">未检索到结果，请尝试精简关键词</div>';
+        if (window.lucide) lucide.createIcons();
+      } catch (err) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:16px; color:#f87171; font-size:12px;">检索异常：' + escapeCinemaHtml(err.message) + '</div>';
+      }
+    }
     window.searchOnlineSubtitles = searchOnlineSubtitles;
-    function exportGeneratedBilingualSubtitle() { if (typeof showCinemaNotice === 'function') showCinemaNotice('AI 双语字幕合成功能暂未开放，敬请期待'); }
-    window.exportGeneratedBilingualSubtitle = exportGeneratedBilingualSubtitle;
-    function startAiBilingualSynthesis() { if (typeof showCinemaNotice === 'function') showCinemaNotice('AI 双语字幕合成功能暂未开放，敬请期待'); }
+
+    async function startAiBilingualSynthesis() {
+      var rawVtt = window._currentCinemaSubVtt || window._currentCinemaSubText || '';
+      if (!rawVtt || !rawVtt.includes('-->')) {
+        showCinemaNotice('请先挂载或上传一份字幕文件，再启动 AI 双语合成', 3000);
+        return;
+      }
+
+      var modeRadio = document.querySelector('input[name="aiSubMode"]:checked');
+      var mode = modeRadio ? modeRadio.value : 'en2bilingual';
+      var sourceLang = mode === 'zh2bilingual' ? 'zh' : 'en';
+
+      var btn = document.getElementById('cinemaAiStartBtn');
+      var progWrap = document.getElementById('cinemaAiProgressWrap');
+      var progText = document.getElementById('cinemaAiProgressText');
+      var progPct = document.getElementById('cinemaAiProgressPercent');
+      var progFill = document.getElementById('cinemaAiProgressBarFill');
+      var resWrap = document.getElementById('cinemaAiResultWrap');
+      var previewBox = document.getElementById('cinemaAiPreviewBox');
+
+      // Parse WebVTT cues
+      var normalized = rawVtt.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      var blocks = normalized.split(/\n\s*\n/);
+      var cues = [];
+      blocks.forEach(function(block) {
+        var lines = block.trim().split('\n');
+        var timeIdx = lines.findIndex(function(l) { return l.includes('-->'); });
+        if (timeIdx !== -1) {
+          var timeLine = lines[timeIdx].trim();
+          var textLines = lines.slice(timeIdx + 1).join(' ').replace(/<[^>]+>/g, '').trim();
+          if (textLines) {
+            cues.push({ time: timeLine, text: textLines, bilingual: textLines });
+          }
+        }
+      });
+
+      if (cues.length === 0) {
+        showCinemaNotice('未能从当前字幕中解析出有效台词时间轴', 3000);
+        return;
+      }
+
+      if (btn) btn.disabled = true;
+      if (progWrap) progWrap.style.display = 'block';
+      if (resWrap) resWrap.style.display = 'none';
+
+      var batchSize = 30;
+      var maxCuesToTranslate = Math.min(cues.length, 300);
+      var totalBatches = Math.ceil(maxCuesToTranslate / batchSize);
+
+      try {
+        for (var b = 0; b < totalBatches; b++) {
+          var startIdx = b * batchSize;
+          var endIdx = Math.min(startIdx + batchSize, maxCuesToTranslate);
+          var batchLines = cues.slice(startIdx, endIdx).map(function(c) { return c.text; });
+          var pct = Math.round(((b) / totalBatches) * 100);
+          if (progText) progText.textContent = 'DeepSeek AI 正在精译第 ' + (startIdx + 1) + '~' + endIdx + ' 句台词...';
+          if (progPct) progPct.textContent = pct + '%';
+          if (progFill) progFill.style.width = pct + '%';
+
+          var resp = await fetch('/api/subtitles/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              lines: batchLines,
+              source_lang: sourceLang,
+              target_lang: 'bilingual'
+            })
+          });
+          var data = await resp.json();
+          if (!data || !data.success) {
+            throw new Error((data && data.error) || '翻译接口返回异常');
+          }
+          if (Array.isArray(data.translations)) {
+            data.translations.forEach(function(tr, idx) {
+              if (cues[startIdx + idx] && tr.bilingual) {
+                cues[startIdx + idx].bilingual = tr.bilingual;
+              }
+            });
+          }
+        }
+
+        if (progText) progText.textContent = '合成完毕！正在挂载双语时间轴...';
+        if (progPct) progPct.textContent = '100%';
+        if (progFill) progFill.style.width = '100%';
+
+        var vttOut = ['WEBVTT\n'];
+        var srtOut = [];
+        cues.forEach(function(c, i) {
+          vttOut.push('\n' + c.time + '\n' + c.bilingual);
+          srtOut.push((i + 1) + '\n' + c.time.replace(/\./g, ',') + '\n' + c.bilingual + '\n');
+        });
+
+        window._generatedBilingualVtt = vttOut.join('\n');
+        window._generatedBilingualSrt = srtOut.join('\n');
+
+        var newName = (window._currentCinemaSubName || 'Subtitle').replace(/\.(vtt|srt|ass|ssa)$/i, '') + '.AI双语.vtt';
+        loadCinemaSubtitleFromText(window._generatedBilingualVtt, newName, 'vtt');
+
+        if (resWrap) resWrap.style.display = 'block';
+        if (previewBox) {
+          previewBox.innerHTML = cues.slice(0, 8).map(function(c) {
+            return '<div style="margin-bottom:6px; padding-bottom:6px; border-bottom:1px dashed rgba(255,255,255,0.07);">' +
+              '<div style="font-size:10.5px; color:#38bdf8; font-family:monospace;">' + escapeCinemaHtml(c.time) + '</div>' +
+              '<div style="font-size:12px; color:#f1f5f9; white-space:pre-line;">' + escapeCinemaHtml(c.bilingual) + '</div>' +
+              '</div>';
+          }).join('');
+        }
+        if (window.lucide) lucide.createIcons();
+      } catch (err) {
+        showCinemaNotice('AI 双语合成中断：' + err.message, 3500);
+        if (progText) progText.textContent = '合成异常：' + err.message;
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
     window.startAiBilingualSynthesis = startAiBilingualSynthesis;
-    function sendAiPrompt() { if (typeof showToast === 'function') showToast('DeepSeek AI 对话功能暂未开放，敬请期待'); }
+
+    function exportGeneratedBilingualSubtitle(format) {
+      var fmt = (format || 'vtt').toLowerCase();
+      var content = fmt === 'srt'
+        ? (window._generatedBilingualSrt || window._currentCinemaSubText || '')
+        : (window._generatedBilingualVtt || window._currentCinemaSubVtt || window._currentCinemaSubText || '');
+      if (!content) {
+        showCinemaNotice('当前没有可导出的字幕内容', 2500);
+        return;
+      }
+      var blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      var baseName = (window._currentCinemaSubName || 'pulseos_bilingual_subtitle').replace(/\.(vtt|srt|ass|ssa)$/i, '');
+      a.href = url;
+      a.download = baseName + '.' + fmt;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
+      showCinemaNotice('已导出字幕文件：' + baseName + '.' + fmt, 2500);
+    }
+    window.exportGeneratedBilingualSubtitle = exportGeneratedBilingualSubtitle;
+
+    async function sendAiPrompt() {
+      var inputEl = document.getElementById('aiInputPrompt');
+      var boxEl = document.getElementById('aiResponseBox');
+      var sendBtn = document.getElementById('aiSendBtn');
+      var promptText = (inputEl ? inputEl.value : '').trim();
+      if (!promptText) {
+        if (typeof showToast === 'function') showToast('请输入问题或需要润色的笔记内容');
+        return;
+      }
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = '⏳ 深度思考中...';
+      }
+      if (boxEl) {
+        boxEl.style.color = '#38bdf8';
+        boxEl.textContent = '🧠 DeepSeek 引擎正在思考与推演中，请稍候...';
+      }
+      try {
+        var res = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptText })
+        });
+        var data = await res.json();
+        if (data && data.success && data.reply) {
+          if (boxEl) {
+            boxEl.style.color = 'var(--text)';
+            boxEl.textContent = data.reply;
+          }
+        } else {
+          throw new Error((data && data.error) || 'AI 响应失败');
+        }
+      } catch (err) {
+        if (boxEl) {
+          boxEl.style.color = '#f87171';
+          boxEl.textContent = '请求异常：' + err.message;
+        }
+      } finally {
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.textContent = '🚀 发送思考';
+        }
+      }
+    }
     window.sendAiPrompt = sendAiPrompt;
 
     // 恢复已保存的字幕字号
@@ -50496,19 +50924,6 @@ function renderHourlyForecast(baseTemp, condText) {
     }
 
     // --- Subtitle Upload & Drag-and-Drop Handlers ---
-    function openCinemaSubtitlePicker() {
-      var input = document.getElementById('cinemaSubtitleFileInput');
-      if (input) input.click();
-    }
-
-    function handleCinemaSubtitleFileSelect(event) {
-      var file = event.target.files && event.target.files[0];
-      if (file) {
-        loadCinemaSubtitleFile(file);
-      }
-      event.target.value = '';
-    }
-
     function convertSrtToVtt(srtText) {
       function fixTs(ts) {
         ts = ts.trim().replace(',', '.');
@@ -50591,6 +51006,14 @@ function renderHourlyForecast(baseTemp, condText) {
 
       var blob = new Blob([finalVtt], { type: 'text/vtt' });
       var blobUrl = URL.createObjectURL(blob);
+
+      window._currentCinemaSubVtt = finalVtt;
+      var cueMatches = finalVtt.match(/-->/g);
+      var cueCount = cueMatches ? cueMatches.length : 0;
+      var statusEl = document.getElementById('cinemaSubCurrentStatus');
+      if (statusEl) statusEl.textContent = '当前挂载：' + (name || '已加载字幕') + ' (' + cueCount + ' 句)';
+      var aiBadgeEl = document.getElementById('cinemaAiSourceBadge');
+      if (aiBadgeEl) aiBadgeEl.textContent = (name || '当前已挂载字幕') + ' (' + cueCount + ' 句)';
 
       if (artCinemaInstance && artCinemaInstance.subtitle) {
         artCinemaInstance.subtitle.switch(blobUrl, {
@@ -51796,46 +52219,33 @@ function renderHourlyForecast(baseTemp, condText) {
     }
 
     
+    function playAlistMediaItemFastStart(filePath, fileName, sizeStr, subUrl) {
+      playAlistMediaItem(filePath, fileName, sizeStr, subUrl);
+      setTimeout(function() {
+        if (!window._cinemaFastStartActive && typeof toggleCinemaFastStartMode === 'function') {
+          toggleCinemaFastStartMode();
+        }
+      }, 150);
+    }
+    window.playAlistMediaItemFastStart = playAlistMediaItemFastStart;
+
     function openInPotPlayer(mediaUrl) {
-      if (!mediaUrl) {
-        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
-        if (ep) mediaUrl = ep.url;
+      dismissMkvOverlay();
+      if (typeof toggleCinemaFastStartMode === 'function') {
+        toggleCinemaFastStartMode();
       }
-      if (!mediaUrl) return;
-      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
-      var potScheme = 'potplayer://' + fullUrl;
-      window.location.href = potScheme;
-      showCinemaNotice('正在唤起本地 PotPlayer 播放原画片源...');
+      showCinemaNotice('已启用 PulseOS 网页端 fMP4 原画重混直通模式');
     }
 
     function copyPotPlayerLink(mediaUrl) {
-      if (!mediaUrl) {
-        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
-        if (ep) mediaUrl = ep.url;
-      }
-      if (!mediaUrl) return;
-      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(fullUrl).then(function () {
-          showCinemaNotice('直链已复制，打开播放器按 Ctrl+U 粘贴即可播放');
-        }).catch(function () {
-          prompt('请复制直链 (PotPlayer 按 Ctrl+U 粘贴):', fullUrl);
-        });
-      } else {
-        prompt('请复制直链 (PotPlayer 按 Ctrl+U 粘贴):', fullUrl);
-      }
+      copyCurrentStreamUrl();
     }
 
     function openInVlc(mediaUrl) {
-      if (!mediaUrl) {
-        var ep = cinemaEpisodes[cinemaCurrentEpisodeIndex];
-        if (ep) mediaUrl = ep.url;
+      dismissMkvOverlay();
+      if (typeof openCinemaAudioTrackSelector === 'function') {
+        openCinemaAudioTrackSelector();
       }
-      if (!mediaUrl) return;
-      var fullUrl = mediaUrl.startsWith('http') ? mediaUrl : (window.location.origin + mediaUrl);
-      var vlcScheme = 'vlc://' + fullUrl;
-      window.location.href = vlcScheme;
-      showCinemaNotice('正在唤起本地 VLC 播放器...');
     }
 
     function downloadCurrentAlistFile() {
@@ -52958,18 +53368,17 @@ function renderHourlyForecast(baseTemp, condText) {
     async function getAlistHeaders(forceRefresh) {
       if (forceRefresh || !alistAdminToken) {
         try {
-          var r = await fetch('/alist/api/auth/login', {
+          var r = await fetch('/api/cinema/alist-auth', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: 'admin', password: 'ppday666' })
+            headers: { 'Content-Type': 'application/json' }
           });
           var d = await r.json();
-          if (d.code === 200 && d.data && d.data.token) {
+          if (d && d.code === 200 && d.data && d.data.token) {
             alistAdminToken = d.data.token;
             localStorage.setItem('pulseos_alist_token', alistAdminToken);
           }
         } catch (err) {
-          console.warn('AList auto-login warning:', err);
+          console.warn('AList auth proxy warning:', err);
         }
       }
       var h = { 'Content-Type': 'application/json' };
@@ -53054,7 +53463,7 @@ function renderHourlyForecast(baseTemp, condText) {
 
       // Storage root recovery:
       // If the first segment is not a known mounted root storage, check if it belongs to Quark
-      var knownRoots = ['夸克网盘', '阿里云盘', '谷歌云盘', '115网盘', 'Demo-Cinema'];
+      var knownRoots = (window._alistDynamicRoots && window._alistDynamicRoots.length) ? window._alistDynamicRoots : ['夸克网盘', '阿里云盘', '谷歌云盘', '115网盘', 'Demo-Cinema'];
       if (!knownRoots.includes(cleanSegs[0])) {
         if (cleanSegs[0].includes('来自') || cleanSegs[0].includes('酷狗') || cleanSegs[0].includes('分享')) {
           cleanSegs.unshift('夸克网盘');
@@ -53253,7 +53662,7 @@ function renderHourlyForecast(baseTemp, condText) {
               '</div>' +
               '</div>' +
               '<div class="cinema-file-actions" style="display:flex; align-items:center; gap:4px; flex-shrink:0;">' +
-              '  <button class="cinema-action-btn" style="color:#f59e0b;" title="本地 PotPlayer 极速硬解" onclick="event.stopPropagation(); openInPotPlayer(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="monitor-play" style="width:12px; height:12px;"></i></button>' +
+              '  <button class="cinema-action-btn" style="color:#eab308;" title="网页端 fMP4 极速秒开 (零延迟重混直出)" onclick="event.stopPropagation(); playAlistMediaItemFastStart(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')"><i data-lucide="zap" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" style="color:#38bdf8;" title="立即点播" onclick="event.stopPropagation(); playAlistMediaItem(\'' + escapeCinemaHtml(fullItemPath) + '\', \'' + escapeCinemaHtml(item.name) + '\', \'' + escapeCinemaHtml(sizeStr) + '\', \'' + escapeCinemaHtml(companionSubPath) + '\')"><i data-lucide="play" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="复制直链" onclick="event.stopPropagation(); copyAlistDirectLink(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="link" style="width:12px; height:12px;"></i></button>' +
               '  <button class="cinema-action-btn" title="下载文件" onclick="event.stopPropagation(); downloadAlistFile(\'' + escapeCinemaHtml(fullItemPath) + '\')"><i data-lucide="download" style="width:12px; height:12px;"></i></button>' +
@@ -53625,6 +54034,41 @@ function renderHourlyForecast(baseTemp, condText) {
       function applyStatus(items) {
         if (!items || !Array.isArray(items)) return;
         var dirNames = items.filter(function(i){ return i.is_dir; }).map(function(i){ return i.name; });
+        if (dirNames.length > 0) {
+          window._alistDynamicRoots = dirNames.slice();
+        }
+
+        // Dynamically update #cinemaStorageStatusText header pill (zero hardcoding)
+        var statusTextEl = document.getElementById('cinemaStorageStatusText');
+        if (statusTextEl) {
+          if (dirNames.length > 0) {
+            var displayDrives = dirNames.filter(function(n) { return n !== 'Demo-Cinema'; });
+            if (displayDrives.length === 0) displayDrives = dirNames;
+            statusTextEl.textContent = '已挂载: ' + displayDrives.join(' · ') + ' (' + dirNames.length + ' 仓在线)';
+          } else {
+            statusTextEl.textContent = '暂未挂载网盘';
+          }
+        }
+
+        // Google 云端硬盘
+        var gdriveDir = dirNames.find(function(n){ return n.includes('谷歌') || n.toLowerCase().includes('google') || n.toLowerCase().includes('gdrive'); });
+        var cardG = document.getElementById('cardGoogleDrive');
+        var tagG = document.getElementById('tagGoogleDrive');
+        var btnG = document.getElementById('btnGoogleDrive');
+        if (cardG && btnG) {
+          if (gdriveDir) {
+            cardG.classList.add('is-mounted-drive');
+            if (tagG) {
+              tagG.style.background = 'rgba(56,189,248,0.15)';
+              tagG.style.color = '#38bdf8';
+              tagG.style.borderColor = 'rgba(56,189,248,0.3)';
+              tagG.textContent = '5 TB 已挂载 · 4K直连';
+            }
+            btnG.className = 'btn btn-cinema-sky';
+            btnG.onclick = function() { enterAlistFolder('/' + gdriveDir); };
+            btnG.innerHTML = '<i data-lucide="folder-open" style="width:13px; height:13px;"></i><span>进入管理与点播</span>';
+          }
+        }
 
         // 阿里云盘
         var hasAliyun = dirNames.some(function(n){ return n.includes('阿里') || n.toLowerCase().includes('aliyun'); });

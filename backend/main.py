@@ -50,6 +50,25 @@ import urllib.parse
 logger = logging.getLogger("pulseos")
 logging.basicConfig(level=logging.INFO)
 
+def _load_dotenv_files():
+    for env_path in ["/opt/pulseos/.env", os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"), ".env"]:
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as ef:
+                    for raw_line in ef:
+                        line = raw_line.strip()
+                        if not line or line.startswith("#") or "=" not in line:
+                            continue
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip('"').strip("'")
+                        if k and k not in os.environ:
+                            os.environ[k] = v
+            except Exception as e:
+                logger.warning(f"Failed to load {env_path}: {e}")
+
+_load_dotenv_files()
+
 
 
 app = FastAPI(
@@ -2403,7 +2422,7 @@ class CatChatRequest(BaseModel):
 
 @app.post("/api/ai/cat")
 async def cat_ai_chat(req: CatChatRequest):
-    api_key = "sk-59667070f6b84ce28e7ec133fbb58feb"
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
     
     # 1. Parse rich dynamic live telemetry signals
     ctx = req.context or {}
@@ -2772,31 +2791,46 @@ async def translate_subtitle_batch(req: SubtitleBatchTranslateRequest):
     prompt_lines = [f"{i+1} | {l.strip()}" for i, l in enumerate(req.lines)]
     prompt_content = "\n".join(prompt_lines)
 
-    api_key = req.api_key.strip() if req.api_key else "sk-59667070f6b84ce28e7ec133fbb58feb"
+    api_key = req.api_key.strip() if req.api_key else os.environ.get("DEEPSEEK_API_KEY", "").strip()
 
     try:
         async with httpx.AsyncClient(timeout=35.0) as client:
-            res = await client.post(
-                "https://api.deepseek.com/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "model": "deepseek-chat",
-                    "messages": [
-                        {"role": "system", "content": sys_prompt},
-                        {"role": "user", "content": prompt_content}
-                    ],
-                    "temperature": 0.1
-                }
-            )
+            res = None
+            if api_key:
+                res = await client.post(
+                    "https://api.deepseek.com/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": "deepseek-chat",
+                        "messages": [
+                            {"role": "system", "content": sys_prompt},
+                            {"role": "user", "content": prompt_content}
+                        ],
+                        "temperature": 0.1
+                    }
+                )
+            if res is None or res.status_code != 200:
+                res = await client.post(
+                    "https://text.pollinations.ai/openai",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "model": "openai",
+                        "messages": [
+                            {"role": "system", "content": sys_prompt},
+                            {"role": "user", "content": prompt_content}
+                        ],
+                        "temperature": 0.1
+                    }
+                )
             if res.status_code != 200:
                 return {
                     "success": False,
                     "translations": [],
                     "detected_source": detected,
-                    "error": f"DeepSeek API error: HTTP {res.status_code} - {res.text[:200]}"
+                    "error": f"LLM API error: HTTP {res.status_code} - {res.text[:200]}"
                 }
             
             data = res.json()
@@ -2998,6 +3032,144 @@ MOVIE_TRANSLATIONS = {
     "神偷奶爸": "Despicable Me"
 }
 
+MOVIE_TITLES_CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "movie_titles_cache.json")
+
+def _load_movie_titles_cache() -> dict:
+    merged = dict(MOVIE_TRANSLATIONS)
+    if os.path.exists(MOVIE_TITLES_CACHE_FILE):
+        try:
+            with open(MOVIE_TITLES_CACHE_FILE, "r", encoding="utf-8") as f:
+                disk_data = json.load(f)
+                if isinstance(disk_data, dict):
+                    merged.update(disk_data)
+        except Exception:
+            pass
+    return merged
+
+def _save_movie_title_to_cache(zh_key: str, en_val: str):
+    if not zh_key or not en_val:
+        return
+    MOVIE_TRANSLATIONS[zh_key] = en_val
+    try:
+        os.makedirs(os.path.dirname(MOVIE_TITLES_CACHE_FILE), exist_ok=True)
+        disk_data = {}
+        if os.path.exists(MOVIE_TITLES_CACHE_FILE):
+            with open(MOVIE_TITLES_CACHE_FILE, "r", encoding="utf-8") as f:
+                disk_data = json.load(f)
+        disk_data[zh_key] = en_val
+        with open(MOVIE_TITLES_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(disk_data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+MOVIE_TRANSLATIONS.update(_load_movie_titles_cache())
+
+async def resolve_media_english_title(clean_q: str, folder: str = "", raw_query: str = "") -> Optional[str]:
+    # 1. Fast L1 Cache & Seed Dictionary Lookup
+    for zh in sorted(MOVIE_TRANSLATIONS.keys(), key=len, reverse=True):
+        if zh and (zh in clean_q or zh in (folder or "") or zh in raw_query):
+            return MOVIE_TRANSLATIONS[zh]
+
+    # Extract primary Chinese phrase from clean_q or folder
+    zh_matches = re.findall(r'[\u4e00-\u9fff]+(?:[\s·:：\d]*[\u4e00-\u9fff\d]*)*', clean_q + " " + (folder or ""))
+    noise_words = {"来自", "分享", "夸克网盘", "阿里云盘", "谷歌云盘", "电影", "电视剧", "国语", "粤语", "中字", "双语", "蓝光", "原盘", "高清", "超清", "全集", "完结"}
+    zh_candidates = [m.strip() for m in zh_matches if len(m.strip()) >= 2 and m.strip() not in noise_words]
+    if not zh_candidates:
+        return None
+    zh_keyword = zh_candidates[0]
+    if zh_keyword in MOVIE_TRANSLATIONS:
+        return MOVIE_TRANSLATIONS[zh_keyword]
+
+    # 2. Tier 1 Dynamic Lookup: Wikidata Global Film & TV Knowledge Graph (~150ms on US-West VPS, no API key needed)
+    try:
+        async with httpx.AsyncClient(timeout=3.5) as client:
+            wd_url = (
+                "https://www.wikidata.org/w/api.php?action=wbsearchentities"
+                f"&search={urllib.parse.quote(zh_keyword)}&language=zh&uselang=en&type=item&format=json"
+            )
+            resp = await client.get(wd_url, headers={"User-Agent": "PulseOS/2.0 (https://ppday.site)"})
+            if resp.status_code == 200:
+                search_items = resp.json().get("search") or []
+                for item in search_items:
+                    label = (item.get("label") or "").strip()
+                    desc = (item.get("description") or "").lower()
+                    # Prefer items with English ASCII label
+                    if label and re.search(r'[A-Za-z]{2,}', label) and not re.search(r'[\u4e00-\u9fff]', label):
+                        if any(k in desc for k in ("film", "movie", "television", "series", "anime", "show", "documentary", "miniseries")) or item == search_items[0]:
+                            en_clean = re.sub(r'[^A-Za-z0-9\s\-]', ' ', label)
+                            en_clean = re.sub(r'\s+', ' ', en_clean).strip()
+                            if en_clean:
+                                _save_movie_title_to_cache(zh_keyword, en_clean)
+                                return en_clean
+    except Exception as e:
+        logger.debug(f"[Wikidata Title Resolver] {zh_keyword}: {e}")
+
+    # 3. Tier 2 Dynamic Lookup: Douban Movie Subject Suggest API
+    try:
+        async with httpx.AsyncClient(timeout=2.8) as client:
+            db_url = f"https://movie.douban.com/j/subject_suggest?q={urllib.parse.quote(zh_keyword)}"
+            resp = await client.get(db_url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Referer": "https://movie.douban.com/"
+            })
+            if resp.status_code == 200:
+                items = resp.json()
+                if isinstance(items, list) and len(items) > 0:
+                    sub_t = (items[0].get("sub_title") or "").strip()
+                    if sub_t and re.search(r'[A-Za-z]{2,}', sub_t):
+                        en_clean = re.sub(r'[^A-Za-z0-9\s\-\']', ' ', sub_t)
+                        en_clean = re.sub(r'\s+', ' ', en_clean).strip()
+                        if en_clean:
+                            _save_movie_title_to_cache(zh_keyword, en_clean)
+                            return en_clean
+    except Exception as e:
+        logger.debug(f"[Douban Title Resolver] {zh_keyword}: {e}")
+
+    # 4. Tier 3 Dynamic Lookup: DeepSeek / Cloud LLM Instant Title Resolver
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+            resp = None
+            sys_p = "You are a film metadata resolver. Given a Chinese movie or TV series title, reply with ONLY its official international English title (ASCII letters and numbers only, no quotes, no explanation)."
+            if api_key:
+                resp = await client.post(
+                    "https://api.deepseek.com/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": "deepseek-chat",
+                        "messages": [
+                            {"role": "system", "content": sys_p},
+                            {"role": "user", "content": zh_keyword}
+                        ],
+                        "temperature": 0.0,
+                        "max_tokens": 24
+                    }
+                )
+            if resp is None or resp.status_code != 200:
+                resp = await client.post(
+                    "https://text.pollinations.ai/openai",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "model": "openai",
+                        "messages": [
+                            {"role": "system", "content": sys_p},
+                            {"role": "user", "content": zh_keyword}
+                        ],
+                        "temperature": 0.0
+                    }
+                )
+            if resp.status_code == 200:
+                ans = resp.json()["choices"][0]["message"]["content"].strip()
+                ans = re.sub(r'[^A-Za-z0-9\s\-]', ' ', ans)
+                ans = re.sub(r'\s+', ' ', ans).strip()
+                if ans and len(ans) >= 2 and len(ans) <= 60:
+                    _save_movie_title_to_cache(zh_keyword, ans)
+                    return ans
+    except Exception as e:
+        logger.debug(f"[LLM Title Resolver] {zh_keyword}: {e}")
+
+    return None
+
 @app.get("/api/subtitles/auto-match")
 @app.post("/api/subtitles/auto-match")
 async def auto_match_subtitles(query: str = "", title: str = "", url: str = "", folder: str = "", path: str = ""):
@@ -3034,12 +3206,8 @@ async def auto_match_subtitles(query: str = "", title: str = "", url: str = "", 
     if not clean_q:
         return {"success": False, "error": "未提供影片名称"}
 
-    # Chinese to English title resolution
-    english_title = None
-    for zh in sorted(MOVIE_TRANSLATIONS.keys(), key=len, reverse=True):
-        if zh in clean_q or zh in (folder or "") or zh in raw_query:
-            english_title = MOVIE_TRANSLATIONS[zh]
-            break
+    # Dynamic Chinese/Foreign to English Title Resolution (Seed Cache + Persistent Disk Cache + Douban API + DeepSeek LLM)
+    english_title = await resolve_media_english_title(clean_q, folder or "", raw_query)
 
     # 1. Generate high-probability release filename candidates
     candidates = []
@@ -3303,25 +3471,35 @@ async def search_subtitles_online(query: str = ""):
     if not query:
         return {"success": False, "candidates": []}
     import urllib.parse
-    clean_q = query.strip().replace("'", "").replace('"', "").replace(" ", ".")
+    raw_q = query.strip()
+    en_title = await resolve_media_english_title(raw_q, "", raw_q)
+    search_terms = [raw_q.replace("'", "").replace('"', "").replace(" ", ".")]
+    if en_title:
+        en_dot = en_title.replace("'", "").replace('"', "").replace(" ", ".")
+        if en_dot not in search_terms:
+            search_terms.insert(0, en_dot)
     candidates = []
-    async with httpx.AsyncClient(timeout=4.5) as client:
-        try:
-            t_url = f"https://api-shoulei-ssl.xunlei.com/oracle/subtitle?name={urllib.parse.quote(clean_q)}"
-            t_resp = await client.get(t_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=3.5)
-            if t_resp.status_code == 200:
-                items = t_resp.json().get('data', [])
-                for idx, it in enumerate(items[:20]):
-                    if it.get('url'):
-                        candidates.append({
-                            "index": idx,
-                            "name": it.get('name') or f"字幕版本 {idx+1}",
-                            "url": it.get('url'),
-                            "source": "Thunder"
-                        })
-        except Exception as e:
-            print(f"[Search Subtitles Online Error]: {e}")
-    return {"success": True, "query": query, "candidates": candidates}
+    seen_urls = set()
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        for term in search_terms:
+            try:
+                t_url = f"https://api-shoulei-ssl.xunlei.com/oracle/subtitle?name={urllib.parse.quote(term)}"
+                t_resp = await client.get(t_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=3.5)
+                if t_resp.status_code == 200:
+                    items = t_resp.json().get('data', [])
+                    for it in items[:20]:
+                        u = it.get('url')
+                        if u and u not in seen_urls:
+                            seen_urls.add(u)
+                            candidates.append({
+                                "index": len(candidates),
+                                "name": it.get('name') or f"字幕版本 {len(candidates)+1}",
+                                "url": u,
+                                "source": "Thunder"
+                            })
+            except Exception as e:
+                print(f"[Search Subtitles Online Error]: {e}")
+    return {"success": True, "query": query, "resolved_english_title": en_title, "candidates": candidates}
 
 
 # ==============================================================================
@@ -4641,9 +4819,11 @@ async def transfer_vault_file_to_alist(payload: dict):
     # Connect to AList on port 5244
     alist_token = None
     try:
+        alist_user = os.environ.get("ALIST_ADMIN_USER", "admin")
+        alist_pass = os.environ.get("ALIST_ADMIN_PASS", "")
         login_req = urllib.request.Request(
             "http://127.0.0.1:5244/alist/api/auth/login",
-            data=json.dumps({"username": "admin", "password": "ppday666"}).encode("utf-8"),
+            data=json.dumps({"username": alist_user, "password": alist_pass}).encode("utf-8"),
             headers={"Content-Type": "application/json"},
             method="POST"
         )
@@ -4871,3 +5051,133 @@ async def reset_shortcuts():
     save_server_shortcuts(DEFAULT_CLOUD_SHORTCUTS)
     return {"status": "ok", "message": "Shortcuts reset to defaults", "shortcuts": DEFAULT_CLOUD_SHORTCUTS}
 
+
+# ==============================================================================
+# 🔐 ALIST DYNAMIC AUTH & STORAGE TELEMETRY PROXY (ZERO FRONTEND HARDCODING)
+# ==============================================================================
+
+async def _get_alist_admin_token() -> Optional[str]:
+    alist_user = os.environ.get("ALIST_ADMIN_USER", "admin")
+    alist_pass = os.environ.get("ALIST_ADMIN_PASS", "")
+    if not alist_pass:
+        return None
+    try:
+        async with httpx.AsyncClient(timeout=4.0) as client:
+            resp = await client.post(
+                "http://127.0.0.1:5244/alist/api/auth/login",
+                json={"username": alist_user, "password": alist_pass}
+            )
+            if resp.status_code == 200:
+                js = resp.json()
+                if js.get("code") == 200 and js.get("data", {}).get("token"):
+                    return js["data"]["token"]
+    except Exception as e:
+        logger.warning(f"[AList Auth Proxy] warning: {e}")
+    return None
+
+@app.get("/api/cinema/alist-auth")
+@app.post("/api/cinema/alist-auth")
+async def get_cinema_alist_auth():
+    token = await _get_alist_admin_token()
+    if token:
+        return {"code": 200, "success": True, "data": {"token": token}}
+    return {"code": 500, "success": False, "message": "AList authentication unavailable"}
+
+@app.get("/api/cinema/storages")
+async def get_cinema_mounted_storages():
+    token = await _get_alist_admin_token()
+    headers = {"Authorization": token} if token else {}
+    storages = []
+    try:
+        async with httpx.AsyncClient(timeout=4.5) as client:
+            if token:
+                r = await client.get("http://127.0.0.1:5244/alist/api/admin/storage/list", headers=headers)
+                if r.status_code == 200:
+                    js = r.json()
+                    content_list = js.get("data", {}).get("content") or []
+                    for st in content_list:
+                        if not st.get("disabled"):
+                            storages.append({
+                                "mount_path": st.get("mount_path", ""),
+                                "driver": st.get("driver", ""),
+                                "status": st.get("status", "work"),
+                                "order": st.get("order", 0)
+                            })
+            if not storages:
+                r2 = await client.post(
+                    "http://127.0.0.1:5244/alist/api/fs/list",
+                    headers=headers,
+                    json={"path": "/", "page": 1, "per_page": 50, "refresh": False}
+                )
+                if r2.status_code == 200:
+                    js2 = r2.json()
+                    for item in (js2.get("data", {}).get("content") or []):
+                        if item.get("is_dir"):
+                            storages.append({
+                                "mount_path": "/" + item.get("name", ""),
+                                "driver": "CloudDrive",
+                                "status": "work",
+                                "order": 0
+                            })
+    except Exception as e:
+        logger.warning(f"[AList Storages Check] {e}")
+    return {"success": True, "count": len(storages), "storages": storages}
+
+
+# ==============================================================================
+# 🧠 DEEPSEEK AI REASONING & WORKSTATION ASSISTANT ENDPOINT (/api/ai/chat)
+# ==============================================================================
+
+class WorkstationAiChatRequest(BaseModel):
+    prompt: str
+    system: Optional[str] = None
+    temperature: Optional[float] = 0.6
+
+@app.post("/api/ai/chat")
+async def workstation_ai_chat(req: WorkstationAiChatRequest):
+    prompt = (req.prompt or "").strip()
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Prompt cannot be empty")
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    sys_msg = req.system or (
+        "你是 PulseOS 极客工作台内置的 DeepSeek 首席架构师与全栈 AI 助手。"
+        "主人 ppday 偏好 Java 21 / Spring Boot 3、Vue 3、Tailwind CSS、Docker Alpine 与高内聚低延迟架构。"
+        "请提供结构清晰、专业精炼、可直接落地的解答或代码建议。"
+    )
+    try:
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            resp = None
+            if api_key:
+                resp = await client.post(
+                    "https://api.deepseek.com/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": "deepseek-chat",
+                        "messages": [
+                            {"role": "system", "content": sys_msg},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": req.temperature or 0.6,
+                        "max_tokens": 2000
+                    }
+                )
+            if resp is None or resp.status_code != 200:
+                resp = await client.post(
+                    "https://text.pollinations.ai/openai",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "model": "openai",
+                        "messages": [
+                            {"role": "system", "content": sys_msg},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "temperature": req.temperature or 0.6
+                    }
+                )
+            if resp.status_code == 200:
+                data = resp.json()
+                reply = data["choices"][0]["message"]["content"].strip()
+                return {"success": True, "reply": reply, "model": data.get("model", "deepseek-chat")}
+            return {"success": False, "error": f"AI Engine HTTP {resp.status_code}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
