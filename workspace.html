@@ -28286,6 +28286,9 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
         } else if (viewKey === 'obsidian') {
           if (typeof renderTreeDOM === 'function') renderTreeDOM();
           if (typeof renderTabs === 'function') renderTabs();
+          if (typeof triggerGitPull === 'function') {
+            triggerGitPull({ silent: true, reason: 'entrance' });
+          }
         } else if (viewKey === 'graph') {
           setTimeout(() => initGraphView(), 50);
         } else if (viewKey === 'overview') {
@@ -31434,7 +31437,9 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
 
       // Strict Source-of-Truth Application
       if (syncSuccess) {
-        const deletedTombstone = new Set(JSON.parse(localStorage.getItem('ppday_vault_deleted') || '[]'));
+        const rawTombstone = JSON.parse(localStorage.getItem('ppday_vault_deleted') || '[]');
+        const deletedTombstone = new Set(rawTombstone.filter(dp => dp !== 'assets' && !dp.startsWith('assets/')));
+        localStorage.setItem('ppday_vault_deleted', JSON.stringify(Array.from(deletedTombstone)));
         vaultNotes = remoteNotes.filter(n => {
           if (n.path.startsWith('assets/') && n.name.toLowerCase().endsWith('.md')) return false;
           if (deletedTombstone.has(n.path) || deletedTombstone.has(n.name)) return false;
@@ -48251,6 +48256,11 @@ function renderHourlyForecast(baseTemp, condText) {
       try { initAudioVisualizerEngine(); } catch(e) { console.warn('initAudioVisualizerEngine error', e); }
       try { initCyberCatCompanion(); } catch(e) { console.warn('initCyberCatCompanion error', e); }
       try { initQuickScratchpad(); } catch(e) { console.warn('initQuickScratchpad error', e); }
+      try {
+        if (typeof triggerGitPull === 'function') {
+          setTimeout(() => { triggerGitPull({ silent: true, reason: 'boot' }); }, 300);
+        }
+      } catch(e) {}
       try {
         var lastView = localStorage.getItem('pulseos_active_view');
         if (lastView === 'cinema' && typeof switchView === 'function') {
