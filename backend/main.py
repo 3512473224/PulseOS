@@ -275,6 +275,9 @@ async def jwt_auth_middleware(request: Request, call_next):
             or path.startswith("/api/vault/unzip/")
             or path.startswith("/api/vault/unzip-entry/")
             or path.startswith("/api/notes/raw_image")
+            or path.startswith("/api/notes/sync_all")
+            or path.startswith("/api/notes/tree")
+            or path.startswith("/api/notes/file")
         ):
             return await call_next(request)
 

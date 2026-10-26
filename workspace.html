@@ -29438,15 +29438,16 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
           if (matched) candidate = matched.path;
         }
 
+        const activeFolder = activeNote?.path?.includes('/') ? activeNote.path.substring(0, activeNote.path.lastIndexOf('/')) : '';
         const candidatePaths = [
           candidate,
           clean,
+          `assets/${activeNote ? activeNote.name.replace(/\.md$/i, '') : '学习'}/${baseName}`,
+          activeFolder ? `assets/${activeFolder}/${baseName}` : null,
+          `assets/学习/${baseName}`,
           `assets/日常的笔记/${baseName}`,
-          `assets/${activeNote ? activeNote.name.replace(/\.md$/i, '') : 'ppday的笔记'}/${baseName}`,
-          `assets/巅峰哥·1/${baseName}`,
-          `assets/未命名 1/${baseName}`,
-          `assets/沙发上/${baseName}`,
-          `assets/ppday的笔记/${baseName}`,
+          `assets/重点/${baseName}`,
+          `assets/python/${baseName}`,
           `assets/${baseName}`,
           baseName
         ].filter((v, i, a) => v && a.indexOf(v) === i);
@@ -29455,31 +29456,40 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
           try {
             const safePath = encodeRepoPath(cPath);
             const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 2000);
+            const timer = setTimeout(() => controller.abort(), 12000);
+            const rawHeaders = { ...headers, 'Accept': 'application/vnd.github.v3.raw' };
             const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${safePath}?ref=${githubBranch}`, { 
-              headers, 
+              headers: rawHeaders, 
               signal: controller.signal 
             }).finally(() => clearTimeout(timer));
 
             if (res.ok) {
-              const data = await res.json();
-              if (data.content && data.encoding === 'base64') {
-                const ext = cPath.split('.').pop().toLowerCase();
-                const mime = ext === 'png' ? 'image/png' : (ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : (ext === 'svg' ? 'image/svg+xml' : (ext === 'webp' ? 'image/webp' : (ext === 'gif' ? 'image/gif' : 'image/png'))));
-                
-                const byteCharacters = atob(data.content.replace(/\s/g, ''));
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                  byteNumbers[i] = byteCharacters.charCodeAt(i);
+              const contentType = res.headers.get('content-type') || '';
+              if (contentType.includes('application/json')) {
+                const data = await res.json();
+                if (data.content && data.encoding === 'base64') {
+                  const ext = cPath.split('.').pop().toLowerCase();
+                  const mime = ext === 'png' ? 'image/png' : (ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : (ext === 'svg' ? 'image/svg+xml' : (ext === 'webp' ? 'image/webp' : (ext === 'gif' ? 'image/gif' : 'image/png'))));
+                  const byteCharacters = atob(data.content.replace(/\s/g, ''));
+                  const byteNumbers = new Array(byteCharacters.length);
+                  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+                  const byteArray = new Uint8Array(byteNumbers);
+                  const blob = new Blob([byteArray], { type: mime });
+                  const blobUrl = URL.createObjectURL(blob);
+                  window.vaultImageBlobCache[clean] = blobUrl;
+                  window.vaultImageBlobCache[cPath] = blobUrl;
+                  window.vaultImageBlobCache[baseName] = blobUrl;
+                  return blobUrl;
                 }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: mime });
-                const blobUrl = URL.createObjectURL(blob);
-                
-                window.vaultImageBlobCache[clean] = blobUrl;
-                window.vaultImageBlobCache[cPath] = blobUrl;
-                window.vaultImageBlobCache[baseName] = blobUrl;
-                return blobUrl;
+              } else {
+                const blob = await res.blob();
+                if (blob && blob.size > 0) {
+                  const blobUrl = URL.createObjectURL(blob);
+                  window.vaultImageBlobCache[clean] = blobUrl;
+                  window.vaultImageBlobCache[cPath] = blobUrl;
+                  window.vaultImageBlobCache[baseName] = blobUrl;
+                  return blobUrl;
+                }
               }
             }
           } catch (e) {}
@@ -31336,7 +31346,11 @@ html.theme-light .cinema-quick-modal-card [style*="color: #fff"] {
 
       // Priority 1: High-Speed Server-Side Authenticated Cloud Sync (/api/notes/sync_all)
       try {
-        const sRes = await fetch(`/api/notes/sync_all?branch=${encodeURIComponent(githubBranch)}&t=${Date.now()}`);
+        const token = localStorage.getItem('pulseos_jwt_token') || sessionStorage.getItem('pulseos_jwt_token') || '';
+        const tokenParam = token ? `&token=${encodeURIComponent(token)}` : '';
+        const sRes = await fetch(`/api/notes/sync_all?branch=${encodeURIComponent(githubBranch)}${tokenParam}&t=${Date.now()}`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
         if (sRes.ok) {
           const sData = await sRes.json();
           if (sData.code === 200 && Array.isArray(sData.notes)) {
